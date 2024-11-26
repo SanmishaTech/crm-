@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Login from "@/Packages/Login/Login";
 import Dashboard from "./Pages/Dashboard";
-import { Toaster, toast } from "sonner";
+ import { Toaster, toast } from "sonner";
 import { useLocation } from "react-router-dom";
 
 import {
@@ -99,7 +99,7 @@ function App() {
       <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/registration" element={<Dashboard />} />
         <Route path="/registrationlist" element={<Dashboard />} />
         <Route path="/holiday" element={<Dashboard />} />
@@ -137,6 +137,7 @@ function App() {
         <Route path="/discountmaster" element={<Dashboard />} />
         <Route path="/rolemaster" element={<Dashboard />} />
         <Route path="/assignaccess" element={<Dashboard />} />
+
       </Routes>
     </>
   );

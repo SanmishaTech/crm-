@@ -141,27 +141,27 @@ export const navItems: NavItem[] = [
   //     },
   //   ],
   // },
-  {
-    title: "Access Control",
-    href: "/lab",
-    icon: "Asdsad",
-    children: [
-      {
-        title: "Role Master",
-        href: "/rolemaster",
-        icon: "department",
-      },
-      {
-        title: "Assign Access",
-        href: "/assignaccess",
-        icon: "Associate",
-      },
-      // {
-      //   title: "Container Link Master",
-      //   href: "/containerlinkmaster",
-      // },
-    ],
-  },
+  // {
+  //   title: "Access Control",
+  //   href: "/lab",
+  //   icon: "Asdsad",
+  //   children: [
+  //     // {
+  //     //   title: "Role Master",
+  //     //   href: "/rolemaster",
+  //     //   icon: "department",
+  //     // },
+  //     // {
+  //     //   title: "Assign Access",
+  //     //   href: "/assignaccess",
+  //     //   icon: "Associate",
+  //     // },
+  //     // {
+  //     //   title: "Container Link Master",
+  //     //   href: "/containerlinkmaster",
+  //     // },
+  //   ],
+  // },
   // {
   //   title: "Parameter Link Master",
   //   href: "/testlinkmaster",

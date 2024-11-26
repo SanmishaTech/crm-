@@ -82,14 +82,14 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 // import { Label } from "recharts";
 // import { Label } from "@/components/ui/label"
-
+ 
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
 
 export default function Dashboard({
   breadcrumbs = [],
   searchPlaceholder = "Search...",
-  userAvatar = "/placeholder-user.jpg",
+  userAvatar = "/",
 }) {
   const barcodeId = "6736f5bf5be3d753757a49ee";
   const [role, setRole] = useState([]);
@@ -154,26 +154,12 @@ export default function Dashboard({
 
   const invoices = [
     {
-      invoice: "patient Master",
+      invoice: "access 01",
     },
     {
-      invoice: "Test Master",
+      invoice: "access 02",
     },
-    {
-      invoice: "Barcode Setup",
-    },
-    {
-      invoice: "Highlighter Master",
-    },
-    {
-      invoice: "Container",
-    },
-    {
-      invoice: "Parameter",
-    },
-    {
-      invoice: "Department",
-    },
+    
   ];
 
   return (
@@ -261,32 +247,35 @@ export default function Dashboard({
 
                     {/* s */}
                     <div className="flex gap-2 flex-col">
-                      <Label htmlFor="email" className="">
-                        Select a Role:
-                      </Label>
-                      <Select
-                        value={selectedRole}
-                        onValueChange={handleRoleChange}
-                      >
-                        <SelectTrigger className="w-[280px]">
-                          <SelectValue placeholder="Select Role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Select Role</SelectLabel>
-                            {role &&
-                              role?.map((item) => (
-                                <div key={item.id} className="k">
-                                  <SelectItem value={item._id}>
-                                    {item.role}
-                                  </SelectItem>
-                                </div>
-                              ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      {/* e */}
-                    </div>
+  <Label htmlFor="email" className="">
+    Select a Role:
+  </Label>
+  <Select
+    value={selectedRole}
+    onValueChange={handleRoleChange}
+  >
+    <SelectTrigger className="w-[280px]">
+      <SelectValue placeholder="Select Role" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectLabel>Select Role</SelectLabel>
+        {(role && Array.isArray(role)) ? (
+          role.map((item) => (
+            <div key={item.id} className="k">
+              <SelectItem value={item._id}>
+                {item.role}
+              </SelectItem>
+            </div>
+          ))
+        ) : (
+          <p>No roles available</p> // Fallback message
+        )}
+      </SelectGroup>
+    </SelectContent>
+  </Select>
+</div>
+
                     <div className="df">
                       {/* <div className="overflow-y-auto max-h-[300px]"> */}
                       <Table>

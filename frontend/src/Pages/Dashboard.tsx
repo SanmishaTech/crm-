@@ -38,21 +38,42 @@ import Formula from "../Components/Formula/Formula";
 import DashboardCorporateMaster from "@/Components/CorporateMaster/Registertable";
 import CorporateTestCard from "@/Components/CorporateMaster/TestCard";
 import CorporateEditCard from "@/Components/CorporateMaster/Edittestcard";
-import { useNavigate } from "react-router-dom";
+ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import ContainerLinkMaster from "@/Components/ContainerLinkMaster/Registertable";
 
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user);
+  // const user = localStorage.getItem("user");
+  // // const User = JSON.parse(user);
+  // const User = user ? JSON.parse(user) : null;
 
-  useEffect(() => {
-    if (!User?._id) {
-      navigate("/");
-    }
-  }, [location, User]);
+
+  // useEffect(() => {
+  //   if (!User?._id) {
+  //     navigate("/");
+  //   }
+  // }, [location, User]);
+
+ // Get user from localStorage
+//  const user = localStorage.getItem("user");
+
+//  useEffect(() => {
+//    if (user && user !== "undefined") {
+//      const User = JSON.parse(user);
+
+//      if (!User._id) {
+//        navigate("/dashboard");  // If _id doesn't exist, navigate to dashboard
+//      } else {
+//        navigate("/");  // If _id exists, navigate to dashboard
+//      }
+//    } else {
+//      console.log("User data is not available.");
+//      navigate("/login");  // If no user data, go to login page
+//    }
+//  }, [user, navigate]);
+
 
   return (
     <div className="flex bg-background w-[100vw] h-full relative min-h-screen">
@@ -60,7 +81,7 @@ const Dashboard = () => {
         <Sidebar className="min-h-full" />
       </div>
       <main className="w-full flex-1 overflow-hidden ">
-        {location.pathname === "/dashboard" && <Dashboardcomponent />}
+         {location.pathname === "/dashboard" && <Dashboardcomponent />}
         {location.pathname === "/registration" && <Registration />}
         {location.pathname === "/registrationlist" && <DashboardPage />}
         {location.pathname === "/services" && <DashboardServices />}

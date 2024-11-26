@@ -165,8 +165,9 @@ export default function Dashboardholiday() {
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
   // Map the API data to match the Dashboard component's expected tableData format
-  const mappedTableData = data
-    ? data?.map((item) => {
+  console.log("Data:", data);
+  const mappedTableData = Array.isArray(data)
+    ? data.map((item) => {
         console.log("This is item", item);
         return {
           _id: item?._id,
@@ -174,11 +175,11 @@ export default function Dashboardholiday() {
           description: item?.description || "Description not provided",
           adn: item?.adn || "Alternate Description not provided",
           delete: `/department/delete/${item?._id}`,
-          action: "actions", // Placeholder for action buttons
-          // Additional fields can be added here
+          action: "actions",
         };
       })
-    : [];
+    : [];  // Return empty array if 'data' is not an array
+      
 
   return (
     <div className="p-4">
