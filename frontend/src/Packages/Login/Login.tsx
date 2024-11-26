@@ -116,7 +116,7 @@ const Login = () => {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg text-white font-bold">Welcome To Website</p>
-            <footer className="text-sm text-white">Sofia Davis</footer>
+            <footer className="text-sm text-white">Customer Relationship Management (CRM) </footer>
           </blockquote>
         </div>
       </div>
