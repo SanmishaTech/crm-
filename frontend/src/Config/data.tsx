@@ -17,130 +17,130 @@ export const navItems: NavItem[] = [
         href: "/department",
         icon: "department",
       },
-      {
-        title: "Holiday",
-        href: "/holiday",
-        icon: "department",
-      },
-      {
-        title: "Patient Master",
-        href: "/patientmaster",
-        icon: "test",
-      },
-    ],
-  },
-  {
-    title: "Test Related Master",
-    href: "/testmaster",
-    icon: "sad",
-    children: [
-      {
-        title: "Test Machine Link Master",
-        href: "/machinelinkmaster",
-        icon: "link2",
-      },
-      {
-        title: "Test Parameter link Master",
-        href: "/testlinkmaster",
-        icon: "link",
-      },
-      {
-        title: "Formula Master",
-        href: "/formula",
-        icon: "Formula",
-      },
-      {
-        title: "Barcode Setup",
-        href: "/barcode",
-        icon: "barcode",
-      },
-      {
-        title: "Rejection Reason Master",
-        href: "/reason",
-        icon: "Rejection",
-      },
-      {
-        title: "Highlighter Master",
-        href: "/highlighter",
-        icon: "Highlighter",
-      },
-
-      {
-        title: "Test Master",
-        href: "/testmaster",
-        icon: "test",
-      },
-      {
-        title: "Container",
-        href: "/container",
-        icon: "container",
-      },
-      {
-        title: "Parameters",
-        href: "/parameter",
-        icon: "pipette",
-      },
-      {
-        title: "Parameter Group",
-        href: "/parametergroup",
-        icon: "pipette",
-      },
-      {
-        title: "TaT Master",
-        href: "/tatmaster",
-        icon: "Tat",
-      },
-    ],
-  },
-
-  {
-    title: "Lab Setup",
-    href: "/lab",
-    icon: "Asdsad",
-    children: [
-      {
-        title: "Machine Master",
-        href: "/machinemaster",
-        icon: "Machine",
-      },
-
       // {
-      //   title: "Container Link Master",
-      //   href: "/containerlinkmaster",
+      //   title: "Holiday",
+      //   href: "/holiday",
+      //   icon: "department",
       // },
-      {
-        title: "Associate Master",
-        href: "/associatemaster",
-        icon: "Associate",
-      },
-
-      {
-        title: "Specimen",
-        href: "/specimen",
-        icon: "specimen",
-      },
-      {
-        title: "Promo Code",
-        href: "/promocodemaster",
-        icon: "Associate",
-      },
-      {
-        title: "Corporate Master",
-        href: "/corporate",
-        icon: "department",
-      },
-      {
-        title: "Prefix Setup",
-        href: "/prefix",
-        icon: "Pencil",
-      },
-      {
-        title: "Discount Master",
-        href: "/discountmaster",
-        icon: "Associate",
-      },
+      // {
+      //   title: "Patient Master",
+      //   href: "/patientmaster",
+      //   icon: "test",
+      // },
     ],
   },
+  // {
+  //   title: "Test Related Master",
+  //   href: "/testmaster",
+  //   icon: "sad",
+  //   children: [
+  //     {
+  //       title: "Test Machine Link Master",
+  //       href: "/machinelinkmaster",
+  //       icon: "link2",
+  //     },
+  //     {
+  //       title: "Test Parameter link Master",
+  //       href: "/testlinkmaster",
+  //       icon: "link",
+  //     },
+  //     {
+  //       title: "Formula Master",
+  //       href: "/formula",
+  //       icon: "Formula",
+  //     },
+  //     {
+  //       title: "Barcode Setup",
+  //       href: "/barcode",
+  //       icon: "barcode",
+  //     },
+  //     {
+  //       title: "Rejection Reason Master",
+  //       href: "/reason",
+  //       icon: "Rejection",
+  //     },
+  //     {
+  //       title: "Highlighter Master",
+  //       href: "/highlighter",
+  //       icon: "Highlighter",
+  //     },
+
+  //     {
+  //       title: "Test Master",
+  //       href: "/testmaster",
+  //       icon: "test",
+  //     },
+  //     {
+  //       title: "Container",
+  //       href: "/container",
+  //       icon: "container",
+  //     },
+  //     {
+  //       title: "Parameters",
+  //       href: "/parameter",
+  //       icon: "pipette",
+  //     },
+  //     {
+  //       title: "Parameter Group",
+  //       href: "/parametergroup",
+  //       icon: "pipette",
+  //     },
+  //     {
+  //       title: "TaT Master",
+  //       href: "/tatmaster",
+  //       icon: "Tat",
+  //     },
+  //   ],
+  // },
+
+  // {
+  //   title: "Lab Setup",
+  //   href: "/lab",
+  //   icon: "Asdsad",
+  //   children: [
+  //     {
+  //       title: "Machine Master",
+  //       href: "/machinemaster",
+  //       icon: "Machine",
+  //     },
+
+  //     // {
+  //     //   title: "Container Link Master",
+  //     //   href: "/containerlinkmaster",
+  //     // },
+  //     {
+  //       title: "Associate Master",
+  //       href: "/associatemaster",
+  //       icon: "Associate",
+  //     },
+
+  //     {
+  //       title: "Specimen",
+  //       href: "/specimen",
+  //       icon: "specimen",
+  //     },
+  //     {
+  //       title: "Promo Code",
+  //       href: "/promocodemaster",
+  //       icon: "Associate",
+  //     },
+  //     {
+  //       title: "Corporate Master",
+  //       href: "/corporate",
+  //       icon: "department",
+  //     },
+  //     {
+  //       title: "Prefix Setup",
+  //       href: "/prefix",
+  //       icon: "Pencil",
+  //     },
+  //     {
+  //       title: "Discount Master",
+  //       href: "/discountmaster",
+  //       icon: "Associate",
+  //     },
+  //   ],
+  // },
   {
     title: "Access Control",
     href: "/lab",

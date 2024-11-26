@@ -15,9 +15,8 @@ const Login = () => {
     password: "",
   };
   const onSubmit = async (data: Record<string, any>) => {
-    console.log(data);
-    const user = await axios
-      .post("/api/users/user/login", data)
+     const user = await axios
+      .post("/api/login", data)
       .then((res) => {
         console.log(res.data);
         if (res.data.token) {
