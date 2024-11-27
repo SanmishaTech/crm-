@@ -3,10 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Profile;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 
 class CreateAdminUserSeeder extends Seeder
 {
@@ -33,5 +34,19 @@ class CreateAdminUserSeeder extends Seeder
 
         // Assign the role to the user
         $user->syncRoles([$role->id]); // Use syncRoles to avoid duplication
+         
+        $profile = Profile::where('user_id',$user->id)->first();
+         if($profile){
+            $profile->name = $user->name;
+            $profile->email = $user->email;
+            $profile->save();
+            return;
+         }
+        $profile = new Profile();
+        $profile->user_id = $user->id;
+        $profile->name = $user->name;
+        $profile->email = $user->email;
+        $profile->save();
+
     }
 }

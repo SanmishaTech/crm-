@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Profile;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
@@ -16,24 +17,40 @@ class CreateMemberUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // $user = User::updateOrCreate(
-        //     ['email' => 'ganesh@gmail.com'], // Search for user by email
-        //     [
-        //         'name' => 'ganesh',
-        //         'password' => Hash::make('abcd123') // Hash the password
-        //     ]
-        // );
+        $user = User::updateOrCreate(
+            ['email' => 'ganesh@gmail.com'], // Search for user by email
+            [
+                'name' => 'ganesh',
+                'password' => Hash::make('abcd123') // Hash the password
+            ]
+        );
     
          // Create or retrieve the admin role
         $role = Role::firstOrCreate(['name' => 'member']);     
 
-        $permissions = [
+        // $permissions = [
           
-        ];
+        // ];
         // $adminRole->givePermissionTo($permissions);
+        $permissions = Permission::pluck('id', 'id')->all();
+
 
         $role->syncPermissions($permissions);
      
-        // $user->assignRole([$role->id]);
+        $user->syncRoles([$role->id]);  //used assign to that multiple role can use asige else use synce
+        
+        $profile = Profile::where('user_id',$user->id)->first();
+        if($profile){
+           $profile->name = $user->name;
+           $profile->email = $user->email;
+           $profile->save();
+           return;
+        }
+       $profile = new Profile();
+       $profile->user_id = $user->id;
+       $profile->name = $user->name;
+       $profile->email = $user->email;
+       $profile->save();
+
     }
 }

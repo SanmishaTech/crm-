@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Task;
+use App\Models\Profile;
 use App\Models\Project;
 use App\Models\TaskSubmission;
 use Laravel\Sanctum\HasApiTokens;
@@ -55,12 +56,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Project::class, "project_user");
     }
 
-    public function tasks(){
-        return $this->belongsToMany(Task::class, "task_user");
-    }
-
-    public function taskSubmissions(){
-        return $this->hasMany(TaskSubmission::class, "user_id");
-    }
+   public function profile(){
+    return $this->hasOne(Profile::class, 'user_id');
+   }
 
 }
+// $table->unsignedBigInteger('country_id')->nullable(); //

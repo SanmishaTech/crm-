@@ -11,6 +11,9 @@ use App\Http\Controllers\Api\BaseController;
 
 class RolesPermissionsController extends BaseController
 {
+     /**
+     * Get All Permissions/Roles
+     */
     public function index(){
         $roles = Role::all();
         $permissions = Permission::all();

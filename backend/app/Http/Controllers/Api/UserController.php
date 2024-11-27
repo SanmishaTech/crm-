@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Validator;
 use App\Models\User;
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\ProfileResource;
 use App\Http\Controllers\Api\BaseController;
 
 class UserController extends BaseController
@@ -44,8 +46,13 @@ class UserController extends BaseController
         $memberRole = Role::where('name', 'member')->first();
         $user->assignRole($memberRole);
         //$role = $user->getRoleNames();
-
-        return $this->sendResponse(['user'=>new UserResource($user)], 'User register successfully.');
+        $profile = new Profile();
+        $profile->user_id = $user->id;
+        $profile->name = $user->name;
+        $profile->email = $user->email;
+        $profile->save(); 
+        
+        return $this->sendResponse(['user'=>new UserResource($user), 'profile'=>new ProfileResource($profile)], 'User register successfully.');
     }
 
      /**
@@ -65,8 +72,8 @@ class UserController extends BaseController
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             $user = Auth::user();
             $token =  $user->createToken($user->name)->plainTextToken;
-
-            return $this->sendResponse(['user'=>new UserResource($user), 'token'=>$token], 'User login successfully.');
+            $profile = Profile::where('user_id', $user->id)->first();
+            return $this->sendResponse(['user'=>new UserResource($user), 'profile'=>new ProfileResource($profile), 'token'=>$token], 'User login successfully.');
 
         } else{
             return $this->sendError('Invalid Credentials.', ['error'=>'Invalid Credentials']);
