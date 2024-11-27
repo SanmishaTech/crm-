@@ -9,13 +9,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\DepartmentResource;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\StoreDepartmentRequest;
+use App\Http\Requests\UpdateDepartmentRequest;
 
 class DepartmentController extends BaseController
 {
     /**
-     * Display a listing of the resource.
+     * Display All Departments.
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $authUser = auth()->user()->roles->pluck('name')->first();
         if($authUser == 'admin'){
@@ -32,7 +33,7 @@ class DepartmentController extends BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store Department.
      */
     public function store(StoreDepartmentRequest $request): JsonResponse
     {
@@ -45,26 +46,47 @@ class DepartmentController extends BaseController
     }
 
     /**
-     * Display the specified resource.
+     * Display Department.
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $department = Department::find($id);
+
+        if(!$department){
+            return $this->sendError("Department not found", ['error'=>'Department not found']);
+        }
+        //  $project->load('users');
+        return $this->sendResponse(["Department"=> new DepartmentResource($department)], "Department retrived successfully");
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update Department.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateDepartmentRequest $request, string $id): JsonResponse
     {
-        //
+        $department = Department::find($id);
+        if(!$department){
+            return $this->sendError("Department not found", ['error'=>'Department not found']);
+        }
+        $department->name = $request->input('name');
+        $department->description = $request->input('description');
+        $department->save();
+        return $this->sendResponse(["Department"=> new DepartmentResource($department)], "Department Updated successfully");
+
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete Department
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $department = Department::find($id);
+        if(!$department){
+            return $this->sendError("department not found", ['error'=>'department not found']);
+        }
+
+        $department->delete();
+
+        return $this->sendResponse([], "department deleted successfully");
     }
 }
