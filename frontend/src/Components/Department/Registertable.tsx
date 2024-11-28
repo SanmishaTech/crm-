@@ -5,6 +5,7 @@ import AddItem from "./Additem"; // Corrected import path
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import EditItem from "./Edititem";
 
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
@@ -104,18 +105,15 @@ export default function Dashboardholiday() {
   // Map the API data to match the Dashboard component's expected tableData format
   console.log("Data:", data);
   const mappedTableData = Array.isArray(data)
-    ? data.map((item) => {
-        console.log("This is item", item);
-        return {
-          _id: item?._id,
-          name: item?.name || "Name not provided",
-          description: item?.description || "Description not provided",
-          adn: item?.adn || "Alternate Description not provided",
-          delete: `/departments${item?._id}`,
-          action: "actions", // You may handle actions with more details, e.g., editing or deleting
-        };
-      })
-    : []; // Return empty array if 'data' is not an array
+    ? data.map((item) => ({
+        _id: item._id,
+        name: item?.name || "Name not provided",
+        description: item?.description || "Description not provided",
+        adn: item?.adn || "Alternate Description not provided",
+        delete: `/departments/${item._id}`,
+        action: "actions",
+      }))
+    : [];
 
   if (loading) return <div className="p-4">Loading...</div>;
   if (error)
@@ -137,6 +135,54 @@ export default function Dashboardholiday() {
     });
   };
 
+  const handleProductAction = async (action: string, id: string) => {
+    console.log("Action:", action, "ID:", id); // Debug log
+    
+    if (action === "edit") {
+      return <EditItem 
+        editid={id} 
+        typeofschema={typeofschema} 
+        onAdd={() => {
+          fetchDepartments(); 
+        }} 
+      />;
+    }
+    if (action === "delete") {
+      if (window.confirm("Are you sure you want to delete this department?")) {
+        try {
+          const response = await axios.delete(`/api/departments/${id}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          
+          if (response.status === 200) {
+            // Update the data state by filtering out the deleted item
+            setData(prevData => prevData.filter(item => item._id !== id));
+            alert("Department deleted successfully!");
+          }
+        } catch (error) {
+          console.error("Error deleting department:", error);
+          alert("Failed to delete department. Please try again.");
+        }
+      }
+    }
+  };
+
+  // Add this function to fetch departments
+  const fetchDepartments = async () => {
+    try {
+      const response = await axios.get(`/api/departments`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setData(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+
   return (
     <div className="p-4">
       <Dashboard
@@ -148,7 +194,7 @@ export default function Dashboardholiday() {
         onAddProduct={() => {}}
         onExport={() => {}}
         onFilterChange={() => {}}
-        onProductAction={() => {}}
+        onProductAction={handleProductAction}
         typeofschema={typeofschema}
         AddItem={() => <AddItem typeofschema={typeofschema} onAdd={() => {}} />}
       />

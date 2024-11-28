@@ -31,7 +31,7 @@ interface Schema {
 }
 
 interface AddItemProps {
-  onAdd: (item: any) => void;
+  onAdd: () => void;
   typeofschema: Schema;
 }
 
@@ -51,46 +51,31 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema }) => {
 
   const handleAdd = async () => {
     setLoading(true);
-  
-    // Check if the user is authenticated by verifying the token
     const token = localStorage.getItem("token");
-  
+
     if (!token) {
       setError("You are not authenticated. Please log in.");
       setLoading(false);
-      return; // Prevent further execution if no token is found
+      return;
     }
-  
+
     try {
-      // Include the token in the Authorization header for the API request
-      const response = await axios.post(
-        "/api/departments", 
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
+      await axios.post("/api/departments", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         }
-      );
-  
-      // Reset the form data and notify the parent component
-      onAdd(formData);
-      setFormData(Object.keys(typeofschema).reduce((acc, key) => {
-        acc[key] = typeofschema[key].type === "Checkbox" ? false : "";
-        return acc;
-      }, {} as Record<string, any>));
+      });
+
+      // Reset form and close dialog
+      setFormData({});
       setHandleopen(false);
-      setError("");
+      
+      // Refresh the departments list
+      onAdd();
+      
     } catch (err: any) {
-      if (err.response && err.response.status === 401) {
-        // Handle unauthorized error (e.g., token expired)
-        setError("Authentication failed. Please log in again.");
-        localStorage.removeItem("token"); // Clear the invalid token
-        window.location.href = "/login"; // Redirect to login page
-      } else {
-        setError("Failed to add department");
-      }
-      console.error(err);
+      console.error("Error adding department:", err);
+      setError(err.response?.data?.message || "Failed to add department");
     } finally {
       setLoading(false);
     }

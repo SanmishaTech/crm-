@@ -12,7 +12,26 @@ import {
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 
-export default function AlertDialogbox({ url }) {
+interface AlertDialogboxProps {
+  url: string;
+  onDelete: () => void;
+}
+
+export default function AlertDialogbox({ url, onDelete }: AlertDialogboxProps) {
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`/api/${url}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      onDelete(); // Refresh the list after deletion
+    } catch (error) {
+      console.error("Error deleting department:", error);
+      alert("Failed to delete department");
+    }
+  };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -24,19 +43,13 @@ export default function AlertDialogbox({ url }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            This action cannot be undone. This will permanently delete the department.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={async () => {
-              await axios.delete(`/api/${url}`);
-              window.location.reload();
-            }}
-          >
-            Continue
+          <AlertDialogAction onClick={handleDelete}>
+            Delete
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

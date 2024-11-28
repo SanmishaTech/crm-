@@ -283,8 +283,7 @@ export default function Dashboard({
                                         Actions
                                       </DropdownMenuLabel>
                                       <Edititem
-                                        editid={row?._id}
-                                        toogleedit={setToggleedit}
+                                        editid={row._id}
                                         typeofschema={typeofschema}
                                         setToggleedit={setToggleedit}
                                         toggleedit={toggleedit}
@@ -292,7 +291,13 @@ export default function Dashboard({
                                       />
                                       <DropdownMenuSeparator />
 
-                                      <AlertDialogbox url={row?.delete} />
+                                      <AlertDialogbox 
+                                        url={row?.delete} 
+                                        onDelete={() => {
+                                          // Refresh the table data
+                                          window.location.reload();
+                                        }} 
+                                      />
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 ) : header.key === "two" ? (

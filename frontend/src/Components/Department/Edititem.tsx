@@ -57,7 +57,7 @@ const AddItem: React.FC<AddItemProps> = ({
   useEffect(() => {
     if (editid) {
       axios
-        .get(`/api/department/reference/${editid}`)
+        .get(`/api/departments/${editid}`)
         .then((res) => {
           setFormData(res.data);
         })
@@ -74,7 +74,7 @@ const AddItem: React.FC<AddItemProps> = ({
     setLoading(true);
     try {
       await axios
-        .put(`/api/department/update/${editid}`, formData)
+        .put(`/api/departments/${editid}`, formData)
         .then((res) => {
           console.log("ppaapppppp", res.data);
           // onAdd(res.data.newService);
