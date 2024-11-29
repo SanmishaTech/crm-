@@ -158,7 +158,7 @@ export default function Dashboard({
             />
           </div>
 
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
@@ -190,7 +190,7 @@ export default function Dashboard({
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </header>
 
         {/* {toggleedit && (

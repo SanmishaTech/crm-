@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Login from "@/Packages/Login/Login";
 import Dashboard from "./Pages/Dashboard";
- import { Toaster, toast } from "sonner";
+import { Toaster, toast } from "sonner";
 import { useLocation } from "react-router-dom";
 
 import {
@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/command";
 import { Icons } from "@/Dashboard/Icon";
 import { Editor } from "@/Components/Editor/Editor";
-import Navbar from "@/Navbar/Navbarcomp";
+import Navbar from "@/Components/Navbar/Navbarcomp";  // Import Navbar
 import { navItems } from "@/Config/data";
 
 function App() {
@@ -56,8 +56,14 @@ function App() {
       setIsLoggedIn(true);
     }
   }, [location.pathname]);
+
   return (
     <>
+      <Toaster position="top-right" />
+
+      
+    <Navbar />
+
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
@@ -81,10 +87,7 @@ function App() {
                             setOpen(false);
                           }}
                         >
-                          {Icon && (
-                            <Icon className={`ml-3 size-5 flex-none `} />
-                          )}
-
+                          {Icon && <Icon className={`ml-3 size-5 flex-none `} />}
                           {child.title}
                         </CommandItem>
                       </div>
@@ -96,10 +99,11 @@ function App() {
           })}
         </CommandList>
       </CommandDialog>
-      <Toaster position="top-right" />
+
+      {/* Main Routes */}
       <Routes>
         <Route path="/" element={<Login />} />
-         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/registration" element={<Dashboard />} />
         <Route path="/registrationlist" element={<Dashboard />} />
         <Route path="/holiday" element={<Dashboard />} />
@@ -137,7 +141,6 @@ function App() {
         <Route path="/discountmaster" element={<Dashboard />} />
         <Route path="/rolemaster" element={<Dashboard />} />
         <Route path="/assignaccess" element={<Dashboard />} />
-
       </Routes>
     </>
   );

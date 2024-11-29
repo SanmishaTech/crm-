@@ -44,35 +44,35 @@ const recentTests = [
     patientName: "John Doe",
     test: "Blood Panel",
     status: "Completed",
-    result: "Normal",
+    result: "High",
   },
   {
     id: "T002",
     patientName: "Jane Smith",
     test: "Urinalysis",
     status: "Completed",
-    result: "Abnormal",
+    result: "Medium",
   },
   {
     id: "T003",
     patientName: "Bob Johnson",
     test: "Lipid Panel",
     status: "In Progress",
-    result: "Pending",
+    result: "Low",
   },
   {
     id: "T004",
     patientName: "Alice Brown",
     test: "Thyroid Function",
     status: "Completed",
-    result: "Normal",
+    result: "Medium",
   },
   {
     id: "T005",
     patientName: "Charlie Davis",
     test: "Liver Function",
     status: "Completed",
-    result: "Abnormal",
+    result: "High",
   },
 ];
 
@@ -80,31 +80,31 @@ const pendingTests = [
   {
     id: "T006",
     patientName: "Eva White",
-    test: "Complete Blood Count",
+    test: "Printing Dimensions",
     priority: "High",
   },
   {
     id: "T007",
     patientName: "Frank Miller",
-    test: "Metabolic Panel",
+    test: "Commercial Press",
     priority: "Medium",
   },
   {
     id: "T008",
     patientName: "Grace Taylor",
-    test: "Hemoglobin A1C",
+    test: "Feltz Printing Service",
     priority: "Low",
   },
   {
     id: "T009",
     patientName: "Henry Wilson",
-    test: "Vitamin D",
+    test: "Morlong Associates",
     priority: "Medium",
   },
   {
     id: "T010",
-    patientName: "Ivy Moore",
-    test: "Iron Panel",
+    patientName: "Sanjeev ",
+    test: "Sanmisha",
     priority: "High",
   },
 ];
@@ -125,7 +125,7 @@ export default function ResponsiveLabDashboard() {
   const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/registration/allregistration`);
+      const response = await axios.get(`/api/departments`);
       console.log(response.data);
       setCountRegister(response.data.length);
     };
@@ -140,12 +140,9 @@ export default function ResponsiveLabDashboard() {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold ">Lab Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-bold ">Welcome </h1>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon">
-              <Bell className="h-4 w-4" />
-            </Button>
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
@@ -177,7 +174,7 @@ export default function ResponsiveLabDashboard() {
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
             {/* Mobile menu */}
             <Sheet>
               <SheetTrigger asChild>
@@ -196,7 +193,7 @@ export default function ResponsiveLabDashboard() {
           <Card className="bg-accent/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Registered
+                My Open Deals
               </CardTitle>
               <FlaskConical className="h-4 w-4 text-muted-foreground" />{" "}
             </CardHeader>
@@ -209,34 +206,32 @@ export default function ResponsiveLabDashboard() {
           <Card className="bg-accent/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Pending Tests
+                My Untouched Deals{" "}
               </CardTitle>
               <FlaskConical className="h-4 w-4 text-muted-foreground" />{" "}
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">32</div>
+              <div className="text-2xl font-bold">11</div>
             </CardContent>
           </Card>
           <Card className="bg-accent/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Abnormal Results
+                My Calls Today
               </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">16.8%</div>
+              <div className="text-2xl font-bold">5</div>
             </CardContent>
           </Card>
           <Card className="bg-accent/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Lab Efficiency
-              </CardTitle>
+              <CardTitle className="text-sm font-medium">My Leads</CardTitle>
               <Settings className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">92.6%</div>
+              <div className="text-2xl font-bold">2</div>
               <p className="text-xs text-muted-foreground">
                 +1.2% from last month
               </p>
@@ -247,17 +242,17 @@ export default function ResponsiveLabDashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4 ">
           <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40">
             <CardHeader>
-              <CardTitle>Recent Test Results</CardTitle>
+              <CardTitle>My Open Tasks</CardTitle>
             </CardHeader>
             <CardContent className="overflow-x-auto ">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[100px]">Test ID</TableHead>
-                    <TableHead>Patient</TableHead>
+                    <TableHead className="w-[100px]">Task ID</TableHead>
+                    <TableHead>Contact Name</TableHead>
                     <TableHead>Test</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Result</TableHead>
+                    <TableHead>Priority</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -280,9 +275,9 @@ export default function ResponsiveLabDashboard() {
                       <TableCell>
                         <Badge
                           variant={
-                            test.result === "Normal"
+                            test.result === "Low"
                               ? "success"
-                              : test.result === "Abnormal"
+                              : test.result === "High"
                               ? "destructive"
                               : "outline"
                           }
@@ -298,8 +293,8 @@ export default function ResponsiveLabDashboard() {
           </Card>
           <Card className="col-span-full lg:col-span-3 overflow-x-auto bg-accent/40">
             <CardHeader>
-              <CardTitle>Pending Tests</CardTitle>
-              <CardDescription>Tests awaiting processing</CardDescription>
+              <CardTitle>My Meetings</CardTitle>
+              <CardDescription>Meetings with Clients</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -336,7 +331,7 @@ export default function ResponsiveLabDashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4">
           <Card className="col-span-full lg:col-span-4 bg-accent/40">
             <CardHeader>
-              <CardTitle>Test Volume Over Time</CardTitle>
+              <CardTitle>Volume Over Time</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={350}>
@@ -362,14 +357,14 @@ export default function ResponsiveLabDashboard() {
           </Card>
           <Card className="col-span-full lg:col-span-3 bg-accent/40">
             <CardHeader>
-              <CardTitle>Lab Statistics</CardTitle>
+              <CardTitle>Statistics</CardTitle>
               <CardDescription>Key performance indicators</CardDescription>
             </CardHeader>
             <CardContent className="space-y-8">
               <div className="space-y-2">
                 <div className="flex items-center">
                   <div className="flex-1">
-                    <div className="text-sm font-medium">Test Accuracy</div>
+                    <div className="text-sm font-medium">Accuracy</div>
                     <div className="text-sm text-muted-foreground">98.2%</div>
                   </div>
                   <div>+0.2%</div>
@@ -391,9 +386,7 @@ export default function ResponsiveLabDashboard() {
               <div className="space-y-2">
                 <div className="flex items-center">
                   <div className="flex-1">
-                    <div className="text-sm font-medium">
-                      Equipment Utilization
-                    </div>
+                    <div className="text-sm font-medium">Utilization</div>
                     <div className="text-sm text-muted-foreground">87.3%</div>
                   </div>
                   <div>+3.7%</div>

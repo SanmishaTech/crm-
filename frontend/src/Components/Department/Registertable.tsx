@@ -46,10 +46,7 @@ export default function Dashboardholiday() {
       type: "String",
       label: "Description",
     },
-    adn: {
-      type: "String",
-      label: "Alternate Description",
-    },
+     
   };
 
   useEffect(() => {
@@ -86,8 +83,7 @@ export default function Dashboardholiday() {
         headers: [
           { label: "Name", key: "name" },
           { label: "Description", key: "description" },
-          { label: "Alternate Description", key: "adn" },
-          { label: "Action", key: "action" },
+           { label: "Action", key: "action" },
         ],
         actions: [
           { label: "Edit", value: "edit" },
@@ -109,8 +105,7 @@ export default function Dashboardholiday() {
         _id: item._id,
         name: item?.name || "Name not provided",
         description: item?.description || "Description not provided",
-        adn: item?.adn || "Alternate Description not provided",
-        delete: `/departments/${item._id}`,
+         delete: `/departments/${item._id}`,
         action: "actions",
       }))
     : [];
