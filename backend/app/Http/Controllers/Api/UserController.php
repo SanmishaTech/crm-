@@ -106,13 +106,17 @@ class UserController extends BaseController
        $user->password = Hash::make($request->input('password'));
        $user->save();
        
-     
         $memberRole = Role::where("name", 'member')->first();
-    
       
        $user->assignRole($memberRole);
+       
+       $profile = new Profile();
+       $profile->user_id = $user->id;
+       $profile->name = $user->name;
+       $profile->email = $user->email;
+       $profile->save();
       
-       return $this->sendResponse(['User'=> new UserResource($user)], "user stored successfully");
+       return $this->sendResponse(['User'=> new UserResource($user), 'profile'=>new ProfileResource($profile)], "user stored successfully");
 
     }
 
@@ -123,14 +127,17 @@ class UserController extends BaseController
        $user->email = $request->input('email');
        $user->password = Hash::make($request->input('password'));
        $user->save();
-       
-      
+    
         $memberRole = Role::where("name", 'member')->first();
     
-      
        $user->assignRole($memberRole);
+       
+       $profile = Profile::where('user_id',$user->id)->first();
+       $profile->name = $user->name;
+       $profile->email = $user->email;
+       $profile->save();
       
-       return $this->sendResponse(['User'=> new UserResource($user)], "User Updated successfully");
+       return $this->sendResponse(['User'=> new UserResource($user), 'profile'=>new ProfileResource($profile)], "User Updated successfully");
 
     }
 
@@ -141,10 +148,11 @@ class UserController extends BaseController
         if(!$user){
             return $this->sendError("User not found", ['error'=>'User not found']);
         }
-
+        $profile = Profile::where('user_id', $user->id)->first();
+        $profile->delete();
         $user->delete();
 
-        return $this->sendResponse([], "User deleted successfully");
+        return $this->sendResponse([], "User and his Profile deleted successfully");
 
     }
 }
