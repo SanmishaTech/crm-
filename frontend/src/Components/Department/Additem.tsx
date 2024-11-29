@@ -1,193 +1,138 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogFooter,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface Field {
-  type: "String" | "Number" | "Date" | "Select" | "Checkbox";
-  label?: string;
-  options?: { value: string; label: string }[]; // For Select fields
-}
-
-interface Schema {
-  [key: string]: Field;
-}
+import axios from "axios";
 
 interface AddItemProps {
-  onAdd: () => void;
-  typeofschema: Schema;
+  onAdd: (item: {
+    id: string;
+    name: string;
+    unit: string;
+    fieldType: string;
+  }) => void;
+  typeofschema: any;
+  add: any;
 }
 
-const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema }) => {
+const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
   const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
+  const User = user ? JSON.parse(user) : null;
 
-  const [formData, setFormData] = useState<Record<string, any>>(
-    Object.keys(typeofschema).reduce((acc, key) => {
-      acc[key] = typeofschema[key].type === "Checkbox" ? false : "";
-      return acc;
-    }, {} as Record<string, any>)
-  );
+  const [SelectedValue, setSelectedValue] = useState("");
+  const [services, setServices] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [handleopen, setHandleopen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [date, setDate] = useState<Date | null>(null);
+  const [description, setdescription] = useState("");
+  const [formData, setFormData] = useState<any>({});
 
   const handleAdd = async () => {
-    setLoading(true);
-    const token = localStorage.getItem("token");
-
-    if (!token) {
+    if (!User || !User.token) {
       setError("You are not authenticated. Please log in.");
-      setLoading(false);
       return;
     }
 
-    try {
-      await axios.post("/api/departments", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
+    const headers = {
+      Authorization: `Bearer ${User.token}`, // Include token in the header
+    };
 
-      // Reset form and close dialog
-      setFormData({});
+    try {
+      // Send request with the token
+      await axios.post(`/api/departments`, formData, { headers });
+      window.location.reload();
+      setName("");
+      setDate(null);
       setHandleopen(false);
-      
-      // Refresh the departments list
-      onAdd();
-      
-    } catch (err: any) {
-      console.error("Error adding department:", err);
-      setError(err.response?.data?.message || "Failed to add department");
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      setError("Failed to add department: " + err.message);
     }
   };
-  
 
-  const handleChange = (name: string, value: any) => {
+  function capitalizeText(text: string) {
+    return text.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: value, // dynamically set key-value pairs
     }));
   };
 
-  const addFields = (schema: Record<string, any>) => {
-    return Object.entries(schema).map(([key, value]) => {
-      const label = value.label || capitalizeText(key);
-      switch (value.type) {
-        case "String":
-        case "Number":
-          return (
-            <div key={key} className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={key} className="text-right">{label}</Label>
-              <Input
-                id={key}
-                name={key}
-                type={value.type.toLowerCase()}
-                onChange={(e) => handleChange(key, e.target.value)}
-                value={formData[key] || ""}
-                placeholder={`Enter ${label.toLowerCase()}`}
-                className="col-span-3"
-              />
-            </div>
-          );
-        case "Date":
-          return (
-            <div key={key} className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={key} className="text-right">{label}</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant={"outline"} className={cn("w-full justify-start text-left font-normal", !formData[key] && "text-muted-foreground")}>
-                    <CalendarIcon className="mr-2" />
-                    {formData[key] ? format(new Date(formData[key]), "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={formData[key] ? new Date(formData[key]) : null}
-                    onSelect={(date) => handleChange(key, date ? date.toISOString() : null)}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          );
-        case "Select":
-          return (
-            <div key={key} className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={key} className="text-right">{label}</Label>
-              <Select onValueChange={(value) => handleChange(key, value)}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder={`Select ${label.toLowerCase()}`} value={formData[key] || ""} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>{label}</SelectLabel>
-                    {value.options?.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          );
-        case "Checkbox":
-          return (
-            <div key={key} className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={key} className="text-right">{label}</Label>
-              <div className="col-span-3 flex items-center space-x-2">
-                <Checkbox
-                  id={key}
-                  checked={formData[key] || false}
-                  onCheckedChange={(checked) => handleChange(key, checked)}
-                />
-              </div>
-            </div>
-          );
-        default:
-          return null;
+  const addFields = (typeofschema: any) => {
+    const allFieldsToRender = [];
+    Object.entries(typeofschema).forEach(([key, value]) => {
+      if (value === "String") {
+        allFieldsToRender.push(
+          <div className="grid grid-cols-4 items-center gap-4" key={key}>
+            <Label htmlFor={key} className="text-right">
+              {capitalizeText(key)}
+            </Label>
+            <Input
+              id={key}
+              name={key}
+              onChange={handleChange}
+              value={formData[key] || ""}
+              className="col-span-3"
+            />
+          </div>
+        );
       }
     });
+    return allFieldsToRender;
   };
 
   return (
-    <Dialog open={handleopen} onOpenChange={setHandleopen}>
+    <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline">Add Department</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add New Department</DialogTitle>
-          <DialogDescription>Enter the details of the Department you want to add.</DialogDescription>
+          <DialogDescription>
+            Enter the details of the Department you want to add to the order.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           {error && <p className="text-red-500">{error}</p>}
           {addFields(typeofschema)}
         </div>
+
         <DialogFooter>
-          <Button onClick={handleAdd} type="button" disabled={loading}>
-            {loading ? "Submitting..." : "Submit"}
+          <Button onClick={handleAdd} type="button">
+            Submit
           </Button>
         </DialogFooter>
       </DialogContent>

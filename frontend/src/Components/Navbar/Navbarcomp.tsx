@@ -58,6 +58,51 @@ const Navbar = () => {
             <Link to="/dashboard" className="text-black hover:text-gray-600">
               Dashboard
             </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  Master
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Masters</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate("/department"); // No token removal here
+                  }}
+                >
+                  Department
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  Access
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Access Control</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate("/rolemaster"); // No token removal here
+                  }}
+                >
+                  Role Master
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate("/assignaccess"); // No token removal here
+                  }}
+                >
+                  Assign Access
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Link to="#" className="text-black hover:text-gray-600">
               Leads
             </Link>
@@ -90,9 +135,7 @@ const Navbar = () => {
 
                 <DropdownMenuItem
                   onClick={() => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("user");
-                    navigate("/dashboard");
+                    navigate("/dashboard"); // No token removal here
                   }}
                 >
                   Products
@@ -121,8 +164,11 @@ const Navbar = () => {
                         </TabsList>
                         <Separator className="my-2 w-[370px]" />
 
-                        <TabsContent className="w-[370px]" value="account">
-                          Make changes to your account here.assdhguf
+                        <TabsContent
+                          className="w-[370px] p-4 bg-white border border-gray-300 rounded-lg shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:translate-y-1"
+                          value="account"
+                        >
+                          Your Signal/Notification Will Be Listed Here.
                         </TabsContent>
                       </Tabs>
                     </PopoverContent>
@@ -168,9 +214,10 @@ const Navbar = () => {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
+                  // Token is only cleared on logout
                   localStorage.removeItem("token");
                   localStorage.removeItem("user");
-                  navigate("/"); // Use navigate here to redirect after logout
+                  navigate("/"); // Redirect to login page after logout
                 }}
               >
                 Logout

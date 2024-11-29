@@ -1,66 +1,35 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Dashboard from "./Dashboardreuse";
-import AddItem from "./Additem"; // Corrected import path
+import AddItem from "./Additem";
 import userAvatar from "@/images/Profile.jpg";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
-import EditItem from "./Edititem";
 
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
-  const [config, setConfig] = useState<any>(null);
-  const [data, setData] = useState<any[]>([]); // Ensure this is an array
+  const User = JSON.parse(user);
+  const [config, setConfig] = useState(null);
+  const [data, setData] = useState([]); // Ensure initial state is an empty array
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<any>(null);
-  const [parameter, setParameter] = useState<any[]>([]);
-  const [parameterGroup, setParameterGroup] = useState<any[]>([]);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDepartment = async () => {
-      try {
-        const response = await axios.get(`/api/departments`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        console.log(response.data);
-        // Ensure data is an array or initialize it as an empty array if not
-        setParameter(Array.isArray(response.data) ? response.data : []);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchDepartment();
-  }, []);
-
-  // Define the schema with various input types
   const typeofschema = {
-    name: {
-      type: "String",
-      label: "Name",
-    },
-    description: {
-      type: "String",
-      label: "Description",
-    },
-     
+    name: "String",
+    description: "String",
   };
 
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get(`/api/departments`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
+      .get(`/api/container/allcontainer`)
       .then((response) => {
-        const fetchedData = response.data;
-        // Ensure data is an array
-        setData(Array.isArray(fetchedData) ? fetchedData : []);
+        // Check if response.data is an array
+        if (Array.isArray(response.data)) {
+          setData(response.data);
+        } else {
+          console.error("Received data is not an array:", response.data);
+          setData([]); // Fallback to an empty array if not an array
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -73,17 +42,16 @@ export default function Dashboardholiday() {
     setConfig({
       breadcrumbs: [
         { label: "Dashboard", href: "/dashboard" },
-        { label: "Department Master" },
+        { label: "Department" },
       ],
-      searchPlaceholder: "Search Department Master...",
-      userAvatar: userAvatar, // Use the imported avatar
+      searchPlaceholder: "Search Departments...",
+      userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Department Master",
-        description: "Manage Department Master and view their details.",
+        title: "Department",
+        description: "Manage Department and view their details.",
         headers: [
-          { label: "Name", key: "name" },
-          { label: "Description", key: "description" },
-           { label: "Action", key: "action" },
+          { label: "Department", key: "one" },
+          { label: "Action", key: "action" },
         ],
         actions: [
           { label: "Edit", value: "edit" },
@@ -98,109 +66,79 @@ export default function Dashboardholiday() {
     });
   }, [User?._id]);
 
-  // Map the API data to match the Dashboard component's expected tableData format
-  console.log("Data:", data);
-  const mappedTableData = Array.isArray(data)
-    ? data.map((item) => ({
-        _id: item._id,
-        name: item?.name || "Name not provided",
-        description: item?.description || "Description not provided",
-         delete: `/departments/${item._id}`,
-        action: "actions",
-      }))
-    : [];
+  // Handlers for actions
+  const handleAddProduct = () => {
+    console.log("Add Registration clicked");
+    // For example, navigate to an add registration page or open a modal
+  };
+
+  const handleExport = () => {
+    console.log("Export clicked");
+    // Implement export functionality such as exporting data as CSV or PDF
+  };
+
+  const handleFilterChange = (filterValue) => {
+    console.log(`Filter changed: ${filterValue}`);
+    // You can implement filtering logic here, possibly refetching data with filters applied
+  };
+
+  const handleProductAction = (action, product) => {
+    console.log(`Action: ${action} on registration:`, product);
+    if (action === "edit") {
+      // Navigate to edit page or open edit modal
+    } else if (action === "delete") {
+      // Implement delete functionality, possibly with confirmation
+    }
+  };
 
   if (loading) return <div className="p-4">Loading...</div>;
   if (error)
-    return <div className="p-4 text-red-500">Error loading parameters.</div>;
+    return <div className="p-4 text-red-500">Error loading registrations.</div>;
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
-  // Render the department data with schema dynamically
-  const renderDepartmentFields = (department: any) => {
-    return Object.keys(typeofschema).map((fieldKey) => {
-      const schema = typeofschema[fieldKey];
-      const fieldValue = department[fieldKey] || "Not Available"; // Fallback text if value is missing
+  // Ensure data is an array before attempting to map
+  const mappedTableData =
+    Array.isArray(data) && !loading
+      ? data.map((item) => {
+          const services = item?.services || [];
+          const paidAmount = item?.paymentMode?.paidAmount || 0;
 
-      return (
-        <div key={fieldKey} className="flex items-center space-x-2 mb-2">
-          <span className="font-semibold">{schema.label}:</span>
-          <span>{fieldValue}</span>
-        </div>
-      );
-    });
-  };
+          // Calculate the total service price based on each service's populated details.
+          const totalServicePrice = services.reduce((acc, service) => {
+            const servicePrice = service?.serviceId?.price || 0; // Replace 'price' with the actual field name for service price
+            return acc + servicePrice;
+          }, 0);
 
-  const handleProductAction = async (action: string, id: string) => {
-    console.log("Action:", action, "ID:", id); // Debug log
-    
-    if (action === "edit") {
-      return <EditItem 
-        editid={id} 
-        typeofschema={typeofschema} 
-        onAdd={() => {
-          fetchDepartments(); 
-        }} 
-      />;
-    }
-    if (action === "delete") {
-      if (window.confirm("Are you sure you want to delete this department?")) {
-        try {
-          const response = await axios.delete(`/api/departments/${id}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
-          
-          if (response.status === 200) {
-            // Update the data state by filtering out the deleted item
-            setData(prevData => prevData.filter(item => item._id !== id));
-            alert("Department deleted successfully!");
-          }
-        } catch (error) {
-          console.error("Error deleting department:", error);
-          alert("Failed to delete department. Please try again.");
-        }
-      }
-    }
-  };
-
-  // Add this function to fetch departments
-  const fetchDepartments = async () => {
-    try {
-      const response = await axios.get(`/api/departments`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      setData(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-      console.error("Error fetching departments:", error);
-    }
-  };
+          // Calculate balance amount based on total service price and paid amount.
+          const balanceAmount =
+            totalServicePrice - paidAmount > 0
+              ? totalServicePrice - paidAmount
+              : 0;
+          return {
+            _id: item?._id,
+            one: item?.container || "Unknown",
+            edit: `container/update/${item?._id}`,
+            delete: `container/delete/${item?._id}`,
+            editfetch: `container/reference/${item?._id}`,
+          };
+        })
+      : [];
 
   return (
     <div className="p-4">
       <Dashboard
         breadcrumbs={config.breadcrumbs}
         searchPlaceholder={config.searchPlaceholder}
-        userAvatar={config.userAvatar}
+        userAvatar={userAvatar}
         tableColumns={config.tableColumns}
-        tableData={mappedTableData} // This should be an array
-        onAddProduct={() => {}}
-        onExport={() => {}}
-        onFilterChange={() => {}}
+        tableData={mappedTableData}
+        onAddProduct={handleAddProduct}
+        onExport={handleExport}
+        onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
+        AddItem={AddItem}
         typeofschema={typeofschema}
-        AddItem={() => <AddItem typeofschema={typeofschema} onAdd={() => {}} />}
       />
-      <div className="mt-6">
-        {Array.isArray(data) && data?.map((department) => (
-          <div key={department?._id} className="border p-4 mb-4">
-            <h2 className="text-xl font-bold mb-2">{department?.name}</h2>
-            {renderDepartmentFields(department)}
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

@@ -195,7 +195,7 @@ export default function ResponsiveLabDashboard() {
               <CardTitle className="text-sm font-medium">
                 My Open Deals
               </CardTitle>
-              <FlaskConical className="h-4 w-4 text-muted-foreground" />{" "}
+              <Users className="h-4 w-4 text-muted-foreground" />{" "}
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -208,7 +208,7 @@ export default function ResponsiveLabDashboard() {
               <CardTitle className="text-sm font-medium">
                 My Untouched Deals{" "}
               </CardTitle>
-              <FlaskConical className="h-4 w-4 text-muted-foreground" />{" "}
+              <Users className="h-4 w-4 text-muted-foreground" />{" "}
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">11</div>
@@ -228,7 +228,7 @@ export default function ResponsiveLabDashboard() {
           <Card className="bg-accent/40">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">My Leads</CardTitle>
-              <Settings className="h-4 w-4 text-muted-foreground" />
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">2</div>

@@ -250,6 +250,7 @@ export default function Dashboard({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
+                      {console.log("ppappa", tableData)}
                       {tableData?.map((row) => (
                         <React.Fragment key={row._id}>
                           <TableRow>
@@ -283,7 +284,8 @@ export default function Dashboard({
                                         Actions
                                       </DropdownMenuLabel>
                                       <Edititem
-                                        editid={row._id}
+                                        editid={row?.edit}
+                                        toogleedit={setToggleedit}
                                         typeofschema={typeofschema}
                                         setToggleedit={setToggleedit}
                                         toggleedit={toggleedit}
@@ -291,13 +293,7 @@ export default function Dashboard({
                                       />
                                       <DropdownMenuSeparator />
 
-                                      <AlertDialogbox 
-                                        url={row?.delete} 
-                                        onDelete={() => {
-                                          // Refresh the table data
-                                          window.location.reload();
-                                        }} 
-                                      />
+                                      <AlertDialogbox url={row?.delete} />
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 ) : header.key === "two" ? (

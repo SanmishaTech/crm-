@@ -14,7 +14,7 @@ import DashboardBarcode from "@/Components/Barcode/Registertable";
 import AssignAccess from "@/Components/AssignAccess/Dashboardreuse";
 import DashboardHighlighter from "@/Components/Highlighter/Registertable";
 import DashboardparameterGroup from "@/Components/ParameterGroup/Registertable";
-import DashboardContainer from "@/Components/Container/Registertable";
+import DashboardContainer from "@/Components/Department/Registertable";
 import DashboardTestMaster from "@/Components/Testmaster/Registertable";
 import Dashboardedittestcard from "@/Components/Testmaster/Edittestcard";
 import DashboardTestLinkMaster from "@/Components/TestLinkMaster/Registertable";
@@ -38,7 +38,7 @@ import Formula from "../Components/Formula/Formula";
 import DashboardCorporateMaster from "@/Components/CorporateMaster/Registertable";
 import CorporateTestCard from "@/Components/CorporateMaster/TestCard";
 import CorporateEditCard from "@/Components/CorporateMaster/Edittestcard";
- import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import ContainerLinkMaster from "@/Components/ContainerLinkMaster/Registertable";
 
@@ -49,31 +49,29 @@ const Dashboard = () => {
   // // const User = JSON.parse(user);
   // const User = user ? JSON.parse(user) : null;
 
-
   // useEffect(() => {
   //   if (!User?._id) {
   //     navigate("/");
   //   }
   // }, [location, User]);
 
- // Get user from localStorage
-//  const user = localStorage.getItem("user");
+  // Get user from localStorage
+  //  const user = localStorage.getItem("user");
 
-//  useEffect(() => {
-//    if (user && user !== "undefined") {
-//      const User = JSON.parse(user);
+  //  useEffect(() => {
+  //    if (user && user !== "undefined") {
+  //      const User = JSON.parse(user);
 
-//      if (!User._id) {
-//        navigate("/dashboard");  // If _id doesn't exist, navigate to dashboard
-//      } else {
-//        navigate("/");  // If _id exists, navigate to dashboard
-//      }
-//    } else {
-//      console.log("User data is not available.");
-//      navigate("/login");  // If no user data, go to login page
-//    }
-//  }, [user, navigate]);
-
+  //      if (!User._id) {
+  //        navigate("/dashboard");  // If _id doesn't exist, navigate to dashboard
+  //      } else {
+  //        navigate("/");  // If _id exists, navigate to dashboard
+  //      }
+  //    } else {
+  //      console.log("User data is not available.");
+  //      navigate("/login");  // If no user data, go to login page
+  //    }
+  //  }, [user, navigate]);
 
   return (
     <div className="flex bg-background w-[100vw] h-full relative min-h-screen">
@@ -81,7 +79,7 @@ const Dashboard = () => {
         <Sidebar className="min-h-full" />
       </div>
       <main className="w-full flex-1 overflow-hidden ">
-         {location.pathname === "/dashboard" && <Dashboardcomponent />}
+        {location.pathname === "/dashboard" && <Dashboardcomponent />}
         {location.pathname === "/registration" && <Registration />}
         {location.pathname === "/registrationlist" && <DashboardPage />}
         {location.pathname === "/services" && <DashboardServices />}
