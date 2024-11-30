@@ -156,6 +156,11 @@ export const navItems: NavItem[] = [
         href: "/assignaccess",
         icon: "Associate",
       },
+      {
+        title: "User Master",
+        href: "/usermaster",
+        icon: "Associate",
+      },
       // {
       //   title: "Container Link Master",
       //   href: "/containerlinkmaster",

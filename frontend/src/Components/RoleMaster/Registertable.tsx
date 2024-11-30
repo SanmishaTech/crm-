@@ -1,87 +1,56 @@
-// components/Dashboardholiday.tsx
-
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Dashboard, { description } from "./Dashboardreuse";
+import Dashboard from "./Dashboardreuse";
 import AddItem from "./Additem"; // Corrected import path
 import userAvatar from "@/images/Profile.jpg";
-import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
 
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user || "{}");
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
   const [config, setConfig] = useState<any>(null);
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
-  const [machine, setMachine] = useState<any[]>([]);
-  const [test, setTest] = useState<any[]>([]);
-  // const [filteredData, setFilteredData] = useState<any[]>([]); // State for filtered data
-  // const [filterValue, setFilterValue] = useState<string>(""); // Store selected filter value
-
-  useEffect(() => {
-    // const fetchMachine = async () => {
-    //   try {
-    //     const response = await axios.get(`/api/discountmaster/alldiscount`);
-    //     console.log("This is a mahcine", response.data);
-    //     setMachine(response.data);
-    //   } catch (error) {
-    //     console.error("Error fetching machines:", error);
-    //   }
-    // };
-    // const fetchTests = async () => {
-    //   try {
-    //     const response = await axios.get(`/api/promocodemaster/allpromocode`);
-    //     console.log(response.data);
-    //     setTest(response.data);
-    //   } catch (error) {
-    //     console.error("Error fetching tests:", error);
-    //   }
-    // };
-    // fetchMachine();
-    // fetchTests();
-  }, []);
 
   // Define the schema with various input types
   const typeofschema = {
-    role: {
+    name: {
       type: "String",
-      label: "Role",
+      label: "Name",
     },
-    description: {
-      type: "String",
-      label: "Description",
-    },
-
-    // sortBy: { type: "Number", label: "Sort By" },
-    // date: { type: "Date", label: "Date" },
-    // category: {
-    //   type: "Select",
-    //   label: "Category",
-    //   options: [
-    //     { value: "category1", label: "Category 1" },
-    //     { value: "category2", label: "Category 2" },
-    //     // Add more options as needed
-    //   ],
-    // },
-    // isActive: { type: "Checkbox", label: "Is Active" },
-    // isbol: { type: "Checkbox", label: "Is bol" },
-    // Add more fields as needed
   };
 
   useEffect(() => {
+    // Check if the token exists
+    if (!token) {
+      setError("User is not authenticated.");
+      setLoading(false);
+      return;
+    }
+
     // Fetch data from the API
     axios
-      .get(`/api/rolemaster/allrole`)
+      .get(`/api/roles`, {
+        headers: {
+          "Content-Type": "application/json", // Corrected Content-Type header
+          Authorization: `Bearer ${token}`, // Using the token from localStorage
+        },
+      })
       .then((response) => {
-        setData(response.data);
-        // setFilteredData(response.data);
+        if (response.data.success) {
+          // Set the roles data from the API response
+          setData(response.data.data.Role);
+        } else {
+          setError("Failed to retrieve roles.");
+        }
         setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching data:", err);
-        setError(err);
+        setError(
+          "Error fetching roles. Please check your token or network connection."
+        );
         setLoading(false);
       });
 
@@ -92,13 +61,12 @@ export default function Dashboardholiday() {
         { label: "Role Master" },
       ],
       searchPlaceholder: "Search Role...",
-      userAvatar: userAvatar, // Use the imported avatar
+      userAvatar: userAvatar,
       tableColumns: {
         title: "Role",
         description: "Manage Role and view their details.",
         headers: [
-          { label: "Role", key: "role" },
-          { label: "Description", key: "description" },
+          { label: "Role", key: "name" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -112,7 +80,7 @@ export default function Dashboardholiday() {
         },
       },
     });
-  }, [User?._id]);
+  }, [token]); // Dependency on token instead of User._id
 
   // Handlers for actions
   const handleAddProduct = () => {
@@ -123,18 +91,6 @@ export default function Dashboardholiday() {
   const handleExport = () => {
     console.log("Export clicked");
     // Implement export functionality such as exporting data as CSV or PDF
-  };
-
-  const handleFilterChange = (filterValue: string) => {
-    console.log(`Filter changed: ${filterValue}`);
-    setFilterValue(filterValue); // Store the selected filter value
-    // if (filterValue === "") {
-    //   setFilteredData(data); // If no filter, show all data
-    // } else {
-    //   const filtered = data.filter((item) => item.discountType === filterValue);
-    //   setFilteredData(filtered); // Filter data based on the selected discountType
-    // }
-    // Implement filtering logic here, possibly refetching data with filters applied
   };
 
   const handleProductAction = (action: string, product: any) => {
@@ -166,20 +122,19 @@ export default function Dashboardholiday() {
   };
 
   if (loading) return <div className="p-4">Loading...</div>;
-  if (error)
-    return <div className="p-4 text-red-500">Error loading machines.</div>;
+  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
   // Map the API data to match the Dashboard component's expected tableData format
-  if (!data) return [];
   const mappedTableData =
     data && Array.isArray(data)
       ? data.map((item) => {
           return {
-            _id: item?._id,
-            role: item?.role || "Role not provided",
-            description: item?.description || "Description not provided",
-            delete: `/rolemaster/delete/${item?._id}`,
+            _id: item.id, // Use the role's 'id' as the unique identifier
+            name: item.name || "Name not provided", // Display the role's 'name'
+            edit: `/roles/${item?._id}`, // Route to the update page
+            delete: `/roles${item?._id}`,
+
             action: "actions", // Placeholder for action buttons
           };
         })
@@ -195,10 +150,8 @@ export default function Dashboardholiday() {
         tableData={mappedTableData}
         onAddProduct={handleAddProduct}
         onExport={handleExport}
-        onFilterChange={handleFilterChange}
         onProductAction={handleProductAction}
         typeofschema={typeofschema}
-        // filterValue={filterValue}
         AddItem={() => (
           <AddItem typeofschema={typeofschema} onAdd={handleAddItem} />
         )}

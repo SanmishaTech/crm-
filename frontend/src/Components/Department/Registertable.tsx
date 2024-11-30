@@ -3,13 +3,12 @@ import axios from "axios";
 import Dashboard from "./Dashboardreuse";
 import AddItem from "./Additem";
 import userAvatar from "@/images/Profile.jpg";
-import { Button } from "@/components/ui/button";
-
+ 
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
   const [config, setConfig] = useState(null);
-  const [data, setData] = useState([]); // Ensure initial state is an empty array
+  const [data, setData] = useState([]);  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,16 +18,16 @@ export default function Dashboardholiday() {
   };
 
   useEffect(() => {
-    // Fetch data from the API
+    
     axios
       .get(`/api/container/allcontainer`)
       .then((response) => {
-        // Check if response.data is an array
+       
         if (Array.isArray(response.data)) {
           setData(response.data);
         } else {
           console.error("Received data is not an array:", response.data);
-          setData([]); // Fallback to an empty array if not an array
+          setData([]);  
         }
         setLoading(false);
       })
@@ -38,7 +37,7 @@ export default function Dashboardholiday() {
         setLoading(false);
       });
 
-    // Define the dashboard configuration
+     
     setConfig({
       breadcrumbs: [
         { label: "Dashboard", href: "/dashboard" },
@@ -66,21 +65,17 @@ export default function Dashboardholiday() {
     });
   }, [User?._id]);
 
-  // Handlers for actions
-  const handleAddProduct = () => {
+   const handleAddProduct = () => {
     console.log("Add Registration clicked");
-    // For example, navigate to an add registration page or open a modal
-  };
+   };
 
   const handleExport = () => {
     console.log("Export clicked");
-    // Implement export functionality such as exporting data as CSV or PDF
-  };
+   };
 
   const handleFilterChange = (filterValue) => {
     console.log(`Filter changed: ${filterValue}`);
-    // You can implement filtering logic here, possibly refetching data with filters applied
-  };
+   };
 
   const handleProductAction = (action, product) => {
     console.log(`Action: ${action} on registration:`, product);
@@ -96,20 +91,19 @@ export default function Dashboardholiday() {
     return <div className="p-4 text-red-500">Error loading registrations.</div>;
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
-  // Ensure data is an array before attempting to map
+ 
   const mappedTableData =
     Array.isArray(data) && !loading
       ? data.map((item) => {
           const services = item?.services || [];
           const paidAmount = item?.paymentMode?.paidAmount || 0;
 
-          // Calculate the total service price based on each service's populated details.
-          const totalServicePrice = services.reduce((acc, service) => {
-            const servicePrice = service?.serviceId?.price || 0; // Replace 'price' with the actual field name for service price
+           const totalServicePrice = services.reduce((acc, service) => {
+            const servicePrice = service?.serviceId?.price || 0;  
             return acc + servicePrice;
           }, 0);
 
-          // Calculate balance amount based on total service price and paid amount.
+         
           const balanceAmount =
             totalServicePrice - paidAmount > 0
               ? totalServicePrice - paidAmount

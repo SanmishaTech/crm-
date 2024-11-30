@@ -144,6 +144,7 @@ function App() {
         <Route path="/discountmaster" element={<Dashboard />} />
         <Route path="/rolemaster" element={<Dashboard />} />
         <Route path="/assignaccess" element={<Dashboard />} />
+        <Route path="/usermaster" element={<Dashboard />} />
       </Routes>
     </>
   );

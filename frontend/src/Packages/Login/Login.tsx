@@ -15,21 +15,29 @@ const Login = () => {
     password: "",
   };
   const onSubmit = async (data: Record<string, any>) => {
-     const user = await axios
-      .post("/api/login", data)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.data.token) {
-          localStorage.setItem("token", res.data.data.token);
-          localStorage.setItem("user", JSON.stringify(res.data.data.user));
-          navigate("/dashboard");
-        }
+    // Assuming userId is available globally or in localStorage
+    const userId = localStorage.getItem("userId") || "defaultUserId"; // Replace with actual way of getting userId
+
+    // Include userId in the login payload
+    const loginData = {
+      ...data,
+      userId, // Add userId here
+    };
+
+    try {
+      const response = await axios.post("/api/login", loginData);
+
+      console.log(response.data);
+      if (response.data.data.token) {
+        localStorage.setItem("token", response.data.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.data.user));
+        navigate("/dashboard");
         toast.success("Successfully Logged In");
-      })  
-      .catch((err) => {
-        console.error("Error logging in:", err);
-        toast.error("Failed to log in. Check your credentials.");
-      });
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      toast.error("Failed to log in. Check your credentials.");
+    }
   };
 
   const typeofschema = {
@@ -116,7 +124,9 @@ const Login = () => {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg text-white font-bold">Welcome To Website</p>
-            <footer className="text-sm text-white">Customer Relationship Management (CRM) </footer>
+            <footer className="text-sm text-white">
+              Customer Relationship Management (CRM){" "}
+            </footer>
           </blockquote>
         </div>
       </div>
@@ -135,7 +145,7 @@ const Login = () => {
             defaultValues={defaultValues}
             onSubmit={onSubmit}
           />
-           <p className="px-8 text-center text-sm text-muted-foreground">
+          <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
               to="/terms"

@@ -43,6 +43,7 @@ interface AddItemProps {
 const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema }) => {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user || "{}");
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
   const [formData, setFormData] = useState<any>({});
   const [error, setError] = useState("");
@@ -52,12 +53,17 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema }) => {
   const handleAdd = async () => {
     setLoading(true);
     try {
-      await axios.post(`/api/rolemaster`, formData);
+      await axios.post(`/api/roles`, formData, {
+        headers: {
+          ContentType: "appication/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       onAdd(formData); // Notify parent component
       setFormData({});
       setHandleopen(false);
       setError("");
-      window.location.reload();
+      // window.location.reload();
     } catch (err) {
       setError("Failed to add Role. Please try again.");
       console.error(err);
@@ -236,7 +242,7 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema }) => {
   return (
     <Dialog open={handleopen} onOpenChange={setHandleopen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Role  </Button>
+        <Button variant="outline">Add Role </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>

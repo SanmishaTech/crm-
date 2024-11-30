@@ -33,12 +33,7 @@ import {
 import axios from "axios";
 
 interface AddItemProps {
-  onAdd: (item: {
-    id: string;
-    name: string;
-    unit: string;
-    fieldType: string;
-  }) => void;
+  onAdd: (item: { id: string; name: string; description: string }) => void;
   typeofschema: any;
   add: any;
 }
@@ -68,7 +63,12 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
 
     try {
       // Send request with the token
-      await axios.post(`/api/departments`, formData, { headers });
+      await axios.post(`/api/departments`, formData, {
+        headers: {
+          ContentType: "appication/json",
+          Authorization: `Bearer ${User.token}`,
+        },
+      });
       window.location.reload();
       setName("");
       setDate(null);

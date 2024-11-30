@@ -54,13 +54,20 @@ const Navbar = () => {
           </Link>
 
           {/* Navigation Links */}
-          <div className="space-x-4">
-            <Link to="/dashboard" className="text-black hover:text-gray-600">
+          <div className="space-x-3">
+            <Link
+              to="/dashboard"
+              className="text-black px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
+            >
               Dashboard
             </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-gray-100 hover:underline transition duration-200"
+                >
                   Master
                 </Button>
               </DropdownMenuTrigger>
@@ -103,22 +110,41 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link to="#" className="text-black hover:text-gray-600">
+            <Link
+              to="#"
+              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
+            >
               Leads
             </Link>
-            <Link to="#" className="text-black hover:text-gray-600">
+
+            <Link
+              to="#"
+              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
+            >
               Contacts
             </Link>
-            <Link to="#" className="text-black hover:text-gray-600">
+            <Link
+              to="#"
+              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
+            >
               Accounts
             </Link>
-            <Link to="#" className="text-black hover:text-gray-600">
+            <Link
+              to="#"
+              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
+            >
               Deals
             </Link>
-            <Link to="#" className="text-black hover:text-gray-600">
+            <Link
+              to="#"
+              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
+            >
               Tasks
             </Link>
-            <Link to="#" className="text-black hover:text-gray-600">
+            <Link
+              to="#"
+              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
+            >
               Accounts
             </Link>
             <DropdownMenu>
@@ -155,7 +181,7 @@ const Navbar = () => {
                   <Popover>
                     <PopoverTrigger>
                       {" "}
-                      <Bell className="h-4 w-4" />
+                      <Bell className="h-4" style={{ strokeWidth: 2 }} />
                     </PopoverTrigger>
                     <PopoverContent className="h-[500px] w-[400px]">
                       <Tabs defaultValue="account" className="w-[400px]">
@@ -181,13 +207,13 @@ const Navbar = () => {
             </Tooltip>
           </TooltipProvider>
           <Button variant="ghost" size="icon">
-            <Settings className="h-4 w-4" />
+            <Settings className="h-4" style={{ strokeWidth: 2 }} />
           </Button>
           <Button variant="ghost" size="icon">
-            <CalendarDays className="h-4 w-4" />
+            <CalendarDays className="h-4" style={{ strokeWidth: 2 }} />
           </Button>
           <Button variant="ghost" size="icon">
-            <Search className="h-4 w-4" />
+            <Search className="h-4" style={{ strokeWidth: 2 }} />
           </Button>
 
           <DropdownMenu>
