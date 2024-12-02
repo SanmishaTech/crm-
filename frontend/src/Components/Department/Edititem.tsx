@@ -71,6 +71,7 @@ const AddItem: React.FC<AddItemProps> = ({
       try {
         const response = await axios.get(`/api/${editfetch}`, {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
@@ -94,13 +95,16 @@ const AddItem: React.FC<AddItemProps> = ({
       return;
     }
 
-    await axios.put(`/api/${editid}`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }).then(() => {
-      window.location.reload();
-    });
+    await axios
+      .put(`/api/${editid}`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        window.location.reload();
+      });
     setName("");
     setDate(null);
     setHandleopen(false);
@@ -115,6 +119,7 @@ const AddItem: React.FC<AddItemProps> = ({
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+      
     }));
   };
 

@@ -57,9 +57,9 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
       return;
     }
 
-    const headers = {
-      Authorization: `Bearer ${User.token}`, // Include token in the header
-    };
+    // const headers = {
+    //   Authorization: `Bearer ${User.token}`, // Include token in the header
+    // };
 
     try {
       // Send request with the token

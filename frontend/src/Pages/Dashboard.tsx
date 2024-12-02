@@ -38,6 +38,9 @@ import Formula from "../Components/Formula/Formula";
 import DashboardCorporateMaster from "@/Components/CorporateMaster/Registertable";
 import CorporateTestCard from "@/Components/CorporateMaster/TestCard";
 import CorporateEditCard from "@/Components/CorporateMaster/Edittestcard";
+import Dashboardleads from "@/Components/Leads/Registertable";
+import DashboardAddLeads from "@/Components/Leads/TestCard";
+
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import ContainerLinkMaster from "@/Components/ContainerLinkMaster/Registertable";
@@ -85,6 +88,9 @@ const Dashboard = () => {
         {location.pathname === "/services" && <DashboardServices />}
         {location.pathname === "/holiday" && <Dashboardholiday />}
         {location.pathname === "/department" && <Dashboarddepartment />}
+        {location.pathname === "/leads" && <Dashboardleads />}
+        {location.pathname === "/leads/add" && <DashboardAddLeads />}
+
         {location.pathname === "/parameter" && <Dashboardparameter />}
         {location.pathname === "/reason" && <Dashboardreason />}
         {location.pathname === "/assignaccess" && <AssignAccess />}

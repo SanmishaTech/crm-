@@ -98,14 +98,16 @@ export default function Dashboardholiday() {
         axios
           .delete(`/api/departments/${product._id}`, {
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
           })
           .then((response) => {
             console.log("Delete successful:", response);
             // Update the state instead of reloading
-            setData(prevData => prevData.filter((item: any) => item.id !== product._id));
+            setData((prevData) =>
+              prevData.filter((item: any) => item.id !== product._id)
+            );
           })
           .catch((error) => {
             console.error("Error deleting department:", error);

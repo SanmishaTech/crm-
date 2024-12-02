@@ -1,5 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
-import { CalendarDays, Search, Ellipsis, Bell, Settings } from "lucide-react";
+import React from "react";
+import {
+  Check,
+  ChevronsUpDown,
+  CalendarDays,
+  Search,
+  Ellipsis,
+  Bell,
+  Settings,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,13 +30,56 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 import userAvatar from "@/images/Profile.jpg";
+//combobox
+import { cn } from "@/lib/utils ";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
+const frameworks = [
+  {
+    value: "tasks",
+    label: "Tasks",
+  },
+  {
+    value: "accounts",
+    label: "Accounts",
+  },
+  {
+    value: "meetings",
+    label: "Meetings",
+  },
+  {
+    value: "invoices",
+    label: "Invoices",
+  },
+  {
+    value: "products",
+    label: "Products",
+  },
+];
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("");
+
+  // Handle navigation to dashboard
+  const handleNavigate = () => {
+    navigate("/dashboard");
+  };
+
+  // Handle navigation to leads page
+  const handleLeadsNavigate = () => {
+    navigate("/leads");
+  };
 
   return (
     <nav className="bg-white text-black py-4 px-6 shadow-md">
@@ -55,12 +107,14 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="space-x-3">
-            <Link
-              to="/dashboard"
-              className="text-black px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
+            <Button
+              onClick={handleNavigate}
+              variant="ghost"
+              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
             >
               Dashboard
-            </Link>
+            </Button>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -76,7 +130,7 @@ const Navbar = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    navigate("/department"); // No token removal here
+                    navigate("/department");
                   }}
                 >
                   Department
@@ -86,23 +140,21 @@ const Navbar = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  Access
-                </Button>
+                <Button variant="ghost">Access</Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Access Control</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    navigate("/rolemaster"); // No token removal here
+                    navigate("/rolemaster");
                   }}
                 >
                   Role Master
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    navigate("/assignaccess"); // No token removal here
+                    navigate("/assignaccess");
                   }}
                 >
                   Assign Access
@@ -110,64 +162,85 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Link
-              to="#"
+            <Button
+              onClick={handleLeadsNavigate} // Use the handleLeadsNavigate function for this button
+              variant="ghost"
               className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
             >
               Leads
-            </Link>
+            </Button>
 
-            <Link
-              to="#"
+            <Button
+              variant="ghost"
               className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
             >
               Contacts
-            </Link>
-            <Link
-              to="#"
+            </Button>
+            <Button
+              variant="ghost"
               className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
             >
               Accounts
-            </Link>
-            <Link
-              to="#"
+            </Button>
+            <Button
+              variant="ghost"
               className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
             >
               Deals
-            </Link>
-            <Link
-              to="#"
-              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
-            >
-              Tasks
-            </Link>
-            <Link
-              to="#"
-              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
-            >
-              Accounts
-            </Link>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
+            </Button>
+
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="p-2" // Adding padding instead of fixed width
+                >
                   <Ellipsis className="h-4 w-4" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Select Modules</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Meetings</DropdownMenuItem>
-                <DropdownMenuItem>Invoices</DropdownMenuItem>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command>
+                  <CommandInput placeholder="Search Modules..." />
+                  <CommandList>
+                    <CommandEmpty>No framework found.</CommandEmpty>
+                    <CommandGroup>
+                      {frameworks.map((framework) => (
+                        <CommandItem
+                          key={framework.value}
+                          value={framework.value}
+                          onSelect={(currentValue) => {
+                            setValue(
+                              currentValue === value ? "" : currentValue
+                            );
+                            setOpen(false);
 
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigate("/dashboard"); // No token removal here
-                  }}
-                >
-                  Products
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                            if (currentValue === "meetings") {
+                              navigate("/dashboard"); // Navigate to /dashboard when Astro is selected
+                            } else if (currentValue === "products") {
+                              navigate("/users"); // Navigate to /users when Remix is selected
+                            } else {
+                              navigate("#"); // Navigate to # for all other frameworks
+                            }
+                          }}
+                        >
+                          {framework.label}
+                          <Check
+                            className={cn(
+                              "ml-auto",
+                              value === framework.value
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
 
