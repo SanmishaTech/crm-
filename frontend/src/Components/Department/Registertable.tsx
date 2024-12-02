@@ -52,7 +52,8 @@ export default function Dashboardholiday() {
         title: "Department",
         description: "Manage Department and view their details.",
         headers: [
-          { label: "Department", key: "name" },
+          { label: "Name", key: "name" },
+          { label: "Description", key: "description" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -82,10 +83,45 @@ export default function Dashboardholiday() {
 
   const handleProductAction = (action, product) => {
     console.log(`Action: ${action} on registration:`, product);
+
     if (action === "edit") {
       // Navigate to edit page or open edit modal
     } else if (action === "delete") {
-      // Implement delete functionality, possibly with confirmation
+      if (!token) {
+        console.error("No authentication token found");
+        alert("You must be logged in to delete departments");
+        return;
+      }
+
+      if (product && product._id) {
+        console.log(`Deleting department with ID: ${product._id}`);
+        axios
+          .delete(`/api/departments/${product._id}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+          })
+          .then((response) => {
+            console.log("Delete successful:", response);
+            // Update the state instead of reloading
+            setData(prevData => prevData.filter((item: any) => item.id !== product._id));
+          })
+          .catch((error) => {
+            console.error("Error deleting department:", error);
+            if (error.response?.status === 401) {
+              alert("Unauthorized: Please log in again");
+              // Optionally redirect to login page or handle token expiration
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "/login";
+            } else {
+              alert("Failed to delete department. Please try again.");
+            }
+          });
+      } else {
+        console.error("Product ID is undefined");
+      }
     }
   };
 
@@ -96,25 +132,14 @@ export default function Dashboardholiday() {
 
   const mappedTableData =
     Array.isArray(data) && !loading
-      ? data.map((item) => {
-          const services = item?.services || [];
-          const paidAmount = item?.paymentMode?.paidAmount || 0;
-
-          const totalServicePrice = services.reduce((acc, service) => {
-            const servicePrice = service?.serviceId?.price || 0;
-            return acc + servicePrice;
-          }, 0);
-
-          const balanceAmount =
-            totalServicePrice - paidAmount > 0
-              ? totalServicePrice - paidAmount
-              : 0;
+      ? data.map((item: any) => {
           return {
-            _id: item?._id,
-            one: item?.container || "Unknown",
-            edit: `container/update/${item?._id}`,
-            delete: `container/delete/${item?._id}`,
-            editfetch: `container/reference/${item?._id}`,
+            _id: item?.id,
+            name: item?.name || "Unknown",
+            description: item?.description || "No description",
+            edit: `departments/${item?.id}`,
+            delete: `departments/${item?.id}`,
+            editfetch: `departments/${item?.id}`,
           };
         })
       : [];

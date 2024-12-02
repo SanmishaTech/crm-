@@ -36,6 +36,11 @@ import axios from "axios";
 
 interface AddItemProps {
   onAdd: (item: { id: string; name: string }) => void;
+  typeofschema: Record<string, string>;
+  editid: string;
+  setToggleedit: (toggle: boolean) => void;
+  toggleedit: boolean;
+  editfetch: string;
 }
 
 const AddItem: React.FC<AddItemProps> = ({
@@ -46,8 +51,12 @@ const AddItem: React.FC<AddItemProps> = ({
   toggleedit,
   editfetch,
 }) => {
+  console.log("Edit ID:", editid);
+  console.log("Edit Fetch Path:", editfetch);
+
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
+  const token = localStorage.getItem("token");
   const [SelectedValue, setSelectedValue] = useState("");
   const [services, setServices] = useState<any[]>([]);
   const [error, setError] = useState("");
@@ -55,12 +64,16 @@ const AddItem: React.FC<AddItemProps> = ({
   const [name, setName] = useState("");
   const [date, setDate] = useState<Date | null>(null);
   const [description, setdescription] = useState("");
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<Record<string, any>>({});
 
   useEffect(() => {
     const fetcheditdetails = async () => {
       try {
-        const response = await axios.get(`/api/${editfetch}`);
+        const response = await axios.get(`/api/${editfetch}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setFormData(response.data);
       } catch (error) {
         console.error("Error fetching data", error);
@@ -68,39 +81,50 @@ const AddItem: React.FC<AddItemProps> = ({
       }
     };
 
-    fetcheditdetails();
-  }, [editfetch]);
+    if (editfetch) {
+      fetcheditdetails();
+    } else {
+      console.error("Edit fetch path is undefined");
+    }
+  }, [editfetch, token]);
+
   const handleAdd = async () => {
-    // const service = services.find((s) => s.name === SelectedValue);
-    await axios.put(`/api/${editid}`, formData).then(() => {
+    if (!editid) {
+      console.error("Edit ID is undefined");
+      return;
+    }
+
+    await axios.put(`/api/${editid}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(() => {
       window.location.reload();
     });
     setName("");
     setDate(null);
-    // Reset form fields
     setHandleopen(false);
   };
 
-  function capitalizeText(text) {
+  function capitalizeText(text: string) {
     return text.replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value, // dynamically set key-value pairs
+      [name]: value,
     }));
   };
-  const addFields = (typeofschema) => {
-    const allFieldstorender = [];
-    Object.entries(typeofschema).map(([key, value]) => {
-      console.log(key, value);
 
+  const addFields = (typeofschema: Record<string, string>) => {
+    const allFieldstorender: JSX.Element[] = [];
+    Object.entries(typeofschema).map(([key, value]) => {
       if (value === "String") {
         allFieldstorender.push(
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="price" className="text-right">
+          <div className="grid grid-cols-4 items-center gap-4" key={key}>
+            <Label htmlFor={key} className="text-right">
               {capitalizeText(key)}
             </Label>
             <Input
@@ -115,7 +139,7 @@ const AddItem: React.FC<AddItemProps> = ({
         );
       }
     });
-    return [...allFieldstorender];
+    return allFieldstorender;
   };
 
   return (
@@ -135,59 +159,7 @@ const AddItem: React.FC<AddItemProps> = ({
         <div className="grid gap-4 py-4">
           {error && <p className="text-red-500">{error}</p>}
           {addFields(typeofschema)}
-          {/* <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="price" className="text-right">
-              Namea
-            </Label>
-            <Input
-              id="name"
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter name"
-              value={name}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="price" className="text-right">
-              Unit
-            </Label>
-            <Input
-              id="name"
-              onChange={(e) => setdescription(e.target.value)}
-              placeholder="Enter description"
-              value={description}
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="price" className="text-right">
-              Date
-            </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-[280px] justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div> */}
         </div>
-
         <DialogFooter>
           <Button onClick={handleAdd} type="button">
             Submit
