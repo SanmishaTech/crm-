@@ -43,6 +43,9 @@ import Dashboardleads from "@/Components/Leads/Registertable";
 import Dashboardaccounts from "@/Components/Accounts/Registertable";
 import DashboardAddaccounts from "@/Components/Accounts/TestCard";
 
+import DashboardAddcontacts from "@/Components/Contacts/TestCard";
+import Dashboardcontacts from "@/Components/Contacts/Registertable";
+
 import DashboardAddLeads from "@/Components/Leads/TestCard";
 
 import { useNavigate } from "react-router-dom";
@@ -98,6 +101,9 @@ const Dashboard = () => {
 
         {location.pathname === "/accounts" && <Dashboardaccounts />}
         {location.pathname === "/accounts/add" && <DashboardAddaccounts />}
+
+        {location.pathname === "/contacts" && <Dashboardcontacts />}
+        {location.pathname === "/contacts/add" && <DashboardAddcontacts />}
 
         {location.pathname === "/parameter" && <Dashboardparameter />}
         {location.pathname === "/reason" && <Dashboardreason />}

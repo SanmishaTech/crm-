@@ -150,6 +150,8 @@ function App() {
 
         <Route path="/accounts" element={<Dashboard />} />
         <Route path="/accounts/add" element={<Dashboard />} />
+        <Route path="/contacts" element={<Dashboard />} />
+        <Route path="/contacts/add" element={<Dashboard />} />
       </Routes>
     </>
   );

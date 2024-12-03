@@ -1,0 +1,18 @@
+export const accountsConfig = [
+  { value: "none", label: "None" },
+  { value: "advertisement", label: "Advertisement" },
+  { value: "employeeReferral", label: "Employee Referral" },
+  { value: "externalReferral", label: "External Referral" },
+  { value: "onlineStore", label: "Online Store" },
+  { value: "twitter", label: "X (Twitter)" },
+  { value: "facebook", label: "X (Facebook)" },
+  { value: "partner", label: "Partner" },
+  { value: "publicRelations", label: "Public Relations" },
+  { value: "salesEmailAlias", label: "Sales Email Alias" },
+  { value: "seminarPartner", label: "Seminar Partner" },
+  { value: "internalSeminar", label: "Internal Seminar" },
+  { value: "tradeShow", label: "Trade Show" },
+  { value: "webDownload", label: "Web Download" },
+  { value: "webResearch", label: "Web Research" },
+  { value: "chat", label: "Chat" },
+];

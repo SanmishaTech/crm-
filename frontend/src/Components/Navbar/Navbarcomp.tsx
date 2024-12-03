@@ -85,6 +85,10 @@ const Navbar = () => {
     navigate("/accounts");
   };
 
+  const handleContactsNavigate = () => {
+    navigate("/contacts");
+  };
+
   return (
     <nav className="bg-white text-black py-4 px-6 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
@@ -175,6 +179,7 @@ const Navbar = () => {
             </Button>
 
             <Button
+              onClick={handleContactsNavigate}
               variant="ghost"
               className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
             >
