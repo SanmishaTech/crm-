@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\RolesController;
 use App\Http\Controllers\Api\TasksController;
 use App\Http\Controllers\Api\ProjectsController;
@@ -27,6 +28,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::resource('departments', DepartmentController::class);  
    Route::resource('roles', RolesController::class);
    Route::resource('permissions', PermissionsController::class);    
+   Route::resource('leads', LeadsController::class);    
 
    Route::get('/logout', [UserController::class, 'logout'])->name('user.logout');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Lead;
 use App\Models\User;
 use App\Models\Department;
 use Illuminate\Database\Eloquent\Model;
@@ -19,4 +20,9 @@ class Profile extends Model
     public function department(){
         return $this->belongTo(Department::class, 'department_id');
     }
+
+    public function leads(){
+        return $this->hasMany(Lead::class, "profile_id");
+    }
+    
 }

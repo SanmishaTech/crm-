@@ -18,12 +18,18 @@ class DepartmentController extends BaseController
      */
     public function index(): JsonResponse
     {
-        try {
-            $departments = Department::all();
-            return response()->json($departments);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+        $authUser = auth()->user()->roles->pluck('name')->first();
+        if($authUser == 'admin'){
+            $department = Department::all();
+            return $this->sendResponse(['Department'=> DepartmentResource::collection($department)], "department retrived successfuly");
+
+        } elseif($authUser == 'member'){
+            // $projects = auth()->user()->projects()->users()->get();  //auth()->user()->projects()->users()->get();   or auth()->user()->projects()->with("users")->get();
+            $department = auth()->user()->profile()->department()->first();  //this is efficient way
+            return $this->sendResponse(['Department'=> DepartmentResource::collection($department)], "department retrived successfuly");
+
         }
+    //    2 returns
     }
 
     /**
