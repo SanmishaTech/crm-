@@ -9,6 +9,21 @@ import { Button } from "@/components/ui/button";
 import { frameworksConfig, industriesConfig } from "./leadsConfig";
 
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -97,6 +112,23 @@ function ProfileForm() {
   const [value, setValue] = React.useState("");
   const [industry, setIndustry] = React.useState("");
   const [industryOpen, setIndustryOpen] = React.useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleCopyBillingToShipping = () => {
+    form.setValue("shippingStreet", form.getValues("billingStreet"));
+    form.setValue("shippingCity", form.getValues("billingCity"));
+    form.setValue("shippingState", form.getValues("billingState"));
+    form.setValue("shippingCode", form.getValues("billingCode"));
+    form.setValue("shippingCountry", form.getValues("billingCountry"));
+  };
+
+  const handleCopyShippingToBilling = () => {
+    form.setValue("billingStreet", form.getValues("shippingStreet"));
+    form.setValue("billingCity", form.getValues("shippingCity"));
+    form.setValue("billingState", form.getValues("shippingState"));
+    form.setValue("billingCode", form.getValues("shippingCode"));
+    form.setValue("billingCountry", form.getValues("shippingCountry"));
+  };
 
   async function onSubmit(data: ProfileFormValues) {
     // console.log("Sas", data);
@@ -105,7 +137,7 @@ function ProfileForm() {
     await axios.post(`/api/associatemaster`, data).then((res) => {
       console.log("ppappappa", res.data);
       toast.success("Associate Master Created Successfully");
-      navigate("/leads");
+      navigate("/accounts");
     });
   }
 
@@ -116,6 +148,7 @@ function ProfileForm() {
         className="space-y-8 pb-[2rem]"
       >
         {" "}
+        <h5 className="text-2xl font-bold">Account Information</h5>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
           <FormField
             className="flex-1"
@@ -140,9 +173,40 @@ function ProfileForm() {
                     <SelectItem value="hospital">Owner 3</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormDescription>
-                  This is the type of Associate you are selecting.
-                </FormDescription>
+                <FormDescription>Select Owner.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            className="flex-1"
+            control={form.control}
+            name="rating"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Ratings</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  className="w-full"
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a verified email to display" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="acquired">Acquired</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="marketFailed">Market Failed</SelectItem>
+                    <SelectItem value="projectCancelled">
+                      Project Cancelled
+                    </SelectItem>
+                    <SelectItem value="shutDown">Shut Down</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>Select Ratings ?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -150,70 +214,14 @@ function ProfileForm() {
 
           <FormField
             control={form.control}
-            name="company"
+            name="accountName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Company</FormLabel>
+                <FormLabel>Account Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Company..." {...field} />
+                  <Input placeholder="Account Name..." {...field} />
                 </FormControl>
-                <FormDescription>What is your Company?</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>First Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="First name..." {...field} />
-                </FormControl>
-                <FormDescription>What is your first name?</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Last name..." {...field} />
-                </FormControl>
-                <FormDescription>What is your last name?</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Title..." {...field} />
-                </FormControl>
-                <FormDescription>What is your title...</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="Email..." {...field} />
-                </FormControl>
-                <FormDescription>What is your email...</FormDescription>
+                <FormDescription>What is your Account Name?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -234,6 +242,20 @@ function ProfileForm() {
           />
           <FormField
             control={form.control}
+            name="accountSite"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Account Site</FormLabel>
+                <FormControl>
+                  <Input placeholder="Account Site..." {...field} />
+                </FormControl>
+                <FormDescription>What is your Account Site?</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="fax"
             render={({ field }) => (
               <FormItem>
@@ -248,16 +270,14 @@ function ProfileForm() {
           />
           <FormField
             control={form.control}
-            name="telephone"
+            name="parentAccount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Telephone</FormLabel>
+                <FormLabel>Parent Account</FormLabel>
                 <FormControl>
-                  <Input placeholder="Telephone..." {...field} />
+                  <Input placeholder="Parent Account..." {...field} />
                 </FormControl>
-                <FormDescription>
-                  What is your name of Telephone
-                </FormDescription>
+                <FormDescription>What is your Parent Account?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -276,11 +296,43 @@ function ProfileForm() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="accountNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Account Number</FormLabel>
+                <FormControl>
+                  <Input placeholder="Account Number..." {...field} />
+                </FormControl>
+                <FormDescription>
+                  What is your Account Number...
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="tickerSymbol"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Ticker Symbol</FormLabel>
+                <FormControl>
+                  <Input placeholder="Ticker Symbol..." {...field} />
+                </FormControl>
+                <FormDescription>
+                  What is your Ticker Symbol ...
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <Popover open={open} onOpenChange={setOpen}>
             <div className="flex flex-col">
               <FormLabel htmlFor="leadSource" className="mb-3 text-sm">
-                Lead Source
+                Account Type
               </FormLabel>
               <PopoverTrigger asChild>
                 <Button
@@ -301,7 +353,7 @@ function ProfileForm() {
               </PopoverTrigger>
             </div>
 
-            <PopoverContent className="w-[200px] h-[300px] overflow-y-auto">
+            <PopoverContent className="w-[200px] h-[300px] overflow-y-auto p-0">
               <Command>
                 <CommandInput
                   placeholder="Search Lead Source..."
@@ -463,39 +515,7 @@ function ProfileForm() {
               </FormItem>
             )}
           />
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="rating"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Ratings</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  className="w-full"
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a verified email to display" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    <SelectItem value="acquired">Acquired</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="marketFailed">Market Failed</SelectItem>
-                    <SelectItem value="projectCancelled">
-                      Project Cancelled
-                    </SelectItem>
-                    <SelectItem value="shutDown">Shut Down</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormDescription>Select Ratings ?</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <FormField
             className="flex-1"
             control={form.control}
@@ -548,73 +568,184 @@ function ProfileForm() {
           />
         </div>
         <Separator />
-        <h5 className="text-2xl font-bold">Address Information</h5>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 max-w-full p-4">
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="street"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Street</FormLabel>
-                <Input placeholder="Street..." {...field} />
-                <FormDescription>What is your Street.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />{" "}
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="city"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>City</FormLabel>
-                <Input placeholder="City..." {...field} />
-                <FormDescription>What is your City.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />{" "}
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="state"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>State</FormLabel>
-                <Input placeholder="State..." {...field} />
-                <FormDescription>What is your State.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />{" "}
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="zipCode"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Zip Code</FormLabel>
-                <Input placeholder="Zip Code..." {...field} />
-                <FormDescription>What is your Zip Code.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />{" "}
-          <FormField
-            className="flex-1"
-            control={form.control}
-            name="country"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Country</FormLabel>
-                <Input placeholder="Country..." {...field} />
-                <FormDescription>What is your Country.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <div className="flex items-center justify-between">
+          <h5 className="text-2xl font-bold">Address Information</h5>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost">Copy Addresses</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-30">
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={handleCopyBillingToShipping}>
+                  Copy Billing to Shipping
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleCopyShippingToBilling}>
+                  Copy Shipping to Billing
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 max-w-full p-4">
+            {/* Billing Fields */}
+            <div className="flex flex-col gap-4">
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="billingStreet"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Billing Street</FormLabel>
+                    <Input placeholder="Billing Street..." {...field} />
+                    <FormDescription>
+                      What is your Billing Street.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="billingCity"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Billing City</FormLabel>
+                    <Input placeholder="Billing City..." {...field} />
+                    <FormDescription>
+                      What is your Billing City.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="billingState"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Billing State</FormLabel>
+                    <Input placeholder="Billing State..." {...field} />
+                    <FormDescription>
+                      What is your Billing State.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="billingCode"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Billing Code</FormLabel>
+                    <Input placeholder="Billing Code..." {...field} />
+                    <FormDescription>
+                      What is your Billing Code.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="billingCountry"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Billing Country</FormLabel>
+                    <Input placeholder="Billing Country..." {...field} />
+                    <FormDescription>
+                      What is your Billing Country.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Shipping Fields */}
+            <div className="flex flex-col gap-4">
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="shippingStreet"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Shipping Street</FormLabel>
+                    <Input placeholder="Shipping Street..." {...field} />
+                    <FormDescription>
+                      What is your Shipping Street.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="shippingCity"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Shipping City</FormLabel>
+                    <Input placeholder="Shipping City..." {...field} />
+                    <FormDescription>
+                      What is your Shipping City.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="shippingState"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Shipping State</FormLabel>
+                    <Input placeholder="Shipping State..." {...field} />
+                    <FormDescription>
+                      What is your Shipping State.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="shippingCode"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Shipping Code</FormLabel>
+                    <Input placeholder="Shipping Code..." {...field} />
+                    <FormDescription>
+                      What is your Shipping Code.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                className="flex-1"
+                control={form.control}
+                name="shippingCountry"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Shipping Country</FormLabel>
+                    <Input placeholder="Shipping Country..." {...field} />
+                    <FormDescription>
+                      What is your Shipping Country.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
         </div>
         <Separator />
         <h5 className="text-2xl font-bold">Contact Information</h5>
@@ -648,7 +779,7 @@ export default function SettingsProfilePage() {
   return (
     <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
       <Button
-        onClick={() => navigate("/leads")}
+        onClick={() => navigate("/accounts")}
         className="ml-4 flex gap-2 m-8 mb-4"
       >
         <MoveLeft className="w-5 text-white" />
@@ -656,8 +787,8 @@ export default function SettingsProfilePage() {
       </Button>
 
       <CardHeader>
-        <CardTitle>Leads</CardTitle>
-        <CardDescription>Leads</CardDescription>
+        <CardTitle>Accounts</CardTitle>
+        <CardDescription>Accounts</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

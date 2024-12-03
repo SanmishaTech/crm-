@@ -147,6 +147,9 @@ function App() {
         <Route path="/usermaster" element={<Dashboard />} />
         <Route path="/leads" element={<Dashboard />} />
         <Route path="/leads/add" element={<Dashboard />} />
+
+        <Route path="/accounts" element={<Dashboard />} />
+        <Route path="/accounts/add" element={<Dashboard />} />
       </Routes>
     </>
   );

@@ -81,6 +81,10 @@ const Navbar = () => {
     navigate("/leads");
   };
 
+  const handleAccountsNavigate = () => {
+    navigate("/accounts");
+  };
+
   return (
     <nav className="bg-white text-black py-4 px-6 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
@@ -163,7 +167,7 @@ const Navbar = () => {
             </DropdownMenu>
 
             <Button
-              onClick={handleLeadsNavigate} // Use the handleLeadsNavigate function for this button
+              onClick={handleLeadsNavigate}
               variant="ghost"
               className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
             >
@@ -177,6 +181,7 @@ const Navbar = () => {
               Contacts
             </Button>
             <Button
+              onClick={handleAccountsNavigate}
               variant="ghost"
               className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
             >

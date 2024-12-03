@@ -40,6 +40,9 @@ import DashboardCorporateMaster from "@/Components/CorporateMaster/Registertable
 import CorporateTestCard from "@/Components/CorporateMaster/TestCard";
 import CorporateEditCard from "@/Components/CorporateMaster/Edittestcard";
 import Dashboardleads from "@/Components/Leads/Registertable";
+import Dashboardaccounts from "@/Components/Accounts/Registertable";
+import DashboardAddaccounts from "@/Components/Accounts/TestCard";
+
 import DashboardAddLeads from "@/Components/Leads/TestCard";
 
 import { useNavigate } from "react-router-dom";
@@ -92,6 +95,9 @@ const Dashboard = () => {
         {location.pathname === "/usermaster" && <UserMasterDashboard />}
         {location.pathname === "/leads" && <Dashboardleads />}
         {location.pathname === "/leads/add" && <DashboardAddLeads />}
+
+        {location.pathname === "/accounts" && <Dashboardaccounts />}
+        {location.pathname === "/accounts/add" && <DashboardAddaccounts />}
 
         {location.pathname === "/parameter" && <Dashboardparameter />}
         {location.pathname === "/reason" && <Dashboardreason />}
