@@ -54,6 +54,7 @@ import { Label } from "recharts";
 
 const profileFormSchema = z.object({
   ownerName: z.string().optional(),
+  company: z.string().optional(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   title: z.string().optional(),
@@ -115,7 +116,7 @@ function ProfileForm() {
         className="space-y-8 pb-[2rem]"
       >
         {" "}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
           <FormField
             className="flex-1"
             control={form.control}
@@ -147,6 +148,20 @@ function ProfileForm() {
             )}
           />
 
+          <FormField
+            control={form.control}
+            name="company"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Company</FormLabel>
+                <FormControl>
+                  <Input placeholder="Company..." {...field} />
+                </FormControl>
+                <FormDescription>What is your Company?</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="firstName"
@@ -189,8 +204,6 @@ function ProfileForm() {
               </FormItem>
             )}
           />
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
           <FormField
             control={form.control}
             name="email"
