@@ -35,7 +35,7 @@ class ProjectsController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProjectRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $project = new Project();
         $project->name = $request->input('name');
@@ -68,7 +68,7 @@ class ProjectsController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProjectRequest $request, string $id): JsonResponse
+    public function update(Request $request, string $id): JsonResponse
     {
 
         // if($validator->fails()){

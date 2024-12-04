@@ -35,7 +35,7 @@ class DepartmentController extends BaseController
     /**
      * Store Department.
      */
-    public function store(StoreDepartmentRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         $department = new Department();
         $department->name = $request->input("name");
@@ -62,7 +62,7 @@ class DepartmentController extends BaseController
     /**
      * Update Department.
      */
-    public function update(UpdateDepartmentRequest $request, string $id): JsonResponse
+    public function update(Request $request, string $id): JsonResponse
     {
         $department = Department::find($id);
         if(!$department){
