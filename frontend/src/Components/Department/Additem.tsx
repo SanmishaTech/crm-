@@ -41,7 +41,6 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
       });
       window.location.reload();
       setName("");
-      setDate(null);
       setHandleopen(false);
     } catch (err) {
       setError("Failed to add department: " + err.message);

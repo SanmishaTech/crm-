@@ -96,8 +96,7 @@ export default function Dashboardholiday() {
   const handleProductAction = (action: string, product: any) => {
     console.log(`Action: ${action} on product:`, product);
     if (action === "edit") {
-      // Navigate to edit page or open edit modal
-      // Example: window.location.href = `/parametergroup/update/${product._id}`;
+      // Handle edit logic
     } else if (action === "delete") {
       if (!token) {
         console.error("No authentication token found");
@@ -106,7 +105,7 @@ export default function Dashboardholiday() {
       }
 
       if (product && product._id) {
-        console.log(`Deleting user with ID: ${product._id}`);
+        console.log(`Deleting role with ID: ${product._id}`);
         axios
           .delete(`/api/roles/${product._id}`, {
             headers: {
@@ -116,13 +115,13 @@ export default function Dashboardholiday() {
           })
           .then((response) => {
             console.log("Delete successful:", response);
-            // Update the state instead of reloading
+            // Update the state without refetching
             setData((prevData) =>
-              prevData.filter((item: any) => item.id !== product._id)
+              prevData.filter((item: any) => item._id !== product._id)
             );
           })
           .catch((error) => {
-            console.error("Error deleting user:", error);
+            console.error("Error deleting role:", error);
             if (error.response?.status === 401) {
               alert("Unauthorized: Please log in again");
               // Optionally redirect to login page or handle token expiration
@@ -130,11 +129,12 @@ export default function Dashboardholiday() {
               localStorage.removeItem("user");
               window.location.href = "/login";
             } else {
-              alert("Failed to delete user. Please try again.");
+              alert("Failed to delete role. Please try again.");
             }
           });
       } else {
         console.error("Product ID is undefined");
+        alert("Role ID is missing or undefined.");
       }
     }
   };
@@ -155,15 +155,14 @@ export default function Dashboardholiday() {
     data && Array.isArray(data)
       ? data.map((item) => {
           return {
-            _id: item.id,
+            _id: item._id || item.id, // Ensure the correct property name is used
             name: item.name || "Name not provided",
-            edit: `/roles/${item?._id}`,
-            delete: `/roles/${item?._id}`,
+            edit: `/roles/${item._id || item.id}`,
+            delete: `/roles/${item._id || item.id}`,
             action: "actions",
           };
         })
       : [];
-
   return (
     <div className="p-4">
       <Dashboard
