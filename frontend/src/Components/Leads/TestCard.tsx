@@ -82,7 +82,6 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-// This can come from your database or API.
 const defaultValues: Partial<ProfileFormValues> = {};
 
 function ProfileForm() {
@@ -97,14 +96,22 @@ function ProfileForm() {
   const [value, setValue] = React.useState("");
   const [industry, setIndustry] = React.useState("");
   const [industryOpen, setIndustryOpen] = React.useState(false);
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
   async function onSubmit(data: ProfileFormValues) {
     // console.log("Sas", data);
-     // Implement actual profile update logic here
-    await axios.post(`/api/associatemaster`, data).then((res) => {
-       toast.success("Associate Master Created Successfully");
-      navigate("/leads");
-    });
+    // Implement actual profile update logic here
+    await axios
+      .post(`/api/leads`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        toast.success("Leads Master Created Successfully");
+        navigate("/leads");
+      });
   }
 
   return (
@@ -129,17 +136,17 @@ function ProfileForm() {
                 >
                   <FormControl className="w-full">
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Associate type" />
+                      <SelectValue placeholder="Select Owner type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="clinic">Owner 1</SelectItem>
+                    <SelectItem value="owner">Owner 1</SelectItem>
                     <SelectItem value="doctor">Owner 2</SelectItem>
                     <SelectItem value="hospital">Owner 3</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  This is the type of Associate you are selecting.
+                  This is the type of Owner you are selecting.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -655,7 +662,7 @@ export default function SettingsProfilePage() {
 
       <CardHeader>
         <CardTitle>Leads</CardTitle>
-        <CardDescription>Leads</CardDescription>
+        <CardDescription>Add the Leads Here.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6 ">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Login from "@/Packages/Login/Login";
@@ -147,7 +148,7 @@ function App() {
         <Route path="/usermaster" element={<Dashboard />} />
         <Route path="/leads" element={<Dashboard />} />
         <Route path="/leads/add" element={<Dashboard />} />
-
+        <Route path="/leads/edit/:id" element={<Dashboard />} />
         <Route path="/accounts" element={<Dashboard />} />
         <Route path="/accounts/add" element={<Dashboard />} />
         <Route path="/contacts" element={<Dashboard />} />

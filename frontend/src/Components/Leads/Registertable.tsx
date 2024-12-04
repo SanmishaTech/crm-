@@ -23,7 +23,7 @@ const AddItem = () => {
 const Edititem = (id: string) => {
   const navigate = useNavigate();
   const handleAdd = () => {
-    navigate(`/associatemaster/edit/${id?.id}`);
+    navigate(`/leads/edit/${id?.id}`);
   };
   return (
     <Button onClick={handleAdd} variant="ghost" className="w-full">
@@ -35,6 +35,7 @@ const Edititem = (id: string) => {
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user || "{}");
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
   const [config, setConfig] = useState<any>(null);
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,39 +44,6 @@ export default function Dashboardholiday() {
   const [parameterGroup, setParameterGroup] = useState<any[]>([]);
   const [test, setTest] = useState<any[]>([]);
 
-  useEffect(() => {
-    // Fetch data from the API
-    const fetchparameter = async () => {
-      try {
-        const response = await axios.get(`/api/associatemaster/allassociates`);
-        console.log(response.data);
-        setParameter(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    const fetchparametergroup = async () => {
-      try {
-        const response = await axios.get(`/api/associatemaster/allassociates`);
-        console.log(response.data);
-        setParameterGroup(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    const fetchtest = async () => {
-      try {
-        const response = await axios.get(`/api/testmaster/alltestmaster`);
-        console.log(response.data);
-        setTest(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchparameter();
-    fetchparametergroup();
-    fetchtest();
-  }, []);
   // Define the schema with various input types
   useEffect(() => {
     console.log("This is parameter", parameter);
@@ -102,9 +70,14 @@ export default function Dashboardholiday() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get(`/api/associatemaster/allassociates`)
+      .get(`/api/leads`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
-        setData(response.data);
+        setData(response.data.data.Leads);
         setLoading(false);
       })
       .catch((err) => {
@@ -125,12 +98,11 @@ export default function Dashboardholiday() {
         title: "Leads",
         description: "Manage Leads and view their details.",
         headers: [
-          { label: "Lead Name", key: "associateType" },
-          { label: "Company", key: "firstName" },
-          { label: "Email", key: "lastName" },
+          { label: "Lead Name", key: "firstName" },
+          { label: "Company", key: "company" },
+          { label: "Email", key: "email" },
           { label: "Phone", key: "mobile" },
           { label: "Lead Source", key: "mobile" },
-          { label: "Lead Owner", key: "mobile" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -162,24 +134,66 @@ export default function Dashboardholiday() {
     // Implement filtering logic here, possibly refetching data with filters applied
   };
 
-  const handleProductAction = (action: string, product: any) => {
-    console.log(`Action: ${action} on product:`, product);
+  const handleProductAction = (action, product) => {
+    // console.log(`Action: ${action} on product:`, product);
     if (action === "edit") {
-      // Navigate to edit page or open edit modal
-      // Example: window.location.href = `/parametergroup/update/${product._id}`;
-    } else if (action === "delete") {
-      // Implement delete functionality, possibly with confirmation
-      // Example:
-      /*
-      if (confirm("Are you sure you want to delete this parameter group?")) {
-        axios.delete(`/api/parametergroup/delete/${product._id}`)
-          .then(() => {
-            // Refresh data
-            setData(prevData => prevData.filter(item => item._id !== product._id));
-          })
-          .catch(err => console.error(err));
+      if (!token) {
+        console.error("No authentication token found");
+        alert("You must be logged in to edit departments");
+        return;
       }
-      */
+      if (product && product._id) {
+        axios
+          .put(`/api/leads/${product._id}`, product)
+          .then((response) => {
+            console.log(response.data);
+            setProducts(response.data);
+          })
+          .catch((error) => {
+            console.error("Error updating product:", error);
+            alert("Error updating product");
+          });
+      }
+
+      // Navigate to edit page or open edit modal
+    } else if (action === "delete") {
+      if (!token) {
+        console.error("No authentication token found");
+        alert("You must be logged in to delete departments");
+        return;
+      }
+
+      if (product && product._id) {
+        console.log(`Deleting department with ID: ${product._id}`);
+        axios
+          .delete(`/api/leads/${product._id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            console.log("Delete successful:", response);
+            // Update the state instead of reloading
+            setData((prevData) =>
+              prevData.filter((item: any) => item.id !== product._id)
+            );
+          })
+          .catch((error) => {
+            console.error("Error deleting department:", error);
+            if (error.response?.status === 401) {
+              alert("Unauthorized: Please log in again");
+              // Optionally redirect to login page or handle token expiration
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "/login";
+            } else {
+              alert("Failed to delete department. Please try again.");
+            }
+          });
+      } else {
+        console.error("Product ID is undefined");
+      }
     }
   };
 
@@ -196,21 +210,21 @@ export default function Dashboardholiday() {
   if (!config) return <div className="p-4">Loading configuration...</div>;
 
   // Map the API data to match the Dashboard component's expected tableData format
-  const mappedTableData = Array.isArray(data)
-    ? data.map((item) => {
-        console.log("This is item", item);
-        return {
-          _id: item?._id,
-          associateType: item?.associateType || "Associate Type not provided",
-          firstName: item?.firstName || "First Name not provided",
-          lastName: item?.lastName || "Last Name not provided",
-          mobile: item?.mobile || "Mobile not provided",
-          delete: `/associatemaster/delete/${item?._id}`,
-          action: "actions", // Placeholder for action buttons
-          // Additional fields can be added here
-        };
-      })
-    : [];
+  const mappedTableData =
+    Array.isArray(data) && !loading
+      ? data.map((item) => {
+          return {
+            _id: item?.id || item?._id, // Fallback to _id if id is missing
+            firstName: item?.firstName || "Unknown",
+            company: item?.company || "No description",
+            email: item?.email || "Unknown",
+            mobile: item?.mobile || "Unknown",
+            edit: item?.id ? `leads/${item.id}` : "#",
+            delete: item?.id ? `leads/${item.id}` : "#",
+            editfetch: item?.id ? `leads/${item.id}` : "#",
+          };
+        })
+      : [];
 
   return (
     <div className="p-4">

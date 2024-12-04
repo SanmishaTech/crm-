@@ -55,7 +55,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useNavigate } from "react-router-dom";
-// import Edititem from "./Edititem";
+import Edititem from "./Edititem";
 export const description =
   "A reusable registrations dashboard with customizable header and table. Configure breadcrumbs, search, tabs, and table data through props.";
 
@@ -65,8 +65,6 @@ export default function Dashboard({
   userAvatar = "/placeholder-user.jpg",
   tableColumns = {},
   AddItem,
-  Edititem,
-  filterValue,
   typeofschema,
   tableData = [],
   onAddProduct = () => {},
@@ -137,7 +135,7 @@ export default function Dashboard({
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
             />
           </div>
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
@@ -169,7 +167,7 @@ export default function Dashboard({
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </header>
 
         {/* {toggleedit && (
@@ -203,24 +201,18 @@ export default function Dashboard({
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {[
-                      {
-                        label: "Priority Card",
-                        value: true,
-                        checked: filterValue === true,
-                      },
-                    ].map((filter, index) => (
+                    {tableColumns?.filters?.map((filter, index) => (
                       <DropdownMenuCheckboxItem
                         key={index}
                         checked={filter.checked}
-                        onCheckedChange={() => onFilterChange(filter.value)} // Apply the filter when selected
+                        onCheckedChange={() => onFilterChange(filter.value)}
                       >
                         {filter.label}
                       </DropdownMenuCheckboxItem>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-
+               
                 {/* <Button size="sm" className="h-8 gap-1" onClick={onAddProduct}>
                   <PlusCircle className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -258,7 +250,7 @@ export default function Dashboard({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {tableData?.map((row) => (
+                       {tableData?.map((row) => (
                         <React.Fragment key={row._id}>
                           <TableRow>
                             {tableColumns?.headers?.map((header, index) => (
@@ -290,7 +282,14 @@ export default function Dashboard({
                                       <DropdownMenuLabel>
                                         Actions
                                       </DropdownMenuLabel>
-                                      <Edititem id={row?._id} />
+                                      <Edititem
+                                        editid={row?.edit}
+                                        toogleedit={setToggleedit}
+                                        typeofschema={typeofschema}
+                                        setToggleedit={setToggleedit}
+                                        toggleedit={toggleedit}
+                                        editfetch={row?.editfetch}
+                                      />
                                       <DropdownMenuSeparator />
 
                                       <AlertDialogbox url={row?.delete} />

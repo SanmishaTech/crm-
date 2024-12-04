@@ -1,6 +1,4 @@
-// components/AddItem.tsx
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,229 +10,88 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-
 import axios from "axios";
 
 interface AddItemProps {
-  onAdd: (item: any) => void;
-  typeofschema: Record<string, any>;
+  onAdd: (item: { id: string; name: string; description: string }) => void;
+  typeofschema: any;
+  add: any;
 }
 
-const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema }) => {
+const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
   const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
+  const User = user ? JSON.parse(user) : null;
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
-  const [formData, setFormData] = useState<any>({});
   const [error, setError] = useState("");
   const [handleopen, setHandleopen] = useState(false);
+  const [name, setName] = useState("");
+  const [formData, setFormData] = useState<any>({});
   const [loading, setLoading] = useState(false);
 
   const handleAdd = async () => {
     setLoading(true);
     try {
-      await axios.post(`/api/testmasterlink`, formData);
-      onAdd(formData); // Notify parent component
-      setFormData({});
-      setHandleopen(false);
-      setError("");
+      await axios.post(`/api/users`, formData, {
+        headers: {
+          ContentType: "appication/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      window.location.reload();
+      setName("");
+       setHandleopen(false);
     } catch (err) {
-      setError("Failed to add parameter group. Please try again.");
-      console.error(err);
-    } finally {
-      setLoading(false);
+      setError("Failed to add users: " + err.message);
     }
   };
 
-  // Capitalize the first letter of each word for labels
   function capitalizeText(text: string) {
     return text.replace(/\b\w/g, (char) => char.toUpperCase());
   }
 
-  // Handle input changes dynamically
-  const handleChange = (name: string, value: any) => {
-    setFormData((prevData: any) => ({
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: value, // dynamically set key-value pairs
     }));
   };
 
-  // Dynamically render form fields based on the schema
-  const addFields = (schema: Record<string, any>) => {
+  const addFields = (typeofschema: any) => {
     const allFieldsToRender = [];
-
-    Object.entries(schema).forEach(([key, value]) => {
-      const fieldType = value.type;
-      const label = value.label || capitalizeText(key);
-
-      switch (fieldType) {
-        case "String":
-          allFieldsToRender.push(
-            <div key={key} className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={key} className="text-right">
-                {label}
-              </Label>
-              <Input
-                id={key}
-                name={key}
-                onChange={(e) => handleChange(key, e.target.value)}
-                placeholder={`Enter ${label.toLowerCase()}`}
-                value={formData[key] || ""}
-                className="col-span-3"
-              />
-            </div>
-          );
-          break;
-
-        case "Number":
-          allFieldsToRender.push(
-            <div key={key} className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={key} className="text-right">
-                {label}
-              </Label>
-              <Input
-                id={key}
-                name={key}
-                type="number"
-                onChange={(e) => handleChange(key, e.target.value)}
-                placeholder={`Enter ${label.toLowerCase()}`}
-                value={formData[key] || ""}
-                className="col-span-3"
-              />
-            </div>
-          );
-          break;
-
-        case "Date":
-          allFieldsToRender.push(
-            <div key={key} className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={key} className="text-right">
-                {label}
-              </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !formData[key] && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2" />
-                    {formData[key] ? (
-                      format(new Date(formData[key]), "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={formData[key] ? new Date(formData[key]) : null}
-                    onSelect={(date) =>
-                      handleChange(key, date ? date.toISOString() : null)
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          );
-          break;
-
-        case "Select":
-          allFieldsToRender.push(
-            <div key={key} className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={key} className="text-right">
-                {label}
-              </Label>
-              <Select onValueChange={(value) => handleChange(key, value)}>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue
-                    placeholder={`Select ${label.toLowerCase()}`}
-                    value={formData[key] || ""}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>{label}</SelectLabel>
-                    {value.options.map((option: any) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          );
-          break;
-
-        // Add this case in the addFields method
-        case "Checkbox":
-          allFieldsToRender.push(
-            <div key={key} className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor={key} className="text-right">
-                {label}
-              </Label>
-              <div className="col-span-3 flex items-center space-x-2">
-                <Checkbox
-                  id={key}
-                  checked={formData[key] || false}
-                  onCheckedChange={(checked) => handleChange(key, checked)}
-                />
-                <label
-                  htmlFor={key}
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  {label}
-                </label>
-              </div>
-            </div>
-          );
-          break;
-
-        // Add more cases for different field types as needed
-
-        default:
-          console.warn(`Unsupported field type: ${fieldType}`);
-          break;
+    Object.entries(typeofschema).forEach(([key, value]) => {
+      if (value === "String") {
+        allFieldsToRender.push(
+          <div className="grid grid-cols-4 items-center gap-4" key={key}>
+            <Label htmlFor={key} className="text-right">
+              {capitalizeText(key)}
+            </Label>
+            <Input
+              id={key}
+              name={key}
+              onChange={handleChange}
+              value={formData[key] || ""}
+              className="col-span-3"
+            />
+          </div>
+        );
       }
     });
-
     return allFieldsToRender;
   };
 
   return (
-    <Dialog open={handleopen} onOpenChange={setHandleopen}>
+    <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Parameter Group</Button>
+        <Button variant="outline">Add Users</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Parameter Group</DialogTitle>
+          <DialogTitle>Add New Users</DialogTitle>
           <DialogDescription>
-            Enter the details of the Parameter Group you want to add.
+            Enter the details of the Users you want to add to the order.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

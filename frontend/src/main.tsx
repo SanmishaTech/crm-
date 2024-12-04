@@ -19,8 +19,8 @@ import { ThemeProvider } from "@/darktheme/CustomTheme";
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
       <Provider store={store}>
         <React.StrictMode>
           <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
@@ -28,7 +28,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           </ThemeProvider>
         </React.StrictMode>
       </Provider>
-    </BrowserRouter>
-    <ReactQueryDevtools initialIsOpen={false} />
-  </QueryClientProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  </BrowserRouter>
 );

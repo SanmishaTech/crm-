@@ -32,6 +32,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::post('/users', [UserController::class, 'store'])->name("users.store");
    Route::put('/users/{id}', [UserController::class, 'update'])->name("users.update");
    Route::get('/users', [UserController::class, 'index'])->name("users.index");
+   Route::get('/users/{id}', [UserController::class, 'show'])->name("users.show");
+   
    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name("users.destroy");
 
    Route::get('/logout', [UserController::class, 'logout'])->name('user.logout');

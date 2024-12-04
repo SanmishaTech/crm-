@@ -169,4 +169,23 @@ class UserController extends BaseController
         return $this->sendResponse([], "User and his Profile deleted successfully");
 
     }
+
+    
+    /**
+     * show User
+     */
+    public function show(string $id): JsonResponse
+    {
+        $user = User::find($id);
+
+        if(!$user){
+            return $this->sendError("User not found", ['error'=>'User not found']);
+        }
+        // $profile = Profile::where('user_id', $user->id)->first();
+        // $profile->delete();
+        // $user->delete();
+
+        return $this->sendResponse(['User'=> new UserResource($user)], "User Retrieved successfully");
+
+    }
 }

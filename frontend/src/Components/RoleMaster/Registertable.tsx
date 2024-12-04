@@ -99,18 +99,43 @@ export default function Dashboardholiday() {
       // Navigate to edit page or open edit modal
       // Example: window.location.href = `/parametergroup/update/${product._id}`;
     } else if (action === "delete") {
-      // Implement delete functionality, possibly with confirmation
-      // Example:
-      /*
-      if (confirm("Are you sure you want to delete this parameter group?")) {
-        axios.delete(`/api/parametergroup/delete/${product._id}`)
-          .then(() => {
-            // Refresh data
-            setData(prevData => prevData.filter(item => item._id !== product._id));
-          })
-          .catch(err => console.error(err));
+      if (!token) {
+        console.error("No authentication token found");
+        alert("You must be logged in to delete users");
+        return;
       }
-      */
+
+      if (product && product._id) {
+        console.log(`Deleting user with ID: ${product._id}`);
+        axios
+          .delete(`/api/roles/${product._id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            console.log("Delete successful:", response);
+            // Update the state instead of reloading
+            setData((prevData) =>
+              prevData.filter((item: any) => item.id !== product._id)
+            );
+          })
+          .catch((error) => {
+            console.error("Error deleting user:", error);
+            if (error.response?.status === 401) {
+              alert("Unauthorized: Please log in again");
+              // Optionally redirect to login page or handle token expiration
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "/login";
+            } else {
+              alert("Failed to delete user. Please try again.");
+            }
+          });
+      } else {
+        console.error("Product ID is undefined");
+      }
     }
   };
 
@@ -130,12 +155,11 @@ export default function Dashboardholiday() {
     data && Array.isArray(data)
       ? data.map((item) => {
           return {
-            _id: item.id, // Use the role's 'id' as the unique identifier
-            name: item.name || "Name not provided", // Display the role's 'name'
-            edit: `/roles/${item?._id}`, // Route to the update page
-            delete: `/roles${item?._id}`,
-
-            action: "actions", // Placeholder for action buttons
+            _id: item.id,
+            name: item.name || "Name not provided",
+            edit: `/roles/${item?._id}`,
+            delete: `/roles/${item?._id}`,
+            action: "actions",
           };
         })
       : [];

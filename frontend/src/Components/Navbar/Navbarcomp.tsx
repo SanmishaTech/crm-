@@ -167,6 +167,13 @@ const Navbar = () => {
                 >
                   Assign Access
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate("/usermaster");
+                  }}
+                >
+                  User Master
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 

@@ -4,7 +4,7 @@ import Dashboard from "./Dashboardreuse";
 import AddItem from "./Additem";
 import userAvatar from "@/images/Profile.jpg";
 
-export default function Dashboardholiday() {
+export default function Dashboarddepartment() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
   const token = localStorage.getItem("token");
@@ -27,14 +27,7 @@ export default function Dashboardholiday() {
         },
       })
       .then((response) => {
-        console.log(response.data); // Check structure here
-
-        if (Array.isArray(response.data)) {
-          setData(response.data);
-        } else {
-          console.error("Received data is not an array:", response.data);
-          setData([]);
-        }
+        setData(response.data.data.Department);
         setLoading(false);
       })
       .catch((err) => {
@@ -84,10 +77,36 @@ export default function Dashboardholiday() {
   };
 
   const handleProductAction = (action, product) => {
-    console.log(`Action: ${action} on registration:`, product);
+    // console.log(`Action: ${action} on registration:`, product);
 
     if (action === "edit") {
       // Navigate to edit page or open edit modal
+      if (!token) {
+        console.error("No authentication token found");
+        alert("You must be logged in to edit departments");
+        return;
+      }
+
+      if (product && product._id) {
+        console.log(`Editing department with ID: ${product._id}`);
+        axios
+          .get(`/api/departments/${product._id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            console.log("Response:", response.data);
+            setProduct(response.data);
+            setIsEditModalOpen(true);
+          })
+          .catch((error) => {
+            console.error("Error fetching department:", error);
+            alert("Error fetching department");
+          });
+      } else {
+        console.log("No product found");
+      }
     } else if (action === "delete") {
       if (!token) {
         console.error("No authentication token found");

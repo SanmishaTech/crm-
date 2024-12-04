@@ -53,16 +53,20 @@ const AddItem: React.FC<AddItemProps> = ({
   const [error, setError] = useState("");
   const [handleopen, setHandleopen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (editid) {
       axios
-        .get(`/api/rolemaster/reference/${editid}`)
+        .get(`/api/roles/${editid}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((res) => {
           setFormData({
-            ...res.data,
-            name: res.data.name?._id,
-            test: res.data.test?._id,
+            ...res.data.data.Role,
           });
         })
         .catch((err) => {
@@ -78,11 +82,16 @@ const AddItem: React.FC<AddItemProps> = ({
     setLoading(true);
     try {
       await axios
-        .put(`/api/rolemaster/update/${editid}`, formData)
+        .put(`/api/roles/${editid}`, formData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then((res) => {
           console.log("ppaapppppp", res.data);
           // onAdd(res.data.newService);
-          setFormData(res.data.newService);
+          setFormData(res.data.data.Role);
           setHandleopen(false);
           setError("");
 

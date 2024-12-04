@@ -75,7 +75,7 @@ const AddItem: React.FC<AddItemProps> = ({
             Authorization: `Bearer ${token}`,
           },
         });
-        setFormData(response.data);
+        setFormData(response.data.data.Department);
       } catch (error) {
         console.error("Error fetching data", error);
         setError("Failed to fetch data.");
@@ -119,7 +119,6 @@ const AddItem: React.FC<AddItemProps> = ({
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
-      
     }));
   };
 

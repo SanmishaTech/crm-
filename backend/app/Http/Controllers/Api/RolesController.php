@@ -53,9 +53,9 @@ class RolesController extends BaseController
             return $this->sendError('Role not found.', ['Error'=> 'Role not found'] );
         }
 
-        $permissions = Permission::all();
-        $rolesPermissions = $role->permissions;
-        return $this->sendResponse(['Role'=>$role, 'Permission'=>$permissions, "RolePermission"=>$rolesPermissions], "Role and Permisions retrived successfully");
+        // $permissions = Permission::all();
+        // $rolesPermissions = $role->permissions;
+        return $this->sendResponse(['Role'=>$role], "Role and Permisions retrived successfully");
     }
 
     /**
@@ -69,7 +69,7 @@ class RolesController extends BaseController
         }
 
         $validator = Validator::make($request->all(), [
-            'roleName'=>'required|string|max:255',
+            'name'=>'required|string|max:255',
        ]);
     
 

@@ -1,5 +1,6 @@
 import React from "react";
 import Sidebar from "@/Dashboard/Sidebar";
+
 import Dashboardcomponent from "@/Components/Dashboard/Dashboard";
 import Registration from "@/Components/Registration/Registration";
 import { useLocation } from "react-router-dom";
@@ -47,6 +48,7 @@ import DashboardAddcontacts from "@/Components/Contacts/TestCard";
 import Dashboardcontacts from "@/Components/Contacts/Registertable";
 
 import DashboardAddLeads from "@/Components/Leads/TestCard";
+import DashboardUpdateLeads from "@/Components/Leads/Edittestcard";
 
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -98,6 +100,9 @@ const Dashboard = () => {
         {location.pathname === "/usermaster" && <UserMasterDashboard />}
         {location.pathname === "/leads" && <Dashboardleads />}
         {location.pathname === "/leads/add" && <DashboardAddLeads />}
+        {/\/leads\/edit\/\d+/.test(location.pathname) && (
+          <DashboardUpdateLeads />
+        )}
 
         {location.pathname === "/accounts" && <Dashboardaccounts />}
         {location.pathname === "/accounts/add" && <DashboardAddaccounts />}

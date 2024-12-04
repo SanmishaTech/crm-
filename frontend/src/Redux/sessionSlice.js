@@ -4,6 +4,7 @@ const initialState = {
   userlist: [],
   userdetail: [],
   ActivityFlag: false,
+  
 };
 
 const counterSlice = createSlice({

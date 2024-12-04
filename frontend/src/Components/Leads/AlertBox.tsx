@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
 export default function AlertDialogbox({ url }) {
   return (
@@ -32,7 +33,12 @@ export default function AlertDialogbox({ url }) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={async () => {
-              await axios.delete(`/api/${url}`);
+              await axios.delete(`/api/${url}`, {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+              });
               window.location.reload();
             }}
           >
