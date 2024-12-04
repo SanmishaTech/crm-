@@ -105,18 +105,18 @@ function ProfileForm() {
 
   async function onSubmit(data: UserFormValues) {
     // console.log("Sas", data);
-    console.log("ppappappa");
     // Implement actual profile update logic here
-    await axios.post(`/api/users`, data,{
-      headers:{
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
-    }).then((res) => {
-      console.log("ppappappa", res.data);
-      toast.success("User details Stored successfully");
-      navigate("/usermaster");
-    });
+    await axios
+      .post(`/api/users`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        toast.success("User details Stored successfully");
+        navigate("/usermaster");
+      });
   }
 
   // async function onSubmit(data: PatientFormValues) {
@@ -167,8 +167,6 @@ function ProfileForm() {
   //     form.setValue("gender", "Female");
   //   }
   // };
-
-  
 
   return (
     <Form {...form}>

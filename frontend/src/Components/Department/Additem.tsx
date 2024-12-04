@@ -10,26 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import axios from "axios";
 
 interface AddItemProps {
@@ -41,32 +22,21 @@ interface AddItemProps {
 const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
   const user = localStorage.getItem("user");
   const User = user ? JSON.parse(user) : null;
+  const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
-  const [SelectedValue, setSelectedValue] = useState("");
-  const [services, setServices] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [handleopen, setHandleopen] = useState(false);
   const [name, setName] = useState("");
-  const [date, setDate] = useState<Date | null>(null);
-  const [description, setdescription] = useState("");
   const [formData, setFormData] = useState<any>({});
+  const [loading, setLoading] = useState(false);
 
   const handleAdd = async () => {
-    if (!User || !User.token) {
-      setError("You are not authenticated. Please log in.");
-      return;
-    }
-
-    // const headers = {
-    //   Authorization: `Bearer ${User.token}`, // Include token in the header
-    // };
-
+    setLoading(true);
     try {
-      // Send request with the token
       await axios.post(`/api/departments`, formData, {
         headers: {
           ContentType: "appication/json",
-          Authorization: `Bearer ${User.token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       window.location.reload();
@@ -131,8 +101,8 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
         </div>
 
         <DialogFooter>
-          <Button onClick={handleAdd} type="button">
-            Submit
+          <Button onClick={handleAdd} type="button" disabled={loading}>
+            {loading ? "Submitting..." : "Submit"}
           </Button>
         </DialogFooter>
       </DialogContent>

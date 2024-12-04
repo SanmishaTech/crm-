@@ -250,8 +250,7 @@ export default function Dashboard({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {console.log("ppappa", tableData)}
-                      {tableData?.map((row) => (
+                       {tableData?.map((row) => (
                         <React.Fragment key={row._id}>
                           <TableRow>
                             {tableColumns?.headers?.map((header, index) => (

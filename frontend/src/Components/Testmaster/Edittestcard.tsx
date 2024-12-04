@@ -144,13 +144,11 @@ function ProfileForm({ formData }) {
 
   async function onSubmit(data: ProfileFormValues) {
     console.log("Sas", data);
-    console.log("ppappappa");
     data.prerequisite = content;
     data.consentForm = consent;
     data.interpretedText = interpretation;
 
     await axios.put(`/api/testmaster/update/${id}`, data).then((res) => {
-      console.log("ppappappa", res.data);
       toast.success("Test Master Updated Successfully");
       navigate("/testmaster");
     });

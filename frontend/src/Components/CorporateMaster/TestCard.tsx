@@ -95,10 +95,8 @@ function ProfileForm() {
   const navigate = useNavigate();
 
   async function onSubmit(data: ProfileFormValues) {
-    console.log("ppappappa");
-    await axios.post(`/api/corporatemaster`, data).then((res) => {
-      console.log("ppappappa", res.data);
-      toast.success("Corporate Master Created Successfully");
+     await axios.post(`/api/corporatemaster`, data).then((res) => {
+       toast.success("Corporate Master Created Successfully");
       navigate("/corporate");
     });
   }

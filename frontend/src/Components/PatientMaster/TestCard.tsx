@@ -150,10 +150,8 @@ function ProfileForm() {
 
   async function onSubmit(data: PatientFormValues) {
     // console.log("Sas", data);
-    console.log("ppappappa");
-    // Implement actual profile update logic here
+     // Implement actual profile update logic here
     await axios.post(`/api/patientmaster`, data).then((res) => {
-      console.log("ppappappa", res.data);
       toast.success("Patient details updated successfully");
       navigate("/patientmaster");
     });

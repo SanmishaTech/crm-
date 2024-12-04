@@ -105,14 +105,12 @@ function ProfileForm() {
 
   async function onSubmit(data: ProfileFormValues) {
     // console.log("Sas", data);
-    console.log("ppappappa");
     data.prerquisite = content;
     data.consentForm = consent;
     data.interpretedText = interpretation;
     data.profile = formData;
 
     await axios.post(`/api/testmaster`, data).then((res) => {
-      console.log("ppappappa", res.data);
       toast.success("Test Master Created Successfully");
       navigate("/testmaster");
     });

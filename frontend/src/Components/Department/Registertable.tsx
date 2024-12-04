@@ -7,7 +7,7 @@ import userAvatar from "@/images/Profile.jpg";
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
-  const token = localStorage.getItem("token"); // Retrieve token from localStorage
+  const token = localStorage.getItem("token");
   const [config, setConfig] = useState(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,11 +22,13 @@ export default function Dashboardholiday() {
     axios
       .get(`/api/departments`, {
         headers: {
-          "Content-Type": "application/json", // Corrected Content-Type header
-          Authorization: `Bearer ${token}`, // Using the token from localStorage
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
+        console.log(response.data); // Check structure here
+
         if (Array.isArray(response.data)) {
           setData(response.data);
         } else {
@@ -131,17 +133,16 @@ export default function Dashboardholiday() {
   if (error)
     return <div className="p-4 text-red-500">Error loading registrations.</div>;
   if (!config) return <div className="p-4">Loading configuration...</div>;
-
   const mappedTableData =
     Array.isArray(data) && !loading
-      ? data.map((item: any) => {
+      ? data.map((item) => {
           return {
-            _id: item?.id,
+            _id: item?.id || item?._id, // Fallback to _id if id is missing
             name: item?.name || "Unknown",
             description: item?.description || "No description",
-            edit: `departments/${item?.id}`,
-            delete: `departments/${item?.id}`,
-            editfetch: `departments/${item?.id}`,
+            edit: item?.id ? `departments/${item.id}` : "#",
+            delete: item?.id ? `departments/${item.id}` : "#",
+            editfetch: item?.id ? `departments/${item.id}` : "#",
           };
         })
       : [];

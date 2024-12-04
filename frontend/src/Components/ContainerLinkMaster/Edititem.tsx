@@ -221,7 +221,6 @@ const AddItem: React.FC<AddItemProps> = ({
               <Label htmlFor={key} className="text-right">
                 {label}
               </Label>
-              {console.log("ppappa", formData[key])}
               <Select
                 defaultValue={formData[key] || ""}
                 onValueChange={(value) => handleChange(key, value)}
