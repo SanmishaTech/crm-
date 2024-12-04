@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import React, {  useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
-import { MoveLeft } from "lucide-react";
+import { MoveLeft, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,39 +31,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { frameworksConfig, industriesConfig } from "./leadsConfig";
+import { Check } from "lucide-react";
 
 const profileFormSchema = z.object({
-  ownerName: z.string().optional(),
-  company: z.string().optional(),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  title: z.string().optional(),
-  email: z.string().email().optional(),
-  mobile: z.string().optional(),
-  fax: z.string().optional(),
-  telephone: z.string().optional(),
-  website: z.string().optional(),
-  leadSource: z.string().optional(),
-  leadStatus: z.string().optional(),
-  industry: z.string().optional(),
+  ownerName: z.any().optional(),
+  company: z.any().optional(),
+  firstName: z.any().optional(),
+  lastName: z.any().optional(),
+  title: z.any().optional(),
+  email: z.any().optional(),
+  mobile: z.any().optional(),
+  fax: z.any().optional(),
+  telephone: z.any().optional(),
+  website: z.any().optional(),
+  leadSource: z.any().optional(),
+  leadStatus: z.any().optional(),
+  industry: z.any().optional(),
   employees: z.any().optional(),
-  annual: z.string().optional(),
-  rating: z.string().optional(),
-  skypeID: z.string().optional(),
-  secondaryEmail: z.string().optional(),
-  twitter: z.string().optional(),
-  street: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  zipCode: z.string().optional(),
-  country: z.string().optional(),
-  description: z.string().optional(),
+  annual: z.any().optional(),
+  rating: z.any().optional(),
+  skypeID: z.any().optional(),
+  secondaryEmail: z.any().optional(),
+  twitter: z.any().optional(),
+  street: z.any().optional(),
+  city: z.any().optional(),
+  state: z.any().optional(),
+  zipCode: z.any().optional(),
+  country: z.any().optional(),
+  description: z.any().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -73,6 +88,11 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 function ProfileForm({ formData }) {
   // console.log("This is formData", formData);
   const defaultValues: Partial<ProfileFormValues> = formData;
+  const [value, setValue] = React.useState("");
+  const [open, setOpen] = React.useState(false);
+  const [industryOpen, setIndustryOpen] = React.useState(false);
+
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
@@ -90,8 +110,12 @@ function ProfileForm({ formData }) {
   const navigate = useNavigate();
 
   async function onSubmit(data: ProfileFormValues) {
-    // console.log("Sas", data);
-    await axios.put(`/api/leads/update/${id}`, data).then((res) => {
+     await axios.put(`/api/leads/${id}`, data, {
+      headers: {
+         "Content-Type": "application/json",
+         Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }).then((res) => {
       toast.success("Leads Updated Successfully");
       navigate("/leads");
     });
@@ -263,6 +287,70 @@ function ProfileForm({ formData }) {
               </FormItem>
             )}
           />
+            <FormField
+  control={form.control}
+  name="leadSource"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel htmlFor="leadSource" className="mb-3 text-sm">
+        Lead Source
+      </FormLabel>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            id="lead-source"
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="w-[200px] justify-between"
+          >
+            {field.value
+              ? frameworksConfig.find((fw) => fw.value === field.value)?.label
+              : "None"}{" "}
+            {/* Display 'None' if no value is selected */}
+            <ChevronsUpDown className="opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] h-[300px] overflow-y-auto">
+          <Command>
+            <CommandInput placeholder="Search Lead Source..." className="h-9" />
+            <CommandList>
+              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandGroup>
+                {frameworksConfig.map((framework) => (
+                  <CommandItem
+                    key={framework.value}
+                    value={framework.value}
+                    onSelect={(currentValue) => {
+                      field.onChange(currentValue); // Sync with form field
+                      setOpen(false);
+                    }}
+                  >
+                    {framework.label}
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        field.value === framework.value
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+      <FormDescription>
+        Select the source of the lead.
+      </FormDescription>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+           
           <FormField
             className="flex-1"
             control={form.control}
@@ -300,6 +388,72 @@ function ProfileForm({ formData }) {
               </FormItem>
             )}
           />
+
+<FormField
+  control={form.control}
+  name="industry"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel htmlFor="industry" className="mb-3 text-sm">
+        Industry
+      </FormLabel>
+      <div>
+      <Popover open={industryOpen} onOpenChange={setIndustryOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            id="industry"
+            variant="outline"
+            role="combobox"
+            aria-expanded={industryOpen}
+            className="w-[200px] justify-between"
+          >
+            {field.value
+              ? industriesConfig.find((fw) => fw.value === field.value)?.label
+              : "None"}{" "}
+            {/* Display 'None' if no value is selected */}
+            <ChevronsUpDown className="opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] h-[300px] overflow-y-auto">
+          <Command>
+            <CommandInput placeholder="Search Industry..." className="h-9" />
+            <CommandList>
+              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandGroup>
+                {industriesConfig.map((framework) => (
+                  <CommandItem
+                    key={framework.value}
+                    value={framework.value}
+                    onSelect={(currentValue) => {
+                      field.onChange(currentValue); // Sync with form field
+                      setIndustryOpen(false);
+                    }}
+                  >
+                    {framework.label}
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        field.value === framework.value
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+      </div>
+      <FormDescription>
+        Select the source of the industry.
+      </FormDescription>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
 
           <FormField
             control={form.control}

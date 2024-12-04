@@ -322,6 +322,7 @@ function ProfileForm() {
                         onSelect={(currentValue) => {
                           setValue(currentValue === value ? "" : currentValue);
                           setOpen(false);
+                          // form.setValue('leadSource', currentValue)  ; // Set the value in the form
                         }}
                       >
                         {framework.label}
