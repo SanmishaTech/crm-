@@ -1,5 +1,3 @@
-// components/AddItem.tsx
-
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -12,26 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import axios from "axios";
 
 interface AddItemProps {
@@ -51,20 +30,11 @@ const AddItem: React.FC<AddItemProps> = ({
   toggleedit,
   editfetch,
 }) => {
-  console.log("Edit ID:", editid);
-  console.log("Edit Fetch Path:", editfetch);
-
   const user = localStorage.getItem("user");
-  const User = JSON.parse(user);
+  const User = JSON.parse(user || "{}");
   const token = localStorage.getItem("token");
-  const [SelectedValue, setSelectedValue] = useState("");
-  const [services, setServices] = useState<any[]>([]);
-  const [error, setError] = useState("");
-  const [handleopen, setHandleopen] = useState(false);
-  const [name, setName] = useState("");
-  const [date, setDate] = useState<Date | null>(null);
-  const [description, setdescription] = useState("");
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetcheditdetails = async () => {
@@ -84,34 +54,8 @@ const AddItem: React.FC<AddItemProps> = ({
 
     if (editfetch) {
       fetcheditdetails();
-    } else {
-      console.error("Edit fetch path is undefined");
     }
   }, [editfetch, token]);
-
-  const handleAdd = async () => {
-    if (!editid) {
-      console.error("Edit ID is undefined");
-      return;
-    }
-
-    await axios
-      .put(`/api/${editid}`, formData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(() => {
-        window.location.reload();
-      });
-    setName("");
-    setHandleopen(false);
-  };
-
-  function capitalizeText(text: string) {
-    return text.replace(/\b\w/g, (char) => char.toUpperCase());
-  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -120,6 +64,30 @@ const AddItem: React.FC<AddItemProps> = ({
       [name]: value,
     }));
   };
+
+  const handleAdd = async () => {
+    if (!editid) {
+      console.error("Edit ID is undefined");
+      return;
+    }
+
+    try {
+      await axios.put(`/api/${editid}`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating item:", error);
+      setError("Failed to update item.");
+    }
+  };
+
+  function capitalizeText(text: string) {
+    return text.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
 
   const addFields = (typeofschema: Record<string, string>) => {
     const allFieldstorender: JSX.Element[] = [];
@@ -134,8 +102,8 @@ const AddItem: React.FC<AddItemProps> = ({
               id={key}
               name={key}
               onChange={handleChange}
+              value={formData[key] || ""}
               placeholder={`Enter ${capitalizeText(key)}`}
-              // value={formData[key] || ""}
               className="col-span-3"
             />
           </div>
@@ -156,7 +124,7 @@ const AddItem: React.FC<AddItemProps> = ({
         <DialogHeader>
           <DialogTitle>Edit</DialogTitle>
           <DialogDescription>
-            Enter the details of the Reason you want to edit.
+            Enter the details of the item you want to edit.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
