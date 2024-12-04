@@ -29,6 +29,10 @@ Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::resource('roles', RolesController::class);
    Route::resource('permissions', PermissionsController::class);    
    Route::resource('leads', LeadsController::class);    
+   Route::post('/users', [UserController::class, 'store'])->name("users.store");
+   Route::put('/users/{id}', [UserController::class, 'update'])->name("users.update");
+   Route::get('/users', [UserController::class, 'index'])->name("users.index");
+   Route::delete('/users/{id}', [UserController::class, 'destroy'])->name("users.destroy");
 
    Route::get('/logout', [UserController::class, 'logout'])->name('user.logout');
 });

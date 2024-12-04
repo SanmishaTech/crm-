@@ -50,44 +50,11 @@ import { useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Controller } from "react-hook-form";
 
-const patientFormSchema = z.object({
-  middleName: z.string().optional(),
-  salutation: z.string().optional(),
-  hfaId: z.string().optional(),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  country: z
-    .string()
-    .min(2, {
-      message: "Country must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Country must not be longer than 30 characters.",
-    }),
-  state: z
-    .string()
-    .min(2, {
-      message: "State must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "State must not be longer than 30 characters.",
-    }),
-  city: z
-    .string()
-    .min(2, {
-      message: "City must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "City must not be longer than 30 characters.",
-    }),
-  address: z
-    .string()
-    .min(2, {
-      message: "Address must be at least 2 characters.",
-    })
-    .max(30, {
-      message: "Address must not be longer than 30 characters.",
-    }),
+const userFormSchema = z.object({
+  name: z.string().optional(),
+  role: z.string().optional(),
+  password: z.string().optional(),
+  password_confirmation: z.string().optional(),
   mobile: z
     .string()
     .min(2, {
@@ -107,35 +74,23 @@ const patientFormSchema = z.object({
   dateOfBirth: z.string().optional(),
   age: z.string().optional(),
   gender: z.string().optional(),
-  ageType: z.string().optional(),
-  patientType: z.string().optional(),
-  bloodGroup: z.string().optional(),
   maritalStatus: z.string().optional(),
-  priorityCard: z.boolean().optional(),
-  value: z.union([z.number(), z.string()]).optional(),
-  percentage: z.union([z.number(), z.string()]).optional(),
 });
 
-type PatientFormValues = z.infer<typeof patientFormSchema>;
-
-// This can come from your database or API.
-const defaultValues: Partial<PatientFormValues> = {
-  country: "india",
-  state: "maharashtra",
-};
+type UserFormValues = z.infer<typeof userFormSchema>;
 
 function ProfileForm() {
-  const form = useForm<PatientFormValues>({
-    resolver: zodResolver(patientFormSchema),
+  const form = useForm<UserFormValues>({
+    resolver: zodResolver(userFormSchema),
     defaultValues,
     mode: "onChange",
   });
-  const salutation = form.watch("salutation");
 
   //   const { fields, append } = useFieldArray({
   //     name: "urls",
   //     control: form.control,
   //   });
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showFields, setShowFields] = useState<Boolean>(false);
@@ -148,14 +103,19 @@ function ProfileForm() {
     form.setValue("dateOfBirth", date ? date.toISOString() : null);
   };
 
-  async function onSubmit(data: PatientFormValues) {
+  async function onSubmit(data: UserFormValues) {
     // console.log("Sas", data);
     console.log("ppappappa");
     // Implement actual profile update logic here
-    await axios.post(`/api/patientmaster`, data).then((res) => {
+    await axios.post(`/api/users`, data,{
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    }).then((res) => {
       console.log("ppappappa", res.data);
-      toast.success("Patient details updated successfully");
-      navigate("/patientmaster");
+      toast.success("User details Stored successfully");
+      navigate("/usermaster");
     });
   }
 
@@ -208,17 +168,7 @@ function ProfileForm() {
   //   }
   // };
 
-  const handleSalutationChange = (e: string) => {
-    if (e === "mr") {
-      form.setValue("gender", "male"); // Set gender to male if "Mr" is selected
-    } else if (e === "mrs") {
-      form.setValue("gender", "female"); // Set gender to female if "Mrs" is selected
-    } else if (e === "ms") {
-      form.setValue("gender", "female"); // Set gender to female if "Mrs" is selected
-    } else {
-      form.setValue("gender", ""); // Reset gender if salutation is something else
-    }
-  };
+  
 
   return (
     <Form {...form}>
@@ -261,14 +211,14 @@ function ProfileForm() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
           <FormField
             control={form.control}
-            name="hfaId"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>HFA ID</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="HFA ID..." {...field} />
+                  <Input placeholder="Name..." {...field} />
                 </FormControl>
-                <FormDescription>What is your ID?</FormDescription>
+                <FormDescription>What is Name?</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -276,14 +226,13 @@ function ProfileForm() {
           <FormField
             className="flex-1"
             control={form.control}
-            name="salutation"
+            name="role"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>select Salutation</FormLabel>
+                <FormLabel>Select Role</FormLabel>
                 <Select
                   onValueChange={(e) => {
-                    form.setValue("salutation", e);
-                    handleSalutationChange(e);
+                    form.setValue("role");
                   }}
                   className="w-full"
                   defaultValue={field.value}

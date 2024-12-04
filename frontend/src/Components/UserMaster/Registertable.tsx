@@ -34,6 +34,7 @@ const Edititem = (id: string) => {
 
 export default function Dashboardholiday() {
   const user = localStorage.getItem("user");
+  const token = localStorage.getItem("token");
   const User = JSON.parse(user || "{}");
   const [config, setConfig] = useState<any>(null);
   const [data, setData] = useState<any[]>([]);
@@ -106,11 +107,16 @@ export default function Dashboardholiday() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get(`/api/users`)
+      .get(`/api/users`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
-        setData(response.data);
-        console.log(response.data);
-        setFilteredData(response.data);
+        setData(response.data.data?.Users);
+        console.log(response.data.data?.Users);
+        setFilteredData(response.data.data?.Users);
         setLoading(false);
       })
       .catch((err) => {
@@ -134,7 +140,7 @@ export default function Dashboardholiday() {
           { label: "Full Name", key: "fullName" },
           { label: "Email", key: "email" },
           { label: "Mobile", key: "mobile" },
-          { label: "Password", key: "password" },
+          { label: "Role", key: "role" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -222,11 +228,11 @@ export default function Dashboardholiday() {
         console.log("This is item", item);
         return {
           _id: item?._id,
-          fullName: item?.name || "Name not provided",
+          name: item?.name || "Name not provided",
           email: item?.email || "Email not provided",
           mobile: item?.mobile || "Mobile not provided",
-          password: item?.password || "password not provided",
-          delete: `/usermaster/delete/${item?._id}`,
+          role: item?.role || "Role not provided",
+          delete: `/usermaster/delete/${item?.id}`,
           action: "actions", // Placeholder for action buttons
           // Additional fields can be added here
         };

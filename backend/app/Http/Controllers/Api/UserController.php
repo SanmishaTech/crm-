@@ -90,6 +90,9 @@ class UserController extends BaseController
     }
 
 
+    /**
+     * All User
+     */
     public function index(): JsonResponse
     {
         $users = User::all();
@@ -97,7 +100,9 @@ class UserController extends BaseController
         return $this->sendResponse(['Users'=> UserResource::collection($users)], "all users retrived sucessfully");
     }
 
-
+    /**
+     * Store User
+     */
     public function store(Request $request){
         
        $user = new User();
@@ -120,9 +125,15 @@ class UserController extends BaseController
 
     }
 
+    /**
+     * Update User
+     */
     public function update(Request $request, string $id): JsonResponse
     {
         $user = User::find($id);
+        if(!$user){
+            return $this->sendError("User not found", ['error'=>'User not found']);
+        }
        $user->name = $request->input('name');
        $user->email = $request->input('email');
        $user->password = Hash::make($request->input('password'));
@@ -141,7 +152,10 @@ class UserController extends BaseController
 
     }
 
-    public function delete(string $id): JsonResponse
+    /**
+     * delete User
+     */
+    public function destroy(string $id): JsonResponse
     {
         $user = User::find($id);
 
