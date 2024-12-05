@@ -12,25 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import axios from "axios";
 
@@ -75,7 +57,7 @@ const AddItem: React.FC<AddItemProps> = ({
             Authorization: `Bearer ${token}`,
           },
         });
-        setFormData(response.data.data.Company);
+        setFormData(response.data.data.Department);
       } catch (error) {
         console.error("Error fetching data", error);
         setError("Failed to fetch data.");
@@ -136,7 +118,7 @@ const AddItem: React.FC<AddItemProps> = ({
               name={key}
               onChange={handleChange}
               placeholder={`Enter ${capitalizeText(key)}`}
-              value={formData && formData[key]}
+              value={formData[key] || ""}
               className="col-span-3"
             />
           </div>

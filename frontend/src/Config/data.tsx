@@ -22,6 +22,11 @@ export const navItems: NavItem[] = [
         href: "/productcategory",
         icon: "department",
       },
+      {
+        title: "Company Master",
+        href: "/companymaster",
+        icon: "department",
+      },
       // {
       //   title: "Holiday",
       //   href: "/holiday",

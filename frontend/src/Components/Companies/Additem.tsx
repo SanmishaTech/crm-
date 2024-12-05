@@ -33,7 +33,7 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
   const handleAdd = async () => {
     setLoading(true);
     try {
-      await axios.post(`/api/companies`, formData, {
+      await axios.post(`/api/departments`, formData, {
         headers: {
           ContentType: "appication/json",
           Authorization: `Bearer ${token}`,
@@ -85,13 +85,13 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Add Company</Button>
+        <Button variant="outline">Add Department</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Company</DialogTitle>
+          <DialogTitle>Add New Department</DialogTitle>
           <DialogDescription>
-            Enter the details of the Company you want to add to the order.
+            Enter the details of the Department you want to add to the order.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
