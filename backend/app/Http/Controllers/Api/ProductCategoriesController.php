@@ -16,8 +16,8 @@ class ProductCategoriesController extends BaseController
      */
     public function index(): JsonResponse
     {
-        $products = ProductCategory::all();
-        return $this->sendResponse(['ProductCategories'=> ProductCategoryResource::collection($products)], "Product Category retrived successfuly");
+        $productCategories = ProductCategory::all();
+        return $this->sendResponse(['ProductCategories'=> ProductCategoryResource::collection($productCategories)], "Product Category retrived successfuly");
 
     }
 
@@ -26,12 +26,10 @@ class ProductCategoriesController extends BaseController
      */
     public function store(Request $request): JsonResponse
     {
-        $product = new ProductCategory();
-        $product->product_category_id = $request->input("category_id");
-        $product->name = $request->input("name");
-        $product->brand = $request->input("brand");
-        $product->save();
-        return $this->sendResponse(['ProductCategory'=> new ProductCategoryResource($product)], "Product Category Stored successfuly");
+        $productCategory = new ProductCategory();
+        $productCategory->name = $request->input("name");
+        $productCategory->save();
+        return $this->sendResponse(['ProductCategory'=> new ProductCategoryResource($productCategory)], "Product Category Stored successfuly");
 
     }
 
@@ -40,11 +38,11 @@ class ProductCategoriesController extends BaseController
      */
     public function show(string $id): JsonResponse
     {
-        $product = ProductCategory::find($id);
-        if(!$product){
+        $productCategory = ProductCategory::find($id);
+        if(!$productCategory){
             return $this->sendError("Product Category not found.", ['Error'=> "Product Category not found"]);
         }
-        return $this->sendResponse(['ProductCategory'=> new ProductCategoryResource($product)], "Product Category retrived successfuly");
+        return $this->sendResponse(['ProductCategory'=> new ProductCategoryResource($productCategory)], "Product Category retrived successfuly");
 
     }
 
@@ -53,16 +51,13 @@ class ProductCategoriesController extends BaseController
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        $product = ProductCategory::find($id);
-        if(!$product){
+        $productCategory = ProductCategory::find($id);
+        if(!$productCategory){
             return $this->sendError("Product Category not found.", ['Error'=> "Product Category not found"]);
         }
-
-        $product->product_category_id = $request->input("category_id");
-        $product->name = $request->input("name");
-        $product->brand = $request->input("brand");
-        $product->save();
-        return $this->sendResponse(['ProductCategory'=> new ProductCategoryResource($product)], "Product Category Updated successfuly");
+        $productCategory->name = $request->input("name");
+        $productCategory->save();
+        return $this->sendResponse(['ProductCategory'=> new ProductCategoryResource($productCategory)], "Product Category Updated successfuly");
          
     }
 
@@ -71,11 +66,11 @@ class ProductCategoriesController extends BaseController
      */
     public function destroy(string $id): JsonResponse
     {
-        $product = ProductCategory::find($id);
-        if(!$product){
+        $productCategory = ProductCategory::find($id);
+        if(!$productCategory){
             return $this->sendError("Product Category not found.", ['Error'=> "Product Category not found"]);
         }
-         $product->delete();
+         $productCategory->delete();
          return $this->sendResponse([], "Product Category Deleted successfuly");
     }
 }
