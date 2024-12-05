@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -53,6 +53,7 @@ import { Separator } from "@/components/ui/separator";
 import { Label } from "recharts";
 
 const profileFormSchema = z.object({
+  name: z.string().optional(),
   ownerName: z.string().optional(),
   company: z.string().optional(),
   firstName: z.string().optional(),
@@ -97,6 +98,14 @@ function ProfileForm() {
   const [industry, setIndustry] = React.useState("");
   const [industryOpen, setIndustryOpen] = React.useState(false);
   const token = localStorage.getItem("token"); // Retrieve token from localStorage
+  const [CompanyOpen, setCompanyOpen] = React.useState(false);
+  const [contactsOpen, setContactsOpen] = React.useState(false);
+  const [loading, setLoading] = useState(true);
+  const [companyNames, setCompanyNames] = useState([]);
+
+  const [companies, setCompanies] = useState<
+    { value: string; label: string }[]
+  >([]); // Store companies
 
   async function onSubmit(data: ProfileFormValues) {
     // console.log("Sas", data);
@@ -114,6 +123,27 @@ function ProfileForm() {
       });
   }
 
+  useEffect(() => {
+    axios
+      .get("/api/companies", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        const companyNames = response.data.data.Companies.map(
+          (company) => company.name
+        );
+
+        setCompanyNames(companyNames);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching companies:", error);
+      });
+  }, [token]);
+
   return (
     <Form {...form}>
       <form
@@ -122,124 +152,182 @@ function ProfileForm() {
       >
         {" "}
         <div className="flex items-center justify-center space-x-4">
-          <Popover open={open} onOpenChange={setOpen}>
-            <div className="flex flex-col">
-              <FormLabel htmlFor="leadSource" className="mb-3 text-sm">
-                Company
-              </FormLabel>
-              <PopoverTrigger asChild>
-                <Button
-                  id="lead-source"
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-[200px] justify-between"
-                >
-                  {value
-                    ? frameworksConfig.find(
-                        (framework) => framework.value === value
-                      )?.label
-                    : "None"}{" "}
-                  {/* Display 'None' if no value is selected */}
-                  <ChevronsUpDown className="opacity-50" />
-                </Button>
-              </PopoverTrigger>
-            </div>
+          {/* Lead Source Popover */}
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="name" className="mb- flex">
+                  Companies
+                </FormLabel>
+                <Popover open={CompanyOpen} onOpenChange={setCompanyOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="lead-source"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={CompanyOpen}
+                      className="w-[200px] justify-between"
+                    >
+                      {field.value ? field.value : "None"}{" "}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] h-[300px] overflow-y-auto">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search Lead Source..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>No companies found.</CommandEmpty>
+                        <CommandGroup>
+                          {companyNames.map((companyName) => (
+                            <CommandItem
+                              key={companyName}
+                              value={companyName}
+                              onSelect={(currentValue) => {
+                                field.onChange(currentValue);
+                                setCompanyOpen(false);
+                              }}
+                            >
+                              {companyName}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  field.value === companyName
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
 
-            <PopoverContent className="w-[200px] h-[300px] overflow-y-auto">
-              <Command>
-                <CommandInput
-                  placeholder="Search Lead Source..."
-                  className="h-9"
-                />
-                <CommandList>
-                  <CommandEmpty>No framework found.</CommandEmpty>
-                  <CommandGroup>
-                    {frameworksConfig.map((framework) => (
-                      <CommandItem
-                        key={framework.value}
-                        value={framework.value}
-                        onSelect={(currentValue) => {
-                          setValue(currentValue === value ? "" : currentValue);
-                          setOpen(false);
-                          // form.setValue('leadSource', currentValue)  ; // Set the value in the form
+                    {/* Create Company Button */}
+                    <div className="mt-4 flex justify-center">
+                      <Button
+                        variant="outline"
+                        className="w-full"
+                        onClick={async () => {
+                          // Trigger API to create new company
+                          const newCompany = prompt("Enter new company name:");
+                          const gst = prompt("Enter GST Number:");
+                          const pan = prompt("Enter PAN Number:");
+                          if (newCompany) {
+                            try {
+                              // Example API call to create the company (adjust to your API endpoint)
+                              const response = await fetch("/api/companies", {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                  Authorization: `Bearer ${localStorage.getItem(
+                                    "token"
+                                  )}`,
+                                },
+                                body: JSON.stringify({
+                                  name: newCompany,
+                                  gstNumber: gst,
+                                  panNumber: pan,
+                                }),
+                              });
+                              const data = await response.json();
+                              if (response.ok) {
+                                // Optionally, update the company names in the list
+                                setCompanyNames((prev) => [
+                                  ...prev,
+                                  newCompany,
+                                ]);
+                                field.onChange(newCompany); // Set the newly created company as the value
+                              } else {
+                                alert(
+                                  "Error creating company: " + data.message
+                                );
+                              }
+                            } catch (error) {
+                              console.error("Failed to create company:", error);
+                              alert("Error creating company");
+                            }
+                          }
                         }}
                       >
-                        {framework.label}
-                        <Check
-                          className={cn(
-                            "ml-auto",
-                            value === framework.value
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-          <Popover open={open} onOpenChange={setOpen}>
-            <div className="flex flex-col">
-              <FormLabel htmlFor="leadSource" className="mb-3 text-sm">
-                Contacts
-              </FormLabel>
-              <PopoverTrigger asChild>
-                <Button
-                  id="lead-source"
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-[200px] justify-between"
-                >
-                  {value
-                    ? frameworksConfig.find(
-                        (framework) => framework.value === value
-                      )?.label
-                    : "None"}{" "}
-                  {/* Display 'None' if no value is selected */}
-                  <ChevronsUpDown className="opacity-50" />
-                </Button>
-              </PopoverTrigger>
-            </div>
+                        Create Company
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+                <FormDescription>Select the companies.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <PopoverContent className="w-[200px] h-[300px] overflow-y-auto">
-              <Command>
-                <CommandInput
-                  placeholder="Search Lead Source..."
-                  className="h-9"
-                />
-                <CommandList>
-                  <CommandEmpty>No framework found.</CommandEmpty>
-                  <CommandGroup>
-                    {frameworksConfig.map((framework) => (
-                      <CommandItem
-                        key={framework.value}
-                        value={framework.value}
-                        onSelect={(currentValue) => {
-                          setValue(currentValue === value ? "" : currentValue);
-                          setOpen(false);
-                          // form.setValue('leadSource', currentValue)  ; // Set the value in the form
-                        }}
-                      >
-                        {framework.label}
-                        <Check
-                          className={cn(
-                            "ml-auto",
-                            value === framework.value
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          {/* Contacts Popover */}
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="name" className="mb- flex">
+                  Contacts
+                </FormLabel>
+                <Popover open={contactsOpen} onOpenChange={setContactsOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id="lead-source"
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={contactsOpen}
+                      className="w-[200px] justify-between"
+                    >
+                      {field.value ? field.value : "None"}{" "}
+                      {/* Display 'None' if no value is selected */}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[200px] h-[300px] overflow-y-auto">
+                    <Command>
+                      <CommandInput
+                        placeholder="Search Lead Source..."
+                        className="h-9"
+                      />
+                      <CommandList>
+                        <CommandEmpty>No contacts found.</CommandEmpty>
+                        <CommandGroup>
+                          {/* Map over companyNames and display each in a CommandItem */}
+                          {companyNames.map((companyName) => (
+                            <CommandItem
+                              key={companyName}
+                              value={companyName}
+                              onSelect={(currentValue) => {
+                                field.onChange(currentValue); // Sync with form field
+                                setContactsOpen(false); // Close popover on select
+                              }}
+                            >
+                              {companyName}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  field.value === companyName
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormDescription>Select the contacts.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <Separator />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">

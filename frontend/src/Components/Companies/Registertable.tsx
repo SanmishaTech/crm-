@@ -15,22 +15,19 @@ export default function Dashboarddepartment() {
 
   const typeofschema = {
     name: "String",
-    address: "String",
-    contact: "String",
-    pan_number: "String",
-    gst_number: "String",
+    description: "String",
   };
 
   useEffect(() => {
     axios
-      .get(`/api/companies`, {
+      .get(`/api/departments`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        setData(response.data.data.Companies);
+        setData(response.data.data.Department);
         setLoading(false);
       })
       .catch((err) => {
@@ -42,17 +39,16 @@ export default function Dashboarddepartment() {
     setConfig({
       breadcrumbs: [
         { label: "Dashboard", href: "/dashboard" },
-        { label: "Company Master" },
+        { label: "Department" },
       ],
-      searchPlaceholder: "Search Company Masters...",
+      searchPlaceholder: "Search Departments...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "Company Master",
-        description: "Manage Company Master and view their details.",
+        title: "Department",
+        description: "Manage Department and view their details.",
         headers: [
           { label: "Name", key: "name" },
-          { label: "Address", key: "address" },
-          { label: "Contact", key: "contact" },
+          { label: "Description", key: "description" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -87,14 +83,14 @@ export default function Dashboarddepartment() {
       // Navigate to edit page or open edit modal
       if (!token) {
         console.error("No authentication token found");
-        alert("You must be logged in to edit companies");
+        alert("You must be logged in to edit departments");
         return;
       }
 
       if (product && product._id) {
         console.log(`Editing department with ID: ${product._id}`);
         axios
-          .get(`/api/companies/${product._id}`, {
+          .get(`/api/departments/${product._id}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -114,14 +110,14 @@ export default function Dashboarddepartment() {
     } else if (action === "delete") {
       if (!token) {
         console.error("No authentication token found");
-        alert("You must be logged in to delete companies");
+        alert("You must be logged in to delete departments");
         return;
       }
 
       if (product && product._id) {
         console.log(`Deleting department with ID: ${product._id}`);
         axios
-          .delete(`/api/companies/${product._id}`, {
+          .delete(`/api/departments/${product._id}`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -162,11 +158,10 @@ export default function Dashboarddepartment() {
           return {
             _id: item?.id || item?._id, // Fallback to _id if id is missing
             name: item?.name || "Unknown",
-            address: item?.address || "No Address",
-            contact: item?.contact || "No Contact",
-            edit: item?.id ? `companies/${item.id}` : "#",
-            delete: item?.id ? `companies/${item.id}` : "#",
-            editfetch: item?.id ? `companies/${item.id}` : "#",
+            description: item?.description || "No description",
+            edit: item?.id ? `departments/${item.id}` : "#",
+            delete: item?.id ? `departments/${item.id}` : "#",
+            editfetch: item?.id ? `departments/${item.id}` : "#",
           };
         })
       : [];

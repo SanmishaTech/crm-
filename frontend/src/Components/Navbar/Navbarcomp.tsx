@@ -1,90 +1,91 @@
-import React, { useState } from "react";
-import crmlogo from "@/images/crm.png";
+import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import {
+  Check,
+  ChevronsUpDown,
+  CalendarDays,
+  Search,
+  Ellipsis,
+  Bell,
+  Settings,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Bell, Settings, CalendarDays, Search } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import userAvatar from "@/images/Profile.jpg";
+//combobox
+import { cn } from "@/lib/utils ";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 
-const NewNavbar = () => {
-  const [isExploreOpen, setIsExploreOpen] = useState(false);
+const frameworks = [
+  {
+    value: "tasks",
+    label: "Tasks",
+  },
+  {
+    value: "accounts",
+    label: "Accounts",
+  },
+  {
+    value: "meetings",
+    label: "Meetings",
+  },
+  {
+    value: "invoices",
+    label: "Invoices",
+  },
+  {
+    value: "products",
+    label: "Products",
+  },
+];
 
-  const handleExploreOpen = () => {
-    setIsExploreOpen(!isExploreOpen);
+const Navbar = () => {
+  const navigate = useNavigate();
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("");
+
+  // Handle navigation to dashboard
+  const handleNavigate = () => {
+    navigate("/dashboard");
+  };
+
+  // Handle navigation to leads page
+  const handleLeadsNavigate = () => {
+    navigate("/leads");
+  };
+
+  const handleAccountsNavigate = () => {
+    navigate("/accounts");
   };
 
   return (
-    <div className="relative">
-      <div className="w-full min-h-[3rem] bg-gray-200 shadow-md items-center justify-center flex relative z-20">
-        <div className="flex items-center gap-4 p-4 min-w-[90%] bg-white max-w-[95%] rounded-md h-[3rem] relative mt-3">
-          <img src={crmlogo} alt="CRM Logo" className="w-10 h-10" />
-          <div className="flex items-center gap-4">
-            <div className="w-full flex items-center gap-2 pl-8">
-              <Button
-                variant="ghost"
-                onClick={handleExploreOpen}
-                className="flex items-center"
-              >
-                Explore
-                {isExploreOpen ? (
-                  <ChevronUp className="ml-1 w-4 h-4 text-black text-medium" />
-                ) : (
-                  <ChevronDown className="ml-1 w-4 h-4 text-black text-medium" />
-                )}
-              </Button>
-              <div className="flex gap-5 text-sm">
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-900 hover:text-primary"
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-900 hover:text-primary"
-                >
-                  Lead
-                </Link>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-900 hover:text-primary"
-                >
-                  Contacts
-                </Link>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-900 hover:text-primary"
-                >
-                  Accounts
-                </Link>
-              </div>
-            </div>
-            <div>
-              <Input className="w-full min-w-[40rem]" placeholder="Search..." />
-            </div>
-            <div className="flex gap-2 items-center ml-4">
-              <Button variant="ghost" size="icon">
-                <Search className="h-4" style={{ strokeWidth: 2 }} />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Bell className="h-4" style={{ strokeWidth: 2 }} />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <CalendarDays className="h-4" style={{ strokeWidth: 2 }} />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Settings className="h-4" style={{ strokeWidth: 2 }} />
-              </Button>
-              <Avatar className="ml-8">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-            </div>
-          </div>
     <nav className="bg-white text-black py-4 px-6 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo / Title */}
@@ -138,6 +139,20 @@ const NewNavbar = () => {
                 >
                   Department
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate("/companymaster");
+                  }}
+                >
+                  Company Master
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    navigate("/productcategory");
+                  }}
+                >
+                  Product Category
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -181,7 +196,6 @@ const NewNavbar = () => {
             </Button>
 
             <Button
-              onClick={handleContactsNavigate}
               variant="ghost"
               className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
             >
@@ -337,58 +351,8 @@ const NewNavbar = () => {
           </DropdownMenu>
         </div>
       </div>
-
-      {/* Explore Content */}
-      {isExploreOpen && (
-        <div className="absolute top-full left-0 right-0 z-10 bg-white shadow-lg">
-          <div className="w-[90%] mx-auto py-8">
-            <div className="grid grid-cols-4 gap-8">
-              {/* Sales Section */}
-              <div>
-                <h3 className="font-semibold mb-4">Sales</h3>
-                <ul className="space-y-2">
-                  <li>Leads</li>
-                  <li>Accounts</li>
-                  <li>Contacts</li>
-                  <li>Deals</li>
-                </ul>
-              </div>
-
-              {/* Marketing Section */}
-              <div>
-                <h3 className="font-semibold mb-4">Marketing</h3>
-                <ul className="space-y-2">
-                  <li>Campaigns</li>
-                  <li>Forms</li>
-                  <li>Email Templates</li>
-                </ul>
-              </div>
-
-              {/* Support Section */}
-              <div>
-                <h3 className="font-semibold mb-4">Support</h3>
-                <ul className="space-y-2">
-                  <li>Tickets</li>
-                  <li>Call Center</li>
-                  <li>Knowledge Base</li>
-                </ul>
-              </div>
-
-              {/* Analytics Section */}
-              <div>
-                <h3 className="font-semibold mb-4">Analytics</h3>
-                <ul className="space-y-2">
-                  <li>Reports</li>
-                  <li>Dashboards</li>
-                  <li>Analytics</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </nav>
   );
 };
 
-export default NewNavbar;
+export default Navbar;

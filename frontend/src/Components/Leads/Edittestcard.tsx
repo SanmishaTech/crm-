@@ -54,6 +54,7 @@ import { frameworksConfig, industriesConfig } from "./leadsConfig";
 import { Check } from "lucide-react";
 
 const profileFormSchema = z.object({
+  
   ownerName: z.any().optional(),
   company: z.any().optional(),
   firstName: z.any().optional(),
