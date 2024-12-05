@@ -8,6 +8,7 @@ import { useLocation } from "react-router-dom";
 import Dashboardholiday from "@/Components/Holiday/Registertable";
 import DashboardPage from "@/Components/Registration/Dashbordcomp/Registertable";
 import Dashboarddepartment from "@/Components/Department/Registertable";
+import CompanyMaster from "@/Components/Company/Registertable";
 import UserMasterDashboard from "@/Components/UserMaster/Registertable";
 import DashboardServices from "@/Components/Services/Registertable";
 import Dashboardparameter from "@/Components/Parameter/Registertable";
@@ -23,7 +24,6 @@ import DashboardTestLinkMaster from "@/Components/TestLinkMaster/Registertable";
 import DashboardAssociateMaster from "@/Components/AssociateMaster/Registertable";
 import DashboardPatientMaster from "@/Components/PatientMaster/Registertable";
 import DashboardTatMaster from "@/Components/TatMaster/Registertable";
-import DashboardTatCard from "@/Components/TatMaster/";
 import Dashboardprefix from "@/Components/PrefixMaster/Registertable";
 import Specimen from "@/Components/Specimen/Registertable";
 import DashboardTestcard from "@/Components/Testmaster/TestCard";
@@ -97,6 +97,7 @@ const Dashboard = () => {
         {location.pathname === "/services" && <DashboardServices />}
         {location.pathname === "/holiday" && <Dashboardholiday />}
         {location.pathname === "/department" && <Dashboarddepartment />}
+        {location.pathname === "/companymaster" && <CompanyMaster />}
         {location.pathname === "/usermaster" && <UserMasterDashboard />}
         {location.pathname === "/leads" && <Dashboardleads />}
         {location.pathname === "/leads/add" && <DashboardAddLeads />}

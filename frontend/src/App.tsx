@@ -113,6 +113,7 @@ function App() {
         <Route path="/holiday" element={<Dashboard />} />
         <Route path="/services" element={<Dashboard />} />
         <Route path="/department" element={<Dashboard />} />
+        <Route path="/companymaster" element={<Dashboard />} />
         <Route path="/parameter" element={<Dashboard />} />
         <Route path="/reason" element={<Dashboard />} />
         <Route path="/barcode" element={<Dashboard />} />

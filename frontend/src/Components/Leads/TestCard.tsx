@@ -121,8 +121,129 @@ function ProfileForm() {
         className="space-y-8 pb-[2rem]"
       >
         {" "}
+        <div className="flex items-center justify-center space-x-4">
+          <Popover open={open} onOpenChange={setOpen}>
+            <div className="flex flex-col">
+              <FormLabel htmlFor="leadSource" className="mb-3 text-sm">
+                Company
+              </FormLabel>
+              <PopoverTrigger asChild>
+                <Button
+                  id="lead-source"
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-[200px] justify-between"
+                >
+                  {value
+                    ? frameworksConfig.find(
+                        (framework) => framework.value === value
+                      )?.label
+                    : "None"}{" "}
+                  {/* Display 'None' if no value is selected */}
+                  <ChevronsUpDown className="opacity-50" />
+                </Button>
+              </PopoverTrigger>
+            </div>
+
+            <PopoverContent className="w-[200px] h-[300px] overflow-y-auto">
+              <Command>
+                <CommandInput
+                  placeholder="Search Lead Source..."
+                  className="h-9"
+                />
+                <CommandList>
+                  <CommandEmpty>No framework found.</CommandEmpty>
+                  <CommandGroup>
+                    {frameworksConfig.map((framework) => (
+                      <CommandItem
+                        key={framework.value}
+                        value={framework.value}
+                        onSelect={(currentValue) => {
+                          setValue(currentValue === value ? "" : currentValue);
+                          setOpen(false);
+                          // form.setValue('leadSource', currentValue)  ; // Set the value in the form
+                        }}
+                      >
+                        {framework.label}
+                        <Check
+                          className={cn(
+                            "ml-auto",
+                            value === framework.value
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+          <Popover open={open} onOpenChange={setOpen}>
+            <div className="flex flex-col">
+              <FormLabel htmlFor="leadSource" className="mb-3 text-sm">
+                Contacts
+              </FormLabel>
+              <PopoverTrigger asChild>
+                <Button
+                  id="lead-source"
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-[200px] justify-between"
+                >
+                  {value
+                    ? frameworksConfig.find(
+                        (framework) => framework.value === value
+                      )?.label
+                    : "None"}{" "}
+                  {/* Display 'None' if no value is selected */}
+                  <ChevronsUpDown className="opacity-50" />
+                </Button>
+              </PopoverTrigger>
+            </div>
+
+            <PopoverContent className="w-[200px] h-[300px] overflow-y-auto">
+              <Command>
+                <CommandInput
+                  placeholder="Search Lead Source..."
+                  className="h-9"
+                />
+                <CommandList>
+                  <CommandEmpty>No framework found.</CommandEmpty>
+                  <CommandGroup>
+                    {frameworksConfig.map((framework) => (
+                      <CommandItem
+                        key={framework.value}
+                        value={framework.value}
+                        onSelect={(currentValue) => {
+                          setValue(currentValue === value ? "" : currentValue);
+                          setOpen(false);
+                          // form.setValue('leadSource', currentValue)  ; // Set the value in the form
+                        }}
+                      >
+                        {framework.label}
+                        <Check
+                          className={cn(
+                            "ml-auto",
+                            value === framework.value
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+        <Separator />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
-          <FormField
+          {/* <FormField
             className="flex-1"
             control={form.control}
             name="ownerName"
@@ -151,9 +272,9 @@ function ProfileForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="company"
             render={({ field }) => (
@@ -166,7 +287,7 @@ function ProfileForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <FormField
             control={form.control}
             name="firstName"
@@ -652,29 +773,31 @@ function ProfileForm() {
 export default function SettingsProfilePage() {
   const navigate = useNavigate();
   return (
-    <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
-      <Button
-        onClick={() => navigate("/leads")}
-        className="ml-4 flex gap-2 m-8 mb-4"
-      >
-        <MoveLeft className="w-5 text-white" />
-        Back
-      </Button>
+    <div className="flex items-center justify-center">
+      <Card className="min-w-[350px] overflow-auto bg-light shadow-md pt-4 ">
+        <Button
+          onClick={() => navigate("/leads")}
+          className="ml-4 flex gap-2 m-8 mb-4"
+        >
+          Cancel
+        </Button>
 
-      <CardHeader>
-        <CardTitle>Leads</CardTitle>
-        <CardDescription>Add the Leads Here.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6 ">
-          <Separator />
-          <ProfileForm />
-        </div>
-      </CardContent>
-      {/* <CardFooter className="flex justify-between">
+        <CardHeader>
+          <CardTitle>Leads</CardTitle>
+          <CardDescription>Add the Leads Here.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6 ">
+            <Separator />
+            <ProfileForm />
+          </div>
+        </CardContent>
+
+        {/* <CardFooter className="flex justify-between">
         <Button variant="outline">Cancel</Button>
         <Button>Deploy</Button>
       </CardFooter> */}
-    </Card>
+      </Card>
+    </div>
   );
 }
