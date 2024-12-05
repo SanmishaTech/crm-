@@ -151,7 +151,7 @@ function ProfileForm() {
         {" "}
         <h5 className="text-2xl font-bold">Account Information</h5>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-full p-4">
-          <FormField
+          {/* <FormField
             className="flex-1"
             control={form.control}
             name="ownerName"
@@ -178,7 +178,7 @@ function ProfileForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <Popover open={open} onOpenChange={setOpen}>
             <div className="flex flex-col">
               <FormLabel htmlFor="leadSource" className="mb-3 text-sm">

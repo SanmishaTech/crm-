@@ -102,7 +102,7 @@ export default function Dashboardholiday() {
           { label: "Company", key: "company" },
           { label: "Email", key: "email" },
           { label: "Phone", key: "mobile" },
-          { label: "Lead Source", key: "mobile" },
+          { label: "Lead Source", key: "leadSource" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -219,6 +219,7 @@ export default function Dashboardholiday() {
             company: item?.company || "No description",
             email: item?.email || "Unknown",
             mobile: item?.mobile || "Unknown",
+            leadSource: item?.leadSource || "Unknown",
             edit: item?.id ? `leads/${item.id}` : "#",
             delete: item?.id ? `leads/${item.id}` : "#",
             editfetch: item?.id ? `leads/${item.id}` : "#",

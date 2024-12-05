@@ -134,9 +134,9 @@ function ProfileForm() {
 
   async function onSubmit(data: ProfileFormValues) {
     // console.log("Sas", data);
-     // Implement actual profile update logic here
+    // Implement actual profile update logic here
     await axios.post(`/api/associatemaster`, data).then((res) => {
-       toast.success("Associate Master Created Successfully");
+      toast.success("Associate Master Created Successfully");
       navigate("/accounts");
     });
   }

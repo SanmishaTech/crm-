@@ -15,20 +15,22 @@ export default function Dashboarddepartment() {
 
   const typeofschema = {
     name: "String",
-    email: "String",
-    password: "String",
+    address: "String",
+    contact: "String",
+    panNumber: "String",
+    gstNumber: "String",
   };
 
   useEffect(() => {
     axios
-      .get(`/api/users`, {
+      .get(`/api/departments`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        setData(response.data.data.Users);
+        setData(response.data.data.Department);
         setLoading(false);
       })
       .catch((err) => {
@@ -40,16 +42,17 @@ export default function Dashboarddepartment() {
     setConfig({
       breadcrumbs: [
         { label: "Dashboard", href: "/dashboard" },
-        { label: "User Master" },
+        { label: "Company Master" },
       ],
-      searchPlaceholder: "Search User Master...",
+      searchPlaceholder: "Search Company Masters...",
       userAvatar: "/path-to-avatar.jpg",
       tableColumns: {
-        title: "User Master",
-        description: "Manage User Master and view their details.",
+        title: "Company Master",
+        description: "Manage Company Master and view their details.",
         headers: [
           { label: "Name", key: "name" },
-          { label: "Email", key: "email" },
+          { label: "Address", key: "adress" },
+          { label: "Contact", key: "contact" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -84,41 +87,41 @@ export default function Dashboarddepartment() {
       // Navigate to edit page or open edit modal
       if (!token) {
         console.error("No authentication token found");
-        alert("You must be logged in to edit Users");
-        return;
-      }
-
-      // if (product && product._id) {
-      //   console.log(`Editing department with ID: ${product._id}`);
-      //   axios
-      //     .get(`/api/users/${product._id}`, {
-      //       headers: {
-      //         Authorization: `Bearer ${token}`,
-      //       },
-      //     })
-      //     .then((response) => {
-      //       console.log("Response:", response.data);
-      //       setProduct(response.data);
-      //       setIsEditModalOpen(true);
-      //     })
-      //     .catch((error) => {
-      //       console.error("Error fetching department:", error);
-      //       alert("Error fetching department");
-      //     });
-      // } else {
-      //   console.log("No product found");
-      // }
-    } else if (action === "delete") {
-      if (!token) {
-        console.error("No authentication token found");
-        alert("You must be logged in to delete users");
+        alert("You must be logged in to edit departments");
         return;
       }
 
       if (product && product._id) {
-        console.log(`Deleting user with ID: ${product._id}`);
+        console.log(`Editing department with ID: ${product._id}`);
         axios
-          .delete(`/api/users/${product._id}`, {
+          .get(`/api/departments/${product._id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            console.log("Response:", response.data);
+            setProduct(response.data);
+            setIsEditModalOpen(true);
+          })
+          .catch((error) => {
+            console.error("Error fetching department:", error);
+            alert("Error fetching department");
+          });
+      } else {
+        console.log("No product found");
+      }
+    } else if (action === "delete") {
+      if (!token) {
+        console.error("No authentication token found");
+        alert("You must be logged in to delete departments");
+        return;
+      }
+
+      if (product && product._id) {
+        console.log(`Deleting department with ID: ${product._id}`);
+        axios
+          .delete(`/api/departments/${product._id}`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -132,7 +135,7 @@ export default function Dashboarddepartment() {
             );
           })
           .catch((error) => {
-            console.error("Error deleting user:", error);
+            console.error("Error deleting department:", error);
             if (error.response?.status === 401) {
               alert("Unauthorized: Please log in again");
               // Optionally redirect to login page or handle token expiration
@@ -140,7 +143,7 @@ export default function Dashboarddepartment() {
               localStorage.removeItem("user");
               window.location.href = "/login";
             } else {
-              alert("Failed to delete user. Please try again.");
+              alert("Failed to delete department. Please try again.");
             }
           });
       } else {
@@ -159,10 +162,11 @@ export default function Dashboarddepartment() {
           return {
             _id: item?.id || item?._id, // Fallback to _id if id is missing
             name: item?.name || "Unknown",
-            email: item?.email || "No email",
-            edit: item?.id ? `users/${item.id}` : "#",
-            delete: item?.id ? `users/${item.id}` : "#",
-            editfetch: item?.id ? `users/${item.id}` : "#",
+            address: item?.address || "No Address",
+            contact: item?.contact || "No Contact",
+            edit: item?.id ? `departments/${item.id}` : "#",
+            delete: item?.id ? `departments/${item.id}` : "#",
+            editfetch: item?.id ? `departments/${item.id}` : "#",
           };
         })
       : [];
