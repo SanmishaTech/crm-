@@ -4,17 +4,20 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CompanyResource;
+use App\Http\Controllers\Api\BaseController;
 
-class CompaniesController extends Controller
+class CompaniesController extends BaseController
 {
     /**
      * Display Company.
      */
     public function index(): JsonResponse
     {
-        $products = Company::all();
-        return $this->sendResponse(['Products'=> ProductResource::collection($products)], "Products retrived successfuly");
+        $companies = Company::all();
+        return $this->sendResponse(['Companies'=> CompanyResource::collection($companies)], "Company retrived successfuly");
 
     }
 
@@ -23,12 +26,13 @@ class CompaniesController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $product = new Company();
-        $product->product_category_id = $request->input("category_id");
-        $product->name = $request->input("name");
-        $product->brand = $request->input("brand");
-        $product->save();
-        return $this->sendResponse(['Company'=> new ProductResource($product)], "Company Stored successfuly");
+        $company = new Company();
+        $company->name = $request->input("name");
+        $company->gst_number = $request->input("gst_number");
+        $company->pan_number = $request->input("pan_number");
+        $company->address = $request->input("address");
+        $company->save();
+        return $this->sendResponse(['Company'=> new CompanyResource($company)], "Company Stored successfuly");
 
     }
 
@@ -37,11 +41,11 @@ class CompaniesController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $product = Company::find($id);
-        if(!$product){
+        $company = Company::find($id);
+        if(!$company){
             return $this->sendError("Company not found.", ['Error'=> "Company not found"]);
         }
-        return $this->sendResponse(['Company'=> new ProductResource($product)], "Company retrived successfuly");
+        return $this->sendResponse(['Company'=> new CompanyResource($company)], "Company retrived successfuly");
 
     }
 
@@ -50,16 +54,17 @@ class CompaniesController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        $product = Company::find($id);
-        if(!$product){
+        $company = Company::find($id);
+        if(!$company){
             return $this->sendError("Company not found.", ['Error'=> "Company not found"]);
         }
 
-        $product->product_category_id = $request->input("category_id");
-        $product->name = $request->input("name");
-        $product->brand = $request->input("brand");
-        $product->save();
-        return $this->sendResponse(['Company'=> new ProductResource($product)], "Company Updated successfuly");
+        $company->name = $request->input("name");
+        $company->gst_number = $request->input("gst_number");
+        $company->pan_number = $request->input("pan_number");
+        $company->address = $request->input("address");
+        $company->save();
+        return $this->sendResponse(['Company'=> new CompanyResource($company)], "Company Updated successfuly");
          
     }
 
@@ -68,11 +73,11 @@ class CompaniesController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $product = Company::find($id);
-        if(!$product){
+        $company = Company::find($id);
+        if(!$company){
             return $this->sendError("Company not found.", ['Error'=> "Company not found"]);
         }
-         $product->delete();
+         $company->delete();
          return $this->sendResponse([], "Company Deleted successfuly");
     }
 }

@@ -15,6 +15,14 @@ export default function Dashboarddepartment() {
 
   const typeofschema = {
     name: "String",
+    product_category: {
+      type: "Select",
+      label: "Product Category",
+      options: machine?.map((machine) => ({
+        value: machine?._id,
+        label: machine?.name,
+      })),
+    },
   };
 
   useEffect(() => {
