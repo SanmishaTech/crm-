@@ -8,6 +8,8 @@ import { useLocation } from "react-router-dom";
 import Dashboardholiday from "@/Components/Holiday/Registertable";
 import DashboardPage from "@/Components/Registration/Dashbordcomp/Registertable";
 import Dashboarddepartment from "@/Components/Department/Registertable";
+import Dashboardproduct from "@/Components/Product/Registertable";
+
 import CompanyMaster from "@/Components/Company/Registertable";
 import Dashboardproductcategory from "@/Components/ProductCategory/Registertable";
 import UserMasterDashboard from "@/Components/UserMaster/Registertable";
@@ -98,6 +100,7 @@ const Dashboard = () => {
         {location.pathname === "/services" && <DashboardServices />}
         {location.pathname === "/holiday" && <Dashboardholiday />}
         {location.pathname === "/department" && <Dashboarddepartment />}
+        {location.pathname === "/productmaster" && <Dashboardproduct />}
 
         {location.pathname === "/companymaster" && <CompanyMaster />}
 

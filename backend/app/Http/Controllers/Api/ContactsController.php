@@ -2,48 +2,82 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\ContactResource;
+use App\Http\Controllers\Api\BaseController;
 
-class ContactsController extends Controller
+class ContactsController extends BaseController
 {
-    /**
-     * Display a listing of the resource.
+   /**
+     * Display Contact.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $contacts = Contact::all();
+        return $this->sendResponse(['Contact'=> ContactResource::collection($contacts)], "Contact retrived successfuly");
+
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store Contact.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        //
+        $contact = new Contact();
+        $contact->company_id = $request->input("companyId");
+        $contact->name = $request->input("name");
+        $contact->mobile = $request->input("mobile");
+        $contact->email = $request->input("email");
+        $contact->save();
+        return $this->sendResponse(['Contact'=> new ContactResource($contact)], "Contact Stored successfuly");
+
     }
 
     /**
-     * Display the specified resource.
+     * Display Contact.
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        //
+        $contact = Contact::find($id);
+        if(!$contact){
+            return $this->sendError("Contact not found.", ['Error'=> "Contact not found"]);
+        }
+        return $this->sendResponse(['Contact'=> new ContactResource($contact)], "Contact retrived successfuly");
+
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update Contact.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): JsonResponse
     {
-        //
+        $contact = Contact::find($id);
+        if(!$contact){
+            return $this->sendError("Contact not found.", ['Error'=> "Contact not found"]);
+        }
+
+        $contact->company_id = $request->input("companyId");
+        $contact->name = $request->input("name");
+        $contact->mobile = $request->input("mobile");
+        $contact->email = $request->input("email");
+        $contact->save();
+        return $this->sendResponse(['Contact'=> new ContactResource($contact)], "Contact Updated successfuly");
+         
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove Contact.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        //
+        $contact = Contact::find($id);
+        if(!$contact){
+            return $this->sendError("Contact not found.", ['Error'=> "Contact not found"]);
+        }
+         $contact->delete();
+         return $this->sendResponse([], "Contact Deleted successfuly");
     }
 }

@@ -13,8 +13,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 
 export default function AlertDialogbox({ url }) {
-  const token = localStorage.getItem("token"); // Retrieve token from localStorage
-
+  const token = localStorage.getItem("token");
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -40,7 +39,6 @@ export default function AlertDialogbox({ url }) {
                   Authorization: `Bearer ${token}`,
                 },
               });
-
               window.location.reload();
             }}
           >

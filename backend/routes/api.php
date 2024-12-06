@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\RolesController;
 use App\Http\Controllers\Api\TasksController;
+use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\ProjectsController;
 use App\Http\Controllers\Api\CompaniesController;
@@ -31,6 +32,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::resource('departments', DepartmentController::class);  
    Route::resource('products', ProductsController::class);  
    Route::resource('companies', CompaniesController::class);  
+   Route::resource('contacts', ContactsController::class);  
    Route::resource('product_categories', ProductCategoriesController::class);  
    Route::resource('roles', RolesController::class);
    Route::resource('permissions', PermissionsController::class);    

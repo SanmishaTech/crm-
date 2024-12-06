@@ -135,7 +135,7 @@ export default function Dashboard({
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
             />
           </div>
-          {/* <DropdownMenu>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
@@ -167,7 +167,7 @@ export default function Dashboard({
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu> */}
+          </DropdownMenu>
         </header>
 
         {/* {toggleedit && (
@@ -250,7 +250,7 @@ export default function Dashboard({
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                       {tableData?.map((row) => (
+                      {tableData?.map((row) => (
                         <React.Fragment key={row._id}>
                           <TableRow>
                             {tableColumns?.headers?.map((header, index) => (
@@ -283,7 +283,7 @@ export default function Dashboard({
                                         Actions
                                       </DropdownMenuLabel>
                                       <Edititem
-                                        editid={row?.edit}
+                                        editid={row?._id}
                                         toogleedit={setToggleedit}
                                         typeofschema={typeofschema}
                                         setToggleedit={setToggleedit}
