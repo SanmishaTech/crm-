@@ -351,7 +351,55 @@ const Navbar = () => {
           </DropdownMenu>
         </div>
       </div>
-    </nav>
+
+       {isExploreOpen && (
+        <div className="absolute top-full left-0 right-0 z-10 bg-white shadow-lg">
+          <div className="w-[90%] mx-auto py-8">
+            <div className="grid grid-cols-4 gap-8">
+               <div>
+                <h3 className="font-semibold mb-4">Sales</h3>
+                <ul className="space-y-2">
+                  <li>Leads</li>
+                  <li>Accounts</li>
+                  <li>Contacts</li>
+                  <li>Deals</li>
+                </ul>
+              </div>
+
+              {/* Marketing Section */}
+              <div>
+                <h3 className="font-semibold mb-4">Marketing</h3>
+                <ul className="space-y-2">
+                  <li>Campaigns</li>
+                  <li>Forms</li>
+                  <li>Email Templates</li>
+                </ul>
+              </div>
+
+              {/* Support Section */}
+              <div>
+                <h3 className="font-semibold mb-4">Support</h3>
+                <ul className="space-y-2">
+                  <li>Tickets</li>
+                  <li>Call Center</li>
+                  <li>Knowledge Base</li>
+                </ul>
+              </div>
+
+              {/* Analytics Section */}
+              <div>
+                <h3 className="font-semibold mb-4">Analytics</h3>
+                <ul className="space-y-2">
+                  <li>Reports</li>
+                  <li>Dashboards</li>
+                  <li>Analytics</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
