@@ -64,7 +64,7 @@ function App() {
     <div>
       <Toaster position="top-right" />
       {/* Conditionally render Navbar based on isLoggedIn */}
-      {<Navbar />}
+      {isLoggedIn && <Navbar />}
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a command or search..." />

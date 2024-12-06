@@ -1,5 +1,5 @@
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import React from "react";
 import {
   Check,
   ChevronsUpDown,
@@ -70,7 +70,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
-
+  const [isExploreOpen, setIsExploreOpen] = useState(false);
   // Handle navigation to dashboard
   const handleNavigate = () => {
     navigate("/dashboard");
@@ -352,11 +352,11 @@ const Navbar = () => {
         </div>
       </div>
 
-       {isExploreOpen && (
+      {isExploreOpen && (
         <div className="absolute top-full left-0 right-0 z-10 bg-white shadow-lg">
           <div className="w-[90%] mx-auto py-8">
             <div className="grid grid-cols-4 gap-8">
-               <div>
+              <div>
                 <h3 className="font-semibold mb-4">Sales</h3>
                 <ul className="space-y-2">
                   <li>Leads</li>
@@ -399,7 +399,7 @@ const Navbar = () => {
           </div>
         </div>
       )}
-    </div>
+    </nav>
   );
 };
 
