@@ -20,8 +20,15 @@ class DepartmentController extends BaseController
     {
         $authUser = auth()->user()->roles->pluck('name')->first();
         if($authUser == 'admin'){
-            $department = Department::all();
-            return $this->sendResponse(['Department'=> DepartmentResource::collection($department)], "department retrived successfuly");
+            $department = Department::paginate(5);
+            return $this->sendResponse(['Department'=> DepartmentResource::collection($department),
+            'pagination' => [
+                'current_page' => $department->currentPage(),
+                'last_page' => $department->lastPage(),
+                'per_page' => $department->perPage(),
+                'total' => $department->total(),
+            ]
+        ], "department retrived successfuly");
 
         } elseif($authUser == 'member'){
             // $projects = auth()->user()->projects()->users()->get();  //auth()->user()->projects()->users()->get();   or auth()->user()->projects()->with("users")->get();
@@ -89,4 +96,33 @@ class DepartmentController extends BaseController
 
         return $this->sendResponse([], "department deleted successfully");
     }
+
+    /**
+     * Search Department
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $query = Department::query();
+
+        if ($request->query('search')) {
+            $searchTerm = $request->query('search'); // Get the search term from the query parameter
+    
+            // Apply filters for 'name' and 'description' based on the search term
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('name', 'like', '%' . $searchTerm . '%')
+                      ->orWhere('description', 'like', '%' . $searchTerm . '%');
+            });
+        }
+        $departments = $query->paginate(5);
+
+        return $this->sendResponse(["Department"=>DepartmentResource::collection($departments),
+        'pagination' => [
+            'current_page' => $departments->currentPage(),
+            'last_page' => $departments->lastPage(),
+            'per_page' => $departments->perPage(),
+            'total' => $departments->total(),
+        ]], "Department retrived successfully");
+    }
+
+   
 }

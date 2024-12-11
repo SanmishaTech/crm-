@@ -52,6 +52,7 @@ import Dashboardcontacts from "@/Components/Contacts/Registertable";
 
 import DashboardAddLeads from "@/Components/Leads/TestCard";
 import DashboardUpdateLeads from "@/Components/Leads/Edittestcard";
+import DepartmentPage from "@/Components/department/index";
 
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -101,6 +102,7 @@ const Dashboard = () => {
         {location.pathname === "/holiday" && <Dashboardholiday />}
         {location.pathname === "/department" && <Dashboarddepartment />}
         {location.pathname === "/productmaster" && <Dashboardproduct />}
+        {location.pathname === "/departmentPage" && <DepartmentPage />}
 
         {location.pathname === "/companymaster" && <CompanyMaster />}
 

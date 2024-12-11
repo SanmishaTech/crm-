@@ -27,7 +27,7 @@ class ProductsController extends BaseController
     public function store(Request $request): JsonResponse
     {
         $product = new Product();
-        $product->product_category_id = $request->input("category_id");
+        $product->product_category_id = $request->input("product_category_id");
         $product->name = $request->input("name");
         $product->brand = $request->input("brand");
         $product->save();
@@ -58,7 +58,7 @@ class ProductsController extends BaseController
             return $this->sendError("Product not found.", ['Error'=> "Product not found"]);
         }
 
-        $product->product_category_id = $request->input("category_id");
+        $product->product_category_id = $request->input("product_category_id");
         $product->name = $request->input("name");
         $product->brand = $request->input("brand");
         $product->save();

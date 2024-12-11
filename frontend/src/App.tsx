@@ -156,6 +156,7 @@ function App() {
         <Route path="/accounts/add" element={<Dashboard />} />
         <Route path="/contacts" element={<Dashboard />} />
         <Route path="/contacts/add" element={<Dashboard />} />
+        <Route path="/departmentPage" element={<Dashboard />} />
       </Routes>
     </div>
   );

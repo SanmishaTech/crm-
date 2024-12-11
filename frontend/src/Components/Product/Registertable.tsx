@@ -22,11 +22,11 @@ export default function Dashboardholiday() {
   useEffect(() => {
     const fetchMachine = async () => {
       try {
-        const response = await axios.get(`/api/product_categories`,{
-          headers:{
+        const response = await axios.get(`/api/product_categories`, {
+          headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         console.log("This is a mahcine", response.data);
         setMachine(response.data?.data?.ProductCategories);
@@ -61,7 +61,7 @@ export default function Dashboardholiday() {
       type: "Select",
       label: "Product Category",
       options: machine?.map((machine) => ({
-        value: machine?._id,
+        value: machine?.id,
         label: machine?.name,
       })),
     },
@@ -85,11 +85,11 @@ export default function Dashboardholiday() {
   useEffect(() => {
     // Fetch data from the API
     axios
-      .get(`/api/products`,{
-        headers:{
+      .get(`/api/products`, {
+        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       })
       .then((response) => {
         setData(response?.data?.data?.Products);
@@ -105,16 +105,16 @@ export default function Dashboardholiday() {
     setConfig({
       breadcrumbs: [
         { label: "Dashboard", href: "/dashboard" },
-        { label: "Test Machine Link" },
+        { label: "Products" },
       ],
-      searchPlaceholder: "Search Test Machine Link...",
+      searchPlaceholder: "Search Products...",
       userAvatar: userAvatar, // Use the imported avatar
       tableColumns: {
-        title: "Test Machine Link",
-        description: "Manage Test Machine Link and view their details.",
+        title: "Products",
+        description: "Manage Products and view their details.",
         headers: [
           { label: "Product Name", key: "name" },
-          { label: "Brand` Name", key: "brand" },
+          { label: "Brand Name", key: "brand" },
           { label: "Action", key: "action" },
         ],
         actions: [
@@ -186,7 +186,7 @@ export default function Dashboardholiday() {
       _id: item?.id,
       name: item?.name || "Name not provided",
       brand: item?.brand || "Brand Name not provided",
-      delete: `/products/delete/${item?.id}`,
+      delete: `/products/${item?.id}`,
       action: "actions", // Placeholder for action buttons
       // Additional fields can be added here
     };

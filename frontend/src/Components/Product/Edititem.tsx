@@ -67,8 +67,10 @@ const AddItem: React.FC<AddItemProps> = ({
         .then((res) => {
           setFormData({
             ...res.data,
-            name: res.data.name?._id,
-            test: res.data.test?._id,
+            name: res.data?.data?.Product?.name,
+            brand: res.data?.data?.Product?.brand,
+            product_category_id: res.data?.data?.Product?.product_category_id,
+
           });
         })
         .catch((err) => {
