@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Validator;
 use App\Models\User;
 use App\Models\Profile;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Role;
@@ -17,43 +18,7 @@ use App\Http\Controllers\Api\BaseController;
 
 class UserController extends BaseController
 {
-     /**
-     * Register User
-     */
-    public function register(Request $request): JsonResponse
-    {
-        $validator = Validator::make($request->all(), [
-             'name'=>'required|string|max:255',
-             'email'=>['required', 'email:rfc,dns', 'unique:users'],
-             'password'=>'required|string|min:6|confirmed',
-             'password_confirmation'=>'required',
-        ]);
 
-      
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
-
-        $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-
-        $user = new User();
-        $user->name = $input['name'];
-        $user->email = $input['email'];
-        $user->password = $input['password'];
-        $user->save();
-
-        $memberRole = Role::where('name', 'member')->first();
-        $user->assignRole($memberRole);
-        //$role = $user->getRoleNames();
-        $profile = new Profile();
-        $profile->user_id = $user->id;
-        $profile->name = $user->name;
-        $profile->email = $user->email;
-        $profile->save(); 
-        
-        return $this->sendResponse(['user'=>new UserResource($user), 'profile'=>new ProfileResource($profile)], 'User register successfully.');
-    }
 
      /**
      * Login User
@@ -72,7 +37,7 @@ class UserController extends BaseController
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             $user = Auth::user();
             $token =  $user->createToken($user->name)->plainTextToken;
-            $profile = Profile::where('user_id', $user->id)->first();
+            $profile = Employee::where('user_id', $user->id)->first();
             return $this->sendResponse(['user'=>new UserResource($user), 'profile'=>new ProfileResource($profile), 'token'=>$token], 'User login successfully.');
 
         } else{

@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProfileResource extends JsonResource
+class ClientResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,16 +14,20 @@ class ProfileResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $user = new UserResource(User::find($this->user_id));
         return [
             'id' => $this->id,
-            'user_id' => $this->user_id,
-            'name' => $this->name,
+            'client' => $this->client,
+            'street_address' => $this->street_address,
+            'area' => $this->area,
+            'city' => $this->city,
+            'state' => $this->state,
+            'pincode' => $this->pincode,
+            'country' => $this->country,
+            'gstin' => $this->gstin,
+            'contact_no' => $this->contact_no,
             'email' => $this->email,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'user' => $user,
-        ]; 
-        
+        ];
     }
 }

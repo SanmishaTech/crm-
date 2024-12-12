@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Task;
 use App\Models\Profile;
 use App\Models\Project;
+use App\Models\Employee;
 use App\Models\TaskSubmission;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
@@ -52,12 +53,12 @@ class User extends Authenticatable
     }
 
 
-    public function projects(){
-        return $this->belongsToMany(Project::class, "project_user");
-    }
+    // public function projects(){
+    //     return $this->belongsToMany(Project::class, "project_user");
+    // }
 
-   public function profile(){
-    return $this->hasOne(Profile::class, 'user_id');
+   public function employee(){
+    return $this->hasOne(Employee::class, 'user_id');
    }
 
 }
