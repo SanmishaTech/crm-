@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\DatabaseSeeder;
+use Database\Seeders\SupplierSeeder;
 use Database\Seeders\CreateAdminUserSeeder;
 use Database\Seeders\CreateMemberUserSeeder;
 
@@ -23,6 +25,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(CreateAdminUserSeeder::class);
         $this->call(CreateMemberUserSeeder::class);
+        $this->call(SupplierSeeder::class);
 
     }
 }
