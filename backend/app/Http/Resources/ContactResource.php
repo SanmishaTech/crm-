@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Client;
 use Illuminate\Http\Request;
+use App\Http\Resources\ClientResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ContactResource extends JsonResource
@@ -14,6 +16,8 @@ class ContactResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $client = new ClientResource(Client::find($this->client_id));
+
         return [
             'id' => $this->id,
             'client_id' => $this->client_id,
@@ -25,6 +29,7 @@ class ContactResource extends JsonResource
             'email' => $this->email,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'client'=> $client,
         ];
     }
 }

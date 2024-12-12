@@ -72,8 +72,13 @@ class ContactsController extends BaseController
             $clients->contact_no = $request->input("contact_no");
             $clients->email = $request->input("email"); 
             $clients->save();
-        };
-        $contact->client_id = $clients->id;
+            $contact->client_id = $clients->id;
+            
+
+        }
+        else{
+        $contact->client_id = $request->input("client_id");
+    };
         $contact->contact_person = $request->input("contact_person");
         $contact->department = $request->input("department");
         $contact->designation = $request->input("designation");
@@ -81,7 +86,7 @@ class ContactsController extends BaseController
         $contact->mobile_2 = $request->input("mobile_2");
         $contact->email = $request->input("email");
         $contact->save();
-        return $this->sendResponse(['Contact'=> new ContactResource($contact), 'Client'=> new ClientResource($clients) ],  "Contact Stored successfully");
+        return $this->sendResponse(['Contact'=> new ContactResource($contact)],  "Contact Stored successfully");
 
     }
          
@@ -127,8 +132,12 @@ class ContactsController extends BaseController
             $clients->contact_no = $request->input("contact_no");
             $clients->email = $request->input("email"); 
             $clients->save();
+            $contact->client_id = $clients->id;
+        }
+        else{
+            $contact->client_id = $request->input("client_id");
         };
-        $contact->client_id = $request->input("client_id");
+        // $contact->client_id = $request->input("client_id");
         $contact->contact_person = $request->input("contact_person");
         $contact->department = $request->input("department");
         $contact->designation = $request->input("designation");
@@ -136,7 +145,7 @@ class ContactsController extends BaseController
         $contact->mobile_2 = $request->input("mobile_2");
         $contact->email = $request->input("email");
         $contact->save();
-        return $this->sendResponse(['Contact'=> new ContactResource($contact), 'Client'=> new ClientResource($clients)], "Contact Updated successfuly");
+        return $this->sendResponse(['Contact'=> new ContactResource($contact)], "Contact Updated successfuly");
          
     }
 
