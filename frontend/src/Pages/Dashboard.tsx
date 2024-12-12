@@ -54,6 +54,8 @@ import DashboardAddLeads from "@/Components/Leads/TestCard";
 import DashboardUpdateLeads from "@/Components/Leads/Edittestcard";
 import DepartmentPage from "@/Components/department/index";
 
+import Suppliers from "@/Components/Suppliers/Suppliers";
+
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import ContainerLinkMaster from "@/Components/ContainerLinkMaster/Registertable";
@@ -92,7 +94,7 @@ const Dashboard = () => {
   return (
     <div className="flex bg-background w-[100vw] h-full relative min-h-screen">
       <div className="min-h-screen relative top-0 bg-accent/40">
-        <Sidebar className="min-h-full" />
+        {/* <Sidebar className="min-h-full" /> */}
       </div>
       <main className="w-full flex-1 overflow-hidden ">
         {location.pathname === "/dashboard" && <Dashboardcomponent />}
@@ -164,6 +166,7 @@ const Dashboard = () => {
         {location.pathname === "/containerlinkmaster" && (
           <ContainerLinkMaster />
         )}
+        {location.pathname === "/suppliers" && <Suppliers />}
       </main>
     </div>
   );

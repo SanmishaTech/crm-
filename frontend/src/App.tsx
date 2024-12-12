@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/command";
 import { Icons } from "@/Dashboard/Icon";
 import { Editor } from "@/Components/Editor/Editor";
-import Navbar from "@/Navbar/NewNavbar"; // Import Navbar
+import Navbar from "@/Components/Navbar/Navbarcomp"; // Import Navbar
 import { navItems } from "@/Config/data";
 
 function App() {
@@ -65,7 +65,7 @@ function App() {
     <div>
       <Toaster position="top-right" />
       {/* Conditionally render Navbar based on isLoggedIn */}
-      {/* {isLoggedIn && <Navbar />} */}
+      {isLoggedIn && <Navbar />}
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a command or search..." />
@@ -158,6 +158,8 @@ function App() {
         <Route path="/contacts" element={<Dashboard />} />
         <Route path="/contacts/add" element={<Dashboard />} />
         <Route path="/departmentPage" element={<Dashboard />} />
+
+        <Route path="/suppliers" element={<Dashboard />} />
       </Routes>
     </div>
   );
