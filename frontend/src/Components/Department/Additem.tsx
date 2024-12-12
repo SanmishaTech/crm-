@@ -97,6 +97,7 @@ const AddItem: React.FC<AddItemProps> = ({ onAdd, typeofschema, add }) => {
         <div className="grid gap-4 py-4">
           {error && <p className="text-red-500">{error}</p>}
           {addFields(typeofschema)}
+          
         </div>
 
         <DialogFooter>
