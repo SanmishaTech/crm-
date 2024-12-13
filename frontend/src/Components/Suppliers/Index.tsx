@@ -83,6 +83,7 @@ export default function TableDemo() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
+  const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -103,6 +104,7 @@ export default function TableDemo() {
         params: {
           page: currentPage,
           limit: itemsPerPage,
+          search: searchTerm, // Include search term in the query params
         },
       })
       .then((response) => {
@@ -114,7 +116,7 @@ export default function TableDemo() {
         setError("Failed to load data");
         setLoading(false);
       });
-  }, [currentPage, itemsPerPage]);
+  }, [currentPage, itemsPerPage, searchTerm]); // Add searchTerm as a dependency
 
   // Sorting function
   const handleSort = (key: keyof Supplier) => {
@@ -207,6 +209,7 @@ export default function TableDemo() {
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
         <h3 className="text-lg font-semibold">Suppliers List</h3>
+
         {/* Add Supplier Dialog Start */}
         <div className="flex space-x-2">
           <Dialog>
@@ -231,7 +234,6 @@ export default function TableDemo() {
                     render={({ field }) => (
                       <FormItem className="flex items-center">
                         <FormLabel className="w-40">Supplier:</FormLabel>{" "}
-                        {/* Adjust width as needed */}
                         <FormControl className="flex-1">
                           <Input placeholder="Supplier" {...field} />
                         </FormControl>
@@ -239,33 +241,7 @@ export default function TableDemo() {
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="street_address"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center">
-                        <FormLabel className="w-40">Street Address:</FormLabel>{" "}
-                        <FormControl>
-                          <Input placeholder="Street Address" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="area"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center">
-                        <FormLabel className="w-40">Area:</FormLabel>{" "}
-                        <FormControl>
-                          <Input placeholder="Area" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {/* Other form fields... */}
                   <DialogFooter>
                     <Button type="submit">Save changes</Button>
                   </DialogFooter>
@@ -273,11 +249,20 @@ export default function TableDemo() {
               </Form>
             </DialogContent>
           </Dialog>
-          {/* Add Supplier Dialog End */}
-          <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
-            Add (Page)
-          </Button>
         </div>
+        {/* Add Supplier Dialog End */}
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-4 flex items-center space-x-2">
+        <Input
+          placeholder="Search suppliers..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+        />
+        <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
+          Add (Page)
+        </Button>
       </div>
 
       <div className="panel p-4 rounded-md bg-gray-50">
