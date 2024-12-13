@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
+import { useNavigate } from "react-router-dom";
 
 // Supplier type
 type Supplier = {
@@ -82,6 +83,7 @@ export default function TableDemo() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -203,74 +205,79 @@ export default function TableDemo() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center p-2">
+      <div className="flex justify-between items-center p-2 space-x-2">
         <h3 className="text-lg font-semibold">Suppliers List</h3>
         {/* Add Supplier Dialog Start */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline">Add</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add Suppliers</DialogTitle>
-              <DialogDescription>
-                Add your supplier details here. Click save when you're done.
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                <FormField
-                  control={form.control}
-                  name="supplier"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center">
-                      <FormLabel className="w-25">Supplier</FormLabel>{" "}
-                      {/* Adjust width as needed */}
-                      <FormControl className="flex-1">
-                        <Input placeholder="Supplier" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+        <div className="flex space-x-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Add Dialog</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add Suppliers</DialogTitle>
+                <DialogDescription>
+                  Add your supplier details here. Click save when you're done.
+                </DialogDescription>
+              </DialogHeader>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
+                  <FormField
+                    control={form.control}
+                    name="supplier"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center">
+                        <FormLabel className="w-40">Supplier:</FormLabel>{" "}
+                        {/* Adjust width as needed */}
+                        <FormControl className="flex-1">
+                          <Input placeholder="Supplier" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="street_address"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Street Address</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Street Address" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="area"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Area</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Area" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <DialogFooter>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-        {/* Add Supplier Dialog End */}
+                  <FormField
+                    control={form.control}
+                    name="street_address"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center">
+                        <FormLabel className="w-40">Street Address:</FormLabel>{" "}
+                        <FormControl>
+                          <Input placeholder="Street Address" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="area"
+                    render={({ field }) => (
+                      <FormItem className="flex items-center">
+                        <FormLabel className="w-40">Area:</FormLabel>{" "}
+                        <FormControl>
+                          <Input placeholder="Area" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <DialogFooter>
+                    <Button type="submit">Save changes</Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+          {/* Add Supplier Dialog End */}
+          <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
+            Add Page
+          </Button>
+        </div>
       </div>
 
       <div className="panel p-4 rounded-md bg-gray-50">

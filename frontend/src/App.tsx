@@ -6,6 +6,7 @@ import Login from "@/Packages/Login/Login";
 import Dashboard from "./Pages/Dashboard";
 import { Toaster, toast } from "sonner";
 import { useLocation } from "react-router-dom";
+import Add from "./Components/Suppliers/Add";
 
 import {
   Calculator,
@@ -160,6 +161,7 @@ function App() {
         <Route path="/departmentPage" element={<Dashboard />} />
 
         <Route path="/suppliers" element={<Dashboard />} />
+        <Route path="/suppliers/add" element={<Add />} />
       </Routes>
     </div>
   );
