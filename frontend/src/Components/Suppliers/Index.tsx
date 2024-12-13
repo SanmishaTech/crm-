@@ -114,7 +114,7 @@ export default function TableDemo() {
         setError("Failed to load data");
         setLoading(false);
       });
-  }, [currentPage, itemsPerPage]); // Re-fetch data when currentPage changes
+  }, [currentPage, itemsPerPage]);
 
   // Sorting function
   const handleSort = (key: keyof Supplier) => {
@@ -211,7 +211,7 @@ export default function TableDemo() {
         <div className="flex space-x-2">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">Add Dialog</Button>
+              <Button variant="outline">Add (Dialog)</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -275,7 +275,7 @@ export default function TableDemo() {
           </Dialog>
           {/* Add Supplier Dialog End */}
           <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
-            Add Page
+            Add (Page)
           </Button>
         </div>
       </div>
@@ -294,7 +294,7 @@ export default function TableDemo() {
               </TableHead>
               <TableHead onClick={() => handleSort("area")}>Area</TableHead>
               <TableHead onClick={() => handleSort("city")}>City</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
@@ -305,12 +305,18 @@ export default function TableDemo() {
                 <TableCell>{supplier.street_address}</TableCell>
                 <TableCell>{supplier.area}</TableCell>
                 <TableCell>{supplier.city}</TableCell>
-                <TableCell>
+                <TableCell className="flex justify-items  space-x-2">
                   <button
                     onClick={() => handleDelete(supplier.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     Delete
+                  </button>
+                  <button
+                    onClick={() => handleDelete(supplier.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Edit
                   </button>
                 </TableCell>
               </TableRow>

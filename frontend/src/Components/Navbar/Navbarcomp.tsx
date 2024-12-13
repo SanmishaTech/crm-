@@ -72,8 +72,11 @@ const Navbar = () => {
   const [value, setValue] = React.useState("");
   const [isExploreOpen, setIsExploreOpen] = useState(false);
   // Handle navigation to dashboard
-  const handleNavigate = () => {
+  const handleDashboardNavigate = () => {
     navigate("/dashboard");
+  };
+  const handleSuppliersNavigate = () => {
+    navigate("/suppliers");
   };
 
   // Handle navigation to leads page
@@ -112,14 +115,21 @@ const Navbar = () => {
           {/* Navigation Links */}
           <div className="space-x-3">
             <Button
-              onClick={handleNavigate}
+              onClick={handleDashboardNavigate}
               variant="ghost"
               className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
             >
               Dashboard
             </Button>
+            <Button
+              onClick={handleSuppliersNavigate}
+              variant="ghost"
+              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
+            >
+              Suppliers
+            </Button>
 
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
@@ -213,9 +223,9 @@ const Navbar = () => {
               className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
             >
               Deals
-            </Button>
+            </Button> */}
 
-            <Popover open={open} onOpenChange={setOpen}>
+            {/* <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="ghost"
@@ -266,7 +276,7 @@ const Navbar = () => {
                   </CommandList>
                 </Command>
               </PopoverContent>
-            </Popover>
+            </Popover> */}
           </div>
         </div>
 
