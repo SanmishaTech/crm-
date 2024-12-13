@@ -42,7 +42,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 
-//Supplier type
+// Supplier type
 type Supplier = {
   id: string;
   supplier: string;
@@ -68,7 +68,7 @@ const formSchema = z.object({
 });
 
 export default function TableDemo() {
-  const [invoices, setInvoices] = useState<Supplier[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
@@ -90,7 +90,7 @@ export default function TableDemo() {
         },
       })
       .then((response) => {
-        setInvoices(response.data.data.Suppliers);
+        setSuppliers(response.data.data.Suppliers); // Updated to setSuppliers
         setLoading(false);
       })
       .catch(() => {
@@ -108,7 +108,7 @@ export default function TableDemo() {
     setSortConfig({ key, direction });
   };
 
-  const sortedInvoices = [...invoices].sort((a, b) => {
+  const sortedSuppliers = [...suppliers].sort((a, b) => {
     if (!sortConfig.key) return 0;
 
     const aValue = a[sortConfig.key as keyof Supplier];
@@ -128,16 +128,18 @@ export default function TableDemo() {
   }
 
   // Delete Supplier
-  const handleDelete = (invoiceId: string) => {
+  const handleDelete = (supplierId: string) => {
     axios
-      .delete(`/api/suppliers/${invoiceId}`, {
+      .delete(`/api/suppliers/${supplierId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
       .then(() => {
-        setInvoices(invoices.filter((invoice) => invoice.id !== invoiceId));
+        setSuppliers(
+          suppliers.filter((supplier) => supplier.id !== supplierId)
+        );
       })
       .catch(() => {
         setError("Failed to delete supplier");
@@ -154,11 +156,11 @@ export default function TableDemo() {
         },
       })
       .then((response) => {
-        setInvoices((prevInvoices) => [...prevInvoices, response.data]);
+        setSuppliers((prevSuppliers) => [...prevSuppliers, response.data]); // Updated to setSuppliers
         form.reset();
         window.location.reload();
       })
-      .catch((err) => {
+      .catch(() => {
         setError("Failed to add supplier");
       });
   };
@@ -253,16 +255,16 @@ export default function TableDemo() {
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {sortedInvoices.map((invoice) => (
-              <TableRow key={invoice.id}>
-                <TableCell>{invoice.supplier}</TableCell>
-                <TableCell>{invoice.street_address}</TableCell>
-                <TableCell>{invoice.area}</TableCell>
-                <TableCell>{invoice.city}</TableCell>
+            {sortedSuppliers.map((supplier) => (
+              <TableRow key={supplier.id}>
+                <TableCell>{supplier.supplier}</TableCell>
+                <TableCell>{supplier.street_address}</TableCell>
+                <TableCell>{supplier.area}</TableCell>
+                <TableCell>{supplier.city}</TableCell>
                 {/* Delete Supplier Button */}
                 <TableCell>
                   <button
-                    onClick={() => handleDelete(invoice.id)}
+                    onClick={() => handleDelete(supplier.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     Delete
