@@ -28,19 +28,8 @@ class UpdateProductCategoryRequest extends FormRequest
                 'required',
                 'unique:product_categories,product_category,' . $this->route('product_category'), 
             ],
-            'product_category_id' => ['nullable', 'exists:product_categories,id'], // Ensure product_category exists
-            'supplier_id' => ['nullable', 'exists:suppliers,id'], // Ensure supplier exist   
         ];
     }
-
-    public function messages(): array
-    {
-        return [
-            'product_category_id.exists' => 'Product Category not Found',
-            'supplier_id.exists' => 'Supplier not Found.',
-        ];
-    }
-
 
     protected function failedValidation(Validator $validator)
     {

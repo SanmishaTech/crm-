@@ -25,8 +25,8 @@ class StoreProductRequest extends FormRequest
     {
         return [
             "product" => ['required', 'unique:products,product'],
-            'product_category_id' => ['nullable', 'exists:product_categories,id'],
-            'supplier_id' => ['nullable', 'exists:suppliers,id'],  
+            'product_category_id' => ['required', 'exists:product_categories,id'],
+            'supplier_id' => ['required', 'exists:suppliers,id'],  
         ];
     }
 

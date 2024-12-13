@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LeadResource;
+use App\Http\Resources\ContactResource;
 use App\Http\Controllers\Api\BaseController;
 
     /**
@@ -21,7 +22,6 @@ class LeadsController extends BaseController
     public function index(Request $request): JsonResponse
     {
         $query = Lead::query();
-
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
     
@@ -75,12 +75,12 @@ class LeadsController extends BaseController
     public function show(string $id): JsonResponse
     {
         $lead = Lead::find($id);
-
+    //   $lead = Lead::with(['leadProducts', 'employee', 'followUp', 'contact'])->find($id);
         if(!$lead){
             return $this->sendError("Lead not found", ['error'=>['lead not found']]);
         }
-        //  $project->load('users');
-        return $this->sendResponse(["lead"=> new LeadResource($lead)], "lead retrieved successfully");
+        return $this->sendResponse(["lead"=>new LeadResource($lead)], "lead retrieved successfully");
+        // return $this->sendResponse(["lead"=> $lead, 'contact'=>new ContactResource($lead->contact)], "lead retrieved successfully");
     }
 
     /**

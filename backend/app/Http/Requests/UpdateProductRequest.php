@@ -27,9 +27,20 @@ class UpdateProductRequest extends FormRequest
             'product' => [
                 'required',
                 'unique:products,product,' . $this->route('product'), 
+            'product_category_id' => ['required', 'exists:product_categories,id'],
+            'supplier_id' => ['required', 'exists:suppliers,id'],  
             ],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'product_category_id.exists' => 'Product Category not Found',
+            'supplier_id.exists' => 'Supplier not Found.',
+        ];
+    }
+
 
     protected function failedValidation(Validator $validator)
     {

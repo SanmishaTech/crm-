@@ -43,7 +43,7 @@ class EmployeesController extends BaseController
             'last_page' => $employees->lastPage(),
             'per_page' => $employees->perPage(),
             'total' => $employees->total(),
-        ]], "Employees retrived successfully");
+        ]], "Employees retrieved successfully");
     }
 
     /**
@@ -66,7 +66,8 @@ class EmployeesController extends BaseController
         $user->password = Hash::make($request->input('password'));
         $user->save();
         
-        $memberRole = $request->input("role");
+        // $memberRole = $request->input("role");
+        $memberRole = $request->input("member");
         $memberRole = Role::where("name",$memberRole)->first();
        
         $user->assignRole($memberRole);

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\EmployeesController;
 use App\Http\Controllers\Api\FollowUpsController;
+use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\ProductCategoriesController;
@@ -30,4 +31,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::resource('products', ProductsController::class);  
    Route::resource('product_categories', ProductCategoriesController::class);  
    Route::get('/logout', [UserController::class, 'logout'])->name('user.logout');
+   Route::post('/purchase', [PurchasesController::class, 'purchase'])->name("purchase.products");
+   Route::get('/purchase/{id}', [PurchasesController::class, 'show'])->name("purchase.show");
+   Route::get('/purchase', [PurchasesController::class, 'index'])->name("purchase.index");
+
 });
