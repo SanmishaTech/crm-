@@ -415,9 +415,9 @@ export default function EditSupplierPage() {
           {/* Feilds Fifth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Buttons For Submit and Cancel */}
-          <div className="flex justify-center space-x-2">
-            <Button type="submit">Save Changes</Button>
+          <div className="flex justify-end space-x-2">
             <Button onClick={() => navigate("/suppliers")}>Cancel</Button>
+            <Button type="submit">Save Changes</Button>
           </div>
         </form>
       </Form>

@@ -410,15 +410,15 @@ export default function InputForm() {
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Error Message */}
           {/* Buttons For Submit and Cancel */}
-          <div className="flex justify-center space-x-2">
-            <Button type="submit" className="align-self-center hover:pointer">
-              Submit
-            </Button>
+          <div className="flex justify-end space-x-2">
             <Button
               onClick={() => navigate("/suppliers")}
               className="align-self-center"
             >
               Cancel
+            </Button>
+            <Button type="submit" className="align-self-center hover:pointer">
+              Submit
             </Button>
           </div>
         </form>
