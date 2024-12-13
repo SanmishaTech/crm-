@@ -89,6 +89,12 @@ export default function EditSupplierPage() {
             pincode: supplierData.pincode,
             country: supplierData.country,
             gstin: supplierData.gstin,
+            contact_no: supplierData.contact_no,
+            department: supplierData.department,
+            designation: supplierData.designation,
+            mobile_1: supplierData.mobile_1,
+            mobile_2: supplierData.mobile_2,
+            email: supplierData.email,
           });
           setLoading(false);
         })
