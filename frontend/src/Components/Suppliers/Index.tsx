@@ -226,15 +226,17 @@ export default function TableDemo() {
                   control={form.control}
                   name="supplier"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Supplier</FormLabel>
-                      <FormControl>
+                    <FormItem className="flex items-center">
+                      <FormLabel className="w-25">Supplier</FormLabel>{" "}
+                      {/* Adjust width as needed */}
+                      <FormControl className="flex-1">
                         <Input placeholder="Supplier" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="street_address"
