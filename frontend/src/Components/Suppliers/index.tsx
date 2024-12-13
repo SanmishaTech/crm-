@@ -22,27 +22,55 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 
+//Supplier type
+type Supplier = {
+  id: string;
+  supplier: string;
+  street_address: string;
+  area: string;
+  city: string;
+  state: string;
+  pincode: string;
+  country: string;
+  gstin: string;
+};
+
+// Form Validation Schema
 const formSchema = z.object({
   supplier: z.string().min(2).max(50),
+  street_address: z.string().min(2).max(50),
+  area: z.string().min(2).max(50),
+  city: z.string().min(2).max(50),
+  state: z.string().min(2).max(50),
+  pincode: z.string().min(2).max(50),
+  country: z.string().min(2).max(50),
+  gstin: z.string().min(2).max(50),
 });
 
 export default function TableDemo() {
-  const [invoices, setInvoices] = useState([]);
+  const [invoices, setInvoices] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -52,9 +80,72 @@ export default function TableDemo() {
     },
   });
 
-  // Define the onSubmit function
-  const onSubmit = (data) => {
-    console.log("Form data:", data);
+  // Fetch Suppliers
+  useEffect(() => {
+    axios
+      .get("/api/suppliers", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        setInvoices(response.data.data.Suppliers);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Failed to load data");
+        setLoading(false);
+      });
+  }, []);
+
+  // Sorting function
+  const handleSort = (key: keyof Supplier) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedInvoices = [...invoices].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+
+    const aValue = a[sortConfig.key as keyof Supplier];
+    const bValue = b[sortConfig.key as keyof Supplier];
+
+    if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  // Delete Supplier
+  const handleDelete = (invoiceId: string) => {
+    axios
+      .delete(`/api/suppliers/${invoiceId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then(() => {
+        setInvoices(invoices.filter((invoice) => invoice.id !== invoiceId));
+      })
+      .catch(() => {
+        setError("Failed to delete supplier");
+      });
+  };
+
+  // onSubmit function
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     axios
       .post("/api/suppliers", data, {
         headers: {
@@ -72,71 +163,12 @@ export default function TableDemo() {
       });
   };
 
-  useEffect(() => {
-    axios
-      .get("/api/suppliers", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        setInvoices(response.data.data.Suppliers);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("Failed to load data");
-        setLoading(false);
-      });
-  }, []);
-
-  const handleSort = (key) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const sortedInvoices = [...invoices].sort((a, b) => {
-    if (!sortConfig.key) return 0;
-
-    const aValue = a[sortConfig.key];
-    const bValue = b[sortConfig.key];
-
-    if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-    if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
-    return 0;
-  });
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  const handleDelete = (invoiceId) => {
-    axios
-      .delete(`/api/suppliers/${invoiceId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then(() => {
-        setInvoices(invoices.filter((invoice) => invoice.id !== invoiceId));
-      })
-      .catch((err) => {
-        setError("Failed to delete invoice");
-      });
-  };
-
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2">
         <h3 className="text-lg font-semibold">Suppliers List</h3>
+
+        {/* Add Supplier Dialog Start */}
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline">Add</Button>
@@ -162,9 +194,6 @@ export default function TableDemo() {
                       <FormControl>
                         <Input placeholder="Supplier" {...field} />
                       </FormControl>
-                      {/* <FormDescription>
-                        This is your public display name.
-                      </FormDescription> */}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -176,11 +205,8 @@ export default function TableDemo() {
                     <FormItem>
                       <FormLabel>Street Address</FormLabel>
                       <FormControl>
-                        <Input placeholder="Supplier" {...field} />
+                        <Input placeholder="Street Address" {...field} />
                       </FormControl>
-                      {/* <FormDescription>
-                        This is your public display name.
-                      </FormDescription> */}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -192,11 +218,8 @@ export default function TableDemo() {
                     <FormItem>
                       <FormLabel>Area</FormLabel>
                       <FormControl>
-                        <Input placeholder="Supplier" {...field} />
+                        <Input placeholder="Area" {...field} />
                       </FormControl>
-                      {/* <FormDescription>
-                        This is your public display name.
-                      </FormDescription> */}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -208,41 +231,35 @@ export default function TableDemo() {
             </Form>
           </DialogContent>
         </Dialog>
+        {/* Add Supplier Dialog End */}
       </div>
 
       <div className="panel p-4 rounded-md bg-gray-50">
+        {/* Table Start */}
         <Table>
           <TableCaption>A list of your recent suppliers.</TableCaption>
           <TableHeader>
             <TableRow>
-              {/* <TableHead className="w-[100px]" onClick={() => handleSort("id")}>
-                ID
-              </TableHead> */}
               <TableHead onClick={() => handleSort("supplier")}>
-                Supplier
+                Suppliers
               </TableHead>
               <TableHead onClick={() => handleSort("street_address")}>
                 Street Address
               </TableHead>
               <TableHead onClick={() => handleSort("area")}>Area</TableHead>
               <TableHead onClick={() => handleSort("city")}>City</TableHead>
-
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
+          <TableFooter></TableFooter>
           <TableBody>
             {sortedInvoices.map((invoice) => (
               <TableRow key={invoice.id}>
-                {/* <TableCell className="font-medium">{invoice.id}</TableCell> */}
                 <TableCell>{invoice.supplier}</TableCell>
                 <TableCell>{invoice.street_address}</TableCell>
                 <TableCell>{invoice.area}</TableCell>
                 <TableCell>{invoice.city}</TableCell>
-                {/* <TableCell>{invoice.paymentStatus}</TableCell>
-                <TableCell>{invoice.paymentMethod}</TableCell> */}
-                {/* <TableCell className="text-right">
-                  {invoice.totalAmount}
-                </TableCell> */}
+                {/* Delete Supplier Button */}
                 <TableCell>
                   <button
                     onClick={() => handleDelete(invoice.id)}
@@ -255,6 +272,33 @@ export default function TableDemo() {
             ))}
           </TableBody>
         </Table>
+        {/* Table End */}
+        {/* Pagination Start */}
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">1</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#" isActive>
+                2
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">3</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext href="#" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+        {/* Pagination End */}
       </div>
     </div>
   );
