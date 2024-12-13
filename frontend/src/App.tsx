@@ -7,6 +7,7 @@ import Dashboard from "./Pages/Dashboard";
 import { Toaster, toast } from "sonner";
 import { useLocation } from "react-router-dom";
 import Add from "./Components/Suppliers/Add";
+import Edit from "./Components/Suppliers/Edit.tsx";
 
 import {
   Calculator,
@@ -162,6 +163,7 @@ function App() {
 
         <Route path="/suppliers" element={<Dashboard />} />
         <Route path="/suppliers/add" element={<Add />} />
+        <Route path="/suppliers/edit/:id" element={<Edit />} />
       </Routes>
     </div>
   );

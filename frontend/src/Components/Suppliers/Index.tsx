@@ -313,8 +313,8 @@ export default function TableDemo() {
                     Delete
                   </button>
                   <button
-                    onClick={() => handleDelete(supplier.id)}
-                    className="text-red-500 hover:text-red-700"
+                    onClick={() => navigate(`/suppliers/edit/${supplier.id}`)}
+                    className="text-blue-500 hover:text-blue-700"
                   >
                     Edit
                   </button>

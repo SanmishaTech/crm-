@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -13,19 +14,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 
-// Form Schema
-const FormSchema = z.object({
-  supplier: z
-    .string()
-    .min(2, { message: "Supplier field must have at least 10 characters." })
-    .max(50, {
-      message: "Supplier field must have no more than 50 characters.",
-    })
-    .nonempty({ message: "Supplier field is required." }),
-
+// Form validation schema
+const formSchema = z.object({
+  supplier: z.string().optional(),
   street_address: z.string().optional(),
   area: z.string().optional(),
   city: z.string().optional(),
@@ -33,31 +26,23 @@ const FormSchema = z.object({
   pincode: z.string().optional(),
   country: z.string().optional(),
   gstin: z.string().optional(),
-  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}$/, {
-  //   message: "Invalid GST Number. Please enter a valid GSTIN.",
-  // })
-  // .max(15, "GST Number must be exactly 15 characters")
-  // .min(15, "GST Number must be exactly 15 characters"),
-  contact_no: z
-    .string()
-    .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
-      message: "Invalid contact number. Please enter a valid phone number.",
-    })
-    .nonempty("Contact number is required."),
+  contact_no: z.string().optional(),
   department: z.string().optional(),
   designation: z.string().optional(),
   mobile_1: z.string().optional(),
   mobile_2: z.string().optional(),
-  email: z
-    .string()
-    .email("Please enter a valid email address.")
-    .nonempty("Email is required."),
+  email: z.string().optional(),
 });
 
-export default function InputForm() {
+export default function EditSupplierPage() {
+  const { id } = useParams(); // Get the supplier ID from the URL
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+
+  // Use react-hook-form with Zod validation schema
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       supplier: "",
       street_address: "",
@@ -76,36 +61,62 @@ export default function InputForm() {
     },
   });
 
-  const navigate = useNavigate(); // Use For Navigation
+  // Fetch supplier data
+  useEffect(() => {
+    if (id) {
+      axios
+        .get(`/api/suppliers/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          const supplierData = response.data.data.Supplier;
+          form.reset({
+            supplier: supplierData.supplier,
+            street_address: supplierData.street_address,
+            area: supplierData.area,
+            city: supplierData.city,
+            state: supplierData.state,
+            pincode: supplierData.pincode,
+            country: supplierData.country,
+            gstin: supplierData.gstin,
+          });
+          setLoading(false);
+        })
+        .catch(() => {
+          setError("Failed to load supplier data");
+          setLoading(false);
+        });
+    }
+  }, [id, form]);
 
-  // onSubmit Function
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+  // Submit form data for updating supplier
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
     axios
-      .post("/api/suppliers", data, {
+      .put(`/api/suppliers/${id}`, data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
       .then(() => {
-        form.reset();
-        navigate("/suppliers");
+        navigate("/suppliers"); // Redirect back to the suppliers list after saving
       })
-      .catch((error) => {
-        console.error(error); // Log error details for debugging
-        setError("Failed to add supplier");
+      .catch(() => {
+        setError("Failed to update supplier");
       });
   };
 
+  // Loading state or error message display
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
-      <h2 className="text-2xl font-semibold   text-center">
-        Supplier Information
-      </h2>
-      <p className="text-center text-xs mb-9">
-        Add a new supplier to the database.
-      </p>
-      {/* Form Fields */}
+    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
+      <h3 className="text-2xl font-semibold text-center">Edit Supplier</h3>
+      <p className="text-center text-xs mb-9">Edit & Update supplier.</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
@@ -246,18 +257,7 @@ export default function InputForm() {
                       placeholder="Enter Gst Number"
                     />
                   </FormControl>
-                  <FormDescription>
-                    The GST Number must be 15 characters long and should follow
-                    this format:<strong>XXABC12345X1Z1</strong>
-                  </FormDescription>{" "}
-                  {/* <li>First 2 characters: 2 digits (State Code)</li>
-                  <li>
-                    Next 5 characters: 5 uppercase letters (Pan Number or GSTIN
-                    Code)
-                  </li>
-                  <li>Next 4 characters: 4 digits (GST Number Sequence)</li>
-                  <li>Next character: 1 uppercase letter (Entity Type)</li>
-                  <li>Last character: 1 digit (Check Digit)</li> */}
+                  <FormDescription>Enter the Gst Number.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -274,19 +274,11 @@ export default function InputForm() {
                       {...field}
                       type="text"
                       inputMode="numeric"
-                      maxLength={12}
-                      value={field.value}
-                      onChange={(e) => {
-                        const formattedValue = e.target.value
-                          .replace(/\D/g, "") // Remove non-digit characters
-                          .replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3"); // Format as 12-3456-7890
-                        field.onChange(formattedValue);
-                      }}
+                      pattern="\d{10}"
+                      maxLength={10}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Enter the Contact (e.g:- 12-3456-7890).
-                  </FormDescription>
+                  <FormDescription>Enter the Contact.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -398,18 +390,10 @@ export default function InputForm() {
           </div>
           {/* Feilds Fifth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
-          {/* Error Message */}
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-center space-x-2">
-            <Button type="submit" className="align-self-center">
-              Submit
-            </Button>
-            <Button
-              onClick={() => navigate("/suppliers")}
-              className="align-self-center"
-            >
-              Cancel
-            </Button>
+            <Button type="submit">Save Changes</Button>
+            <Button onClick={() => navigate("/suppliers")}>Cancel</Button>
           </div>
         </form>
       </Form>
