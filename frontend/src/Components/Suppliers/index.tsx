@@ -33,11 +33,9 @@ import {
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
-  PaginationLink,
-  PaginationNext,
   PaginationPrevious,
+  PaginationNext,
 } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
@@ -53,6 +51,13 @@ type Supplier = {
   pincode: string;
   country: string;
   gstin: string;
+};
+
+type PaginationData = {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
 };
 
 // Form Validation Schema
@@ -71,7 +76,12 @@ export default function TableDemo() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -88,16 +98,21 @@ export default function TableDemo() {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
+        params: {
+          page: currentPage,
+          limit: itemsPerPage,
+        },
       })
       .then((response) => {
-        setSuppliers(response.data.data.Suppliers); // Updated to setSuppliers
+        setSuppliers(response.data.data.Suppliers);
+        setPagination(response.data.data.pagination);
         setLoading(false);
       })
       .catch(() => {
         setError("Failed to load data");
         setLoading(false);
       });
-  }, []);
+  }, [currentPage, itemsPerPage]); // Re-fetch data when currentPage changes
 
   // Sorting function
   const handleSort = (key: keyof Supplier) => {
@@ -156,7 +171,7 @@ export default function TableDemo() {
         },
       })
       .then((response) => {
-        setSuppliers((prevSuppliers) => [...prevSuppliers, response.data]); // Updated to setSuppliers
+        setSuppliers((prevSuppliers) => [...prevSuppliers, response.data]);
         form.reset();
         window.location.reload();
       })
@@ -165,11 +180,31 @@ export default function TableDemo() {
       });
   };
 
+  // Pagination functions
+  const totalPages = pagination?.last_page || 1;
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2">
         <h3 className="text-lg font-semibold">Suppliers List</h3>
-
         {/* Add Supplier Dialog Start */}
         <Dialog>
           <DialogTrigger asChild>
@@ -261,7 +296,6 @@ export default function TableDemo() {
                 <TableCell>{supplier.street_address}</TableCell>
                 <TableCell>{supplier.area}</TableCell>
                 <TableCell>{supplier.city}</TableCell>
-                {/* Delete Supplier Button */}
                 <TableCell>
                   <button
                     onClick={() => handleDelete(supplier.id)}
@@ -277,27 +311,27 @@ export default function TableDemo() {
         {/* Table End */}
         {/* Pagination Start */}
         <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                2
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">3</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
+          <PaginationContent className="flex items-center space-x-4">
+            {/* Previous Button */}
+            <PaginationPrevious
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </PaginationPrevious>
+
+            {/* Page Number */}
+            <span className="text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            {/* Next Button */}
+            <PaginationNext
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </PaginationNext>
           </PaginationContent>
         </Pagination>
         {/* Pagination End */}
