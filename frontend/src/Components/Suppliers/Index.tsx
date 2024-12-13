@@ -160,6 +160,7 @@ export default function TableDemo() {
         setSuppliers(
           suppliers.filter((supplier) => supplier.id !== supplierId)
         );
+        window.location.reload();
       })
       .catch(() => {
         setError("Failed to delete supplier");
@@ -331,6 +332,7 @@ export default function TableDemo() {
 
             {/* Next Button */}
             <PaginationNext
+              className="hover:pointer"
               onClick={goToNextPage}
               disabled={currentPage === totalPages}
             >

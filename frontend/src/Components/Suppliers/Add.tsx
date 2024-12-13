@@ -34,7 +34,7 @@ const FormSchema = z.object({
   pincode: z.string().optional(),
   country: z.string().optional(),
   gstin: z
-    // 22AAAAA0000A1Z5
+
     .string()
     .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
       message: "Invalid GST Number. Please enter a valid GSTIN.",
@@ -292,12 +292,6 @@ export default function InputForm() {
                       inputMode="numeric"
                       maxLength={10}
                       value={field.value}
-                      // onChange={(e) => {
-                      //   const formattedValue = e.target.value
-                      //     .replace(/\D/g, "") // Remove non-digit characters
-                      //     .replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3"); // Format as 12-3456-7890
-                      //   field.onChange(formattedValue);
-                      // }}
                     />
                   </FormControl>
                   <FormDescription>
@@ -417,7 +411,7 @@ export default function InputForm() {
           {/* Error Message */}
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-center space-x-2">
-            <Button type="submit" className="align-self-center">
+            <Button type="submit" className="align-self-center hover:pointer">
               Submit
             </Button>
             <Button
