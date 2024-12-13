@@ -32,12 +32,14 @@ const FormSchema = z.object({
   state: z.string().optional(),
   pincode: z.string().optional(),
   country: z.string().optional(),
-  gstin: z.string().optional(),
-  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}$/, {
-  //   message: "Invalid GST Number. Please enter a valid GSTIN.",
-  // })
-  // .max(15, "GST Number must be exactly 15 characters")
-  // .min(15, "GST Number must be exactly 15 characters"),
+  gstin: z
+    // 22AAAAA0000A1Z5
+    .string()
+    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+      message: "Invalid GST Number. Please enter a valid GSTIN.",
+    })
+    .max(15, "GST Number must be exactly 15 characters")
+    .min(15, "GST Number must be exactly 15 characters"),
   contact_no: z
     .string()
     .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
@@ -92,8 +94,27 @@ export default function InputForm() {
         navigate("/suppliers");
       })
       .catch((error) => {
-        console.error(error); // Log error details for debugging
-        setError("Failed to add supplier");
+        console.error(error);
+
+        // Check if the error response contains the specific message for a duplicate supplier
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message === "The supplier has already been taken."
+        ) {
+          // If the supplier name is already taken, display a custom error message
+          setError("supplierName", {
+            type: "manual",
+            message:
+              "The supplier name is already taken. Please choose another one.",
+          });
+        } else {
+          // For any other errors, display a generic error message
+          setError("Supplier Name Already Taken ", {
+            type: "manual",
+            message: "Failed to add supplier. Please try again.",
+          });
+        }
       });
   };
 
@@ -236,7 +257,7 @@ export default function InputForm() {
               name="gstin"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Gst Number</FormLabel>
+                  <FormLabel>GST IN</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
@@ -248,16 +269,8 @@ export default function InputForm() {
                   </FormControl>
                   <FormDescription>
                     The GST Number must be 15 characters long and should follow
-                    this format:<strong>XXABC12345X1Z1</strong>
+                    this format:<strong>22AAAAA0000A1Z5</strong>
                   </FormDescription>{" "}
-                  {/* <li>First 2 characters: 2 digits (State Code)</li>
-                  <li>
-                    Next 5 characters: 5 uppercase letters (Pan Number or GSTIN
-                    Code)
-                  </li>
-                  <li>Next 4 characters: 4 digits (GST Number Sequence)</li>
-                  <li>Next character: 1 uppercase letter (Entity Type)</li>
-                  <li>Last character: 1 digit (Check Digit)</li> */}
                   <FormMessage />
                 </FormItem>
               )}
