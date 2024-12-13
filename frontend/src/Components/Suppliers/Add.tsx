@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 const FormSchema = z.object({
   supplier: z
     .string()
-    .min(2, { message: "Supplier field must have at least 10 characters." })
+    .min(2, { message: "Supplier field must have at least 2 characters." })
     .max(50, {
       message: "Supplier field must have no more than 50 characters.",
     })
@@ -46,6 +46,8 @@ const FormSchema = z.object({
     .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
       message: "Invalid contact number. Please enter a valid phone number.",
     })
+    .max(10, "Contact number must be exactly 10 characters")
+    .min(10, "Contact number must be exactly 10 characters")
     .nonempty("Contact number is required."),
   department: z.string().optional(),
   designation: z.string().optional(),
@@ -270,7 +272,7 @@ export default function InputForm() {
                   </FormControl>
                   <FormDescription>
                     The GST Number must be 15 characters long and should follow
-                    this format:<strong>22AAAAA0000A1Z5</strong>
+                    this format:<strong>22ABCDE0123A1Z5</strong>
                   </FormDescription>{" "}
                   <FormMessage />
                 </FormItem>
@@ -288,14 +290,14 @@ export default function InputForm() {
                       {...field}
                       type="text"
                       inputMode="numeric"
-                      maxLength={12}
+                      maxLength={10}
                       value={field.value}
-                      onChange={(e) => {
-                        const formattedValue = e.target.value
-                          .replace(/\D/g, "") // Remove non-digit characters
-                          .replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3"); // Format as 12-3456-7890
-                        field.onChange(formattedValue);
-                      }}
+                      // onChange={(e) => {
+                      //   const formattedValue = e.target.value
+                      //     .replace(/\D/g, "") // Remove non-digit characters
+                      //     .replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3"); // Format as 12-3456-7890
+                      //   field.onChange(formattedValue);
+                      // }}
                     />
                   </FormControl>
                   <FormDescription>

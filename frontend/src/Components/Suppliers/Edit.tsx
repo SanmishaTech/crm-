@@ -25,7 +25,14 @@ const formSchema = z.object({
   state: z.string().optional(),
   pincode: z.string().optional(),
   country: z.string().optional(),
-  gstin: z.string().optional(),
+  gstin: z
+    // 22AAAAA0000A1Z5
+    .string()
+    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+      message: "Invalid GST Number. Please enter a valid GSTIN.",
+    })
+    .max(15, "GST Number must be exactly 15 characters")
+    .min(15, "GST Number must be exactly 15 characters"),
   contact_no: z.string().optional(),
   department: z.string().optional(),
   designation: z.string().optional(),
@@ -247,7 +254,7 @@ export default function EditSupplierPage() {
               name="gstin"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Gst Number</FormLabel>
+                  <FormLabel>GST IN</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
@@ -257,7 +264,10 @@ export default function EditSupplierPage() {
                       placeholder="Enter Gst Number"
                     />
                   </FormControl>
-                  <FormDescription>Enter the Gst Number.</FormDescription>
+                  <FormDescription>
+                    The GST Number must be 15 characters long and should follow
+                    this format:<strong>22ABCDE0123A1Z5</strong>
+                  </FormDescription>{" "}
                   <FormMessage />
                 </FormItem>
               )}
@@ -274,11 +284,19 @@ export default function EditSupplierPage() {
                       {...field}
                       type="text"
                       inputMode="numeric"
-                      pattern="\d{10}"
                       maxLength={10}
+                      value={field.value}
+                      // onChange={(e) => {
+                      //   const formattedValue = e.target.value
+                      //     .replace(/\D/g, "") // Remove non-digit characters
+                      //     .replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3"); // Format as 12-3456-7890
+                      //   field.onChange(formattedValue);
+                      // }}
                     />
                   </FormControl>
-                  <FormDescription>Enter the Contact.</FormDescription>
+                  <FormDescription>
+                    Enter the Contact (e.g:- 12-3456-7890).
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
