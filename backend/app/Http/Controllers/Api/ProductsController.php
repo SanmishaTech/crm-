@@ -31,7 +31,7 @@ class ProductsController extends BaseController
                 $query->where('department_name', 'like', '%' . $searchTerm . '%');
             });
         }
-        $products = $query->paginate(5);
+        $products = $query->paginate(20);
 
         return $this->sendResponse(["Product"=>ProductResource::collection($products),
         'pagination' => [
@@ -61,10 +61,8 @@ class ProductsController extends BaseController
         $product->model = $request->input("model");
         $product->manufacturer = $request->input("manufacturer");
         $product->opening_qty = $request->input("opening_qty");
-        //$product->closing_qty = $request->input("closing_qty");
-        //$product->last_traded_price = $request->input("last_traded_price");
         $product->save();
-        return $this->sendResponse(['Product'=> new ProductResource($product)], "Product Stored successfuly");
+        return $this->sendResponse(['Product'=> new ProductResource($product)], "Product Stored successfully");
 
     }
 

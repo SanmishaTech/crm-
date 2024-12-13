@@ -34,7 +34,7 @@ class ContactsController extends BaseController
                 $query->where('contact_person', 'like', '%' . $searchTerm . '%');
             });
         }
-        $contact = $query->paginate(5);
+        $contact = $query->paginate(20);
 
         return $this->sendResponse(["Contact"=>ContactResource::collection($contact),
         'pagination' => [
@@ -73,8 +73,6 @@ class ContactsController extends BaseController
             $clients->email = $request->input("email"); 
             $clients->save();
             $contact->client_id = $clients->id;
-            
-
         }
         else{
         $contact->client_id = $request->input("client_id");
