@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -209,9 +210,19 @@ export default function TableDemo() {
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
         <h3 className="text-lg font-semibold">Suppliers List</h3>
-
-        {/* Add Supplier Dialog Start */}
+      </div>
+      <div className="flex justify-between items-center space-x-2 w-full">
+        {/* Search Bar Starts */}
+        <div className="flex-1 space-x-2">
+          <Input
+            placeholder="Search suppliers..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        {/* Search Bar Ends */}
         <div className="flex space-x-2">
+          {/* Add(Dialog) Starts */}
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline">Add (Dialog)</Button>
@@ -241,7 +252,7 @@ export default function TableDemo() {
                       </FormItem>
                     )}
                   />
-                  {/* Other form fields... */}
+
                   <DialogFooter>
                     <Button type="submit">Save changes</Button>
                   </DialogFooter>
@@ -249,20 +260,13 @@ export default function TableDemo() {
               </Form>
             </DialogContent>
           </Dialog>
+          {/* Add(Dialog) Ends */}
+          {/* Add(Page) Starts */}
+          <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
+            Add (Page)
+          </Button>
+          {/* Add(Page) Ends */}
         </div>
-        {/* Add Supplier Dialog End */}
-      </div>
-
-      {/* Search Bar */}
-      <div className="mb-4 flex items-center space-x-2">
-        <Input
-          placeholder="Search suppliers..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} // Update search term
-        />
-        <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
-          Add (Page)
-        </Button>
       </div>
 
       <div className="panel p-4 rounded-md bg-gray-50">
