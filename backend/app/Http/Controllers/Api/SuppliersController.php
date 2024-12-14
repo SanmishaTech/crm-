@@ -31,7 +31,11 @@ class SuppliersController extends BaseController
                 $query->where('supplier', 'like', '%' . $searchTerm . '%');
             });
         }
-        $suppliers = $query->paginate(20);
+
+        $suppliers = $query->paginate(10);
+
+       
+
 
         return $this->sendResponse(["Suppliers"=>SupplierResource::collection($suppliers),
         'pagination' => [

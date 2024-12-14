@@ -54,7 +54,7 @@ import DashboardAddLeads from "@/Components/Leads/TestCard";
 import DashboardUpdateLeads from "@/Components/Leads/Edittestcard";
 import DepartmentPage from "@/Components/department/index";
 
-import Suppliers from "@/Components/Suppliers";
+import Suppliers from "@/Components/Suppliers/Index";
 
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
