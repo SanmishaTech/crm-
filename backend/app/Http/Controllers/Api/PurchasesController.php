@@ -88,7 +88,7 @@ class PurchasesController extends BaseController
           // Attach the products to the purchase record (using one-to-many relation)
          $purchase->purchaseDetails()->saveMany($purchaseDetails);
 
-         return $this->sendResponse(['Purchase'=> new PurchaseResource($purchase)], "Payment done Successfully");
+         return $this->sendResponse(['Purchase'=> new PurchaseResource($purchase)], "Products Purchased Successfully");
 
     }
 
@@ -104,7 +104,7 @@ class PurchasesController extends BaseController
         $purchase = Purchase::with(['purchaseDetails'])
             ->find($id);
         if(!$purchase){
-            return $this->sendError("Purchase  details not found", ['error'=>['Purchase details not found']]);
+            return $this->sendError("Purchase details not found", ['error'=>['Purchase details not found']]);
         }
         
         return $this->sendResponse(["Purchase"=>new PurchaseResource($purchase), 'PurchaseDetails'=>new PurchaseDetailResource($purchase->purchaseDetails)], "Purchase Details retrived successfully");

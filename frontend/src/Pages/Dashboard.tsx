@@ -5,6 +5,8 @@ import { useLocation } from "react-router-dom";
 import Suppliers from "@/Components/Suppliers/Index";
 import SuppliersAdd from "@/Components/Suppliers/Add";
 import SuppliersEdit from "@/Components/Suppliers/Edit";
+import Departments from "@/Components/Departments/Index";
+import DepartmentsDialog from "@/Components/Departments/DepartmentDialog";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -48,6 +50,8 @@ const Dashboard = () => {
         {location.pathname === "/suppliers" && <Suppliers />}
         {location.pathname === "/suppliers/add" && <SuppliersAdd />}
         {location.pathname === "/suppliers/edit/:id" && <SuppliersEdit />}
+        {location.pathname === "/departments" && <Departments />}
+        {location.pathname === "/departments/add" && <DepartmentsDialog />}
       </main>
     </div>
   );

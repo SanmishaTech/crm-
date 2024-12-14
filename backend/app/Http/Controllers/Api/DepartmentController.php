@@ -32,10 +32,10 @@ class DepartmentController extends BaseController
                 $query->where('department_name', 'like', '%' . $searchTerm . '%');
             });
         }
-        $departments = $query->paginate(20);
+        $departments = $query->orderBy("id", "DESC")->paginate(5);
 
-        return $this->sendResponse(["Department"=>DepartmentResource::collection($departments),
-        'pagination' => [
+        return $this->sendResponse(["Departments"=>DepartmentResource::collection($departments),
+        'Pagination' => [
             'current_page' => $departments->currentPage(),
             'last_page' => $departments->lastPage(),
             'per_page' => $departments->perPage(),

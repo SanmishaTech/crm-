@@ -31,7 +31,7 @@ class ProductsController extends BaseController
                 $query->where('department_name', 'like', '%' . $searchTerm . '%');
             });
         }
-        $products = $query->paginate(20);
+        $products = $query->orderBy('id', 'DESC')->paginate(20);
 
         return $this->sendResponse(["Product"=>ProductResource::collection($products),
         'pagination' => [
@@ -39,7 +39,7 @@ class ProductsController extends BaseController
             'last_page' => $products->lastPage(),
             'per_page' => $products->perPage(),
             'total' => $products->total(),
-        ]], "Products retrived successfully");
+        ]], "Products retrieved successfully");
 
     }
 
