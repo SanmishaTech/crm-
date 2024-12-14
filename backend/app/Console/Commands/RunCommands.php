@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 
 class RunCommands extends Command
 {
-    protected $signature = 'run:all-commands';
+    protected $signature = 'all';
     protected $description = 'Run a series of PHP commands in sequence';
 
     public function __construct()

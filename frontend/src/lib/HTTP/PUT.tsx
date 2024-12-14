@@ -37,7 +37,7 @@ const postData = async ({
 };
 
 // Custom hook to handle POST requests
-const usePostData = ({
+const usePutData = ({
   endpoint,
   params,
 }: {
@@ -52,7 +52,15 @@ const usePostData = ({
     querykey.push(...params.queryKey);
   }
   return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
-    mutationFn: (data) => postData({ endpoint, data, headers: params.headers }),
+    mutationFn: (data) =>
+      postData({
+        endpoint,
+        data,
+        headers: params.headers ?? {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }),
     onSuccess:
       params.onSuccess ??
       (() => {
@@ -69,4 +77,4 @@ const usePostData = ({
   });
 };
 
-export { usePostData };
+export { usePutData };

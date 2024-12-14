@@ -41,6 +41,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
+import { usePostData } from "@/lib/HTTP/DELETE";
 
 // Supplier type
 type Supplier = {
@@ -105,7 +106,7 @@ export default function TableDemo() {
         params: {
           page: currentPage,
           limit: itemsPerPage,
-          search: searchTerm, // Include search term in the query params
+          search: searchTerm,
         },
       })
       .then((response) => {
@@ -117,7 +118,7 @@ export default function TableDemo() {
         setError("Failed to load data");
         setLoading(false);
       });
-  }, [currentPage, itemsPerPage, searchTerm]); // Add searchTerm as a dependency
+  }, [currentPage, itemsPerPage, searchTerm]);
 
   // Sorting function
   const handleSort = (key: keyof Supplier) => {
@@ -160,29 +161,10 @@ export default function TableDemo() {
         setSuppliers(
           suppliers.filter((supplier) => supplier.id !== supplierId)
         );
-        window.location.reload();
+        // window.location.reload();
       })
       .catch(() => {
         setError("Failed to delete supplier");
-      });
-  };
-
-  // onSubmit function
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    axios
-      .post("/api/suppliers", data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        setSuppliers((prevSuppliers) => [...prevSuppliers, response.data]);
-        form.reset();
-        window.location.reload();
-      })
-      .catch(() => {
-        setError("Failed to add supplier");
       });
   };
 
@@ -223,45 +205,6 @@ export default function TableDemo() {
         </div>
         {/* Search Bar Ends */}
         <div className="flex space-x-2">
-          {/* Add(Dialog) Starts */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">Add (Dialog)</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add Suppliers</DialogTitle>
-                <DialogDescription>
-                  Add your supplier details here. Click save when you're done.
-                </DialogDescription>
-              </DialogHeader>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
-                >
-                  <FormField
-                    control={form.control}
-                    name="supplier"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center">
-                        <FormLabel className="w-40">Supplier:</FormLabel>{" "}
-                        <FormControl className="flex-1">
-                          <Input placeholder="Supplier" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <DialogFooter>
-                    <Button type="submit">Save changes</Button>
-                  </DialogFooter>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
-          {/* Add(Dialog) Ends */}
           {/* Add(Page) Starts */}
           <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
             Add (Page)

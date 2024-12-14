@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-import { Button } from "@/components/ui/button";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Login from "@/Packages/Login/Login";
 import Dashboard from "./Pages/Dashboard";
@@ -38,7 +37,6 @@ function App() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("This is data", navItems);
 
   useEffect(() => {
     // Check if user is logged in (this could be replaced with your actual login check logic)

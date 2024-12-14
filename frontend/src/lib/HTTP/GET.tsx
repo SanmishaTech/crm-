@@ -26,7 +26,7 @@ import { toast } from "sonner";
 };
 
 // Custom hook to fetch data
-const useFetchData = ({
+const useGetData = ({
   endpoint,
   params,
 }: {
@@ -55,7 +55,11 @@ const useFetchData = ({
     queryKey: Array.isArray(customParams.queryKey) 
       ? customParams.queryKey 
       : [customParams.queryKey],
-    queryFn: () => fetchData({ endpoint, headers: params.headers }),
+    queryFn: () => fetchData({ endpoint, headers: params.headers??{
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + localStorage.getItem("token"),
+      
+    } }),
     retry: customParams.retry,
     refetchOnWindowFocus: customParams.refetchOnWindowFocus,
     onSuccess: customParams.onSuccess,
@@ -66,4 +70,4 @@ const useFetchData = ({
   return { data, isLoading, isFetching, isError };
 };
 
-export { useFetchData };
+export { useGetData };

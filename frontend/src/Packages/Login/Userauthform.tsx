@@ -18,11 +18,11 @@ import { useForm } from "react-hook-form";
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { useFetchData } from "@/fetchcomponents/Fetchapi";
+import { useFetchData } from "@/lib/HTTP/GET";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { usePostData } from "@/fetchcomponents/postapi";
+import { usePostData } from "@/lib/HTTP/POST";
 
 gsap.registerPlugin(useGSAP);
 

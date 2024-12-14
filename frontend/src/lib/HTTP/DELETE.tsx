@@ -29,12 +29,12 @@ const postData = async ({
   headers?: Record<string, string>;
 }): Promise<AxiosResponse<Response>> => {
   const config = headers ? { headers } : {};
-  const response = await axios.post<Response>(endpoint, data, config);
+  const response = await axios.delete<Response>(endpoint, config);
   return response;
 };
 
 // Custom hook to handle POST requests
-const usePostData = ({
+const useDeleteData = ({
   endpoint,
   params,
 }: {
@@ -52,16 +52,24 @@ const usePostData = ({
   //   }
   // );
   return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
-    mutationFn: (data) => postData({ endpoint, data, headers: params.headers }),
+    mutationFn: (data) =>
+      postData({
+        endpoint,
+        data,
+        headers: params.headers ?? {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }),
     onSuccess:
-      params.onSuccess ?? (() => toast.success("Data posted successfully")),
+      params.onSuccess ?? (() => toast.success("Data Deleted successfully")),
     onError:
       params.onError ?? ((error: AxiosError) => toast.error(error.message)),
-    retry: params.retry ?? 3,
+    retry: params.retry ?? 1,
     onSettled: (data) => {
       console.log(data);
     },
   });
 };
 
-export { usePostData };
+export { useDeleteData };

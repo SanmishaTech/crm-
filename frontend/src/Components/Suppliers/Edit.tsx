@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +14,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { z } from "zod";
+import { toast } from "sonner";
+import { useGetData } from "@/lib/HTTP/GET";
+import { usePutData } from "@/lib/HTTP/PUT";
 
 // Form validation schema
 const formSchema = z.object({
@@ -42,12 +44,10 @@ const formSchema = z.object({
 });
 
 export default function EditSupplierPage() {
-  const { id } = useParams(); // Get the supplier ID from the URL
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Use react-hook-form with Zod validation schema
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -67,64 +67,78 @@ export default function EditSupplierPage() {
       email: "",
     },
   });
+  const { data, isLoading, isFetching, isError } = useGetData({
+    endpoint: `/api/suppliers/${id}`,
+    params: {
+      queryKeyId: "suppliers",
+      retry: 1,
+      onError: (error) => {
+        console.log("error", error);
+        if (error.message && error.message.includes("duplicate supplier")) {
+          toast.error("Supplier name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to submit the form. Please try again.");
+        }
+      },
+      onSuccess: (data) => {
+        console.log("data", data);
+        navigate("/suppliers");
+      },
+    },
+  });
 
-  // Fetch supplier data
   useEffect(() => {
-    if (id) {
-      axios
-        .get(`/api/suppliers/${id}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        })
-        .then((response) => {
-          const supplierData = response.data.data.Supplier;
-          form.reset({
-            supplier: supplierData.supplier,
-            street_address: supplierData.street_address,
-            area: supplierData.area,
-            city: supplierData.city,
-            state: supplierData.state,
-            pincode: supplierData.pincode,
-            country: supplierData.country,
-            gstin: supplierData.gstin,
-            contact_no: supplierData.contact_no,
-            department: supplierData.department,
-            designation: supplierData.designation,
-            mobile_1: supplierData.mobile_1,
-            mobile_2: supplierData.mobile_2,
-            email: supplierData.email,
-          });
-          setLoading(false);
-        })
-        .catch(() => {
-          setError("Failed to load supplier data");
-          setLoading(false);
-        });
-    }
-  }, [id, form]);
-
-  // Submit form data for updating supplier
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    axios
-      .put(`/api/suppliers/${id}`, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then(() => {
-        navigate("/suppliers"); // Redirect back to the suppliers list after saving
-      })
-      .catch(() => {
-        setError("Failed to update supplier");
+    if (data) {
+      const newData = data.data.Supplier;
+      form.reset({
+        supplier: newData.supplier || "",
+        street_address: newData.street_address || "",
+        area: newData.area || "",
+        city: newData.city || "",
+        state: newData.state || "",
+        pincode: newData.pincode || "",
+        country: newData.country || "India",
+        gstin: newData.gstin || "",
+        contact_no: newData.contact_no || "",
+        department: newData.department || "",
+        designation: newData.designation || "",
+        mobile_1: newData.mobile_1 || "",
+        mobile_2: newData.mobile_2 || "",
+        email: newData.email || "",
       });
-  };
+    }
+  }, [data, form]);
 
-  // Loading state or error message display
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (isError) {
+    return <div>Error fetching data. Please try again.</div>;
+  }
+
+  type FormValues = z.infer<typeof formSchema>;
+  const fetchData = usePutData({
+    endpoint: `/api/suppliers/${id}`,
+    params: {
+      onSuccess: (data) => {
+        console.log("data", data);
+        navigate("/suppliers");
+      },
+      onError: (error) => {
+        console.log("error", error);
+
+        if (error.message && error.message.includes("duplicate supplier")) {
+          toast.error("Supplier name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to submit the form. Please try again.");
+        }
+      },
+    },
+  });
+
+  const onSubmit = (data: FormValues) => {
+    fetchData.mutate(data);
+  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
@@ -141,7 +155,11 @@ export default function EditSupplierPage() {
                 <FormItem>
                   <FormLabel>Supplier</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Supplier Name" {...field} />
+                    <Input
+                      placeholder="Enter Supplier Name"
+                      {...field}
+                      value={field.value}
+                    />
                   </FormControl>
                   <FormDescription>Enter the Supplier name.</FormDescription>
                   <FormMessage />
