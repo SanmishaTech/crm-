@@ -26,7 +26,7 @@ import { toast } from "sonner";
 };
 
 // Custom hook to fetch data
-const useFetchData = ({
+const useGetData = ({
   endpoint,
   params,
 }: {
@@ -70,4 +70,4 @@ const useFetchData = ({
   return { data, isLoading, isFetching, isError };
 };
 
-export { useFetchData };
+export { useGetData };

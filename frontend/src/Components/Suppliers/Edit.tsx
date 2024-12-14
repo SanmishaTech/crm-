@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { toast } from "sonner";
-import { useFetchData } from "@/lib/HTTP/GET";
-import { usePostData } from "@/lib/HTTP/PUT";
+import { useGetData } from "@/lib/HTTP/GET";
+import { usePutData } from "@/lib/HTTP/PUT";
 
 // Form validation schema
 const formSchema = z.object({
@@ -67,7 +67,7 @@ export default function EditSupplierPage() {
       email: "",
     },
   });
-  const { data, isLoading, isFetching, isError } = useFetchData({
+  const { data, isLoading, isFetching, isError } = useGetData({
     endpoint: `/api/suppliers/${id}`,
     params: {
       queryKeyId: "suppliers",
@@ -117,7 +117,7 @@ export default function EditSupplierPage() {
   }
 
   type FormValues = z.infer<typeof formSchema>;
-  const fetchData = usePostData({
+  const fetchData = usePutData({
     endpoint: `/api/suppliers/${id}`,
     params: {
       onSuccess: (data) => {

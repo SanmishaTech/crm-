@@ -34,7 +34,7 @@ const postData = async ({
 };
 
 // Custom hook to handle POST requests
-const usePostData = ({
+const useDeleteData = ({
   endpoint,
   params,
 }: {
@@ -65,11 +65,11 @@ const usePostData = ({
       params.onSuccess ?? (() => toast.success("Data Deleted successfully")),
     onError:
       params.onError ?? ((error: AxiosError) => toast.error(error.message)),
-    retry: params.retry ?? 3,
+    retry: params.retry ?? 1,
     onSettled: (data) => {
       console.log(data);
     },
   });
 };
 
-export { usePostData };
+export { useDeleteData };

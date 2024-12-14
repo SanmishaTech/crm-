@@ -37,7 +37,7 @@ const postData = async ({
 };
 
 // Custom hook to handle POST requests
-const usePostData = ({
+const usePutData = ({
   endpoint,
   params,
 }: {
@@ -77,4 +77,4 @@ const usePostData = ({
   });
 };
 
-export { usePostData };
+export { usePutData };
