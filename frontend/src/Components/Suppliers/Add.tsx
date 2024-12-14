@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { usePostData } from "@/fetchcomponents/postapi";
+import { usePostData } from "@/lib/HTTP/POST";
 import { toast } from "sonner";
 
 // Form Schema
@@ -81,10 +81,6 @@ export default function InputForm() {
   const navigate = useNavigate(); // Use For Navigation
 
   type FormValues = z.infer<typeof FormSchema>;
-
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user || "{}");
-
   const formData = usePostData({
     endpoint: "/api/suppliers",
     params: {
@@ -105,7 +101,6 @@ export default function InputForm() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    data.userId = User?._id;
     formData.mutate(data);
   };
 

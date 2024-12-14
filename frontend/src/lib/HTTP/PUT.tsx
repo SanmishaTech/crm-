@@ -3,6 +3,8 @@ import {
   useMutation,
   UseMutationResult,
   MutationFunction,
+  QueryClient,
+  useQueryClient,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -13,6 +15,7 @@ interface RequestData {
 
 interface ParamsType {
   headers?: Record<string, string>;
+  queryKey?: string | string[];
   onSuccess?: (data: AxiosResponse<Response>) => void;
   onError?: (error: AxiosError) => void;
   retry?: number;
@@ -29,7 +32,7 @@ const postData = async ({
   headers?: Record<string, string>;
 }): Promise<AxiosResponse<Response>> => {
   const config = headers ? { headers } : {};
-  const response = await axios.delete<Response>(endpoint, config);
+  const response = await axios.put<Response>(endpoint, data, config);
   return response;
 };
 
@@ -41,20 +44,30 @@ const usePostData = ({
   endpoint: string;
   params: ParamsType;
 }): UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData> => {
-  // return useMutation<AxiosResponse<Response>, AxiosError, RequestData>(
-  //   (data) => postData({ endpoint, data, headers: params.headers }),
-  //   {
-  //     onSuccess:
-  //       params.onSuccess ?? (() => toast.success("Data posted successfully")),
-  //     onError:
-  //       params.onError ?? ((error: AxiosError) => toast.error(error.message)),
-  //     retry: params.retry ?? 3,
-  //   }
-  // );
+  const queryClient = useQueryClient();
+  const querykey: Array<String> = [];
+  if (!Array.isArray(params.queryKey)) {
+    querykey.push(params.queryKey as string);
+  } else {
+    querykey.push(...params.queryKey);
+  }
   return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
-    mutationFn: (data) => postData({ endpoint, data, headers: params.headers }),
+    mutationFn: (data) =>
+      postData({
+        endpoint,
+        data,
+        headers: params.headers ?? {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }),
     onSuccess:
-      params.onSuccess ?? (() => toast.success("Data Deleted successfully")),
+      params.onSuccess ??
+      (() => {
+        queryClient.invalidateQueries({ queryKey: querykey }),
+          toast.success("Data updated successfully");
+      }),
+
     onError:
       params.onError ?? ((error: AxiosError) => toast.error(error.message)),
     retry: params.retry ?? 3,
