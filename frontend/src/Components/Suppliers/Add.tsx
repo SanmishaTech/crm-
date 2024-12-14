@@ -3,7 +3,6 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,16 +15,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { usePostData } from "@/fetchcomponents/postapi";
 
 // Form Schema
 const FormSchema = z.object({
-  supplier: z
-    .string()
-    .min(2, { message: "Supplier field must have at least 2 characters." })
-    .max(50, {
-      message: "Supplier field must have no more than 50 characters.",
-    })
-    .nonempty({ message: "Supplier field is required." }),
+  supplier: z.string().optional(),
+  // .min(2, { message: "Supplier field must have at least 2 characters." })
+  // .max(50, {
+  //   message: "Supplier field must have no more than 50 characters.",
+  // })
+  // .nonempty({ message: "Supplier field is required." }),
 
   street_address: z.string().optional(),
   area: z.string().optional(),
@@ -33,30 +32,26 @@ const FormSchema = z.object({
   state: z.string().optional(),
   pincode: z.string().optional(),
   country: z.string().optional(),
-  gstin: z
-
-    .string()
-    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-      message: "Invalid GST Number. Please enter a valid GSTIN.",
-    })
-    .max(15, "GST Number must be exactly 15 characters")
-    .min(15, "GST Number must be exactly 15 characters"),
-  contact_no: z
-    .string()
-    .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
-      message: "Invalid contact number. Please enter a valid phone number.",
-    })
-    .max(10, "Contact number must be exactly 10 characters")
-    .min(10, "Contact number must be exactly 10 characters")
-    .nonempty("Contact number is required."),
+  gstin: z.string().optional(),
+  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+  //   message: "Invalid GST Number. Please enter a valid GSTIN.",
+  // })
+  // .max(15, "GST Number must be exactly 15 characters")
+  // .min(15, "GST Number must be exactly 15 characters"),
+  contact_no: z.string().optional(),
+  // .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
+  //   message: "Invalid contact number. Please enter a valid phone number.",
+  // })
+  // .max(10, "Contact number must be exactly 10 characters")
+  // .min(10, "Contact number must be exactly 10 characters")
+  // .nonempty("Contact number is required."),
   department: z.string().optional(),
   designation: z.string().optional(),
   mobile_1: z.string().optional(),
   mobile_2: z.string().optional(),
-  email: z
-    .string()
-    .email("Please enter a valid email address.")
-    .nonempty("Email is required."),
+  email: z.string().optional(),
+  // .email("Please enter a valid email address.")
+  // .nonempty("Email is required."),
 });
 
 export default function InputForm() {
@@ -83,42 +78,24 @@ export default function InputForm() {
 
   const navigate = useNavigate(); // Use For Navigation
 
-  // onSubmit Function
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    axios
-      .post("/api/suppliers", data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then(() => {
-        form.reset();
-        navigate("/suppliers");
-      })
-      .catch((error) => {
-        console.error(error);
+  type FormValues = z.infer<typeof FormSchema>;
 
-        // Check if the error response contains the specific message for a duplicate supplier
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.message === "The supplier has already been taken."
-        ) {
-          // If the supplier name is already taken, display a custom error message
-          setError("supplierName", {
-            type: "manual",
-            message:
-              "The supplier name is already taken. Please choose another one.",
-          });
-        } else {
-          // For any other errors, display a generic error message
-          setError("Supplier Name Already Taken ", {
-            type: "manual",
-            message: "Failed to add supplier. Please try again.",
-          });
-        }
-      });
+  const user = localStorage.getItem("user");
+  const User = JSON.parse(user || "{}");
+  const token = localStorage.getItem("token");
+  const formSubmit = usePostData({
+    endpoint: "/api/suppliers",
+    params: {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+    },
+  });
+
+  const onSubmit = async (data: FormValues) => {
+    data.userId = User?._id;
+    formSubmit.mutate(data);
   };
 
   return (
