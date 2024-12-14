@@ -160,7 +160,7 @@ export default function TableDemo() {
         setSuppliers(
           suppliers.filter((supplier) => supplier.id !== supplierId)
         );
-        window.location.reload();
+        // window.location.reload();
       })
       .catch(() => {
         setError("Failed to delete supplier");

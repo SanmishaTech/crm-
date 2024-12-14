@@ -3,6 +3,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/fetchcomponents/postapi";
+import { toast } from "sonner";
 
 // Form Schema
 const FormSchema = z.object({
@@ -82,20 +84,29 @@ export default function InputForm() {
 
   const user = localStorage.getItem("user");
   const User = JSON.parse(user || "{}");
-  const token = localStorage.getItem("token");
-  const formSubmit = usePostData({
+
+  const formData = usePostData({
     endpoint: "/api/suppliers",
     params: {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
+      onSuccess: (data) => {
+        console.log("data", data);
+        navigate("/suppliers");
+      },
+      onError: (error) => {
+        console.log("error", error);
+
+        if (error.message && error.message.includes("duplicate supplier")) {
+          toast.error("Supplier name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to submit the form. Please try again.");
+        }
       },
     },
   });
 
   const onSubmit = async (data: FormValues) => {
     data.userId = User?._id;
-    formSubmit.mutate(data);
+    formData.mutate(data);
   };
 
   return (

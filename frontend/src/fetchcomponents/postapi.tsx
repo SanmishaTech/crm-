@@ -42,15 +42,20 @@ const usePostData = ({
   params: ParamsType;
 }): UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData> => {
   return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
-    mutationFn: (data) => {
-      console.log("data", data);
-      postData({ endpoint, data, headers: params.headers });
-    },
+    mutationFn: (data) =>
+      postData({
+        endpoint,
+        data,
+        headers: params.headers ?? {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }),
     onSuccess:
-      params.onSuccess ?? (() => toast.success("Data saved successfully")),
+      params.onSuccess ?? (() => toast.success("Data posted successfully")),
     onError:
       params.onError ?? ((error: AxiosError) => toast.error(error.message)),
-    retry: params.retry ?? 3,
+    retry: params.retry ?? 0,
     onSettled: (data) => {
       console.log(data);
     },
