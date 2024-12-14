@@ -19,11 +19,9 @@ class RunCommands extends Command
     
     $commands = [
         'optimize',      
-        'migrate',
         'permissions:generate',      
         'db:seed',  
         'optimize',     
-        
     ];
 
     foreach ($commands as $command) {
