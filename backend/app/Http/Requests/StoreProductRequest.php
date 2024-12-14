@@ -25,6 +25,16 @@ class StoreProductRequest extends FormRequest
     {
         return [
             "product" => ['required', 'unique:products,product'],
+            'product_category_id' => ['required', 'exists:product_categories,id'],
+            'supplier_id' => ['required', 'exists:suppliers,id'],  
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'product_category_id.exists' => 'Product Category not Found',
+            'supplier_id.exists' => 'Supplier not Found.',
         ];
     }
 

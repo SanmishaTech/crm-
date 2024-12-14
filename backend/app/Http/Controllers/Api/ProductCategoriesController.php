@@ -35,7 +35,7 @@ class ProductCategoriesController extends BaseController
                 $query->where('product_category', 'like', '%' . $searchTerm . '%');
             });
         }
-        $product_categories = $query->paginate(5);
+        $product_categories = $query->paginate(20);
 
         return $this->sendResponse(["ProductCategories"=>ProductCategoryResource::collection($product_categories),
         'pagination' => [

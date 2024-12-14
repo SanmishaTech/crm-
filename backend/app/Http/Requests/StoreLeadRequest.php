@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateProductRequest extends FormRequest
+class StoreLeadRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,23 +24,16 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product' => [
-                'required',
-                'unique:products,product,' . $this->route('product'), 
-            'product_category_id' => ['required', 'exists:product_categories,id'],
-            'supplier_id' => ['required', 'exists:suppliers,id'],  
-            ],
+            "employee_id" => ['required', 'exists:employees,id'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'product_category_id.exists' => 'Product Category not Found',
-            'supplier_id.exists' => 'Supplier not Found.',
+            'employee_id.exists' => 'Lead Owner not Found',
         ];
     }
-
 
     protected function failedValidation(Validator $validator)
     {

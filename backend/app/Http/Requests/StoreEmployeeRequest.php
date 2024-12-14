@@ -26,6 +26,7 @@ class StoreEmployeeRequest extends FormRequest
         return [
             "email" => ['required', 'unique:users,email','unique:employees,email'],
             "mobile" => ['required', 'unique:employees,mobile'],
+            'department_id' => ['required', 'exists:departments,id'],
         ];
     }
 

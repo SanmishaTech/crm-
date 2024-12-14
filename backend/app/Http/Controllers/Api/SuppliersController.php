@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\UpdateSupplierRequest;
 
  /**
-     * @group Suppliers Management.
+     * @group Supplier Management.
     */
  
 class SuppliersController extends BaseController
@@ -31,7 +31,11 @@ class SuppliersController extends BaseController
                 $query->where('supplier', 'like', '%' . $searchTerm . '%');
             });
         }
+
         $suppliers = $query->paginate(10);
+
+       
+
 
         return $this->sendResponse(["Suppliers"=>SupplierResource::collection($suppliers),
         'pagination' => [

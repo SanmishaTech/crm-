@@ -14,7 +14,7 @@ use App\Http\Controllers\Api\ClientsController;
 
  
     /**
-     * @group Clients Management.
+     * @group Client Management.
      */
  
   
@@ -37,7 +37,7 @@ class ClientsController extends BaseController
                 $query->where('client', 'like', '%' . $searchTerm . '%');
             });
         }
-        $clients = $query->paginate(5);
+        $clients = $query->paginate(20);
 
         return $this->sendResponse(["Client"=>ClientResource::collection($clients),
         'pagination' => [

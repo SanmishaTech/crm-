@@ -32,9 +32,17 @@ class UpdateEmployeeRequest extends FormRequest
                 'required',
                 'unique:employees,mobile,' . $this->route('employee'), 
             ],
+            'department_id' => ['required', 'exists:departments,id'],
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'department_id.exists' => 'Department not Found',
+        ];
+    }
+    
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(

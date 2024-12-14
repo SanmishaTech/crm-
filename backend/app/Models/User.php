@@ -53,13 +53,8 @@ class User extends Authenticatable
     }
 
 
-    // public function projects(){
-    //     return $this->belongsToMany(Project::class, "project_user");
-    // }
-
    public function employee(){
     return $this->hasOne(Employee::class, 'user_id');
    }
 
 }
-// $table->unsignedBigInteger('country_id')->nullable(); //
