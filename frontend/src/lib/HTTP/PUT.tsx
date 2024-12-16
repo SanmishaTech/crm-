@@ -33,7 +33,7 @@ const postData = async ({
 }): Promise<AxiosResponse<Response>> => {
   const config = headers ? { headers } : {};
   const response = await axios.put<Response>(endpoint, data, config);
-  return response;
+  return response.data;
 };
 
 // Custom hook to handle POST requests
@@ -44,13 +44,15 @@ const usePutData = ({
   endpoint: string;
   params: ParamsType;
 }): UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData> => {
-  const queryClient = useQueryClient();
-  const querykey: Array<String> = [];
-  if (!Array.isArray(params.queryKey)) {
-    querykey.push(params.queryKey as string);
-  } else {
-    querykey.push(...params.queryKey);
-  }
+  // const queryClient = useQueryClient();
+  // const querykey: Array<String> = [];
+  // if (!Array.isArray(params.queryKey)) {
+  //   querykey.push(params.queryKey as string);
+  // } else {
+  //   querykey.push(...params.queryKey);
+  // }
+
+  // console.log("querykey", querykey);
   return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
     mutationFn: (data) =>
       postData({
@@ -64,8 +66,8 @@ const usePutData = ({
     onSuccess:
       params.onSuccess ??
       (() => {
-        queryClient.invalidateQueries({ queryKey: querykey }),
-          toast.success("Data updated successfully");
+        // queryClient.invalidateQueries({ queryKey: params.queryKey }),
+        toast.success("Data updated successfully");
       }),
 
     onError:

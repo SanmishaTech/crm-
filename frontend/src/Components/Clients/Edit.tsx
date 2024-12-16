@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useQueryClient } from "@tanstack/react-query";
+
 import {
   Form,
   FormControl,
@@ -36,17 +38,21 @@ const formSchema = z.object({
     .max(15, "GST Number must be exactly 15 characters")
     .min(15, "GST Number must be exactly 15 characters"),
   contact_no: z.string().optional(),
-
+  department: z.string().optional(),
+  designation: z.string().optional(),
+  mobile_1: z.string().optional(),
+  mobile_2: z.string().optional(),
   email: z.string().optional(),
 });
 
 // Move FormValues type definition outside the component
 type FormValues = z.infer<typeof formSchema>;
 
-export default function EditSupplierPage() {
+export default function EditClientPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -57,10 +63,13 @@ export default function EditSupplierPage() {
       city: "",
       state: "",
       pincode: "",
-      country: "India",
+      country: "",
       gstin: "",
       contact_no: "",
-
+      department: "",
+      designation: "",
+      mobile_1: "",
+      mobile_2: "",
       email: "",
     },
   });
@@ -68,14 +77,19 @@ export default function EditSupplierPage() {
   // Move the usePutData hook before any conditional returns
   const fetchData = usePutData({
     endpoint: `/api/clients/${id}`,
+    queryKey: ["editclient", id],
+
     params: {
-      onSuccess: () => {
-        toast.success("Supplier updated successfully");
+      onSuccess: (data) => {
+        console.log("editdata", data);
+        queryClient.invalidateQueries({ queryKey: ["editclient"] });
+        queryClient.invalidateQueries({ queryKey: ["editclient", id] });
+        toast.success("Client updated successfully");
         navigate("/clients");
       },
       onError: (error) => {
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        if (error.message && error.message.includes("duplicate client")) {
+          toast.error("Client name is duplicated. Please use a unique name.");
         } else {
           toast.error("Failed to submit the form. Please try again.");
         }
@@ -83,24 +97,39 @@ export default function EditSupplierPage() {
     },
   });
 
-  const { data, isLoading, isError } = useGetData({
+  const {
+    data: editData,
+    isLoading,
+    isError,
+  } = useGetData({
     endpoint: `/api/clients/${id}`,
     params: {
-      queryKeyId: ["client", id],
+      queryKey: ["editclient", id],
       retry: 1,
+
+      onSuccess: (data) => {
+        console.log("data", data);
+        setData(data.Client);
+        setLoading(false);
+      },
       onError: (error) => {
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        if (error.message && error.message.includes("duplicate client")) {
+          toast.error("Client name is duplicated. Please use a unique name.");
         } else {
-          toast.error("Failed to fetch supplier data. Please try again.");
+          toast.error("Failed to fetch client data. Please try again.");
         }
       },
+      enabled: !!id,
     },
   });
 
   useEffect(() => {
-    if (data && "data" in data) {
-      const newData = data.data.Client;
+    console.log("data", editData);
+  }, [editData]);
+
+  useEffect(() => {
+    if (editData?.Client) {
+      const newData = editData.Client;
       form.reset({
         client: newData.client || "",
         street_address: newData.street_address || "",
@@ -111,11 +140,10 @@ export default function EditSupplierPage() {
         country: newData.country || "India",
         gstin: newData.gstin || "",
         contact_no: newData.contact_no || "",
-
         email: newData.email || "",
       });
     }
-  }, [data, form]);
+  }, [editData, form]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -126,12 +154,14 @@ export default function EditSupplierPage() {
 
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
+    queryClient.invalidateQueries({ queryKey: ["client"] });
+    queryClient.invalidateQueries({ queryKey: ["client", id] });
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
-      <h3 className="text-2xl font-semibold text-center">Edit Supplier</h3>
-      <p className="text-center text-xs mb-9">Edit & Update supplier.</p>
+      <h3 className="text-2xl font-semibold text-center">Edit Client</h3>
+      <p className="text-center text-xs mb-9">Edit & Update Client.</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
@@ -315,28 +345,25 @@ export default function EditSupplierPage() {
             />
           </div>
           {/* Feilds Third Row Ends */}
-          {/* Feilds Fourth Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Email.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Feilds Fourth Row Ends */}
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    className="justify-left"
+                    placeholder="Enter Email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>Enter the Email.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* Feilds Fifth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">

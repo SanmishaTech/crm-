@@ -14,23 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+
 import {
   Pagination,
   PaginationContent,
@@ -42,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/DELETE";
+import AlertDialogbox from "./AlertBox";
 
 // Client type
 type Client = {
@@ -237,12 +222,14 @@ export default function TableDemo() {
                 <TableCell>{client.area}</TableCell>
                 <TableCell>{client.city}</TableCell>
                 <TableCell className="flex justify-items  space-x-2">
-                  <button
+                  <AlertDialogbox url={client.id} />
+
+                  {/* <button
                     onClick={() => handleDelete(client.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     Delete
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => navigate(`/clients/edit/${client.id}`)}
                     className="text-blue-500 hover:text-blue-700"
