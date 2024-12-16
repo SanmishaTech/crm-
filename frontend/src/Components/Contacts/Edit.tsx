@@ -31,22 +31,9 @@ import {
 const formSchema = z.object({
   client_id: z.string().optional(),
   contact_person: z.string().optional(),
-  area: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  pincode: z.string().optional(),
-  country: z.string().optional(),
-  gstin: z
-    // 22AAAAA0000A1Z5
-    .string()
-    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-      message: "Invalid GST Number. Please enter a valid GSTIN.",
-    })
-    .max(15, "GST Number must be exactly 15 characters")
-    .min(15, "GST Number must be exactly 15 characters"),
-  contact_no: z.string().optional(),
   department: z.string().optional(),
   designation: z.string().optional(),
+
   mobile_1: z.string().optional(),
   mobile_2: z.string().optional(),
   email: z.string().optional(),
@@ -68,15 +55,9 @@ export default function EditSupplierPage() {
     defaultValues: {
       client_id: "",
       contact_person: "",
-      area: "",
-      city: "",
-      state: "",
-      pincode: "",
-      country: "",
-      gstin: "",
-      contact_no: "",
       department: "",
       designation: "",
+
       mobile_1: "",
       mobile_2: "",
       email: "",
@@ -94,7 +75,7 @@ export default function EditSupplierPage() {
         queryClient.invalidateQueries({ queryKey: ["editsupplier"] });
         queryClient.invalidateQueries({ queryKey: ["editsupplier", id] });
         toast.success("Supplier updated successfully");
-        navigate("/clients");
+        navigate("/contacts");
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate supplier")) {
@@ -142,13 +123,10 @@ export default function EditSupplierPage() {
       form.reset({
         client_id: newData.client_id || "",
         contact_person: newData.contact_person || "",
-        area: newData.area || "",
-        city: newData.city || "",
-        state: newData.state || "",
-        pincode: newData.pincode || "",
-        country: newData.country || "India",
-        gstin: newData.gstin || "",
-        contact_no: newData.contact_no || "",
+        department: newData.department || "",
+        designation: newData.designation || "",
+        mobile_1: newData.mobile_1 || "",
+        mobile_2: newData.mobile_2 || "",
         email: newData.email || "",
       });
     }
@@ -226,143 +204,44 @@ export default function EditSupplierPage() {
             />
             <FormField
               control={form.control}
-              name="street_address"
+              name="department"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Street Address</FormLabel>
+                  <FormLabel>Departmernt</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Street Address" {...field} />
+                    <Input placeholder="Enter Departmernt" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the Street Address.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="area"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Area</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Area" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Area.</FormDescription>
+                  <FormDescription>Enter the Departmernt.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-          {/* Feilds First Row Ends */}
-          {/* Feilds Second Row */}
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
-              name="city"
+              name="designation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>City</FormLabel>
+                  <FormLabel>Designation</FormLabel>
                   <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter City"
-                      {...field}
-                    />
+                    <Input placeholder="Enter Designation" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the City.</FormDescription>
+                  <FormDescription>Enter the Designation.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
-              name="state"
+              name="mobile_1"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>State</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter State" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the State.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="pincode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Pincode</FormLabel>
+                  <FormLabel>Mobile-1</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter Pincode"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{6}"
-                      maxLength={6}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Pincode.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Feilds Second Row Ends */}
-          {/* Feilds Third Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Country"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Country.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="gstin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>GST IN</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      maxLength={15}
-                      {...field}
-                      style={{ textTransform: "uppercase" }}
-                      placeholder="Enter Gst Number"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The GST Number must be 15 characters long and should follow
-                    this format:<strong>22ABCDE0123A1Z5</strong>
-                  </FormDescription>{" "}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="contact_no"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contact</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Contact"
+                      placeholder="Enter Mobile"
                       {...field}
                       type="text"
                       inputMode="numeric"
@@ -377,7 +256,36 @@ export default function EditSupplierPage() {
                     />
                   </FormControl>
                   <FormDescription>
-                    Enter the Contact (e.g:- 12-3456-7890).
+                    Enter the Mobile (e.g:- 12-3456-7890).
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="mobile_2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Mobile-2</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter Mobile"
+                      {...field}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={field.value}
+                      // onChange={(e) => {
+                      //   const formattedValue = e.target.value
+                      //     .replace(/\D/g, "") // Remove non-digit characters
+                      //     .replace(/(\d{2})(\d{4})(\d{4})/, "$1-$2-$3"); // Format as 12-3456-7890
+                      //   field.onChange(formattedValue);
+                      // }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Enter the Mobile (e.g:- 12-3456-7890).
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -403,7 +311,6 @@ export default function EditSupplierPage() {
               </FormItem>
             )}
           />
-          {/* Feilds Fifth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">
@@ -411,7 +318,7 @@ export default function EditSupplierPage() {
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                navigate("/clients");
+                navigate("/contacts");
               }}
             >
               Cancel
