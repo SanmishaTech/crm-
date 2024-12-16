@@ -43,17 +43,14 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/DELETE";
 
-// Supplier type
-type Supplier = {
+// Contact type
+type Contact = {
   id: string;
-  supplier: string;
-  street_address: string;
-  area: string;
-  city: string;
-  state: string;
-  pincode: string;
-  country: string;
-  gstin: string;
+  client_id: string;
+  contact_person: string;
+  department: string;
+  designation: string;
+  email: string;
 };
 
 type PaginationData = {
@@ -65,18 +62,15 @@ type PaginationData = {
 
 // Form Validation Schema
 const formSchema = z.object({
-  supplier: z.string().min(2).max(50),
-  street_address: z.string().min(2).max(50),
-  area: z.string().min(2).max(50),
-  city: z.string().min(2).max(50),
-  state: z.string().min(2).max(50),
-  pincode: z.string().min(2).max(50),
-  country: z.string().min(2).max(50),
-  gstin: z.string().min(2).max(50),
+  contact_person: z.string().min(2).max(50),
+  client_id: z.any().optional(),
+  department: z.string().min(2).max(50),
+  designation: z.string().min(2).max(50),
+  email: z.string().min(2).max(50),
 });
 
 export default function TableDemo() {
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
@@ -91,14 +85,14 @@ export default function TableDemo() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      supplier: "",
+      contact_person: "",
     },
   });
 
   // Fetch Suppliers
   useEffect(() => {
     axios
-      .get("/api/suppliers", {
+      .get("/api/contacts", {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
@@ -110,7 +104,7 @@ export default function TableDemo() {
         },
       })
       .then((response) => {
-        setSuppliers(response.data.data.Suppliers);
+        setContacts(response.data.data.Contact);
         setPagination(response.data.data.pagination);
         setLoading(false);
       })
@@ -121,7 +115,7 @@ export default function TableDemo() {
   }, [currentPage, itemsPerPage, searchTerm]);
 
   // Sorting function
-  const handleSort = (key: keyof Supplier) => {
+  const handleSort = (key: keyof Contact) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -129,11 +123,11 @@ export default function TableDemo() {
     setSortConfig({ key, direction });
   };
 
-  const sortedSuppliers = [...suppliers].sort((a, b) => {
+  const sortedContacts = [...contacts].sort((a, b) => {
     if (!sortConfig.key) return 0;
 
-    const aValue = a[sortConfig.key as keyof Supplier];
-    const bValue = b[sortConfig.key as keyof Supplier];
+    const aValue = a[sortConfig.key as keyof Contact];
+    const bValue = b[sortConfig.key as keyof Contact];
 
     if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
     if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
@@ -148,23 +142,21 @@ export default function TableDemo() {
     return <div>{error}</div>;
   }
 
-  // Delete Supplier
-  const handleDelete = (supplierId: string) => {
+  // Delete Contact
+  const handleDelete = (contactId: string) => {
     axios
-      .delete(`/api/suppliers/${supplierId}`, {
+      .delete(`/api/contacts/${contactId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
       .then(() => {
-        setSuppliers(
-          suppliers.filter((supplier) => supplier.id !== supplierId)
-        );
+        setContacts(contacts.filter((contact) => contact.id !== contactId));
         // window.location.reload();
       })
       .catch(() => {
-        setError("Failed to delete supplier");
+        setError("Failed to delete contact");
       });
   };
 
@@ -192,13 +184,13 @@ export default function TableDemo() {
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Suppliers List</h3>
+        <h3 className="text-lg font-semibold">Contacts List</h3>
       </div>
       <div className="flex justify-between items-center space-x-2 w-full">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">
           <Input
-            placeholder="Search suppliers..."
+            placeholder="Search contacts..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -206,8 +198,8 @@ export default function TableDemo() {
         {/* Search Bar Ends */}
         <div className="flex space-x-2">
           {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
-            Add Supplier
+          <Button variant="outline" onClick={() => navigate("/contacts/add")}>
+            Add Contact
           </Button>
           {/* Add(Page) Ends */}
         </div>
@@ -219,34 +211,38 @@ export default function TableDemo() {
           <TableCaption>A list of your recent suppliers.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead onClick={() => handleSort("supplier")}>
-                Suppliers
+              <TableHead onClick={() => handleSort("contact_person")}>
+                Contact person
               </TableHead>
-              <TableHead onClick={() => handleSort("street_address")}>
-                Street Address
+              <TableHead onClick={() => handleSort("client")}>Client</TableHead>
+              <TableHead onClick={() => handleSort("department")}>
+                Department
               </TableHead>
-              <TableHead onClick={() => handleSort("area")}>Area</TableHead>
-              <TableHead onClick={() => handleSort("city")}>City</TableHead>
+              <TableHead onClick={() => handleSort("designation")}>
+                Designation
+              </TableHead>
+              <TableHead onClick={() => handleSort("email")}>Email</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {sortedSuppliers.map((supplier) => (
-              <TableRow key={supplier.id}>
-                <TableCell>{supplier.supplier}</TableCell>
-                <TableCell>{supplier.street_address}</TableCell>
-                <TableCell>{supplier.area}</TableCell>
-                <TableCell>{supplier.city}</TableCell>
+            {sortedContacts.map((contact) => (
+              <TableRow key={contact.id}>
+                <TableCell>{contact.contact_person}</TableCell>
+                <TableCell>{contact?.client?.client}</TableCell>
+                <TableCell>{contact.department}</TableCell>
+                <TableCell>{contact.designation}</TableCell>
+                <TableCell>{contact.email}</TableCell>
                 <TableCell className="flex justify-items  space-x-2">
                   <button
-                    onClick={() => handleDelete(supplier.id)}
+                    onClick={() => handleDelete(contact.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     Delete
                   </button>
                   <button
-                    onClick={() => navigate(`/suppliers/edit/${supplier.id}`)}
+                    onClick={() => navigate(`/contacts/edit/${contact.id}`)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Edit

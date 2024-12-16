@@ -22,6 +22,16 @@ export const navItems: NavItem[] = [
         href: "/departments",
         icon: "department",
       },
+      {
+        title: "Contacts",
+        href: "/contacts",
+        icon: "department",
+      },
+      {
+        title: "Clients",
+        href: "/clients",
+        icon: "department",
+      },
     ],
   },
 ];

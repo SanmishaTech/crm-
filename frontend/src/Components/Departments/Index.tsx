@@ -38,7 +38,7 @@ import { useNavigate } from "react-router-dom";
 import DepartmentDialog from "./DepartmentDialog";
 import PaginationComponent from "./PaginationComponent";
 
-// Supplier type
+// Department type
 type Department = {
   id: string;
   department_name: string;
@@ -135,7 +135,7 @@ export default function TableDemo() {
     return <div>{error}</div>;
   }
 
-  // Delete Supplier
+  // Delete Department
   const handleDelete = (departmentId: string) => {
     axios
       .delete(`/api/departments/${departmentId}`, {
@@ -170,7 +170,7 @@ export default function TableDemo() {
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Departments List</h3>
+        <h3 className="text-lg font-semibold mb-3">Departments List</h3>
       </div>
       <div className="flex justify-between items-center space-x-2 w-full">
         {/* Search Bar Starts */}
@@ -194,11 +194,6 @@ export default function TableDemo() {
             fetchDepartments={fetchDepartments}
           />
           {/* Add(Dialog) Ends */}
-          {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
-            Add (Page)
-          </Button>
-          {/* Add(Page) Ends */}
         </div>
       </div>
 
@@ -242,7 +237,8 @@ export default function TableDemo() {
         <PaginationComponent
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
-          pagination={pagination}        />
+          pagination={pagination}
+        />
         {/* Pagination End */}
       </div>
     </div>

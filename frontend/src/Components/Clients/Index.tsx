@@ -43,10 +43,10 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/DELETE";
 
-// Supplier type
-type Supplier = {
+// Client type
+type Client = {
   id: string;
-  supplier: string;
+  client: string;
   street_address: string;
   area: string;
   city: string;
@@ -65,7 +65,7 @@ type PaginationData = {
 
 // Form Validation Schema
 const formSchema = z.object({
-  supplier: z.string().min(2).max(50),
+  client: z.string().min(2).max(50),
   street_address: z.string().min(2).max(50),
   area: z.string().min(2).max(50),
   city: z.string().min(2).max(50),
@@ -76,7 +76,7 @@ const formSchema = z.object({
 });
 
 export default function TableDemo() {
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
@@ -91,14 +91,14 @@ export default function TableDemo() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      supplier: "",
+      client: "",
     },
   });
 
-  // Fetch Suppliers
+  // Fetch Client
   useEffect(() => {
     axios
-      .get("/api/suppliers", {
+      .get("/api/clients", {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
@@ -110,7 +110,7 @@ export default function TableDemo() {
         },
       })
       .then((response) => {
-        setSuppliers(response.data.data.Suppliers);
+        setClients(response.data.data.Client);
         setPagination(response.data.data.pagination);
         setLoading(false);
       })
@@ -121,7 +121,7 @@ export default function TableDemo() {
   }, [currentPage, itemsPerPage, searchTerm]);
 
   // Sorting function
-  const handleSort = (key: keyof Supplier) => {
+  const handleSort = (key: keyof Client) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -129,11 +129,11 @@ export default function TableDemo() {
     setSortConfig({ key, direction });
   };
 
-  const sortedSuppliers = [...suppliers].sort((a, b) => {
+  const sortedClients = [...clients].sort((a, b) => {
     if (!sortConfig.key) return 0;
 
-    const aValue = a[sortConfig.key as keyof Supplier];
-    const bValue = b[sortConfig.key as keyof Supplier];
+    const aValue = a[sortConfig.key as keyof Client];
+    const bValue = b[sortConfig.key as keyof Client];
 
     if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
     if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
@@ -148,23 +148,21 @@ export default function TableDemo() {
     return <div>{error}</div>;
   }
 
-  // Delete Supplier
-  const handleDelete = (supplierId: string) => {
+  // Delete Client
+  const handleDelete = (clientId: string) => {
     axios
-      .delete(`/api/suppliers/${supplierId}`, {
+      .delete(`/api/clients/${clientId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
       .then(() => {
-        setSuppliers(
-          suppliers.filter((supplier) => supplier.id !== supplierId)
-        );
+        setClients(clients.filter((client) => client.id !== clientId));
         // window.location.reload();
       })
       .catch(() => {
-        setError("Failed to delete supplier");
+        setError("Failed to delete client");
       });
   };
 
@@ -192,13 +190,13 @@ export default function TableDemo() {
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Suppliers List</h3>
+        <h3 className="text-lg font-semibold">Clients List</h3>
       </div>
       <div className="flex justify-between items-center space-x-2 w-full">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">
           <Input
-            placeholder="Search suppliers..."
+            placeholder="Search clients..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -206,8 +204,8 @@ export default function TableDemo() {
         {/* Search Bar Ends */}
         <div className="flex space-x-2">
           {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
-            Add Supplier
+          <Button variant="outline" onClick={() => navigate("/clients/add")}>
+            Add Client
           </Button>
           {/* Add(Page) Ends */}
         </div>
@@ -216,11 +214,11 @@ export default function TableDemo() {
       <div className="panel p-4 rounded-md bg-gray-50">
         {/* Table Start */}
         <Table>
-          <TableCaption>A list of your recent suppliers.</TableCaption>
+          <TableCaption>A list of your recent clients.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead onClick={() => handleSort("supplier")}>
-                Suppliers
+              <TableHead onClick={() => handleSort("client")}>
+                Clients
               </TableHead>
               <TableHead onClick={() => handleSort("street_address")}>
                 Street Address
@@ -232,21 +230,21 @@ export default function TableDemo() {
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {sortedSuppliers.map((supplier) => (
-              <TableRow key={supplier.id}>
-                <TableCell>{supplier.supplier}</TableCell>
-                <TableCell>{supplier.street_address}</TableCell>
-                <TableCell>{supplier.area}</TableCell>
-                <TableCell>{supplier.city}</TableCell>
+            {sortedClients.map((client) => (
+              <TableRow key={client.id}>
+                <TableCell>{client.client}</TableCell>
+                <TableCell>{client.street_address}</TableCell>
+                <TableCell>{client.area}</TableCell>
+                <TableCell>{client.city}</TableCell>
                 <TableCell className="flex justify-items  space-x-2">
                   <button
-                    onClick={() => handleDelete(supplier.id)}
+                    onClick={() => handleDelete(client.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     Delete
                   </button>
                   <button
-                    onClick={() => navigate(`/suppliers/edit/${supplier.id}`)}
+                    onClick={() => navigate(`/clients/edit/${client.id}`)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Edit
