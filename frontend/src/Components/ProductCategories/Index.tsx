@@ -35,14 +35,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import DepartmentDialog from "./DepartmentDialog";
-import PaginationComponent from "./PaginationComponent";
-import AddProductCategory from "../ProductCategories/AddProductCategory";
-
-// Department type
-type Department = {
+import ProductCategoryDialog from "./ProductCategoryDialog";
+import PaginationComponent from "../Departments/PaginationComponent";
+import AddDepartment from "../Departments/AddDepartment";
+// Supplier type
+type ProductCategory = {
   id: string;
-  department_name: string;
+  product_category: string;
 };
 
 type PaginationData = {
@@ -54,17 +53,23 @@ type PaginationData = {
 
 // Form Validation Schema
 const formSchema = z.object({
-  department_name: z.string().min(1, "Department name is required").max(50),
+  product_category: z
+    .string()
+    .min(1, "Product category name is required")
+    .max(50),
 });
 
 export default function TableDemo() {
-  const [departments, setDepartments] = useState<Department[]>([]);
+  const [productCategories, setProductCategories] = useState<ProductCategory[]>(
+    []
+  );
   const [open, setOpen] = useState(false); // Manage the dialog state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-  const [editDepartment, setEditDepartment] = useState<Department | null>(null); // To hold department to edit
+  const [editProductCategory, setEditProductCategory] =
+    useState<ProductCategory | null>(null);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,14 +80,14 @@ export default function TableDemo() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      department_name: "",
+      product_category: "",
     },
   });
 
-  // Fetch Departments
-  const fetchDepartments = () => {
+  // Fetch Product Categoriess
+  const fetchProductCategories = () => {
     axios
-      .get("/api/departments", {
+      .get("/api/product_categories", {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
@@ -94,7 +99,7 @@ export default function TableDemo() {
         },
       })
       .then((response) => {
-        setDepartments(response.data.data.Departments);
+        setProductCategories(response.data.data.ProductCategories);
         setPagination(response.data.data.Pagination);
         setLoading(false); // Stop loading
       })
@@ -105,11 +110,11 @@ export default function TableDemo() {
   };
 
   useEffect(() => {
-    fetchDepartments();
+    fetchProductCategories();
   }, [currentPage, itemsPerPage, searchTerm]); // Add searchTerm as a dependency
 
   // Sorting function
-  const handleSort = (key: keyof Department) => {
+  const handleSort = (key: keyof ProductCategory) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -117,11 +122,11 @@ export default function TableDemo() {
     setSortConfig({ key, direction });
   };
 
-  const sortedDepartments = [...departments].sort((a, b) => {
+  const sortedProductCategories = [...productCategories].sort((a, b) => {
     if (!sortConfig.key) return 0;
 
-    const aValue = a[sortConfig.key as keyof Department];
-    const bValue = b[sortConfig.key as keyof Department];
+    const aValue = a[sortConfig.key as keyof ProductCategory];
+    const bValue = b[sortConfig.key as keyof ProductCategory];
 
     if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
     if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
@@ -132,30 +137,33 @@ export default function TableDemo() {
     return <div>{error}</div>;
   }
 
-  // Delete Department
-  const handleDelete = (departmentId: string) => {
+  // Delete Supplier
+  const handleDelete = (productCategoryId: string) => {
     axios
-      .delete(`/api/departments/${departmentId}`, {
+      .delete(`/api/product_categories/${productCategoryId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
       .then(() => {
-        setDepartments(
-          departments.filter((department) => department.id !== departmentId)
+        setProductCategories(
+          productCategories.filter(
+            (productCategory) => productCategory.id !== productCategoryId
+          )
         );
-        fetchDepartments();
+        fetchProductCategories();
+        // window.location.reload();
       })
       .catch(() => {
-        setError("Failed to delete department");
+        setError("Failed to delete Product Category");
       });
   };
 
-  // Open the edit dialog and populate form with department data
-  const handleEdit = (department: Department) => {
-    setEditDepartment(department);
-    form.setValue("department_name", department.department_name); // Populate form with existing data
+  // Open the edit dialog and populate form with Product Category data
+  const handleEdit = (productCategory: ProductCategory) => {
+    setEditProductCategory(productCategory);
+    form.setValue("product_category", productCategory.product_category); // Populate form with existing data
     handleEditDialogOpen();
   };
 
@@ -166,13 +174,13 @@ export default function TableDemo() {
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Departments List</h3>
+        <h3 className="text-lg font-semibold">Product Categories List</h3>
       </div>
       <div className="flex justify-between items-center space-x-2 w-full">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">
           <Input
-            placeholder="Search departments..."
+            placeholder="Search Product Categories..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -180,16 +188,16 @@ export default function TableDemo() {
         {/* Search Bar Ends */}
         <div className="flex space-x-2">
           {/* Add(Dialog) Starts */}
-          <DepartmentDialog
-            loading={loading}
-            setLoading={setLoading}
+          <ProductCategoryDialog
             setOpen={setOpen}
             open={open}
-            editDepartment={editDepartment}
-            setEditDepartment={setEditDepartment}
+            editProductCategory={editProductCategory}
+            setEditProductCategory={setEditProductCategory}
             setError={setError}
             form={form}
-            fetchDepartments={fetchDepartments}
+            fetchProductCategories={fetchProductCategories}
+            loading={loading}
+            setLoading={setLoading}
           />
           {/* Add(Dialog) Ends */}
         </div>
@@ -198,29 +206,29 @@ export default function TableDemo() {
       <div className="panel p-4 rounded-md bg-gray-50">
         {/* Table Start */}
         <Table>
-          <TableCaption>A list of your recent departments.</TableCaption>
+          <TableCaption>A list of your recent Product Categories.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead onClick={() => handleSort("department")}>
-                Departments
+              <TableHead onClick={() => handleSort("productCategory")}>
+                Product Categories
               </TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {sortedDepartments.map((department) => (
-              <TableRow key={department.id}>
-                <TableCell>{department.department_name}</TableCell>
+            {sortedProductCategories.map((productCategory) => (
+              <TableRow key={productCategory.id}>
+                <TableCell>{productCategory.product_category}</TableCell>
                 <TableCell className="text-center">
                   <button
-                    onClick={() => handleDelete(department.id)}
+                    onClick={() => handleDelete(productCategory.id)}
                     className="text-red-500 hover:text-red-700 pr-1"
                   >
                     Delete
                   </button>
                   <button
-                    onClick={() => handleEdit(department)}
+                    onClick={() => handleEdit(productCategory)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Edit

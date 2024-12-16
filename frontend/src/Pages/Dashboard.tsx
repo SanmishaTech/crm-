@@ -7,6 +7,11 @@ import SuppliersAdd from "@/Components/Suppliers/Add";
 import SuppliersEdit from "@/Components/Suppliers/Edit";
 import Departments from "@/Components/Departments/Index";
 import DepartmentsDialog from "@/Components/Departments/DepartmentDialog";
+import ProductCategories from "@/Components/ProductCategories/Index";
+import ProductCategoryDialog from "@/Components/ProductCategories/ProductCategoryDialog";
+import Products from "@/Components/Products/Index";
+import ProductsAdd from "@/Components/Products/Add";
+import ProductsEdit from "@/Components/Products/Edit";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -52,6 +57,13 @@ const Dashboard = () => {
         {location.pathname === "/suppliers/edit/:id" && <SuppliersEdit />}
         {location.pathname === "/departments" && <Departments />}
         {location.pathname === "/departments/add" && <DepartmentsDialog />}
+        {location.pathname === "/productCategories" && <ProductCategories />}
+        {location.pathname === "/productCategories/add" && (
+          <ProductCategoryDialog />
+        )}
+        {location.pathname === "/products" && <Products />}
+        {location.pathname === "/products/add" && <ProductsAdd />}
+        {location.pathname === "/products/edit/:id" && <ProductsEdit />}
       </main>
     </div>
   );
