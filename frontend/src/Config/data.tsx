@@ -31,6 +31,15 @@ export const navItems: NavItem[] = [
         title: "Products",
         href: "/products",
         icon: "department",
+          },{
+        title: "Contacts",
+        href: "/contacts",
+        icon: "department",
+      },
+      {
+        title: "Clients",
+        href: "/clients",
+        icon: "department",
       },
     ],
   },

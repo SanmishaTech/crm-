@@ -25,14 +25,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { useDeleteData } from "@/lib/HTTP/DELETE";
-import { useGetData } from "@/lib/HTTP/GET";
+import { usePostData } from "@/lib/HTTP/DELETE";
 import AlertDialogbox from "./AlertBox";
 
-// Supplier type
-type Supplier = {
+// Client type
+type Client = {
   id: string;
-  supplier: string;
+  client: string;
   street_address: string;
   area: string;
   city: string;
@@ -51,7 +50,7 @@ type PaginationData = {
 
 // Form Validation Schema
 const formSchema = z.object({
-  supplier: z.string().min(2).max(50),
+  client: z.string().min(2).max(50),
   street_address: z.string().min(2).max(50),
   area: z.string().min(2).max(50),
   city: z.string().min(2).max(50),
@@ -62,43 +61,95 @@ const formSchema = z.object({
 });
 
 export default function TableDemo() {
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
+  const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      supplier: "",
+      client: "",
     },
   });
 
-  const { data: Sup } = useGetData({
-    endpoint: `/api/suppliers`,
-    params: {
-      queryKey: ["supplier"],
-      retry: 1,
-      onSuccess: (data) => {
-        setSuppliers(data.data.Suppliers);
-        setPagination(data.data.pagination);
+  // Fetch Client
+  useEffect(() => {
+    axios
+      .get("/api/clients", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        params: {
+          page: currentPage,
+          limit: itemsPerPage,
+          search: searchTerm,
+        },
+      })
+      .then((response) => {
+        setClients(response.data.data.Client);
+        setPagination(response.data.data.pagination);
         setLoading(false);
-      },
-      onError: (error) => {
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to fetch supplier data. Please try again.");
-        }
-      },
-    },
+      })
+      .catch(() => {
+        setError("Failed to load data");
+        setLoading(false);
+      });
+  }, [currentPage, itemsPerPage, searchTerm]);
+
+  // Sorting function
+  const handleSort = (key: keyof Client) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedClients = [...clients].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+
+    const aValue = a[sortConfig.key as keyof Client];
+    const bValue = b[sortConfig.key as keyof Client];
+
+    if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+    return 0;
   });
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  // Delete Client
+  const handleDelete = (clientId: string) => {
+    axios
+      .delete(`/api/clients/${clientId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then(() => {
+        setClients(clients.filter((client) => client.id !== clientId));
+        // window.location.reload();
+      })
+      .catch(() => {
+        setError("Failed to delete client");
+      });
+  };
 
   // Pagination functions
   const totalPages = pagination?.last_page || 1;
@@ -124,13 +175,13 @@ export default function TableDemo() {
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Suppliers List</h3>
+        <h3 className="text-lg font-semibold">Clients List</h3>
       </div>
       <div className="flex justify-between items-center space-x-2 w-full">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">
           <Input
-            placeholder="Search suppliers..."
+            placeholder="Search clients..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -138,8 +189,8 @@ export default function TableDemo() {
         {/* Search Bar Ends */}
         <div className="flex space-x-2">
           {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
-            Add Supplier
+          <Button variant="outline" onClick={() => navigate("/clients/add")}>
+            Add Client
           </Button>
           {/* Add(Page) Ends */}
         </div>
@@ -148,11 +199,11 @@ export default function TableDemo() {
       <div className="panel p-4 rounded-md bg-gray-50">
         {/* Table Start */}
         <Table>
-          <TableCaption>A list of your recent suppliers.</TableCaption>
+          <TableCaption>A list of your recent clients.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead onClick={() => handleSort("supplier")}>
-                Suppliers
+              <TableHead onClick={() => handleSort("client")}>
+                Clients
               </TableHead>
               <TableHead onClick={() => handleSort("street_address")}>
                 Street Address
@@ -164,17 +215,23 @@ export default function TableDemo() {
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {Sup?.Suppliers?.map((supplier) => (
-              <TableRow key={supplier.id}>
-                <TableCell>{supplier.supplier}</TableCell>
-                <TableCell>{supplier.street_address}</TableCell>
-                <TableCell>{supplier.area}</TableCell>
-                <TableCell>{supplier.city}</TableCell>
-                <TableCell className="flex justify-items space-x-2">
-                  <AlertDialogbox url={supplier.id} />
+            {sortedClients.map((client) => (
+              <TableRow key={client.id}>
+                <TableCell>{client.client}</TableCell>
+                <TableCell>{client.street_address}</TableCell>
+                <TableCell>{client.area}</TableCell>
+                <TableCell>{client.city}</TableCell>
+                <TableCell className="flex justify-items  space-x-2">
+                  <AlertDialogbox url={client.id} />
 
+                  {/* <button
+                    onClick={() => handleDelete(client.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button> */}
                   <button
-                    onClick={() => navigate(`/suppliers/edit/${supplier.id}`)}
+                    onClick={() => navigate(`/clients/edit/${client.id}`)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Edit

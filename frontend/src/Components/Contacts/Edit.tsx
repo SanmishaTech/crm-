@@ -19,11 +19,18 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
 import { usePutData } from "@/lib/HTTP/PUT";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Form validation schema
 const formSchema = z.object({
-  supplier: z.string().optional(),
-  street_address: z.string().optional(),
+  client_id: z.string().optional(),
+  contact_person: z.string().optional(),
   area: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
@@ -53,12 +60,14 @@ export default function EditSupplierPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false); // To handle loading state
+  const [clients, setClients] = useState<any[]>([]); // State to store fetched clients
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      supplier: "",
-      street_address: "",
+      client_id: "",
+      contact_person: "",
       area: "",
       city: "",
       state: "",
@@ -76,7 +85,7 @@ export default function EditSupplierPage() {
 
   // Move the usePutData hook before any conditional returns
   const fetchData = usePutData({
-    endpoint: `/api/suppliers/${id}`,
+    endpoint: `/api/contacts/${id}`,
     queryKey: ["editsupplier", id],
 
     params: {
@@ -85,7 +94,7 @@ export default function EditSupplierPage() {
         queryClient.invalidateQueries({ queryKey: ["editsupplier"] });
         queryClient.invalidateQueries({ queryKey: ["editsupplier", id] });
         toast.success("Supplier updated successfully");
-        navigate("/suppliers");
+        navigate("/clients");
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate supplier")) {
@@ -102,14 +111,14 @@ export default function EditSupplierPage() {
     isLoading,
     isError,
   } = useGetData({
-    endpoint: `/api/suppliers/${id}`,
+    endpoint: `/api/contacts/${id}`,
     params: {
       queryKey: ["editsupplier", id],
       retry: 1,
 
       onSuccess: (data) => {
         console.log("data", data);
-        setData(data.Supplier);
+        setData(data.Contact);
         setLoading(false);
       },
       onError: (error) => {
@@ -128,11 +137,11 @@ export default function EditSupplierPage() {
   }, [editData]);
 
   useEffect(() => {
-    if (editData?.Supplier) {
-      const newData = editData.Supplier;
+    if (editData?.Contact) {
+      const newData = editData.Contact;
       form.reset({
-        supplier: newData.supplier || "",
-        street_address: newData.street_address || "",
+        client_id: newData.client_id || "",
+        contact_person: newData.contact_person || "",
         area: newData.area || "",
         city: newData.city || "",
         state: newData.state || "",
@@ -140,10 +149,6 @@ export default function EditSupplierPage() {
         country: newData.country || "India",
         gstin: newData.gstin || "",
         contact_no: newData.contact_no || "",
-        department: newData.department || "",
-        designation: newData.designation || "",
-        mobile_1: newData.mobile_1 || "",
-        mobile_2: newData.mobile_2 || "",
         email: newData.email || "",
       });
     }
@@ -158,32 +163,63 @@ export default function EditSupplierPage() {
 
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
-    queryClient.invalidateQueries({ queryKey: ["supplier"] });
-    queryClient.invalidateQueries({ queryKey: ["supplier", id] });
+    queryClient.invalidateQueries({ queryKey: ["client"] });
+    queryClient.invalidateQueries({ queryKey: ["client", id] });
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
-      <h3 className="text-2xl font-semibold text-center">Edit Supplier</h3>
-      <p className="text-center text-xs mb-9">Edit & Update supplier.</p>
+      <h3 className="text-2xl font-semibold text-center">Edit Client</h3>
+      <p className="text-center text-xs mb-9">Edit & Update Client.</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
-              name="supplier"
+              name="client_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Supplier</FormLabel>
+                  <FormLabel>Client</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter Supplier Name"
-                      {...field}
-                      value={field.value}
-                    />
+                    <Select
+                      value={String(field.value)} // Ensure the value is a string
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Client" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loading ? (
+                          <SelectItem disabled>Loading...</SelectItem>
+                        ) : (
+                          clients.map((client) => (
+                            <SelectItem
+                              key={client.id}
+                              value={String(client.id)}
+                            >
+                              {client.client} {/* Display the client name */}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
-                  <FormDescription>Enter the Supplier name.</FormDescription>
+                  <FormDescription>Enter the Client.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="contact_person"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contact Person</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter Contact Person" {...field} />
+                  </FormControl>
+                  <FormDescription>Enter the Contact Person.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -349,109 +385,24 @@ export default function EditSupplierPage() {
             />
           </div>
           {/* Feilds Third Row Ends */}
-          {/* Feilds Fourth Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="department"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Department</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Department"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Department.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="designation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Designation</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Designation"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Designation.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="mobile_1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile-1</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Mobile"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{10}"
-                      maxLength={10}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Mobile.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Feilds Fourth Row Ends */}
-          {/* Feilds Fifth Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="mobile_2"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile-2</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Mobile"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{10}"
-                      maxLength={10}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Mobile.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Email.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    className="justify-left"
+                    placeholder="Enter Email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>Enter the Email.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           {/* Feilds Fifth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Buttons For Submit and Cancel */}
@@ -460,7 +411,7 @@ export default function EditSupplierPage() {
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                navigate("/suppliers");
+                navigate("/clients");
               }}
             >
               Cancel

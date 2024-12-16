@@ -43,7 +43,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 
-// Supplier type
+// Department type
 type Department = {
   id: string;
   department_name: string;

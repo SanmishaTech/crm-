@@ -1,14 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Check,
-  ChevronsUpDown,
-  CalendarDays,
-  Search,
-  Ellipsis,
-  Bell,
-  Settings,
-} from "lucide-react";
+import { CalendarDays, Search, Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -32,49 +24,16 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import userAvatar from "@/images/Profile.jpg";
-//combobox
-import { cn } from "@/lib/utils ";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-
-const frameworks = [
-  {
-    value: "tasks",
-    label: "Tasks",
-  },
-  {
-    value: "accounts",
-    label: "Accounts",
-  },
-  {
-    value: "meetings",
-    label: "Meetings",
-  },
-  {
-    value: "invoices",
-    label: "Invoices",
-  },
-  {
-    value: "products",
-    label: "Products",
-  },
-];
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
-  const [isExploreOpen, setIsExploreOpen] = useState(false);
+  const [isExploreOpen] = useState(false);
+
   // Handle navigation to dashboard
   const handleDashboardNavigate = () => {
     navigate("/dashboard");
   };
+
   const handleSuppliersNavigate = () => {
     navigate("/suppliers");
   };
@@ -284,13 +243,13 @@ const Navbar = () => {
         <div className="flex items-center space-x-2">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
-                {" "}
+              <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Popover>
-                    <PopoverTrigger>
-                      {" "}
-                      <Bell className="h-4" style={{ strokeWidth: 2 }} />
+                    <PopoverTrigger asChild>
+                      <div className="cursor-pointer">
+                        <Bell className="h-4" style={{ strokeWidth: 2 }} />
+                      </div>
                     </PopoverTrigger>
                     <PopoverContent className="h-[500px] w-[400px]">
                       <Tabs defaultValue="account" className="w-[400px]">

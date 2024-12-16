@@ -6,6 +6,8 @@ import Dashboard from "./Pages/Dashboard";
 import { Toaster, toast } from "sonner";
 import { useLocation } from "react-router-dom";
 import Edit from "./Components/Suppliers/Edit";
+import EditContacts from "./Components/Contacts/Edit";
+import EditClients from "./Components/Clients/Edit";
 
 import {
   Calculator,
@@ -113,6 +115,13 @@ function App() {
         <Route path="/suppliers" element={<Dashboard />} />
         <Route path="/suppliers/add" element={<Dashboard />} />
         <Route path="/suppliers/edit/:id" element={<Edit />} />
+        <Route path="/contacts" element={<Dashboard />} />
+        <Route path="/contacts/add" element={<Dashboard />} />
+        <Route path="/contacts/edit/:id" element={<EditContacts />} />
+        <Route path="/clients" element={<Dashboard />} />
+        <Route path="/clients/add" element={<Dashboard />} />
+        <Route path="/clients/edit/:id" element={<EditClients />} />
+
         <Route path="/departments" element={<Dashboard />} />
         <Route path="/departments/add" element={<Dashboard />} />
         <Route path="/productCategories" element={<Dashboard />} />
