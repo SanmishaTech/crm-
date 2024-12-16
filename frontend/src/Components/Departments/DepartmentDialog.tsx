@@ -146,7 +146,7 @@ const DepartmentDialog = ({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" onClick={handleDialogOpen}>
-            Add (Dialog)
+            Add Department
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">

@@ -139,15 +139,15 @@ export default function EditSupplierPage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
-      <h3 className="text-2xl font-semibold text-center">Edit Supplier</h3>
-      <p className="text-center text-xs mb-9">Edit & Update supplier.</p>
+      <h3 className="text-2xl font-semibold text-center">Edit Contact</h3>
+      <p className="text-center text-xs mb-9">Edit & Update Contact.</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
-              name="supplier"
+              name="supplier" 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Supplier</FormLabel>

@@ -42,7 +42,7 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 
-// Supplier type
+// Department type
 type Department = {
   id: string;
   department_name: string;

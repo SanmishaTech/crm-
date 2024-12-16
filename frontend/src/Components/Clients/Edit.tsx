@@ -20,7 +20,7 @@ import { usePutData } from "@/lib/HTTP/PUT";
 
 // Form validation schema
 const formSchema = z.object({
-  supplier: z.string().optional(),
+  client: z.string().optional(),
   street_address: z.string().optional(),
   area: z.string().optional(),
   city: z.string().optional(),
@@ -36,10 +36,7 @@ const formSchema = z.object({
     .max(15, "GST Number must be exactly 15 characters")
     .min(15, "GST Number must be exactly 15 characters"),
   contact_no: z.string().optional(),
-  department: z.string().optional(),
-  designation: z.string().optional(),
-  mobile_1: z.string().optional(),
-  mobile_2: z.string().optional(),
+
   email: z.string().optional(),
 });
 
@@ -54,7 +51,7 @@ export default function EditSupplierPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      supplier: "",
+      client: "",
       street_address: "",
       area: "",
       city: "",
@@ -63,21 +60,18 @@ export default function EditSupplierPage() {
       country: "India",
       gstin: "",
       contact_no: "",
-      department: "",
-      designation: "",
-      mobile_1: "",
-      mobile_2: "",
+
       email: "",
     },
   });
 
   // Move the usePutData hook before any conditional returns
   const fetchData = usePutData({
-    endpoint: `/api/suppliers/${id}`,
+    endpoint: `/api/clients/${id}`,
     params: {
       onSuccess: () => {
         toast.success("Supplier updated successfully");
-        navigate("/suppliers");
+        navigate("/clients");
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate supplier")) {
@@ -90,9 +84,9 @@ export default function EditSupplierPage() {
   });
 
   const { data, isLoading, isError } = useGetData({
-    endpoint: `/api/suppliers/${id}`,
+    endpoint: `/api/clients/${id}`,
     params: {
-      queryKeyId: ["supplier", id],
+      queryKeyId: ["client", id],
       retry: 1,
       onError: (error) => {
         if (error.message && error.message.includes("duplicate supplier")) {
@@ -106,9 +100,9 @@ export default function EditSupplierPage() {
 
   useEffect(() => {
     if (data && "data" in data) {
-      const newData = data.data.Supplier;
+      const newData = data.data.Client;
       form.reset({
-        supplier: newData.supplier || "",
+        client: newData.client || "",
         street_address: newData.street_address || "",
         area: newData.area || "",
         city: newData.city || "",
@@ -117,10 +111,7 @@ export default function EditSupplierPage() {
         country: newData.country || "India",
         gstin: newData.gstin || "",
         contact_no: newData.contact_no || "",
-        department: newData.department || "",
-        designation: newData.designation || "",
-        mobile_1: newData.mobile_1 || "",
-        mobile_2: newData.mobile_2 || "",
+
         email: newData.email || "",
       });
     }
@@ -147,18 +138,18 @@ export default function EditSupplierPage() {
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
-              name="supplier"
+              name="client"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Supplier</FormLabel>
+                  <FormLabel>Client</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter Supplier Name"
+                      placeholder="Enter Client Name"
                       {...field}
                       value={field.value}
                     />
                   </FormControl>
-                  <FormDescription>Enter the Supplier name.</FormDescription>
+                  <FormDescription>Enter the Client name.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -328,88 +319,6 @@ export default function EditSupplierPage() {
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
-              name="department"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Department</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Department"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Department.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="designation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Designation</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Designation"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Designation.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="mobile_1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile-1</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Mobile"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{10}"
-                      maxLength={10}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Mobile.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Feilds Fourth Row Ends */}
-          {/* Feilds Fifth Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="mobile_2"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile-2</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Mobile"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{10}"
-                      maxLength={10}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Mobile.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
@@ -427,7 +336,7 @@ export default function EditSupplierPage() {
               )}
             />
           </div>
-          {/* Feilds Fifth Row Ends */}
+          {/* Feilds Fourth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">
@@ -435,7 +344,7 @@ export default function EditSupplierPage() {
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                navigate("/suppliers");
+                navigate("/clients");
               }}
             >
               Cancel
