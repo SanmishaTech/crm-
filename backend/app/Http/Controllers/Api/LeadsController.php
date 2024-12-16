@@ -66,7 +66,7 @@ class LeadsController extends BaseController
        }
 
         
-        return $this->sendResponse(['lead'=> new LeadResource($lead)], 'Lead Created Successfully');
+        return $this->sendResponse(['Lead'=> new LeadResource($lead)], 'Lead Created Successfully');
     }
 
     /**
@@ -79,7 +79,7 @@ class LeadsController extends BaseController
         if(!$lead){
             return $this->sendError("Lead not found", ['error'=>['lead not found']]);
         }
-        return $this->sendResponse(["lead"=>new LeadResource($lead)], "lead retrieved successfully");
+        return $this->sendResponse(["Lead"=>new LeadResource($lead)], "lead retrieved successfully");
         // return $this->sendResponse(["lead"=> $lead, 'contact'=>new ContactResource($lead->contact)], "lead retrieved successfully");
     }
 
