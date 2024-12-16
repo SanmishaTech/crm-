@@ -3,7 +3,6 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,7 +17,9 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
+// Get QueryClient from the context
 // Form Schema
 const FormSchema = z.object({
   supplier: z.string().optional(),
@@ -77,6 +78,7 @@ export default function InputForm() {
       email: "",
     },
   });
+  const queryClient = useQueryClient();
 
   const navigate = useNavigate(); // Use For Navigation
 
@@ -86,6 +88,7 @@ export default function InputForm() {
     params: {
       onSuccess: (data) => {
         console.log("data", data);
+        queryClient.invalidateQueries({ queryKey: ["supplier"] });
         navigate("/suppliers");
       },
       onError: (error) => {

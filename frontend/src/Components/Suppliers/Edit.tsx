@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import {
   Form,
   FormControl,
@@ -60,7 +61,7 @@ export default function EditSupplierPage() {
       city: "",
       state: "",
       pincode: "",
-      country: "India",
+      country: "",
       gstin: "",
       contact_no: "",
       department: "",
@@ -92,7 +93,7 @@ export default function EditSupplierPage() {
   const { data, isLoading, isError } = useGetData({
     endpoint: `/api/suppliers/${id}`,
     params: {
-      queryKeyId: ["supplier", id],
+      queryKey: ["supplier"],
       retry: 1,
       onError: (error) => {
         if (error.message && error.message.includes("duplicate supplier")) {
