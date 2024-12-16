@@ -31,18 +31,29 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+} from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import DepartmentDialog from "./DepartmentDialog";
-import PaginationComponent from "./PaginationComponent";
-import AddProductCategory from "../ProductCategories/AddProductCategory";
+import { usePostData } from "@/lib/HTTP/DELETE";
 
-// Department type
-type Department = {
+// Products type
+type Product = {
   id: string;
-  department_name: string;
+  product: string;
+  product_category_id: string;
+  supplier_id: string;
+  model: string;
+  manufacturer: string;
+  opening_qty: string;
+  closing_qty: string;
+  last_traded_price: string;
 };
 
 type PaginationData = {
@@ -52,19 +63,12 @@ type PaginationData = {
   total: number;
 };
 
-// Form Validation Schema
-const formSchema = z.object({
-  department_name: z.string().min(1, "Department name is required").max(50),
-});
-
 export default function TableDemo() {
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [open, setOpen] = useState(false); // Manage the dialog state
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-  const [editDepartment, setEditDepartment] = useState<Department | null>(null); // To hold department to edit
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,17 +76,12 @@ export default function TableDemo() {
   const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
   const navigate = useNavigate();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      department_name: "",
-    },
-  });
 
-  // Fetch Departments
-  const fetchDepartments = () => {
+
+  // Fetch Products
+  useEffect(() => {
     axios
-      .get("/api/departments", {
+      .get("/api/products", {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
@@ -90,26 +89,22 @@ export default function TableDemo() {
         params: {
           page: currentPage,
           limit: itemsPerPage,
-          search: searchTerm, // Include search term in the query params
+          search: searchTerm,
         },
       })
       .then((response) => {
-        setDepartments(response.data.data.Departments);
+        setProducts(response.data.data.Products);
         setPagination(response.data.data.Pagination);
-        setLoading(false); // Stop loading
+        setLoading(false);
       })
       .catch(() => {
         setError("Failed to load data");
-        setLoading(false); // Stop loading even if there's an error
+        setLoading(false);
       });
-  };
-
-  useEffect(() => {
-    fetchDepartments();
-  }, [currentPage, itemsPerPage, searchTerm]); // Add searchTerm as a dependency
+  }, [currentPage, itemsPerPage, searchTerm]);
 
   // Sorting function
-  const handleSort = (key: keyof Department) => {
+  const handleSort = (key: keyof Product) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -117,110 +112,120 @@ export default function TableDemo() {
     setSortConfig({ key, direction });
   };
 
-  const sortedDepartments = [...departments].sort((a, b) => {
+  const sortedProducts = [...products].sort((a, b) => {
     if (!sortConfig.key) return 0;
 
-    const aValue = a[sortConfig.key as keyof Department];
-    const bValue = b[sortConfig.key as keyof Department];
+    const aValue = a[sortConfig.key as keyof Product];
+    const bValue = b[sortConfig.key as keyof Product];
 
     if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
     if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
     return 0;
   });
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   if (error) {
     return <div>{error}</div>;
   }
 
-  // Delete Department
-  const handleDelete = (departmentId: string) => {
+  // Delete Supplier
+  const handleDelete = (productId: string) => {
     axios
-      .delete(`/api/departments/${departmentId}`, {
+      .delete(`/api/products/${productId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
       .then(() => {
-        setDepartments(
-          departments.filter((department) => department.id !== departmentId)
-        );
-        fetchDepartments();
+        setProducts(products.filter((product) => product.id !== productId));
+        // window.location.reload();
       })
       .catch(() => {
-        setError("Failed to delete department");
+        setError("Failed to delete product");
       });
   };
 
-  // Open the edit dialog and populate form with department data
-  const handleEdit = (department: Department) => {
-    setEditDepartment(department);
-    form.setValue("department_name", department.department_name); // Populate form with existing data
-    handleEditDialogOpen();
+  // Pagination functions
+  const totalPages = pagination?.last_page || 1;
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
   };
 
-  const handleEditDialogOpen = () => {
-    setOpen(true);
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold mb-3">Departments List</h3>
+        <h3 className="text-lg font-semibold">Products List</h3>
       </div>
       <div className="flex justify-between items-center space-x-2 w-full">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">
           <Input
-            placeholder="Search departments..."
+            placeholder="Search products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         {/* Search Bar Ends */}
         <div className="flex space-x-2">
-          {/* Add(Dialog) Starts */}
-          <DepartmentDialog
-            loading={loading}
-            setLoading={setLoading}
-            setOpen={setOpen}
-            open={open}
-            editDepartment={editDepartment}
-            setEditDepartment={setEditDepartment}
-            setError={setError}
-            form={form}
-            fetchDepartments={fetchDepartments}
-          />
-          {/* Add(Dialog) Ends */}
+          {/* Add(Page) Starts */}
+          <Button variant="outline" onClick={() => navigate("/products/add")}>
+            Add (Page)
+          </Button>
+          {/* Add(Page) Ends */}
         </div>
       </div>
 
       <div className="panel p-4 rounded-md bg-gray-50">
         {/* Table Start */}
         <Table>
-          <TableCaption>A list of your recent departments.</TableCaption>
+          <TableCaption>A list of your recent products.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead onClick={() => handleSort("department")}>
-                Departments
+              <TableHead onClick={() => handleSort("product")}>
+                Product
+              </TableHead>
+              <TableHead onClick={() => handleSort("model")}>Model</TableHead>
+              <TableHead onClick={() => handleSort("Manufacturer")}>
+                Manufacturer
               </TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {sortedDepartments.map((department) => (
-              <TableRow key={department.id}>
-                <TableCell>{department.department_name}</TableCell>
-                <TableCell className="text-center">
+            {sortedProducts.map((product) => (
+              <TableRow key={product.id}>
+                <TableCell>{product.product}</TableCell>
+                <TableCell>{product.model}</TableCell>
+                <TableCell>{product.manufacturer}</TableCell>
+                <TableCell className="flex justify-items  space-x-2">
                   <button
-                    onClick={() => handleDelete(department.id)}
-                    className="text-red-500 hover:text-red-700 pr-1"
+                    onClick={() => handleDelete(product.id)}
+                    className="text-red-500 hover:text-red-700"
                   >
                     Delete
                   </button>
                   <button
-                    onClick={() => handleEdit(department)}
+                    onClick={() => navigate(`/products/edit/${product.id}`)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Edit
@@ -232,11 +237,31 @@ export default function TableDemo() {
         </Table>
         {/* Table End */}
         {/* Pagination Start */}
-        <PaginationComponent
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          pagination={pagination}
-        />
+        <Pagination>
+          <PaginationContent className="flex items-center space-x-4">
+            {/* Previous Button */}
+            <PaginationPrevious
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </PaginationPrevious>
+
+            {/* Page Number */}
+            <span className="text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            {/* Next Button */}
+            <PaginationNext
+              className="hover:pointer"
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </PaginationNext>
+          </PaginationContent>
+        </Pagination>
         {/* Pagination End */}
       </div>
     </div>

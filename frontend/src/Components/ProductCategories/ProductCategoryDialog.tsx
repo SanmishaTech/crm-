@@ -40,14 +40,14 @@ import {
 } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
+import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 import { usePutData } from "@/lib/HTTP/PUT";
-import { useNavigate } from "react-router-dom";
 
 // Supplier type
-type Department = {
+type ProductCategory = {
   id: string;
-  department_name: string;
+  product_category: string;
 };
 
 type PaginationData = {
@@ -57,72 +57,71 @@ type PaginationData = {
   total: number;
 };
 
-const DepartmentDialog = ({
-  loading,
-  setLoading,
+const ProductCategoryDialog = ({
   open,
   form,
   setOpen,
-  editDepartment,
+  editProductCategory,
   setError,
-  setEditDepartment,
-  fetchDepartments,
+  setEditProductCategory,
+  fetchProductCategories,
+  loading,
+  setLoading,
 }) => {
-  // Add Department mutation function
+  // Add Product Category mutation function
   type FormValues = z.infer<typeof FormSchema>;
-  const storeDepartmentData = usePostData({
-    endpoint: "/api/departments",
+  const storeProductCategoryData = usePostData({
+    endpoint: "/api/product_categories",
     params: {
       onSuccess: (data) => {
-        console.log("department data", data);
         form.reset();
-        fetchDepartments();
+        fetchProductCategories();
         handleDialogClose();
       },
       onError: (error) => {
         if (error.response && error.response.data.errors) {
           const serverErrors = error.response.data.errors;
-          // Assuming the error is for the department_name field
-          if (serverErrors.department_name) {
-            form.setError("department_name", {
+          // Assuming the error is for the product_category field
+          if (serverErrors.product_category) {
+            form.setError("product_category", {
               type: "manual",
-              message: serverErrors.department_name[0], // The error message from the server
+              message: serverErrors.product_category[0], // The error message from the server
             });
           } else {
-            setError("Failed to add department"); // For any other errors
+            setError("Failed to add product category"); // For any other errors
           }
         } else {
-          setError("Failed to add department");
+          setError("Failed to add product category");
         }
       },
     },
   });
 
-  //update department mutation function
-  const updateDepartmentData = usePutData({
-    endpoint: `/api/departments/${editDepartment?.id}`,
+  //update product category mutation function
+  const updateProductCategoryData = usePutData({
+    endpoint: `/api/product_categories/${editProductCategory?.id}`,
     params: {
       onSuccess: (data) => {
-        setEditDepartment(null); // Reset edit mode
+        setEditProductCategory(null); // Reset edit mode
         form.reset();
-        fetchDepartments();
+        fetchProductCategories();
         handleDialogClose();
         setLoading(false);
       },
       onError: (error) => {
         if (error.response && error.response.data.errors) {
           const serverErrors = error.response.data.errors;
-          // Assuming the error is for the department_name field
-          if (serverErrors.department_name) {
-            form.setError("department_name", {
+          // Assuming the error is for the product category field
+          if (serverErrors.product_category) {
+            form.setError("product_category", {
               type: "manual",
-              message: serverErrors.department_name[0], // The error message from the server
+              message: serverErrors.product_category[0], // The error message from the server
             });
           } else {
-            setError("Failed to update department"); // For any other errors
+            setError("Failed to update product category"); // For any other errors
           }
         } else {
-          setError("Failed to update department");
+          setError("Failed to update product category");
         }
         setLoading(false);
       },
@@ -131,17 +130,17 @@ const DepartmentDialog = ({
 
   // onSubmit function
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    if (editDepartment) {
+    if (editProductCategory) {
       setLoading(true);
-      updateDepartmentData.mutate(data);
+      updateProductCategoryData.mutate(data);
     } else {
-      storeDepartmentData.mutate(data);
+      storeProductCategoryData.mutate(data);
     }
   };
 
   const handleDialogOpen = () => {
-    setEditDepartment(null);
-    form.setValue("department_name", ""); // Populate form with existing data
+    setEditProductCategory(null);
+    form.setValue("product_category", ""); // Populate form with existing data
     setOpen(true);
   };
 
@@ -154,17 +153,17 @@ const DepartmentDialog = ({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" onClick={handleDialogOpen}>
-            Add Department
+            Add Product Category
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>
-              {editDepartment ? "Edit" : "Add"} Departments
+              {editProductCategory ? "Edit" : "Add"} Product Category
             </DialogTitle>
             <DialogDescription>
-              {editDepartment ? "Edit" : "Add"} your department details here.
-              Click save when you're done.
+              {editProductCategory ? "Edit" : "Add"} your Product Category
+              details here. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
 
@@ -172,12 +171,14 @@ const DepartmentDialog = ({
             <form onSubmit={form.handleSubmit(onSubmit)} className="">
               <FormField
                 control={form.control}
-                name="department_name"
+                name="product_category"
                 render={({ field }) => (
                   <FormItem className="flex flex-col space-y-2">
-                    <FormLabel className="w-40">Department Name:</FormLabel>{" "}
+                    <FormLabel className="w-40">
+                      Product Category Name:
+                    </FormLabel>{" "}
                     <FormControl className="flex-1">
-                      <Input placeholder="Department" {...field} />
+                      <Input placeholder="Product Category" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -197,4 +198,4 @@ const DepartmentDialog = ({
   );
 };
 
-export default DepartmentDialog;
+export default ProductCategoryDialog;

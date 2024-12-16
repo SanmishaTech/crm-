@@ -28,13 +28,13 @@ class ProductsController extends BaseController
             $searchTerm = $request->query('search');
     
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('department_name', 'like', '%' . $searchTerm . '%');
+                $query->where('product', 'like', '%' . $searchTerm . '%');
             });
         }
         $products = $query->orderBy('id', 'DESC')->paginate(20);
 
-        return $this->sendResponse(["Product"=>ProductResource::collection($products),
-        'pagination' => [
+        return $this->sendResponse(["Products"=>ProductResource::collection($products),
+        'Pagination' => [
             'current_page' => $products->currentPage(),
             'last_page' => $products->lastPage(),
             'per_page' => $products->perPage(),

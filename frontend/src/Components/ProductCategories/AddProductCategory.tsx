@@ -43,25 +43,28 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 
-// Department type
-type Department = {
+// Supplier type
+type ProductCategory = {
   id: string;
-  department_name: string;
+  product_category: string;
 };
 
 // Form Validation Schema
 const formSchema = z.object({
-  department_name: z.string().min(1, "Department name is required").max(50),
+  product_category: z
+    .string()
+    .min(1, "Product Category name is required")
+    .max(50),
 });
 
-const AddDepartment = () => {
+const AddProductCategory = () => {
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false); // Manage the dialog state
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      department_name: "",
+      product_category: "",
     },
   });
 
@@ -73,10 +76,10 @@ const AddDepartment = () => {
     setOpen(false);
   };
 
-  // Add Department mutation function
+  // Add Product Category mutation function
   type FormValues = z.infer<typeof FormSchema>;
-  const storeDepartmentData = usePostData({
-    endpoint: "/api/departments",
+  const storeProductCategoryData = usePostData({
+    endpoint: "/api/product_categories",
     params: {
       onSuccess: (data) => {
         form.reset();
@@ -85,52 +88,24 @@ const AddDepartment = () => {
       onError: (error) => {
         if (error.response && error.response.data.errors) {
           const serverErrors = error.response.data.errors;
-          // Assuming the error is for the department_name field
-          if (serverErrors.department_name) {
-            form.setError("department_name", {
+          // Assuming the error is for the product_category field
+          if (serverErrors.product_category) {
+            form.setError("product_category", {
               type: "manual",
-              message: serverErrors.department_name[0], // The error message from the server
+              message: serverErrors.product_category[0], // The error message from the server
             });
           } else {
-            setError("Failed to add department"); // For any other errors
+            setError("Failed to add product category"); // For any other errors
           }
         } else {
-          setError("Failed to add department");
+          setError("Failed to add product category");
         }
       },
     },
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    storeDepartmentData.mutate(data);
-    // axios
-    //   .post("/api/departments", data, {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: "Bearer " + localStorage.getItem("token"),
-    //     },
-    //   })
-    //   .then((response) => {
-    //     form.reset();
-    //     handleDialogClose();
-    //     // window.location.reload();
-    //   })
-    //   .catch((error) => {
-    //     if (error.response && error.response.data.errors) {
-    //       const serverErrors = error.response.data.errors;
-    //       // Assuming the error is for the department_name field
-    //       if (serverErrors.department_name) {
-    //         form.setError("department_name", {
-    //           type: "manual",
-    //           message: serverErrors.department_name[0], // The error message from the server
-    //         });
-    //       } else {
-    //         setError("Failed to update department"); // For any other errors
-    //       }
-    //     } else {
-    //       setError("Failed to update department");
-    //     }
-    //   });
+    storeProductCategoryData.mutate(data);
   };
 
   return (
@@ -138,31 +113,47 @@ const AddDepartment = () => {
       {/* Add(Dialog) Starts */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button
+          {/* <Button
             variant="outline"
             // className="text-xl p-0 bg-transparent border-none hover:bg-transparent focus:ring-0" // Custom styles for a minimal button
             onClick={handleDialogOpen}
           >
-            Add Department
-          </Button>
+            Add Product Category
+          </Button> */}
+          <span
+            onClick={handleDialogOpen}
+            className="text-sm cursor-pointer text-blue-600 hover:text-blue-800 focus:outline-none"
+          >
+            + Add Product Category
+          </span>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add Departments</DialogTitle>
+            <DialogTitle>Add Product Category</DialogTitle>
             <DialogDescription>
-              Add your department details here. Click save when you're done.
+              Add your Product Category details here. Click save when you're
+              done.
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="">
+            <form
+              // onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={(e) => {
+                e.stopPropagation(); // Prevent event bubbling to parent form
+                form.handleSubmit(onSubmit)(e); // Only handle the category form submit
+              }}
+              className=""
+            >
               <FormField
                 control={form.control}
-                name="department_name"
+                name="product_category"
                 render={({ field }) => (
                   <FormItem className="flex flex-col space-y-2">
-                    <FormLabel className="w-40">Department Name:</FormLabel>{" "}
+                    <FormLabel className="w-40">
+                      Product Category Name:
+                    </FormLabel>{" "}
                     <FormControl className="flex-1">
-                      <Input placeholder="Department" {...field} />
+                      <Input placeholder="Product Category" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -181,4 +172,4 @@ const AddDepartment = () => {
   );
 };
 
-export default AddDepartment;
+export default AddProductCategory;
