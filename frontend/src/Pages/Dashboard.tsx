@@ -11,6 +11,9 @@ import ContactsEdit from "@/Components/Contacts/Edit";
 import Clients from "@/Components/Clients/Index";
 import ClientsAdd from "@/Components/Clients/Add";
 import ClientsEdit from "@/Components/Clients/Edit";
+import Leads from "@/Components/Leads/Index";
+import LeadsAdd from "@/Components/Leads/Add";
+import LeadsEdit from "@/Components/Leads/Edit";
 import Departments from "@/Components/Departments/Index";
 import DepartmentsDialog from "@/Components/Departments/DepartmentDialog";
 import ProductCategories from "@/Components/ProductCategories/Index";
@@ -67,6 +70,9 @@ const Dashboard = () => {
         {location.pathname === "/clients" && <Clients />}
         {location.pathname === "/clients/add" && <ClientsAdd />}
         {location.pathname === "/clients/edit/:id" && <ClientsEdit />}
+        {location.pathname === "/leads" && <Leads />}
+        {location.pathname === "/leads/add" && <LeadsAdd />}
+        {location.pathname === "/leads/edit/:id" && <LeadsEdit />}
         {location.pathname === "/departments" && <Departments />}
         {location.pathname === "/departments/add" && <DepartmentsDialog />}
         {location.pathname === "/productCategories" && <ProductCategories />}

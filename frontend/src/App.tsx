@@ -9,6 +9,7 @@ import Edit from "./Components/Suppliers/Edit";
 import EditContacts from "./Components/Contacts/Edit";
 import EditClients from "./Components/Clients/Edit";
 import EditProducts from "./Components/Products/Edit";
+import EditLeads from "./Components/Leads/Edit";
 
 import {
   Calculator,
@@ -122,6 +123,9 @@ function App() {
         <Route path="/clients" element={<Dashboard />} />
         <Route path="/clients/add" element={<Dashboard />} />
         <Route path="/clients/edit/:id" element={<EditClients />} />
+        <Route path="/leads" element={<Dashboard />} />
+        <Route path="/leads/add" element={<Dashboard />} />
+        <Route path="/leads/edit/:id" element={<EditLeads />} />
 
         <Route path="/departments" element={<Dashboard />} />
         <Route path="/departments/add" element={<Dashboard />} />
