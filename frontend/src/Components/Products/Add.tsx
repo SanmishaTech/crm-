@@ -95,6 +95,8 @@ export default function InputForm() {
   const [productCategories, setProductCategories] = useState<ProductCategory[]>(
     []
   );
+  const [loading, setLoading] = useState(false); // To handle loading state
+
   const [suppliers, setSuppliers] = useState([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -161,12 +163,19 @@ export default function InputForm() {
         navigate("/products");
       },
       onError: (error) => {
-        console.log("error", error);
-
-        if (error.message && error.message.includes("duplicate product")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        if (error.response && error.response.data.errors) {
+          const serverErrors = error.response.data.errors;
+          // Assuming the error is for the department_name field
+          if (serverErrors.product) {
+            form.setError("product", {
+              type: "manual",
+              message: serverErrors.product[0], // The error message from the server
+            });
+          } else {
+            setError("Failed to add product"); // For any other errors
+          }
         } else {
-          toast.error("Failed to submit the form. Please try again.");
+          setError("Failed to add product");
         }
       },
     },
@@ -288,72 +297,77 @@ export default function InputForm() {
           {/* Feilds Third Row Starts */}
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
-              className="flex-1"
               control={form.control}
               name="product_category_id"
               render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Select Product Category</FormLabel>
-                  <Select
-                    value={field.value} // Bind the value to the form state
-                    onValueChange={(value) => field.onChange(value)} // Handle change
-                    // {...field}
-                    className="w-full"
-                  >
-                    <FormControl>
-                      <SelectTrigger>
+                <FormItem>
+                  <FormLabel>Product Category</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={String(field.value)}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select Product Category" />
                       </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {productCategories.length > 0 &&
-                        productCategories.map((productCategory) => (
-                          <SelectItem
-                            key={productCategory.id}
-                            value={productCategory.id}
-                          >
-                            {productCategory.product_category}
-                          </SelectItem>
-                        ))}
-                      <div className="px-5 py-1">
-                        <AddProductCategory />
-                      </div>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Select Product Category?</FormDescription>
+                      <SelectContent>
+                        {loading ? (
+                          <SelectItem disabled>Loading...</SelectItem>
+                        ) : (
+                          productCategories.map((ProductCategory) => (
+                            <SelectItem
+                              key={ProductCategory.id}
+                              value={String(ProductCategory.id)}
+                            >
+                              {ProductCategory.product_category}
+                            </SelectItem>
+                          ))
+                        )}
+                        <div className="px-5 py-1">
+                          <AddProductCategory
+                            fetchProductCategories={fetchProductCategories}
+                          />
+                        </div>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>Enter the Product Category.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
-              className="flex-1"
               control={form.control}
               name="supplier_id"
               render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Select Supplier</FormLabel>
-                  <Select
-                    value={field.value} // Bind the value to the form state
-                    onValueChange={(value) => field.onChange(value)} // Handle change
-                    // {...field}
-                    className="w-full"
-                  >
-                    <FormControl>
-                      <SelectTrigger>
+                <FormItem>
+                  <FormLabel>Supplier</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={String(field.value)}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select Supplier" />
                       </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {suppliers.length > 0 &&
-                        suppliers.map((supplier) => (
-                          <SelectItem key={supplier.id} value={supplier.id}>
-                            {supplier.supplier}
-                            {console.log(supplier.supplier)}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Select Supplier?</FormDescription>
+                      <SelectContent>
+                        {loading ? (
+                          <SelectItem disabled>Loading...</SelectItem>
+                        ) : (
+                          suppliers.map((supplier) => (
+                            <SelectItem
+                              key={supplier.id}
+                              value={String(supplier.id)}
+                            >
+                              {supplier.supplier}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>Enter the Supplier.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -365,7 +379,8 @@ export default function InputForm() {
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">
             <Button
-              onClick={() => navigate("/suppliers")}
+              type="button"
+              onClick={() => navigate("/products")}
               className="align-self-center"
             >
               Cancel

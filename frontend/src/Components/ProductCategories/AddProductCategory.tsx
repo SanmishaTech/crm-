@@ -57,7 +57,7 @@ const formSchema = z.object({
     .max(50),
 });
 
-const AddProductCategory = () => {
+const AddProductCategory = ({ fetchProductCategories }) => {
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false); // Manage the dialog state
 
@@ -84,6 +84,7 @@ const AddProductCategory = () => {
       onSuccess: (data) => {
         form.reset();
         handleDialogClose();
+        fetchProductCategories();
       },
       onError: (error) => {
         if (error.response && error.response.data.errors) {
