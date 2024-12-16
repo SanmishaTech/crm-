@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   Form,
@@ -51,6 +52,7 @@ export default function EditSupplierPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -75,8 +77,13 @@ export default function EditSupplierPage() {
   // Move the usePutData hook before any conditional returns
   const fetchData = usePutData({
     endpoint: `/api/suppliers/${id}`,
+    queryKey: ["editsupplier", id],
+
     params: {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        console.log("editdata", data);
+        queryClient.invalidateQueries({ queryKey: ["editsupplier"] });
+        queryClient.invalidateQueries({ queryKey: ["editsupplier", id] });
         toast.success("Supplier updated successfully");
         navigate("/suppliers");
       },
@@ -90,11 +97,21 @@ export default function EditSupplierPage() {
     },
   });
 
-  const { data, isLoading, isError } = useGetData({
+  const {
+    data: editData,
+    isLoading,
+    isError,
+  } = useGetData({
     endpoint: `/api/suppliers/${id}`,
     params: {
-      queryKey: ["supplier"],
+      queryKey: ["editsupplier", id],
       retry: 1,
+
+      onSuccess: (data) => {
+        console.log("data", data);
+        setData(data.Supplier);
+        setLoading(false);
+      },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate supplier")) {
           toast.error("Supplier name is duplicated. Please use a unique name.");
@@ -102,12 +119,17 @@ export default function EditSupplierPage() {
           toast.error("Failed to fetch supplier data. Please try again.");
         }
       },
+      enabled: !!id,
     },
   });
 
   useEffect(() => {
-    if (data && "data" in data) {
-      const newData = data.data.Supplier;
+    console.log("data", editData);
+  }, [editData]);
+
+  useEffect(() => {
+    if (editData?.Supplier) {
+      const newData = editData.Supplier;
       form.reset({
         supplier: newData.supplier || "",
         street_address: newData.street_address || "",
@@ -125,7 +147,7 @@ export default function EditSupplierPage() {
         email: newData.email || "",
       });
     }
-  }, [data, form]);
+  }, [editData, form]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -136,6 +158,8 @@ export default function EditSupplierPage() {
 
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
+    queryClient.invalidateQueries({ queryKey: ["supplier"] });
+    queryClient.invalidateQueries({ queryKey: ["supplier", id] });
   };
 
   return (

@@ -14,23 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+
 import {
   Pagination,
   PaginationContent,
@@ -43,6 +27,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useGetData } from "@/lib/HTTP/GET";
+import AlertDialogbox from "./AlertBox";
 
 // Supplier type
 type Supplier = {
@@ -81,12 +66,11 @@ export default function TableDemo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
-  const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -115,42 +99,6 @@ export default function TableDemo() {
       },
     },
   });
-
-  const handleSort = (key: keyof Supplier) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const sortedSuppliers = suppliers.sort((a, b) => {
-    if (!sortConfig.key) return 0;
-    const aValue = a[sortConfig.key as keyof Supplier];
-    const bValue = b[sortConfig.key as keyof Supplier];
-    if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-    if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
-    return 0;
-  });
-
-  // const handleDelete = (supplierId: string) => {
-  //   axios
-  //     .delete(`/api/suppliers/${supplierId}`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: "Bearer " + localStorage.getItem("token"),
-  //       },
-  //     })
-  //     .then(() => {
-  //       setSuppliers(
-  //         suppliers.filter((supplier) => supplier.id !== supplierId)
-  //       );
-  //       // window.location.reload();
-  //     })
-  //     .catch(() => {
-  //       setError("Failed to delete supplier");
-  //     });
-  // };
 
   // Pagination functions
   const totalPages = pagination?.last_page || 1;
@@ -216,19 +164,15 @@ export default function TableDemo() {
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {Sup?.data?.Suppliers.map((supplier) => (
+            {Sup?.Suppliers?.map((supplier) => (
               <TableRow key={supplier.id}>
                 <TableCell>{supplier.supplier}</TableCell>
                 <TableCell>{supplier.street_address}</TableCell>
                 <TableCell>{supplier.area}</TableCell>
                 <TableCell>{supplier.city}</TableCell>
                 <TableCell className="flex justify-items space-x-2">
-                  <button
-                    onClick={() => handleDelete(supplier.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Delete
-                  </button>
+                  <AlertDialogbox url={supplier.id} />
+
                   <button
                     onClick={() => navigate(`/suppliers/edit/${supplier.id}`)}
                     className="text-blue-500 hover:text-blue-700"

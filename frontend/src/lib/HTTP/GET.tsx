@@ -22,7 +22,7 @@ const fetchData = async ({
 }): Promise<Response> => {
   const config = headers ? { headers } : {};
   const response = await axios.get<Response>(endpoint, config);
-  return response.data;
+  return response.data.data;
 };
 
 // Custom hook to fetch data
@@ -37,13 +37,15 @@ const useGetData = ({
 
   useEffect(() => {
     const newCustomParams: ParamsType = {
-      queryKey: params.queryKey
-        ? `${params.queryKey}`
-        : params.queryKeyId
-        ? [`${endpoint}`, params.queryKeyId]
-        : `${endpoint}`,
+      // queryKey: params.queryKey
+      //   ? `${params.queryKey}`
+      //   : params.queryKeyId
+      //   ? [`${endpoint}`, params.queryKeyId]
+      //   : `${endpoint}`,
+      queryKey: params.queryKey,
       retry: params.retry ?? 5,
       refetchOnWindowFocus: params.refetchOnWindowFocus ?? true,
+      enabled: params.enabled ?? true,
       onSuccess:
         params.onSuccess ?? (() => toast.success("Successfully Fetched Data")),
       onError:

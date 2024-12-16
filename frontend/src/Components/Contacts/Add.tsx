@@ -44,8 +44,6 @@ const FormSchema = z.object({
   //   message: "Supplier field must have no more than 50 characters.",
   // })
   // .nonempty({ message: "Supplier field is required." }),
-
-  street_address: z.string().optional(),
   area: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
@@ -84,7 +82,6 @@ export default function InputForm() {
     defaultValues: {
       client_id: "",
       contact_person: "",
-      street_address: "",
       area: "",
       city: "",
       state: "",
@@ -169,7 +166,7 @@ export default function InputForm() {
                   <FormLabel>Client</FormLabel>
                   <FormControl>
                     <Select
-                      value={String(field.value)} // Ensure the value is a string
+                      value={String(field.value)}
                       onValueChange={field.onChange}
                     >
                       <SelectTrigger className="w-[180px]">
@@ -184,7 +181,7 @@ export default function InputForm() {
                               key={client.id}
                               value={String(client.id)}
                             >
-                              {client.client} {/* Display the client name */}
+                              {client.client}
                             </SelectItem>
                           ))
                         )}
