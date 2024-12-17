@@ -49,7 +49,9 @@ export default function EditSupplierPage() {
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false); // To handle loading state
   const [clients, setClients] = useState<any[]>([]); // State to store fetched clients
-  const [data, setData] = useState<any>({});
+ 
+  const [data, setData] = useState<any>([]);
+ 
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -119,8 +121,8 @@ export default function EditSupplierPage() {
   }, [editData]);
 
   useEffect(() => {
-    if (editData?.Contact) {
-      const newData = editData.Contact;
+    if (editData?.data?.Contact) {
+      const newData = editData.data?.Contact;
       form.reset({
         client_id: newData.client_id || "",
         contact_person: newData.contact_person || "",
@@ -148,8 +150,8 @@ export default function EditSupplierPage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
-      <h3 className="text-2xl font-semibold text-center">Edit Client</h3>
-      <p className="text-center text-xs mb-9">Edit & Update Client.</p>
+      <h3 className="text-2xl font-semibold text-center">Edit Contact</h3>
+      <p className="text-center text-xs mb-9">Edit & Update Contact.</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
