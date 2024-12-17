@@ -97,6 +97,7 @@ const DepartmentDialog = ({
       },
     },
   });
+  // const { id } = useParams();
 
   //update department mutation function
   const updateDepartmentData = usePutData({
