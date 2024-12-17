@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import AddContacts from "@/Components/Leads/AddContacts";
 import {
   Form,
   FormControl,
@@ -91,9 +92,14 @@ export default function InputForm() {
         setLoading(false);
       });
   }, []);
+  const fetchProductCategories = () => {
+    axios
+      .get("/api/contacts")
+      .then((response) => setContacts(response.data))
+      .catch((err) => console.error("Failed to fetch contacts", err));
+  };
 
   const onSubmit = async (data: FormValues) => {
-    
     formData.mutate(data);
   };
 
@@ -112,7 +118,7 @@ export default function InputForm() {
               name="contact_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Client</FormLabel>
+                  <FormLabel>Contact</FormLabel>
                   <FormControl>
                     <Select
                       value={field.value}
@@ -139,18 +145,23 @@ export default function InputForm() {
                             );
                           })
                         ) : (
-                          <SelectItem disabled>No clients available</SelectItem>
+                          <SelectItem disabled>No Contact available</SelectItem>
                         )}
+                        <div className="px-5 py-1">
+                          <AddContacts
+                            fetchedContacts={fetchProductCategories}
+                          />
+                        </div>
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormDescription>Enter the Client.</FormDescription>
+                  <FormDescription>Select the Contact.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-             <FormField
+            <FormField
               control={form.control}
               name="lead_source"
               render={({ field }) => (
