@@ -155,23 +155,24 @@ export default function TableDemo() {
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {Sup?.data?.Lead?.map((lead) => (
-              <TableRow key={lead.id}>
-                <TableCell>{lead?.contact?.contact_person}</TableCell>
-                <TableCell>{lead.lead_source}</TableCell>
-                <TableCell>{lead.lead_status}</TableCell>
-                <TableCell className="flex justify-items space-x-2">
-                  <AlertDialogbox url={lead.id} />
+            {Sup &&
+              Sup?.data?.Lead?.map((lead) => (
+                <TableRow key={lead.id}>
+                  <TableCell>{lead?.contact?.contact_person}</TableCell>
+                  <TableCell>{lead.lead_source}</TableCell>
+                  <TableCell>{lead.lead_status}</TableCell>
+                  <TableCell className="flex justify-items space-x-2">
+                    <AlertDialogbox url={lead.id} />
 
-                  <button
-                    onClick={() => navigate(`/leads/edit/${lead.id}`)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Edit
-                  </button>
-                </TableCell>
-              </TableRow>
-            ))}
+                    <button
+                      onClick={() => navigate(`/leads/edit/${lead.id}`)}
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      Edit
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
         {/* Table End */}

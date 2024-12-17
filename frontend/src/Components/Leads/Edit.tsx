@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -20,77 +25,71 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
 import { usePutData } from "@/lib/HTTP/PUT";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 // Form validation schema
 const formSchema = z.object({
-  contact_id: z.any().optional(),
-  lead_source: z.string().optional(),
+  contact_id: z.string().optional(),
   lead_status: z.string().optional(),
+  lead_source: z.string().optional(),
+
+  email: z.string().optional(),
 });
 
 // Move FormValues type definition outside the component
 type FormValues = z.infer<typeof formSchema>;
 
-export default function EditSupplierPage() {
+export default function EditLeadPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const [loading, setLoading] = useState(false); // To handle loading state
+  const [data, setData] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
   const [contacts, setContacts] = useState<any[]>([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      contact_id: "",
-      lead_source: "",
-      lead_status: "",
+      supplier: "",
+      street_address: "",
+      area: "",
+      city: "",
+      state: "",
+      pincode: "",
+      country: "",
+      gstin: "",
+      contact_no: "",
+      department: "",
+      designation: "",
+      mobile_1: "",
+      mobile_2: "",
+      email: "",
     },
   });
 
-  // Fetch contacts
-  const { data: contactsData, isLoading: isContactsLoading } = useGetData({
-    endpoint: "/api/contacts",
+  // Move the usePutData hook before any conditional returns
+  const fetchData = usePutData({
+    endpoint: `/api/leads/${id}`,
+    queryKey: ["editlead", id],
+
     params: {
-      queryKey: ["contacts"],
       onSuccess: (data) => {
-        setContacts(data.Contact);
+        console.log("editdata", data);
+        queryClient.invalidateQueries({ queryKey: ["editlead"] });
+        queryClient.invalidateQueries({ queryKey: ["editlead", id] });
+        toast.success("Lead updated successfully");
+        navigate("/leads");
       },
-      onError: () => {
-        toast.error("Failed to fetch contacts. Please try again.");
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate lead")) {
+          toast.error("Lead name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to submit the form. Please try again.");
+        }
       },
     },
   });
 
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get("/api/contacts", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        const fetchedContacts = response.data.data.Contact || [];
-        setContacts(fetchedContacts);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch contacts:", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  // Fetch lead data
   const {
     data: editData,
     isLoading,
@@ -100,103 +99,102 @@ export default function EditSupplierPage() {
     params: {
       queryKey: ["editlead", id],
       retry: 1,
+
       onSuccess: (data) => {
+        console.log("GetData", data);
+        setData(data?.Lead);
         setLoading(false);
-        form.reset({
-          contact_id: data?.Contact?.id || "Empty",
-          lead_source: data?.Lead?.lead_source || "",
-          lead_status: data?.Lead?.lead_status || "",
-        });
       },
       onError: (error) => {
-        toast.error("Failed to fetch lead data. Please try again.");
+        if (error.message && error.message.includes("duplicate lead")) {
+          toast.error("Lead name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch lead data. Please try again.");
+        }
       },
       enabled: !!id,
     },
   });
 
-  const fetchData = usePutData({
-    endpoint: `/api/leads/${id}`,
-    queryKey: ["editlead", id],
-    params: {
-      onSuccess: (data) => {
-        toast.success("Lead updated successfully");
-        queryClient.invalidateQueries({ queryKey: ["editlead"] });
-        queryClient.invalidateQueries({ queryKey: ["editlead", id] });
-        navigate("/leads");
-      },
-      onError: (error) => {
-        toast.error("Failed to submit the form. Please try again.");
-      },
-    },
-  });
+  useEffect(() => {
+    console.log("data", editData);
+  }, [editData]);
 
   useEffect(() => {
-    console.log("editData", contactsData);
-    if (editData?.Lead) {
+    if (editData?.data?.Lead) {
+      const newData = editData?.data?.Lead;
+      console.log("Lead", newData);
       form.reset({
-        contact_id: editData?.Lead?.contact?.id || "",
-        lead_source: editData.Lead.lead_source || "",
-        lead_status: editData.Lead.lead_status || "",
+        contact_id: newData?.Lead?.contact_id || "",
+        lead_status: newData.lead_status || "",
+        lead_source: newData.lead_source || "",
       });
     }
   }, [editData, form]);
 
+  const getData = useGetData({
+    endpoint: `/api/contacts`,
+    params: {
+      queryKey: ["contacts"],
+      retry: 1,
+      onSuccess: (data) => {
+        console.log("GetData", data);
+        setContacts(data?.data?.Contact);
+        setLoading(false);
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate client")) {
+          toast.error("Client name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch client data. Please try again.");
+        }
+      },
+      enabled: !!id,
+    },
+  });
+
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
-    queryClient.invalidateQueries({ queryKey: ["lead"] });
-    queryClient.invalidateQueries({ queryKey: ["lead", id] });
+    getData.mutate(data);
+    queryClient.invalidateQueries({ queryKey: ["supplier"] });
+    queryClient.invalidateQueries({ queryKey: ["supplier", id] });
   };
-
-  if (isLoading || isContactsLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error fetching data. Please try again.</div>;
-  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
       <h3 className="text-2xl font-semibold text-center">Edit Lead</h3>
-      <p className="text-center text-xs mb-9">Edit & Update lead.</p>
+      <p className="text-center text-xs mb-9">Edit & Update Lead.</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Feilds First Row */}
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            {/* Client Dropdown */}
             <FormField
               control={form.control}
-              name="contact_id"
+              name="client_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Client</FormLabel>
+                  <FormLabel>Contacts</FormLabel>
                   <FormControl>
                     <Select
-                      value={field.value}
-                      onValueChange={(value) => field.onChange(value)}
+                      value={String(field.value)} // Ensure the value is a string
+                      onValueChange={field.onChange}
                     >
                       <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select Contact" />
+                        <SelectValue placeholder="Select Client" />
                       </SelectTrigger>
                       <SelectContent>
                         {loading ? (
                           <SelectItem disabled>Loading...</SelectItem>
-                        ) : (contacts || []).length > 0 ? (
-                          contacts.map((contact) => {
-                            const contactPerson =
-                              contact.contact_person || "No Contact Person";
-
-                            return (
-                              <SelectItem
-                                key={contact.id}
-                                value={String(contact.id)}
-                              >
-                                {` ${contactPerson}`}
-                              </SelectItem>
-                            );
-                          })
                         ) : (
-                          <SelectItem disabled>No clients available</SelectItem>
+                          contacts?.map((contact) => (
+                            <SelectItem
+                              key={contact.id}
+                              value={String(contact.id)}
+                            >
+                              {contact.contact_person}{" "}
+                              {/* Display the client name */}
+                            </SelectItem>
+                          ))
                         )}
                       </SelectContent>
                     </Select>
@@ -206,50 +204,61 @@ export default function EditSupplierPage() {
                 </FormItem>
               )}
             />
-
-            {/* Lead Source */}
-
-            <FormField
+            {/* <FormField
               control={form.control}
-              name="lead_source"
+              name="contact_id"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Street Address</FormLabel>
+                  <FormLabel>contact_id</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Street Address" {...field} />
+                    <Input
+                      placeholder="Enter contact_id Name"
+                      {...field}
+                      value={field.value}
+                    />
                   </FormControl>
-                  <FormDescription>Enter the Street Address.</FormDescription>
+                  <FormDescription>Enter the contact_id name.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
-            />
-            {/* Lead Status */}
+            /> */}
             <FormField
               control={form.control}
               name="lead_status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Area</FormLabel>
+                  <FormLabel>Lead Status</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Area" {...field} />
+                    <Input placeholder="Enter Lead Status" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the Area.</FormDescription>
+                  <FormDescription>Enter the Lead Status.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lead_source"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Lead Source</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter Lead Source" {...field} />
+                  </FormControl>
+                  <FormDescription>Enter the Lead Source.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
-
-          {/* Error message */}
-          {error && <div className="text-red-500">{error}</div>}
-
-          {/* Buttons */}
+          {error && <div className="text-red-500">{error}</div>}{" "}
+          {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">
             <Button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                navigate("/suppliers");
+                navigate("/leads");
               }}
             >
               Cancel
