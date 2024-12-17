@@ -16,10 +16,21 @@ interface ParamsType {
 }
 
 // Memoized POST function
-const postData = (() => {
-  const memoizedResponses = new Map<string, Promise<AxiosResponse<Response>>>();
+const memoize = <T extends (...args: any[]) => Promise<any>>(fn: T): T => {
+  const cache = new Map<string, Promise<any>>();
+  return ((...args: any[]) => {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) {
+      return cache.get(key)!;
+    }
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  }) as T;
+};
 
-  return async ({
+const postData = memoize(
+  async ({
     endpoint,
     data,
     headers,
@@ -28,49 +39,36 @@ const postData = (() => {
     data: RequestData;
     headers?: Record<string, string>;
   }): Promise<AxiosResponse<Response>> => {
-    const cacheKey = `${endpoint}-${JSON.stringify(data)}-${JSON.stringify(
-      headers
-    )}`;
-
-    if (memoizedResponses.has(cacheKey)) {
-      return memoizedResponses.get(cacheKey)!;
-    }
-
     const config = headers ? { headers } : {};
-    const request = axios
-      .put<Response>(endpoint, data, config)
-      .then((res) => res.data);
+    const response = await axios.put<Response>(endpoint, data, config);
+    return response.data;
+  }
+);
 
-    memoizedResponses.set(cacheKey, request);
-    return request;
-  };
-})();
+// Memoize the custom hook
+const memoizeHook = <T extends (...args: any[]) => any>(fn: T): T => {
+  const cache = new Map<string, any>();
+  return ((...args: any[]) => {
+    const key = JSON.stringify(args);
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    const result = fn(...args);
+    cache.set(key, result);
+    return result;
+  }) as T;
+};
 
 // Custom hook to handle PUT requests
-const usePutData = (() => {
-  const memoizedHooks = new Map<
-    string,
-    UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData>
-  >();
-
-  return ({
+const usePutData = memoizeHook(
+  ({
     endpoint,
     params,
   }: {
     endpoint: string;
     params: ParamsType;
   }): UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData> => {
-    const cacheKey = `${endpoint}-${JSON.stringify(params)}`;
-
-    if (memoizedHooks.has(cacheKey)) {
-      return memoizedHooks.get(cacheKey)!;
-    }
-
-    const mutation = useMutation<
-      AxiosResponse<Response>,
-      AxiosError,
-      RequestData
-    >({
+    return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
       mutationFn: (data) =>
         postData({
           endpoint,
@@ -93,10 +91,7 @@ const usePutData = (() => {
         console.log(data);
       },
     });
-
-    memoizedHooks.set(cacheKey, mutation);
-    return mutation;
-  };
-})();
+  }
+);
 
 export { usePutData };
