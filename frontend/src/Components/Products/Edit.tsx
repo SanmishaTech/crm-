@@ -183,6 +183,24 @@ export default function EditProductPage() {
   }
 
   type FormValues = z.infer<typeof formSchema>;
+
+  // const updateData = (data) => {
+  //   axios
+  //     .put(`/api/products/${id}`, data)
+  //     .then((response) => {
+  //       console.log(response);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+
+  const onSubmit = (data: FormValues) => {
+    console.log("data", data);
+    fetchData.mutate(data);
+    // updateData(data);
+  };
+
   const fetchData = usePutData({
     endpoint: `/api/products/${id}`,
     params: {
@@ -201,24 +219,6 @@ export default function EditProductPage() {
       },
     },
   });
-
-  // const updateData = (data) => {
-  //   axios
-  //     .put(`/api/products/${id}`, data)
-  //     .then((response) => {
-  //       console.log(response);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
-
-  const onSubmit = (data: FormValues) => {
-    fetchData.mutate(data);
-    // updateData(data);
-  };
-
-
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">

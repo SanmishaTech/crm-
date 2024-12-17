@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import {
   useMutation,
@@ -33,7 +34,7 @@ const postData = async ({
 }): Promise<AxiosResponse<Response>> => {
   const config = headers ? { headers } : {};
   const response = await axios.put<Response>(endpoint, data, config);
-  return response.data;
+  return response;
 };
 
 // Custom hook to handle POST requests
@@ -44,35 +45,24 @@ const usePutData = ({
   endpoint: string;
   params: ParamsType;
 }): UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData> => {
-  // const queryClient = useQueryClient();
-  // const querykey: Array<String> = [];
-  // if (!Array.isArray(params.queryKey)) {
-  //   querykey.push(params.queryKey as string);
-  // } else {
-  //   querykey.push(...params.queryKey);
-  // }
+  const stableParams = useMemo(
+    () => ({
+      onSuccess:
+        params.onSuccess ?? (() => toast.success("Data updated successfully")),
+      onError:
+        params.onError ?? ((error: AxiosError) => toast.error(error.message)),
+      retry: params.retry ?? 3,
+      headers: params.headers,
+    }),
+    [params.onSuccess, params.onError, params.retry, params.headers]
+  );
 
-  // console.log("querykey", querykey);
   return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
     mutationFn: (data) =>
-      postData({
-        endpoint,
-        data,
-        headers: params.headers ?? {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }),
-    onSuccess:
-      params.onSuccess ??
-      (() => {
-        // queryClient.invalidateQueries({ queryKey: params.queryKey }),
-        toast.success("Data updated successfully");
-      }),
-
-    onError:
-      params.onError ?? ((error: AxiosError) => toast.error(error.message)),
-    retry: params.retry ?? 3,
+      postData({ endpoint, data, headers: stableParams.headers }),
+    onSuccess: stableParams.onSuccess,
+    onError: stableParams.onError,
+    retry: stableParams.retry,
     onSettled: (data) => {
       console.log(data);
     },
