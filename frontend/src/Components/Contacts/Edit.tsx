@@ -135,15 +135,30 @@ export default function EditSupplierPage() {
     }
   }, [editData, form]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (isError) {
-    return <div>Error fetching data. Please try again.</div>;
-  }
+  const getData = useGetData({
+    endpoint: `/api/clients`,
+    params: {
+      queryKey: ["clients"],
+      retry: 1,
+      onSuccess: (data) => {
+        console.log("GetData", data);
+        setClients(data.data.Client);
+        setLoading(false);
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate client")) {
+          toast.error("Client name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch client data. Please try again.");
+        }
+      },
+      enabled: !!id,
+    },
+  });
 
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
+    getData.mutate();
     queryClient.invalidateQueries({ queryKey: ["client"] });
     queryClient.invalidateQueries({ queryKey: ["client", id] });
   };
@@ -171,10 +186,11 @@ export default function EditSupplierPage() {
                         <SelectValue placeholder="Select Client" />
                       </SelectTrigger>
                       <SelectContent>
+                        {console.log("clients", clients)}
                         {loading ? (
                           <SelectItem disabled>Loading...</SelectItem>
                         ) : (
-                          clients.map((client) => (
+                          clients?.map((client) => (
                             <SelectItem
                               key={client.id}
                               value={String(client.id)}
