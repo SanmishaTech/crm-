@@ -175,13 +175,6 @@ export default function EditProductPage() {
     }
   }, [data, form]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  if (isError) {
-    return <div>Error fetching data. Please try again.</div>;
-  }
-
   type FormValues = z.infer<typeof formSchema>;
   const fetchData = usePutData({
     endpoint: `/api/products/${id}`,
@@ -201,24 +194,6 @@ export default function EditProductPage() {
       },
     },
   });
-
-  // const updateData = (data) => {
-  //   axios
-  //     .put(`/api/products/${id}`, data)
-  //     .then((response) => {
-  //       console.log(response);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
-
-  const onSubmit = (data: FormValues) => {
-    fetchData.mutate(data);
-    // updateData(data);
-  };
-
-
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
