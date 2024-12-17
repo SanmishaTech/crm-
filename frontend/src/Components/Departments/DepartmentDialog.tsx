@@ -98,11 +98,11 @@ const DepartmentDialog = ({
       },
     },
   });
-  const { id } = useParams();
+  // const { id } = useParams();
 
   //update department mutation function
   const updateDepartmentData = usePutData({
-    endpoint: `/api/departments/${id}`,
+    endpoint: `/api/departments/${editDepartment?.id}`,
     params: {
       onSuccess: (data) => {
         setEditDepartment(null); // Reset edit mode
@@ -161,9 +161,9 @@ const DepartmentDialog = ({
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>{id ? "Edit" : "Add"} Departments</DialogTitle>
+            <DialogTitle>{editDepartment ? "Edit" : "Add"} Departments</DialogTitle>
             <DialogDescription>
-              {id ? "Edit" : "Add"} your department details here. Click save
+              {editDepartment ? "Edit" : "Add"} your department details here. Click save
               when you're done.
             </DialogDescription>
           </DialogHeader>
