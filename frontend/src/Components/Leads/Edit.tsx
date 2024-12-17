@@ -110,9 +110,10 @@ export default function EditSupplierPage() {
   });
 
   useEffect(() => {
+    console.log("editData", contactsData);
     if (editData?.Lead) {
       form.reset({
-        contact_id: editData.Lead.contact_id || "",
+        contact_id: contactsData?.Contact?.contact_id || "",
         lead_source: editData.Lead.lead_source || "",
         lead_status: editData.Lead.lead_status || "",
       });

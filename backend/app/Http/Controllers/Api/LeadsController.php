@@ -56,14 +56,15 @@ class LeadsController extends BaseController
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
         $lead->save();
+        
          
         // Get the array of product IDs and quantities from the request
-       $products = $request->input('products'); // Example: [{product_id: 1, quantity: 5}, {product_id: 2, quantity: 3}]
+    //    $products = $request->input('products'); // Example: [{product_id: 1, quantity: 5}, {product_id: 2, quantity: 3}]
     
        // Attach products to the lead with their respective quantities
-       foreach ($products as $product) {
-       $lead->leadProducts()->attach($product['product_id'], ['quantity' => $product['quantity']]);
-       }
+    //    foreach ($products as $product) {
+    //    $lead->leadProducts()->attach($product['product_id'], ['quantity' => $product['quantity']]);
+    //    }
 
         
         return $this->sendResponse(['Lead'=> new LeadResource($lead)], 'Lead Created Successfully');
