@@ -147,11 +147,6 @@ export default function InputForm() {
                         ) : (
                           <SelectItem disabled>No Contact available</SelectItem>
                         )}
-                        {/* <div className="px-5 py-1">
-                          <AddContacts
-                            fetchedContacts={fetchProductCategories}
-                          />
-                        </div> */}
                       </SelectContent>
                     </Select>
                   </FormControl>
