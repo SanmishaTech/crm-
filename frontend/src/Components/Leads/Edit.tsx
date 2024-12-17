@@ -170,7 +170,7 @@ export default function EditLeadPage() {
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
-              name="client_id"
+              name="contact_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Contacts</FormLabel>
@@ -180,12 +180,13 @@ export default function EditLeadPage() {
                       onValueChange={field.onChange}
                     >
                       <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select Client" />
+                        <SelectValue placeholder="Select Contact" />
                       </SelectTrigger>
                       <SelectContent>
                         {loading ? (
                           <SelectItem disabled>Loading...</SelectItem>
                         ) : (
+                          contacts &&
                           contacts?.map((contact) => (
                             <SelectItem
                               key={contact.id}

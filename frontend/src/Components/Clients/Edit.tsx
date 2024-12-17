@@ -53,6 +53,8 @@ export default function EditClientPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const [data, setData] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -128,8 +130,8 @@ export default function EditClientPage() {
   }, [editData]);
 
   useEffect(() => {
-    if (editData?.Client) {
-      const newData = editData.Client;
+    if (editData?.data?.Client) {
+      const newData = editData?.data?.Client;
       form.reset({
         client: newData.client || "",
         street_address: newData.street_address || "",

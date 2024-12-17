@@ -1,6 +1,5 @@
 //@ts-nocheck
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Table,
   TableBody,
