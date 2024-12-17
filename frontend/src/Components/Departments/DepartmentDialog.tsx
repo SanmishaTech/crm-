@@ -162,12 +162,13 @@ const DepartmentDialog = ({
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
+
             <DialogTitle>
               {editDepartment ? "Edit" : "Add"} Departments
             </DialogTitle>
             <DialogDescription>
-              {editDepartment ? "Edit" : "Add"} your department details here.
-              Click save when you're done.
+              {editDepartment ? "Edit" : "Add"} your department details here. Click save
+              when you're done.
             </DialogDescription>
           </DialogHeader>
 
