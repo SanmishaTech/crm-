@@ -111,7 +111,7 @@ export default function EditSupplierPage() {
 
       onSuccess: (data) => {
         console.log("GetData", data);
-        setData(data.Supplier);
+        setData(data?.Supplier);
         setLoading(false);
       },
       onError: (error) => {
@@ -130,8 +130,9 @@ export default function EditSupplierPage() {
   }, [editData]);
 
   useEffect(() => {
-    if (editData?.Supplier) {
-      const newData = editData.Supplier;
+    if (editData?.data.Supplier) {
+      const newData = editData.data.Supplier;
+      console.log("newData", newData);
       form.reset({
         supplier: newData.supplier || "",
         street_address: newData.street_address || "",
