@@ -163,12 +163,12 @@ export default function TableDemo() {
                 <TableCell className="flex justify-items space-x-2">
                   <AlertDialogbox url={lead.id} />
 
-                  {/* <button
+                  <button
                     onClick={() => navigate(`/leads/edit/${lead.id}`)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Edit
-                  </button> */}
+                  </button>
                 </TableCell>
               </TableRow>
             ))}

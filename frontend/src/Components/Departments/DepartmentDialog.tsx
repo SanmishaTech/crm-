@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -97,10 +98,11 @@ const DepartmentDialog = ({
       },
     },
   });
+  const { id } = useParams();
 
   //update department mutation function
   const updateDepartmentData = usePutData({
-    endpoint: `/api/departments/${editDepartment?.id}`,
+    endpoint: `/api/departments/${id}`,
     params: {
       onSuccess: (data) => {
         setEditDepartment(null); // Reset edit mode
@@ -159,12 +161,10 @@ const DepartmentDialog = ({
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>
-              {editDepartment ? "Edit" : "Add"} Departments
-            </DialogTitle>
+            <DialogTitle>{id ? "Edit" : "Add"} Departments</DialogTitle>
             <DialogDescription>
-              {editDepartment ? "Edit" : "Add"} your department details here.
-              Click save when you're done.
+              {id ? "Edit" : "Add"} your department details here. Click save
+              when you're done.
             </DialogDescription>
           </DialogHeader>
 

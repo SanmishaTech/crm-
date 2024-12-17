@@ -22,7 +22,7 @@ const fetchData = async ({
 }): Promise<Response> => {
   const config = headers ? { headers } : {};
   const response = await axios.get<Response>(endpoint, config);
-  return response.data.data;
+  return response.data;
 };
 
 // Custom hook to fetch data

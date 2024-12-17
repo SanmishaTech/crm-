@@ -86,8 +86,9 @@ export default function TableDemo() {
       queryKey: ["supplier"],
       retry: 1,
       onSuccess: (data) => {
-        setSuppliers(data.data.Suppliers);
-        setPagination(data.data.pagination);
+        console.log("test-test", data);
+        setSuppliers(data.Suppliers);
+        setPagination(data.pagination);
         setLoading(false);
       },
       onError: (error) => {
@@ -164,7 +165,8 @@ export default function TableDemo() {
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {Sup?.Suppliers?.map((supplier) => (
+            {console.log("sup", Sup)}
+            {Sup?.data?.Suppliers?.map((supplier) => (
               <TableRow key={supplier.id}>
                 <TableCell>{supplier.supplier}</TableCell>
                 <TableCell>{supplier.street_address}</TableCell>

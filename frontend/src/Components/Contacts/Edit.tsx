@@ -117,6 +117,8 @@ export default function EditSupplierPage() {
     console.log("data", editData);
   }, [editData]);
 
+  
+
   useEffect(() => {
     if (editData?.Contact) {
       const newData = editData.Contact;
@@ -188,6 +190,7 @@ export default function EditSupplierPage() {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="contact_person"
