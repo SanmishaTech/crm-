@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LeadResource;
+use App\Http\Requests\StoreLeadRequest;
 use App\Http\Resources\ContactResource;
 use App\Http\Controllers\Api\BaseController;
 
@@ -46,7 +47,7 @@ class LeadsController extends BaseController
      * @bodyParam lead_status string The Status of the Lead.
      * @bodyParam contact_id string The id of the contact.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreLeadRequest $request): JsonResponse
     {
         $employee = auth()->user()->employee;
         $lead = new Lead();
