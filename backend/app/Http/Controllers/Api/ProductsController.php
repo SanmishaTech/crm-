@@ -61,6 +61,9 @@ class ProductsController extends BaseController
         $product->model = $request->input("model");
         $product->manufacturer = $request->input("manufacturer");
         $product->opening_qty = $request->input("opening_qty");
+        $product->closing_qty = $request->input("closing_qty");
+        $product->last_traded_price = $request->input("last_traded_price");
+
         $product->save();
         return $this->sendResponse(['Product'=> new ProductResource($product)], "Product Stored successfully");
 
@@ -101,8 +104,8 @@ class ProductsController extends BaseController
         $product->model = $request->input("model");
         $product->manufacturer = $request->input("manufacturer");
         $product->opening_qty = $request->input("opening_qty");
-        // $product->closing_qty = $request->input("closing_qty");
-        // $product->last_traded_price = $request->input("last_traded_price");
+        $product->closing_qty = $request->input("closing_qty");
+        $product->last_traded_price = $request->input("last_traded_price");
         $product->save();
         return $this->sendResponse(['Product'=> new ProductResource($product)], "Product Updated successfuly");
          

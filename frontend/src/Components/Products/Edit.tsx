@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { QueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {
   Form,
@@ -47,10 +48,9 @@ const formSchema = z.object({
       message: "Manufacturer field must have no more than 50 characters.",
     }),
   opening_qty: z
-    .string()
-    .min(1, { message: "Opening quantity field is required." })
-    .max(50, {
-      message: "Opening quantity field must have no more than 50 characters.",
+    .union([z.string(), z.number()])
+    .refine((val) => val !== "" && val !== undefined, {
+      message: "Opening Quantity field is required",
     }),
   // product_category_id: z.union([z.string(), z.number()]),
   // supplier_id: z.union([z.string(), z.number()]),
@@ -67,11 +67,11 @@ const formSchema = z.object({
     }),
 
   closing_qty: z
-    .string()
-    .min(1, { message: "Closing quantity field is required." })
-    .max(50, {
-      message: "Closing quantity field must have no more than 50 characters.",
+    .union([z.string(), z.number()])
+    .refine((val) => val !== "" && val !== undefined, {
+      message: "Closing Quantity field is required",
     }),
+
   last_traded_price: z
     .union([z.string(), z.number()])
     .refine((val) => val !== "" && val !== undefined, {
@@ -84,11 +84,8 @@ export default function EditProductPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false); // To handle loading state
-  const [productCategories, setProductCategories] = useState<ProductCategory[]>(
-    []
-  );
+  const [productCategories, setProductCategories] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -105,7 +102,7 @@ export default function EditProductPage() {
   const { data, isLoading, isFetching, isError } = useGetData({
     endpoint: `/api/products/${id}`,
     params: {
-      queryKeyId: "products",
+      queryKey: ["products"],
       retry: 1,
       onError: (error) => {
         console.log("error", error);
@@ -117,12 +114,27 @@ export default function EditProductPage() {
       },
       onSuccess: (data) => {
         console.log("data", data);
-        navigate("/products");
       },
     },
   });
 
-  // Fetch Products
+  // const { data: ProductCategoryData, isLoading: productCategoriesLoading } =
+  //   useGetData({
+  //     endpoint: `/api/product_categories`,
+  //     params: {
+  //       queryKey: ["product_category"],
+  //       retry: 1,
+  //       onSuccess: (data) => {
+  //         console.log(data.data.ProductCategories);
+  //         setProductCategories(data.data.ProductCategories);
+  //       },
+  //       onError: (error) => {
+  //         console.log(error);
+  //       },
+  //     },
+  //   });
+
+  // Fetch Product categories
   const fetchProductCategories = () => {
     axios
       .get("/api/product_categories", {
@@ -163,8 +175,11 @@ export default function EditProductPage() {
 
   useEffect(() => {
     if (data) {
-      const newData = data.Product;
+      const newData = data.data.Product;
       form.reset({
+        product: newData.product || "",
+        product_category_id: newData.product_category_id || "",
+        supplier_id: newData.supplier_id || "",
         product: newData.product || "",
         model: newData.model || "",
         manufacturer: newData.manufacturer || "",
@@ -194,6 +209,11 @@ export default function EditProductPage() {
       },
     },
   });
+
+  const onSubmit = (data: FormValues) => {
+    fetchData.mutate(data);
+    navigate("/products");
+  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
@@ -382,7 +402,9 @@ export default function EditProductPage() {
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">
-            <Button onClick={() => navigate("/suppliers")}>Cancel</Button>
+            <Button type="button" onClick={() => navigate("/products")}>
+              Cancel
+            </Button>
             <Button type="submit">Save Changes</Button>
           </div>
         </form>
