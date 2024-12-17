@@ -103,9 +103,9 @@ export default function EditSupplierPage() {
       onSuccess: (data) => {
         setLoading(false);
         form.reset({
-          contact_id: data.Contact.id || "Empty",
-          lead_source: data.Lead.lead_source || "",
-          lead_status: data.Lead.lead_status || "",
+          contact_id: data?.Contact?.id || "Empty",
+          lead_source: data?.Lead?.lead_source || "",
+          lead_status: data?.Lead?.lead_status || "",
         });
       },
       onError: (error) => {

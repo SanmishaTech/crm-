@@ -76,7 +76,7 @@ export default function TableDemo() {
       queryKey: ["lead"],
       retry: 1,
       onSuccess: (data) => {
-        setSuppliers(data.data.Lead);
+        setSuppliers(data?.Lead);
         setPagination(data.data.pagination);
         setLoading(false);
       },
@@ -155,7 +155,7 @@ export default function TableDemo() {
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {Sup?.Lead?.map((lead) => (
+            {Sup?.data?.Lead?.map((lead) => (
               <TableRow key={lead.id}>
                 <TableCell>{lead?.contact?.contact_person}</TableCell>
                 <TableCell>{lead.lead_source}</TableCell>
