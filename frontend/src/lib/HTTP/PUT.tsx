@@ -1,6 +1,12 @@
 import React, { useMemo } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import {
+  useMutation,
+  UseMutationResult,
+  MutationFunction,
+  QueryClient,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 
 // Define types for request and response data
@@ -16,83 +22,53 @@ interface ParamsType {
   retry?: number;
 }
 
-// Memoized POST function
-const memoize = <T extends (...args: any[]) => Promise<any>>(fn: T): T => {
-  const cache = new Map<string, Promise<any>>();
-  return ((...args: any[]) => {
-    const key = JSON.stringify(args);
-    if (cache.has(key)) {
-      return cache.get(key)!;
-    }
-    const result = fn(...args);
-    cache.set(key, result);
-    return result;
-  }) as T;
+// Define the POST function
+const postData = async ({
+  endpoint,
+  data,
+  headers,
+}: {
+  endpoint: string;
+  data: RequestData;
+  headers?: Record<string, string>;
+}): Promise<AxiosResponse<Response>> => {
+  const config = headers ? { headers } : {};
+  const response = await axios.put<Response>(endpoint, data, config);
+  return response.data;
 };
 
-const postData = memoize(
-  async ({
-    endpoint,
-    data,
-    headers,
-  }: {
-    endpoint: string;
-    data: RequestData;
-    headers?: Record<string, string>;
-  }): Promise<AxiosResponse<Response>> => {
-    const config = headers ? { headers } : {};
-    const response = await axios.put<Response>(endpoint, data, config);
-    return response.data;
-  }
-);
+// Custom hook to handle POST requests
+const usePutData = ({
+  endpoint,
+  params,
+}: {
+  endpoint: string;
+  params: ParamsType;
+}): UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData> => {
+  return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
+    mutationFn: (data) =>
+      postData({
+        endpoint,
+        data,
+        headers: params.headers ?? {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }),
+    onSuccess:
+      params.onSuccess ??
+      (() => {
+        // queryClient.invalidateQueries({ queryKey: params.queryKey }),
+        toast.success("Data updated successfully");
+      }),
 
-// Memoize the custom hook
-const memoizeHook = <T extends (...args: any[]) => any>(fn: T): T => {
-  const cache = new Map<string, any>();
-  return ((...args: any[]) => {
-    const key = JSON.stringify(args);
-    if (cache.has(key)) {
-      return cache.get(key);
-    }
-    const result = fn(...args);
-    cache.set(key, result);
-    return result;
-  }) as T;
+    onError:
+      params.onError ?? ((error: AxiosError) => toast.error(error.message)),
+    retry: params.retry ?? 3,
+    onSettled: (data) => {
+      console.log(data);
+    },
+  });
 };
-
-// Custom hook to handle PUT requests
-const usePutData = memoizeHook(
-  ({
-    endpoint,
-    params,
-  }: {
-    endpoint: string;
-    params: ParamsType;
-  }): UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData> => {
-    return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
-      mutationFn: (data) =>
-        postData({
-          endpoint,
-          data,
-          headers: params.headers ?? {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        }),
-      onSuccess:
-        params.onSuccess ??
-        (() => {
-          toast.success("Data updated successfully");
-        }),
-
-      onError:
-        params.onError ?? ((error: AxiosError) => toast.error(error.message)),
-      retry: params.retry ?? 3,
-      onSettled: (data) => {
-        console.log(data);
-      },
-    });
-  }
-);
 
 export { usePutData };

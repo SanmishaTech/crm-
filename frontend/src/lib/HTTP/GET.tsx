@@ -37,28 +37,16 @@ const useGetData = ({
 
   useEffect(() => {
     const newCustomParams: ParamsType = {
-      // queryKey: params.queryKey
-      //   ? `${params.queryKey}`
-      //   : params.queryKeyId
-      //   ? [`${endpoint}`, params.queryKeyId]
-      //   : `${endpoint}`,
       queryKey: params.queryKey,
       retry: params.retry ?? 5,
       refetchOnWindowFocus: params.refetchOnWindowFocus ?? true,
       enabled: params.enabled ?? true,
-      onSuccess:
-        params.onSuccess ?? (() => toast.success("Successfully Fetched Data")),
-      onError:
-        params.onError ?? ((error: AxiosError) => toast.error(error.message)),
     };
 
     setCustomParams(newCustomParams);
   }, [endpoint, JSON.stringify(params)]);
 
-  const { data, isLoading, isFetching, isError } = useQuery<
-    Response,
-    AxiosError
-  >({
+  const queryResult = useQuery<Response, AxiosError>({
     queryKey: Array.isArray(customParams.queryKey)
       ? customParams.queryKey
       : [customParams.queryKey],
@@ -72,12 +60,19 @@ const useGetData = ({
       }),
     retry: customParams.retry,
     refetchOnWindowFocus: customParams.refetchOnWindowFocus,
-    onSuccess: customParams.onSuccess,
-    onError: customParams.onError,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  return { data, isLoading, isFetching, isError };
+  useEffect(() => {
+    if (queryResult.isSuccess && params.onSuccess) {
+      params.onSuccess(queryResult.data);
+    }
+    if (queryResult.isError && params.onError) {
+      params.onError(queryResult.error);
+    }
+  }, [queryResult, params]);
+
+  return queryResult;
 };
 
 export { useGetData };
