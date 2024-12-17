@@ -79,7 +79,6 @@ export default function EditSupplierPage() {
   // Move the usePutData hook before any conditional returns
   const fetchData = usePutData({
     endpoint: `/api/suppliers/${id}`,
-    queryKey: ["editsupplier", id],
 
     params: {
       onSuccess: (data) => {
@@ -152,18 +151,18 @@ export default function EditSupplierPage() {
     }
   }, [editData, form]);
 
+  const onSubmit = (data: FormValues) => {
+    fetchData.mutate(data);
+    queryClient.invalidateQueries({ queryKey: ["supplier"] });
+    queryClient.invalidateQueries({ queryKey: ["supplier", id] });
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
   if (isError) {
     return <div>Error fetching data. Please try again.</div>;
   }
-
-  const onSubmit = (data: FormValues) => {
-    fetchData.mutate(data);
-    queryClient.invalidateQueries({ queryKey: ["supplier"] });
-    queryClient.invalidateQueries({ queryKey: ["supplier", id] });
-  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
