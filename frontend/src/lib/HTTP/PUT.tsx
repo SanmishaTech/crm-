@@ -1,11 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import {
-  useMutation,
-  UseMutationResult,
-  MutationFunction,
-  QueryClient,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 // Define types for request and response data
@@ -21,62 +15,88 @@ interface ParamsType {
   retry?: number;
 }
 
-// Define the POST function
-const postData = async ({
-  endpoint,
-  data,
-  headers,
-}: {
-  endpoint: string;
-  data: RequestData;
-  headers?: Record<string, string>;
-}): Promise<AxiosResponse<Response>> => {
-  const config = headers ? { headers } : {};
-  const response = await axios.put<Response>(endpoint, data, config);
-  return response.data;
-};
+// Memoized POST function
+const postData = (() => {
+  const memoizedResponses = new Map<string, Promise<AxiosResponse<Response>>>();
 
-// Custom hook to handle POST requests
-const usePutData = ({
-  endpoint,
-  params,
-}: {
-  endpoint: string;
-  params: ParamsType;
-}): UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData> => {
-  // const queryClient = useQueryClient();
-  // const querykey: Array<String> = [];
-  // if (!Array.isArray(params.queryKey)) {
-  //   querykey.push(params.queryKey as string);
-  // } else {
-  //   querykey.push(...params.queryKey);
-  // }
+  return async ({
+    endpoint,
+    data,
+    headers,
+  }: {
+    endpoint: string;
+    data: RequestData;
+    headers?: Record<string, string>;
+  }): Promise<AxiosResponse<Response>> => {
+    const cacheKey = `${endpoint}-${JSON.stringify(data)}-${JSON.stringify(
+      headers
+    )}`;
 
-  // console.log("querykey", querykey);
-  return useMutation<AxiosResponse<Response>, AxiosError, RequestData>({
-    mutationFn: (data) =>
-      postData({
-        endpoint,
-        data,
-        headers: params.headers ?? {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      }),
-    onSuccess:
-      params.onSuccess ??
-      (() => {
-        // queryClient.invalidateQueries({ queryKey: params.queryKey }),
-        toast.success("Data updated successfully");
-      }),
+    if (memoizedResponses.has(cacheKey)) {
+      return memoizedResponses.get(cacheKey)!;
+    }
 
-    onError:
-      params.onError ?? ((error: AxiosError) => toast.error(error.message)),
-    retry: params.retry ?? 3,
-    onSettled: (data) => {
-      console.log(data);
-    },
-  });
-};
+    const config = headers ? { headers } : {};
+    const request = axios
+      .put<Response>(endpoint, data, config)
+      .then((res) => res.data);
+
+    memoizedResponses.set(cacheKey, request);
+    return request;
+  };
+})();
+
+// Custom hook to handle PUT requests
+const usePutData = (() => {
+  const memoizedHooks = new Map<
+    string,
+    UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData>
+  >();
+
+  return ({
+    endpoint,
+    params,
+  }: {
+    endpoint: string;
+    params: ParamsType;
+  }): UseMutationResult<AxiosResponse<Response>, AxiosError, RequestData> => {
+    const cacheKey = `${endpoint}-${JSON.stringify(params)}`;
+
+    if (memoizedHooks.has(cacheKey)) {
+      return memoizedHooks.get(cacheKey)!;
+    }
+
+    const mutation = useMutation<
+      AxiosResponse<Response>,
+      AxiosError,
+      RequestData
+    >({
+      mutationFn: (data) =>
+        postData({
+          endpoint,
+          data,
+          headers: params.headers ?? {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }),
+      onSuccess:
+        params.onSuccess ??
+        (() => {
+          toast.success("Data updated successfully");
+        }),
+
+      onError:
+        params.onError ?? ((error: AxiosError) => toast.error(error.message)),
+      retry: params.retry ?? 3,
+      onSettled: (data) => {
+        console.log(data);
+      },
+    });
+
+    memoizedHooks.set(cacheKey, mutation);
+    return mutation;
+  };
+})();
 
 export { usePutData };
