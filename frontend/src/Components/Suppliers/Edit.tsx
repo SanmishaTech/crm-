@@ -108,7 +108,7 @@ export default function EditSupplierPage() {
       retry: 1,
 
       onSuccess: (data) => {
-        console.log("data", data);
+        console.log("GetData", data);
         setData(data.Supplier);
         setLoading(false);
       },

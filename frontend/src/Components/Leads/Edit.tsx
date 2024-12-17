@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,7 +30,7 @@ import {
 
 // Form validation schema
 const formSchema = z.object({
-  contact_id: z.string().optional(),
+  contact_id: z.any().optional(),
   lead_source: z.string().optional(),
   lead_status: z.string().optional(),
 });
@@ -56,17 +57,38 @@ export default function EditSupplierPage() {
 
   // Fetch contacts
   const { data: contactsData, isLoading: isContactsLoading } = useGetData({
-    endpoint: "/api/contacts", // Replace with the actual API endpoint for fetching contacts
+    endpoint: "/api/contacts",
     params: {
-      queryKey: ["contacts"], // Optional: Query key for cache management
+      queryKey: ["contacts"],
       onSuccess: (data) => {
-        setContacts(data.Contact); // Assuming the response has a 'contacts' field
+        setContacts(data.Contact);
       },
-      onError: (error) => {
+      onError: () => {
         toast.error("Failed to fetch contacts. Please try again.");
       },
     },
   });
+
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get("/api/contacts", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        const fetchedContacts = response.data.data.Contact || [];
+        setContacts(fetchedContacts);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch contacts:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   // Fetch lead data
   const {
@@ -81,7 +103,7 @@ export default function EditSupplierPage() {
       onSuccess: (data) => {
         setLoading(false);
         form.reset({
-          contact_id: data.Lead.contact_id || "",
+          contact_id: data.Contact.id || "Empty",
           lead_source: data.Lead.lead_source || "",
           lead_status: data.Lead.lead_status || "",
         });
@@ -113,7 +135,7 @@ export default function EditSupplierPage() {
     console.log("editData", contactsData);
     if (editData?.Lead) {
       form.reset({
-        contact_id: contactsData?.Contact?.contact_id || "",
+        contact_id: editData?.Lead?.contact?.id || "",
         lead_source: editData.Lead.lead_source || "",
         lead_status: editData.Lead.lead_status || "",
       });
@@ -151,39 +173,42 @@ export default function EditSupplierPage() {
                   <FormControl>
                     <Select
                       value={field.value}
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        console.log("Selected Contact ID:", value); // Log the contact ID
-                      }}
+                      onValueChange={(value) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select Contact" />
                       </SelectTrigger>
                       <SelectContent>
-                        {contacts.length === 0 ? (
-                          <SelectItem disabled>No contact available</SelectItem>
+                        {loading ? (
+                          <SelectItem disabled>Loading...</SelectItem>
+                        ) : (contacts || []).length > 0 ? (
+                          contacts.map((contact) => {
+                            const contactPerson =
+                              contact.contact_person || "No Contact Person";
+
+                            return (
+                              <SelectItem
+                                key={contact.id}
+                                value={String(contact.id)}
+                              >
+                                {` ${contactPerson}`}
+                              </SelectItem>
+                            );
+                          })
                         ) : (
-                          contacts.map((contact) => (
-                            <SelectItem
-                              key={contact.id}
-                              value={String(contact.id)}
-                            >
-                              {contact.contact_person
-                                ? `${contact.contact_person} (ID: ${contact.id})`
-                                : `No Contact Person (ID: ${contact.id})`}
-                            </SelectItem>
-                          ))
+                          <SelectItem disabled>No clients available</SelectItem>
                         )}
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormDescription>Enter the Contact.</FormDescription>
+                  <FormDescription>Enter the Client.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
             {/* Lead Source */}
+
             <FormField
               control={form.control}
               name="lead_source"
