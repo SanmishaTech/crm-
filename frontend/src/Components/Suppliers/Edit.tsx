@@ -53,6 +53,8 @@ export default function EditSupplierPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const [data, setData] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
