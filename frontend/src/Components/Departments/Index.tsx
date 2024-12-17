@@ -204,7 +204,7 @@ export default function TableDemo() {
               <TableHead onClick={() => handleSort("department")}>
                 Departments
               </TableHead>
-              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
@@ -212,7 +212,7 @@ export default function TableDemo() {
             {sortedDepartments.map((department) => (
               <TableRow key={department.id}>
                 <TableCell>{department.department_name}</TableCell>
-                <TableCell className="text-center">
+                <TableCell className="text-right">
                   <button
                     onClick={() => handleDelete(department.id)}
                     className="text-red-500 hover:text-red-700 pr-1"

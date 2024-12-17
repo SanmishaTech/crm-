@@ -76,8 +76,6 @@ export default function TableDemo() {
   const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
   const navigate = useNavigate();
 
-
-
   // Fetch Products
   useEffect(() => {
     axios
@@ -170,6 +168,39 @@ export default function TableDemo() {
     }
   };
 
+  const fetchProductCategories = () => {
+    axios
+      .get("/api/product_categories", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        // setProductCategories(response.data.data.ProductCategories);
+      })
+      .catch(() => {
+        setError("Failed to load Product categories");
+      });
+  };
+
+  // Fetch Products
+  const fetchSuppliers = () => {
+    axios
+      .get("/api/suppliers", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        // setSuppliers(response.data.data.Suppliers);
+      })
+      .catch(() => {
+        setError("Failed to load Suppliers");
+      });
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
@@ -207,7 +238,7 @@ export default function TableDemo() {
               <TableHead onClick={() => handleSort("Manufacturer")}>
                 Manufacturer
               </TableHead>
-              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
@@ -217,15 +248,19 @@ export default function TableDemo() {
                 <TableCell>{product.product}</TableCell>
                 <TableCell>{product.model}</TableCell>
                 <TableCell>{product.manufacturer}</TableCell>
-                <TableCell className="flex justify-items  space-x-2">
+                <TableCell className="text-right">
                   <button
                     onClick={() => handleDelete(product.id)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 pr-1"
                   >
                     Delete
                   </button>
                   <button
-                    onClick={() => navigate(`/products/edit/${product.id}`)}
+                    onClick={() => {
+                      fetchProductCategories();
+                      fetchSuppliers();
+                      navigate(`/products/edit/${product.id}`);
+                    }}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Edit

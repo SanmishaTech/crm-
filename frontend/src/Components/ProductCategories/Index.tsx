@@ -212,7 +212,7 @@ export default function TableDemo() {
               <TableHead onClick={() => handleSort("productCategory")}>
                 Product Categories
               </TableHead>
-              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
@@ -220,7 +220,7 @@ export default function TableDemo() {
             {sortedProductCategories.map((productCategory) => (
               <TableRow key={productCategory.id}>
                 <TableCell>{productCategory.product_category}</TableCell>
-                <TableCell className="text-center">
+                <TableCell className="text-right">
                   <button
                     onClick={() => handleDelete(productCategory.id)}
                     className="text-red-500 hover:text-red-700 pr-1"
