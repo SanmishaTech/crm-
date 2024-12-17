@@ -56,6 +56,7 @@ class LeadsController extends BaseController
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
         $lead->save();
+
         
         return $this->sendResponse(['Lead'=> new LeadResource($lead)], 'Lead Created Successfully');
     }

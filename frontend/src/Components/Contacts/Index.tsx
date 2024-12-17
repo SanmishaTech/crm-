@@ -42,6 +42,7 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/DELETE";
+import AlertDialogbox from "./AlertBox";
 
 // Contact type
 type Contact = {
@@ -235,12 +236,14 @@ export default function TableDemo() {
                 <TableCell>{contact.designation}</TableCell>
                 <TableCell>{contact.email}</TableCell>
                 <TableCell className="flex justify-items  space-x-2">
-                  <button
+                  {/* <button
                     onClick={() => handleDelete(contact.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     Delete
-                  </button>
+                  </button> */}
+                  <AlertDialogbox url={contact.id} />
+
                   <button
                     onClick={() => navigate(`/contacts/edit/${contact.id}`)}
                     className="text-blue-500 hover:text-blue-700"
