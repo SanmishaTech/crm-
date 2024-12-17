@@ -144,7 +144,10 @@ export default function EditProductPage() {
         },
       })
       .then((response) => {
-        setProductCategories(response.data.data.ProductCategories);
+        // setProductCategories(response.data.data.ProductCategories);
+        const category = response.data.data.ProductCategories;
+        setProductCategories(category);
+        console.log("callled");
       })
       .catch(() => {
         setError("Failed to load Product categories");
@@ -174,13 +177,13 @@ export default function EditProductPage() {
   }, []);
 
   useEffect(() => {
+    
     if (data) {
       const newData = data.data.Product;
       form.reset({
         product: newData.product || "",
         product_category_id: newData.product_category_id || "",
         supplier_id: newData.supplier_id || "",
-        product: newData.product || "",
         model: newData.model || "",
         manufacturer: newData.manufacturer || "",
         opening_qty: newData.opening_qty || "",
@@ -323,79 +326,81 @@ export default function EditProductPage() {
             />
           </div>
           {/* Feilds Second Row Ends */}
-          <FormField
-            control={form.control}
-            name="product_category_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Product Category</FormLabel>
-                <FormControl>
-                  <Select
-                    value={String(field.value)}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select Product Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {loading ? (
-                        <SelectItem disabled>Loading...</SelectItem>
-                      ) : (
-                        productCategories.map((ProductCategory) => (
-                          <SelectItem
-                            key={ProductCategory.id}
-                            value={String(ProductCategory.id)}
-                          >
-                            {ProductCategory.product_category}
-                          </SelectItem>
-                        ))
-                      )}
-                      <div className="px-5 py-1">
-                        <AddProductCategory />
-                      </div>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormDescription>Enter the Product Category.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="supplier_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Supplier</FormLabel>
-                <FormControl>
-                  <Select
-                    value={String(field.value)}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select Supplier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {loading ? (
-                        <SelectItem disabled>Loading...</SelectItem>
-                      ) : (
-                        suppliers.map((supplier) => (
-                          <SelectItem
-                            key={supplier.id}
-                            value={String(supplier.id)}
-                          >
-                            {supplier.supplier}
-                          </SelectItem>
-                        ))
-                      )}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormDescription>Enter the Supplier.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+            <FormField
+              control={form.control}
+              name="product_category_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Category</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={String(field.value || "")}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Product Category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loading ? (
+                          <SelectItem disabled>Loading...</SelectItem>
+                        ) : (
+                          productCategories.map((ProductCategory) => (
+                            <SelectItem
+                              key={ProductCategory.id}
+                              value={String(ProductCategory.id)}
+                            >
+                              {ProductCategory.product_category}
+                            </SelectItem>
+                          ))
+                        )}
+                        <div className="px-5 py-1">
+                          <AddProductCategory />
+                        </div>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>Enter the Product Category.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="supplier_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Supplier</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={String(field.value)}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Supplier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loading ? (
+                          <SelectItem disabled>Loading...</SelectItem>
+                        ) : (
+                          suppliers.map((supplier) => (
+                            <SelectItem
+                              key={supplier.id}
+                              value={String(supplier.id)}
+                            >
+                              {supplier.supplier}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>Enter the Supplier.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           {/* Feilds Third Row Starts */}
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4"></div>
           {/* Feilds Fifth Row Ends */}

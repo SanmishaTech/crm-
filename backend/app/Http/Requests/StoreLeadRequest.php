@@ -24,14 +24,14 @@ class StoreLeadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "employee_id" => ['required', 'exists:employees,id'],
+            "contact_id" => ['required', 'exists:contacts,id'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'employee_id.exists' => 'Lead Owner not Found',
+            'contact_id.exists' => 'Contact not Found',
         ];
     }
 
