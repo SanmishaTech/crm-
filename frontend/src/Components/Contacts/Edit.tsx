@@ -49,7 +49,9 @@ export default function EditSupplierPage() {
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false); // To handle loading state
   const [clients, setClients] = useState<any[]>([]); // State to store fetched clients
+ 
   const [data, setData] = useState<any>([]);
+ 
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
