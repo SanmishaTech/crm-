@@ -32,7 +32,7 @@ class SuppliersController extends BaseController
             });
         }
 
-        $suppliers = $query->paginate(20);
+        $suppliers = $query->paginate(3);
 
        
 

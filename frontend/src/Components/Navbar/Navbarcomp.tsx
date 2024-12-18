@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CalendarDays, Search, Bell, Settings } from "lucide-react";
+import {
+  EllipsisVertical,
+  CalendarDays,
+  Search,
+  Bell,
+  Settings,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,6 +27,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import userAvatar from "@/images/Profile.jpg";
@@ -39,12 +46,15 @@ const Navbar = () => {
   };
 
   // Handle navigation to leads page
-  const handleLeadsNavigate = () => {
-    navigate("/leads");
+  const handleContactsNavigate = () => {
+    navigate("/contacts");
   };
 
-  const handleAccountsNavigate = () => {
-    navigate("/accounts");
+  const handleClientsNavigate = () => {
+    navigate("/clients");
+  };
+  const handleLeadsNavigate = () => {
+    navigate("/leads");
   };
 
   return (
@@ -88,14 +98,38 @@ const Navbar = () => {
               Suppliers
             </Button>
 
+            <Button
+              onClick={handleContactsNavigate}
+              variant="ghost"
+              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
+            >
+              Contacts
+            </Button>
+            <Button
+              onClick={handleClientsNavigate}
+              variant="ghost"
+              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
+            >
+              Clients
+            </Button>
+            <Button
+              onClick={handleLeadsNavigate}
+              variant="ghost"
+              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
+            >
+              Leads
+            </Button>
+
             {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="hover:bg-gray-100 hover:underline transition duration-200"
+                  className="hover:bg-gray-100 hover:underline transition duration-200 "
                 >
-                  Master
+                  <EllipsisVertical 
+                  className="h-4 w-4 "
+                  />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -103,86 +137,27 @@ const Navbar = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    navigate("/department");
+                    navigate("#");
                   }}
                 >
-                  Department
+                  Electrical
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    navigate("/companymaster");
+                    navigate("#");
                   }}
                 >
                   Company Master
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    navigate("/productcategory");
+                    navigate("#");
                   }}
                 >
-                  Product Category
+                  
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost">Access</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Access Control</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigate("/rolemaster");
-                  }}
-                >
-                  Role Master
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigate("/assignaccess");
-                  }}
-                >
-                  Assign Access
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigate("/usermaster");
-                  }}
-                >
-                  User Master
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <Button
-              onClick={handleLeadsNavigate}
-              variant="ghost"
-              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
-            >
-              Leads
-            </Button>
-
-            <Button
-              variant="ghost"
-              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
-            >
-              Contacts
-            </Button>
-            <Button
-              onClick={handleAccountsNavigate}
-              variant="ghost"
-              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
-            >
-              Accounts
-            </Button>
-            <Button
-              variant="ghost"
-              className="text-black  px-2 py-2  hover:bg-gray-100 hover:underline transition duration-200"
-            >
-              Deals
-            </Button> */}
+            </DropdownMenu> */}
 
             {/* <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
