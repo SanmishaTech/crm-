@@ -79,6 +79,7 @@ export default function TableDemo() {
     },
   });
 
+  //Fetch Suppliers
   const { data: Sup } = useGetData({
     endpoint: `/api/suppliers?search=${searchTerm}`,
     params: {

@@ -65,17 +65,10 @@ export default function InputForm() {
     defaultValues: {
       client_id: "",
       contact_person: "",
-      area: "",
-      city: "",
-      state: "",
-      pincode: "",
-      country: "India",
-      gstin: "",
-      contact_no: "",
       department: "",
       designation: "",
       mobile_1: "",
-      mobile_2: "",
+      mobile_2: "", 
       email: "",
     },
   });

@@ -58,17 +58,16 @@ export default function InputForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      client: "",
-      street_address: "",
-      area: "",
-      city: "",
-      state: "",
-      pincode: "",
-      country: "India",
-      gstin: "",
-      contact_no: "",
-
-      email: "",
+        client: "",
+        street_address: "",
+        area: "",
+        city: "",
+        state: "",
+        pincode: "",
+        country: "India",
+        gstin: "",
+        contact_no: "",
+        email: "",
     },
   });
 

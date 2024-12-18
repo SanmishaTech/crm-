@@ -103,13 +103,13 @@ export default function InputForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       product: "",
-      product_category_id: "",
-      supplier_id: "",
       model: "",
       manufacturer: "",
       opening_qty: "",
       closing_qty: "",
       last_traded_price: "",
+      product_category_id: "",
+      supplier_id: "",
     },
   });
 
