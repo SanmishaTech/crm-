@@ -26,7 +26,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useGetData } from "@/lib/HTTP/GET";
-import AlertDialogbox from "./AlertBox";
+import AlertDialogbox from "./Delete";
 
 // Supplier type
 type Supplier = {
