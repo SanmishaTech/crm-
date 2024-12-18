@@ -80,10 +80,11 @@ export default function TableDemo() {
   });
 
   const { data: Sup } = useGetData({
-    endpoint: `/api/suppliers`,
+    endpoint: `/api/suppliers?search=${searchTerm}`,
     params: {
-      queryKey: ["supplier"],
+      queryKey: ["supplier", searchTerm],
       retry: 1,
+
       onSuccess: (data) => {
         console.log("test-test", data);
         setSuppliers(data.Suppliers);
