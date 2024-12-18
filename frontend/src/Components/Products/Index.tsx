@@ -219,7 +219,7 @@ export default function TableDemo() {
         <div className="flex space-x-2">
           {/* Add(Page) Starts */}
           <Button variant="outline" onClick={() => navigate("/products/add")}>
-            Add (Page)
+            Add Products
           </Button>
           {/* Add(Page) Ends */}
         </div>

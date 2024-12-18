@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AlertDialogbox({ url }) {
+  const queryClient = useQueryClient();
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -38,7 +40,8 @@ export default function AlertDialogbox({ url }) {
                   Authorization: "Bearer " + localStorage.getItem("token"),
                 },
               });
-              window.location.reload();
+              queryClient.invalidateQueries({ queryKey: ["lead"] });
+              queryClient.invalidateQueries({ queryKey: ["lead", url] });
             }}
           >
             Continue

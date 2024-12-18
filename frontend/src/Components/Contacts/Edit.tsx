@@ -49,9 +49,8 @@ export default function EditSupplierPage() {
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false); // To handle loading state
   const [clients, setClients] = useState<any[]>([]); // State to store fetched clients
- 
+
   const [data, setData] = useState<any>([]);
- 
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -122,7 +121,7 @@ export default function EditSupplierPage() {
 
   useEffect(() => {
     if (editData?.data?.Contact) {
-      const newData = editData.data?.Contact;
+      const newData = editData?.data?.Contact;
       form.reset({
         client_id: newData.client_id || "",
         contact_person: newData.contact_person || "",
@@ -179,14 +178,13 @@ export default function EditSupplierPage() {
                   <FormLabel>Client</FormLabel>
                   <FormControl>
                     <Select
-                      value={String(field.value)} // Ensure the value is a string
+                      value={String(field.value) || ""} // Ensure the value is a string, and it's properly assigned
                       onValueChange={field.onChange}
                     >
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select Client" />
                       </SelectTrigger>
                       <SelectContent>
-                        {console.log("clients", clients)}
                         {loading ? (
                           <SelectItem disabled>Loading...</SelectItem>
                         ) : (
@@ -223,7 +221,7 @@ export default function EditSupplierPage() {
               )}
             />
             <FormField
-              control={form.control}
+              control={form.control}  
               name="department"
               render={({ field }) => (
                 <FormItem>

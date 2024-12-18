@@ -1,6 +1,5 @@
 //@ts-nocheck
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Table,
   TableBody,
@@ -40,8 +39,9 @@ import {
 } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Supplier type
 type ProductCategory = {
@@ -60,6 +60,7 @@ const formSchema = z.object({
 const AddProductCategory = ({ fetchProductCategories }) => {
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false); // Manage the dialog state
+  const id = useParams().id;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -75,16 +76,21 @@ const AddProductCategory = ({ fetchProductCategories }) => {
   const handleDialogClose = () => {
     setOpen(false);
   };
+  const queryClient = useQueryClient();
 
   // Add Product Category mutation function
   type FormValues = z.infer<typeof FormSchema>;
   const storeProductCategoryData = usePostData({
     endpoint: "/api/contacts",
+    queryKey: ["contacts", id],
+
     params: {
       onSuccess: (data) => {
         form.reset();
         handleDialogClose();
         fetchProductCategories();
+        queryClient.invalidateQueries({ queryKey: ["contacts"] });
+        queryClient.invalidateQueries({ queryKey: ["contact", id] });
       },
       onError: (error) => {
         if (error.response && error.response.data.errors) {

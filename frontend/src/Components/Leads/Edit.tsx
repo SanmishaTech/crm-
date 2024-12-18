@@ -50,28 +50,15 @@ export default function EditLeadPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      supplier: "",
-      street_address: "",
-      area: "",
-      city: "",
-      state: "",
-      pincode: "",
-      country: "",
-      gstin: "",
-      contact_no: "",
-      department: "",
-      designation: "",
-      mobile_1: "",
-      mobile_2: "",
-      email: "",
+      contact_id: "",
+      lead_status: "",
+      lead_source: "",
     },
   });
 
-  // Move the usePutData hook before any conditional returns
   const fetchData = usePutData({
     endpoint: `/api/leads/${id}`,
     queryKey: ["editlead", id],
-
     params: {
       onSuccess: (data) => {
         console.log("editdata", data);
@@ -99,10 +86,10 @@ export default function EditLeadPage() {
     params: {
       queryKey: ["editlead", id],
       retry: 1,
-
       onSuccess: (data) => {
         console.log("GetData", data);
         setData(data?.Lead);
+        setContacts(data?.data?.Lead?.contact_id); // Store contact_id for later use
         setLoading(false);
       },
       onError: (error) => {
@@ -117,17 +104,13 @@ export default function EditLeadPage() {
   });
 
   useEffect(() => {
-    console.log("data", editData);
-  }, [editData]);
-
-  useEffect(() => {
     if (editData?.data?.Lead) {
       const newData = editData?.data?.Lead;
       console.log("Lead", newData);
       form.reset({
-        contact_id: newData?.Lead?.contact_id || "",
-        lead_status: newData.lead_status || "",
-        lead_source: newData.lead_source || "",
+        contact_id: newData?.contact_id || "", // Preselect the contact_id from the fetched data
+        lead_status: newData?.lead_status || "",
+        lead_source: newData?.lead_source || "",
       });
     }
   }, [editData, form]);
@@ -139,7 +122,7 @@ export default function EditLeadPage() {
       retry: 1,
       onSuccess: (data) => {
         console.log("GetData", data);
-        setContacts(data?.data?.Contact);
+        setContacts(data?.data?.Contact || []); // Set contacts array after fetching
         setLoading(false);
       },
       onError: (error) => {
@@ -166,7 +149,7 @@ export default function EditLeadPage() {
       <p className="text-center text-xs mb-9">Edit & Update Lead.</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Feilds First Row */}
+          {/* Fields First Row */}
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
@@ -176,7 +159,7 @@ export default function EditLeadPage() {
                   <FormLabel>Contacts</FormLabel>
                   <FormControl>
                     <Select
-                      value={String(field.value)} // Ensure the value is a string
+                      value={String(field.value)} // Ensure the value is a string and correctly selected
                       onValueChange={field.onChange}
                     >
                       <SelectTrigger className="w-[180px]">
@@ -185,17 +168,19 @@ export default function EditLeadPage() {
                       <SelectContent>
                         {loading ? (
                           <SelectItem disabled>Loading...</SelectItem>
-                        ) : (
-                          contacts &&
-                          contacts?.map((contact) => (
+                        ) : Array.isArray(contacts) && contacts.length > 0 ? (
+                          contacts.map((contact) => (
                             <SelectItem
                               key={contact.id}
-                              value={String(contact.id)}
+                              value={String(contact.id)} // Ensure value is a string
                             >
-                              {contact.contact_person}{" "}
-                              {/* Display the client name */}
+                              {contact.contact_person}
                             </SelectItem>
                           ))
+                        ) : (
+                          <SelectItem disabled>
+                            No contacts available
+                          </SelectItem>
                         )}
                       </SelectContent>
                     </Select>
@@ -205,24 +190,6 @@ export default function EditLeadPage() {
                 </FormItem>
               )}
             />
-            {/* <FormField
-              control={form.control}
-              name="contact_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>contact_id</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter contact_id Name"
-                      {...field}
-                      value={field.value}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the contact_id name.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
             <FormField
               control={form.control}
               name="lead_status"
@@ -252,8 +219,7 @@ export default function EditLeadPage() {
               )}
             />
           </div>
-          {error && <div className="text-red-500">{error}</div>}{" "}
-          {/* Buttons For Submit and Cancel */}
+          {error && <div className="text-red-500">{error}</div>}
           <div className="flex justify-end space-x-2">
             <Button
               type="button"

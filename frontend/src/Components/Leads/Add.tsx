@@ -52,10 +52,12 @@ export default function InputForm() {
   type FormValues = z.infer<typeof FormSchema>;
   const formData = usePostData({
     endpoint: "/api/leads",
+    queryKey: ["lead"],
     params: {
       onSuccess: (data) => {
         console.log("data", data);
         queryClient.invalidateQueries({ queryKey: ["lead"] });
+        queryClient.invalidateQueries({ queryKey: ["leads"] });
         navigate("/leads");
       },
       onError: (error) => {
