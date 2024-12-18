@@ -44,24 +44,7 @@ const FormSchema = z.object({
   //   message: "Supplier field must have no more than 50 characters.",
   // })
   // .nonempty({ message: "Supplier field is required." }),
-  area: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  pincode: z.string().optional(),
-  country: z.string().optional(),
-  gstin: z.string().optional(),
-  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-  //   message: "Invalid GST Number. Please enter a valid GSTIN.",
-  // })
-  // .max(15, "GST Number must be exactly 15 characters")
-  // .min(15, "GST Number must be exactly 15 characters"),
-  contact_no: z.string().optional(),
-  // .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
-  //   message: "Invalid contact number. Please enter a valid phone number.",
-  // })
-  // .max(10, "Contact number must be exactly 10 characters")
-  // .min(10, "Contact number must be exactly 10 characters")
-  // .nonempty("Contact number is required."),
+
   department: z.string().optional(),
   designation: z.string().optional(),
   mobile_1: z.string().optional(),

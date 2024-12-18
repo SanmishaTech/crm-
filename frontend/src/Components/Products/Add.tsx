@@ -217,7 +217,7 @@ export default function InputForm() {
               name="model"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>model</FormLabel>
+                  <FormLabel>Model</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter model" {...field} />
                   </FormControl>
@@ -249,7 +249,7 @@ export default function InputForm() {
               name="opening_qty"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Opening Quantity</FormLabel>
+                  <FormLabel>Opening Quantity(units)</FormLabel>
                   <FormControl>
                     <Input
                       className="justify-left"
@@ -267,7 +267,7 @@ export default function InputForm() {
               name="closing_qty"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Closing Quantity</FormLabel>
+                  <FormLabel>Closing Quantity (units)</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter Closing Quantity" {...field} />
                   </FormControl>
@@ -281,7 +281,7 @@ export default function InputForm() {
               name="last_traded_price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Traded Price</FormLabel>
+                  <FormLabel>Last Traded Price (Rs)</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter Last Traded Price" {...field} />
                   </FormControl>
