@@ -42,6 +42,7 @@ export default function AlertDialogbox({ url }) {
               });
               queryClient.invalidateQueries({ queryKey: ["contacts"] });
               queryClient.invalidateQueries({ queryKey: ["contact", url] });
+              window.location.reload();
             }}
           >
             Continue

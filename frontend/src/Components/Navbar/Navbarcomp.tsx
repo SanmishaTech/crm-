@@ -56,6 +56,9 @@ const Navbar = () => {
   const handleLeadsNavigate = () => {
     navigate("/leads");
   };
+  const handleDepartmentNavigate = () => {
+    navigate("/departments");
+  };
 
   return (
     <nav className="bg-white text-black py-4 px-6 shadow-md">
@@ -91,6 +94,13 @@ const Navbar = () => {
               Dashboard
             </Button>
             <Button
+              onClick={handleDepartmentNavigate}
+              variant="ghost"
+              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
+            >
+              Department
+            </Button>
+            <Button
               onClick={handleSuppliersNavigate}
               variant="ghost"
               className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
@@ -120,16 +130,14 @@ const Navbar = () => {
               Leads
             </Button>
 
-            {/* <DropdownMenu>
+            <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="hover:bg-gray-100 hover:underline transition duration-200 "
                 >
-                  <EllipsisVertical 
-                  className="h-4 w-4 "
-                  />
+                  <EllipsisVertical className="h-4 w-4 " />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -137,27 +145,20 @@ const Navbar = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    navigate("#");
+                    navigate("/products");
                   }}
                 >
-                  Electrical
+                  Products
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    navigate("#");
+                    navigate("/productCategories");
                   }}
                 >
-                  Company Master
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigate("#");
-                  }}
-                >
-                  
+                  Product Categories
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu> */}
+            </DropdownMenu>
 
             {/* <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>

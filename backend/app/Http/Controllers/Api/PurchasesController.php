@@ -34,7 +34,7 @@ class PurchasesController extends BaseController
                
             });
         }
-        $purchases = $query->with(['purchaseDetails'])->paginate(10);
+        $purchases = $query->with(['purchaseDetails'])->paginate(15);
         
         return $this->sendResponse(["Purchases"=>PurchaseResource::collection($purchases),
         'pagination' => [

@@ -22,12 +22,13 @@ import { useQueryClient } from "@tanstack/react-query";
 // Get QueryClient from the context
 // Form Schema
 const FormSchema = z.object({
-  supplier: z.string().optional(),
-  // .min(2, { message: "Supplier field must have at least 2 characters." })
-  // .max(50, {
-  //   message: "Supplier field must have no more than 50 characters.",
-  // })
-  // .nonempty({ message: "Supplier field is required." }),
+  supplier: z
+    .string()
+    .min(2, { message: "Supplier field must have at least 2 characters." })
+    .max(50, {
+      message: "Supplier field must have no more than 50 characters.",
+    })
+    .nonempty({ message: "Supplier field is required." }),
 
   street_address: z.string().optional(),
   area: z.string().optional(),
@@ -35,26 +36,29 @@ const FormSchema = z.object({
   state: z.string().optional(),
   pincode: z.string().optional(),
   country: z.string().optional(),
-  gstin: z.string().optional(),
-  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-  //   message: "Invalid GST Number. Please enter a valid GSTIN.",
-  // })
-  // .max(15, "GST Number must be exactly 15 characters")
-  // .min(15, "GST Number must be exactly 15 characters"),
-  contact_no: z.string().optional(),
-  // .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
-  //   message: "Invalid contact number. Please enter a valid phone number.",
-  // })
-  // .max(10, "Contact number must be exactly 10 characters")
-  // .min(10, "Contact number must be exactly 10 characters")
-  // .nonempty("Contact number is required."),
+  gstin: z
+    .string()
+    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+      message: "Invalid GST Number. Please enter a valid GSTIN.",
+    })
+    .max(15, "GST Number must be exactly 15 characters")
+    .min(15, "GST Number must be exactly 15 characters"),
+  contact_no: z
+    .string()
+    .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
+      message: "Invalid contact number. Please enter a valid phone number.",
+    })
+    .max(10, "Contact number must be exactly 10 characters")
+    .min(10, "Contact number must be exactly 10 characters")
+    .nonempty("Contact number is required."),
   department: z.string().optional(),
   designation: z.string().optional(),
   mobile_1: z.string().optional(),
   mobile_2: z.string().optional(),
-  email: z.string().optional(),
-  // .email("Please enter a valid email address.")
-  // .nonempty("Email is required."),
+  email: z
+    .string()
+    .email("Please enter a valid email address.")
+    .nonempty("Email is required."),
 });
 
 export default function InputForm() {

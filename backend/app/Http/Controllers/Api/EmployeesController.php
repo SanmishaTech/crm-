@@ -35,7 +35,7 @@ class EmployeesController extends BaseController
                 $query->where('employee_name', 'like', '%' . $searchTerm . '%');
             });
         }
-        $employees = $query->paginate(20);
+        $employees = $query->paginate(15);
 
         return $this->sendResponse(["Employees"=>EmployeeResource::collection($employees),
         'pagination' => [

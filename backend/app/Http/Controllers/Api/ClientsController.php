@@ -37,7 +37,7 @@ class ClientsController extends BaseController
                 $query->where('client', 'like', '%' . $searchTerm . '%');
             });
         }
-        $clients = $query->paginate(5);
+        $clients = $query->paginate(15);
 
         return $this->sendResponse(["Client"=>ClientResource::collection($clients),
         'pagination' => [
