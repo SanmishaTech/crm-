@@ -101,4 +101,17 @@ class ProductCategoriesController extends BaseController
          $productCategory->delete();
          return $this->sendResponse([], "Product Category Deleted successfuly");
     }
+
+     /**
+     * Fetch All Products.
+     */
+    public function allProductCategories(): JsonResponse
+    {
+        $product_categories = ProductCategory::all();
+
+        return $this->sendResponse(["ProductCategories"=>ProductCategoryResource::collection($product_categories),
+        ], "Product Categories retrived successfully");
+
+    }
+    
 }

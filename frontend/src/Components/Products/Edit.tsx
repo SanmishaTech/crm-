@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { QueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {
   Form,
@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
 import { usePutData } from "@/lib/HTTP/PUT";
 import AddProductCategory from "../ProductCategories/AddProductCategory";
+import useFetchData from "@/lib/HTTP/useFetchData";
 
 // Form validation schema
 const formSchema = z.object({
@@ -82,6 +83,8 @@ const formSchema = z.object({
 export default function EditProductPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false); // To handle loading state
   const [productCategories, setProductCategories] = useState([]);
@@ -99,24 +102,109 @@ export default function EditProductPage() {
       last_traded_price: "",
     },
   });
-  const { data, isLoading, isFetching, isError } = useGetData({
-    endpoint: `/api/products/${id}`,
-    params: {
-      queryKey: ["products"],
-      retry: 1,
-      onError: (error) => {
-        console.log("error", error);
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to submit the form. Please try again.");
-        }
-      },
-      onSuccess: (data) => {
-        console.log("data", data);
-      },
-    },
-  });
+
+  useEffect(() => {
+    // Fetch Product categories
+    const fetchProductCategories = () => {
+      axios
+        .get("/api/all_product_categories", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          // setProductCategories(response.data.data.ProductCategories);
+          const category = response.data.data.ProductCategories;
+          setProductCategories(category);
+          console.log("callled");
+        })
+        .catch(() => {
+          setError("Failed to load Product categories");
+        });
+    };
+
+    // Fetch Products
+    const fetchSuppliers = () => {
+      axios
+        .get("/api/all_suppliers", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((response) => {
+          setSuppliers(response.data.data.Suppliers);
+        })
+        .catch(() => {
+          setError("Failed to load Suppliers");
+        });
+    };
+
+    fetchProductCategories();
+    fetchSuppliers();
+  }, []);
+
+  // my component start
+  const options = {
+    enabled: true,
+    refetchOnWindowFocus: true,
+    retry: 1,
+  };
+
+  const {
+    data,
+    isLoading: isProductLoading,
+    error: isProductrror,
+    isSuccess: isProductSuccess,
+  } = useFetchData("products", id, options, null);
+
+  const handleInvalidateQuery = () => {
+    // Invalidate the 'departments' query to trigger a refetch
+    queryClient.invalidateQueries(["product", id]);
+  };
+
+  useEffect(() => {
+    if (isProductSuccess) {
+      console.log("Product data");
+      const newData = data.data.Product;
+      form.reset({
+        product: newData.product || "",
+        supplier_id: newData.supplier_id || "",
+        product_category_id: newData.product_category_id || "",
+        model: newData.model || "",
+        manufacturer: newData.manufacturer || "",
+        opening_qty: newData.opening_qty || "",
+        closing_qty: newData.closing_qty || "",
+        last_traded_price: newData.last_traded_price || "",
+      });
+    }
+    handleInvalidateQuery();
+  }, [data, form]);
+
+  // const { data, isLoading, isFetching, isError } = useGetData({
+  //   endpoint: `/api/products/${id}`,
+  //   params: {
+  //     queryKey: ["product", id],
+  //     retry: 1,
+  //     onError: (error) => {
+  //       console.log("error", error);
+  //       if (error.message && error.message.includes("duplicate supplier")) {
+  //         toast.error("Supplier name is duplicated. Please use a unique name.");
+  //       } else {
+  //         toast.error("Failed to submit the form. Please try again.");
+  //       }
+  //     },
+  //     onSuccess: (data) => {
+  //       console.log("data", data);
+  //       // form.setValue(
+  //       //   "product_category_id",
+  //       //   data.data.Product.product_category_id
+  //       // );
+  //       // form.setValue("supplier_id", data.data.Product.supplier_id);
+  //     },
+  //   },
+  // });
 
   // const { data: ProductCategoryData, isLoading: productCategoriesLoading } =
   //   useGetData({
@@ -134,64 +222,21 @@ export default function EditProductPage() {
   //     },
   //   });
 
-  // Fetch Product categories
-  const fetchProductCategories = () => {
-    axios
-      .get("/api/product_categories", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        // setProductCategories(response.data.data.ProductCategories);
-        const category = response.data.data.ProductCategories;
-        setProductCategories(category);
-        console.log("callled");
-      })
-      .catch(() => {
-        setError("Failed to load Product categories");
-      });
-  };
-
-  // Fetch Products
-  const fetchSuppliers = () => {
-    axios
-      .get("/api/suppliers", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        setSuppliers(response.data.data.Suppliers);
-      })
-      .catch(() => {
-        setError("Failed to load Suppliers");
-      });
-  };
-
-  useEffect(() => {
-    fetchProductCategories();
-    fetchSuppliers();
-  }, []);
-
-  useEffect(() => {
-    
-    if (data) {
-      const newData = data.data.Product;
-      form.reset({
-        product: newData.product || "",
-        product_category_id: newData.product_category_id || "",
-        supplier_id: newData.supplier_id || "",
-        model: newData.model || "",
-        manufacturer: newData.manufacturer || "",
-        opening_qty: newData.opening_qty || "",
-        closing_qty: newData.closing_qty || "",
-        last_traded_price: newData.last_traded_price || "",
-      });
-    }
-  }, [data, form]);
+  // useEffect(() => {
+  //   if (data) {
+  //     const newData = data.data.Product;
+  //     form.reset({
+  //       product: newData.product || "",
+  //       product_category_id: newData.product_category_id || "",
+  //       supplier_id: newData.supplier_id || "",
+  //       model: newData.model || "",
+  //       manufacturer: newData.manufacturer || "",
+  //       opening_qty: newData.opening_qty || "",
+  //       closing_qty: newData.closing_qty || "",
+  //       last_traded_price: newData.last_traded_price || "",
+  //     });
+  //   }
+  // }, [data, form]);
 
   type FormValues = z.infer<typeof formSchema>;
   const fetchData = usePutData({
@@ -200,6 +245,8 @@ export default function EditProductPage() {
       onSuccess: (data) => {
         console.log("data", data);
         navigate("/products");
+        // queryClient.invalidateQueries({ queryKey: ["product", id] });
+        handleInvalidateQuery();
       },
       onError: (error) => {
         console.log("error", error);
@@ -333,33 +380,35 @@ export default function EditProductPage() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Product Category</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={String(field.value || "")}
-                      onValueChange={field.onChange}
-                    >
+                  <Select
+                    value={String(field.value || "")}
+                    onValueChange={field.onChange}
+                    // value={field.value}
+                  >
+                    <FormControl>
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select Product Category" />
                       </SelectTrigger>
-                      <SelectContent>
-                        {loading ? (
-                          <SelectItem disabled>Loading...</SelectItem>
-                        ) : (
-                          productCategories.map((ProductCategory) => (
-                            <SelectItem
-                              key={ProductCategory.id}
-                              value={String(ProductCategory.id)}
-                            >
-                              {ProductCategory.product_category}
-                            </SelectItem>
-                          ))
-                        )}
-                        <div className="px-5 py-1">
-                          <AddProductCategory />
-                        </div>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                    </FormControl>
+
+                    <SelectContent>
+                      {loading ? (
+                        <SelectItem disabled>Loading...</SelectItem>
+                      ) : (
+                        productCategories.map((ProductCategory) => (
+                          <SelectItem
+                            key={ProductCategory.id}
+                            value={String(ProductCategory.id)}
+                          >
+                            {ProductCategory.product_category}
+                          </SelectItem>
+                        ))
+                      )}
+                      <div className="px-5 py-1">
+                        <AddProductCategory />
+                      </div>
+                    </SelectContent>
+                  </Select>
                   <FormDescription>Enter the Product Category.</FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -373,8 +422,9 @@ export default function EditProductPage() {
                   <FormLabel>Supplier</FormLabel>
                   <FormControl>
                     <Select
-                      value={String(field.value)}
+                      // value={String(field.value)}
                       onValueChange={field.onChange}
+                      value={String(field.value)}
                     >
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select Supplier" />
@@ -407,7 +457,13 @@ export default function EditProductPage() {
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">
-            <Button type="button" onClick={() => navigate("/products")}>
+            <Button
+              type="button"
+              onClick={() => {
+                navigate("/products");
+                queryClient.invalidateQueries({ queryKey: ["product", id] });
+              }}
+            >
               Cancel
             </Button>
             <Button type="submit">Save Changes</Button>

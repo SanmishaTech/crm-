@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -31,6 +32,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
@@ -38,6 +40,8 @@ import { useNavigate } from "react-router-dom";
 import DepartmentDialog from "./DepartmentDialog";
 import PaginationComponent from "./PaginationComponent";
 import AddProductCategory from "../ProductCategories/AddProductCategory";
+import useFetchData from "@/lib/HTTP/useFetchData";
+import AlertDialogbox from "./Delete";
 
 // Department type
 type Department = {
@@ -60,11 +64,12 @@ const formSchema = z.object({
 export default function TableDemo() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [open, setOpen] = useState(false); // Manage the dialog state
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
   const [editDepartment, setEditDepartment] = useState<Department | null>(null); // To hold department to edit
+  const queryClient = useQueryClient();
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,78 +84,45 @@ export default function TableDemo() {
     },
   });
 
-  // Fetch Departments
-  const fetchDepartments = () => {
-    axios
-      .get("/api/departments", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        params: {
-          page: currentPage,
-          limit: itemsPerPage,
-          search: searchTerm, // Include search term in the query params
-        },
-      })
-      .then((response) => {
-        setDepartments(response.data.data.Departments);
-        setPagination(response.data.data.Pagination);
-        setLoading(false); // Stop loading
-      })
-      .catch(() => {
-        setError("Failed to load data");
-        setLoading(false); // Stop loading even if there's an error
-      });
+  // component start
+
+  const params = {
+    page: currentPage,
+    limit: itemsPerPage,
+    search: searchTerm,
+  };
+
+  const options = {
+    enabled: true,
+    refetchOnWindowFocus: true,
+    retry: 3,
+  };
+
+  const {
+    data: departmentData,
+    isLoading: isDepartmentLoading,
+    error: isDepartmentError,
+    isSuccess: isDepartmentSuccess,
+  } = useFetchData("departments", null, options, params);
+
+  const handleInvalidateQuery = () => {
+    // Invalidate the 'departments' query to trigger a refetch
+    queryClient.invalidateQueries(["departments", null, params]);
   };
 
   useEffect(() => {
-    fetchDepartments();
-  }, [currentPage, itemsPerPage, searchTerm]); // Add searchTerm as a dependency
-
-  // Sorting function
-  const handleSort = (key: keyof Department) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
+    if (isDepartmentSuccess) {
+      setDepartments(departmentData.data.Departments);
+      setPagination(departmentData.data.Pagination);
     }
-    setSortConfig({ key, direction });
-  };
+    if (isDepartmentError) {
+      console.log("Error", isDepartmentError.message);
+    }
 
-  const sortedDepartments = [...departments].sort((a, b) => {
-    if (!sortConfig.key) return 0;
+    handleInvalidateQuery();
+  }, [departmentData, params]);
 
-    const aValue = a[sortConfig.key as keyof Department];
-    const bValue = b[sortConfig.key as keyof Department];
-
-    if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-    if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
-    return 0;
-  });
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  // Delete Department
-  const handleDelete = (departmentId: string) => {
-    axios
-      .delete(`/api/departments/${departmentId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then(() => {
-        setDepartments(
-          departments.filter((department) => department.id !== departmentId)
-        );
-        fetchDepartments();
-      })
-      .catch(() => {
-        setError("Failed to delete department");
-      });
-  };
+  // component end
 
   // Open the edit dialog and populate form with department data
   const handleEdit = (department: Department) => {
@@ -189,7 +161,8 @@ export default function TableDemo() {
             setEditDepartment={setEditDepartment}
             setError={setError}
             form={form}
-            fetchDepartments={fetchDepartments}
+            handleInvalidateQuery={handleInvalidateQuery}
+            // fetchDepartments={fetchDepartments}
           />
           {/* Add(Dialog) Ends */}
         </div>
@@ -209,25 +182,24 @@ export default function TableDemo() {
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {sortedDepartments.map((department) => (
-              <TableRow key={department.id}>
-                <TableCell>{department.department_name}</TableCell>
-                <TableCell className="text-right">
-                  <button
-                    onClick={() => handleDelete(department.id)}
-                    className="text-red-500 hover:text-red-700 pr-1"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => handleEdit(department)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Edit
-                  </button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {departments &&
+              departments.map((department) => (
+                <TableRow key={department.id}>
+                  <TableCell>{department.department_name}</TableCell>
+                  <TableCell className="text-right">
+                    <AlertDialogbox
+                    handleInvalidateQuery={handleInvalidateQuery}
+                      url={department.id}
+                    />
+                    <button
+                      onClick={() => handleEdit(department)}
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      Edit
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
         {/* Table End */}

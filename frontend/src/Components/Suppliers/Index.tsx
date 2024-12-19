@@ -81,7 +81,7 @@ export default function TableDemo() {
 
   //Fetch Suppliers
   const { data: Sup } = useGetData({
-    endpoint: `/api/suppliers?search=${searchTerm}`,
+    endpoint: `/api/suppliers?search=${searchTerm}&page=${currentPage}`,
     params: {
       queryKey: ["supplier", searchTerm],
       retry: 1,
