@@ -42,6 +42,8 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/DELETE";
+import PaginationComponent from "../Departments/PaginationComponent";
+import AlertDialogbox from "./Delete";
 
 // Products type
 type Product = {
@@ -77,7 +79,7 @@ export default function TableDemo() {
   const navigate = useNavigate();
 
   // Fetch Products
-  useEffect(() => {
+  const fetchProducts = () => {
     axios
       .get("/api/products", {
         headers: {
@@ -99,6 +101,10 @@ export default function TableDemo() {
         setError("Failed to load data");
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchProducts();
   }, [currentPage, itemsPerPage, searchTerm]);
 
   // Sorting function
@@ -129,24 +135,6 @@ export default function TableDemo() {
     return <div>{error}</div>;
   }
 
-  // Delete Supplier
-  const handleDelete = (productId: string) => {
-    axios
-      .delete(`/api/products/${productId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then(() => {
-        setProducts(products.filter((product) => product.id !== productId));
-        // window.location.reload();
-      })
-      .catch(() => {
-        setError("Failed to delete product");
-      });
-  };
-
   // Pagination functions
   const totalPages = pagination?.last_page || 1;
 
@@ -166,39 +154,6 @@ export default function TableDemo() {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
-  };
-
-  const fetchProductCategories = () => {
-    axios
-      .get("/api/product_categories", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        // setProductCategories(response.data.data.ProductCategories);
-      })
-      .catch(() => {
-        setError("Failed to load Product categories");
-      });
-  };
-
-  // Fetch Products
-  const fetchSuppliers = () => {
-    axios
-      .get("/api/suppliers", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        // setSuppliers(response.data.data.Suppliers);
-      })
-      .catch(() => {
-        setError("Failed to load Suppliers");
-      });
   };
 
   return (
@@ -249,16 +204,12 @@ export default function TableDemo() {
                 <TableCell>{product.model}</TableCell>
                 <TableCell>{product.manufacturer}</TableCell>
                 <TableCell className="text-right">
-                  <button
-                    onClick={() => handleDelete(product.id)}
-                    className="text-red-500 hover:text-red-700 pr-1"
-                  >
-                    Delete
-                  </button>
+                  <AlertDialogbox
+                    fetchProducts={fetchProducts}
+                    url={product.id}
+                  />
                   <button
                     onClick={() => {
-                      fetchProductCategories();
-                      fetchSuppliers();
                       navigate(`/products/edit/${product.id}`);
                     }}
                     className="text-blue-500 hover:text-blue-700"
@@ -272,31 +223,12 @@ export default function TableDemo() {
         </Table>
         {/* Table End */}
         {/* Pagination Start */}
-        <Pagination>
-          <PaginationContent className="flex items-center space-x-4">
-            {/* Previous Button */}
-            <PaginationPrevious
-              onClick={goToPreviousPage}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </PaginationPrevious>
-
-            {/* Page Number */}
-            <span className="text-sm">
-              Page {currentPage} of {totalPages}
-            </span>
-
-            {/* Next Button */}
-            <PaginationNext
-              className="hover:pointer"
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </PaginationNext>
-          </PaginationContent>
-        </Pagination>
+        {/* Pagination Start */}
+        <PaginationComponent
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          pagination={pagination}
+        />
         {/* Pagination End */}
       </div>
     </div>

@@ -161,4 +161,17 @@ class SuppliersController extends BaseController
         return $this->sendResponse([], 'Supplier Deleted Successfully');
 
     }
+
+     /**
+     * Fetch All Suppliers.
+     */
+    public function allSuppliers(): JsonResponse
+    {
+        $suppliers = Supplier::all();
+
+        return $this->sendResponse(["Suppliers"=>SupplierResource::collection($suppliers),
+        ], "Suppliers retrived successfully");
+
+    }
+    
 }

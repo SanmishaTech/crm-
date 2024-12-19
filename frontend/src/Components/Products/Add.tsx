@@ -116,7 +116,7 @@ export default function InputForm() {
   // Fetch Products
   const fetchProductCategories = () => {
     axios
-      .get("/api/product_categories", {
+      .get("/api/all_product_categories", {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
@@ -133,7 +133,7 @@ export default function InputForm() {
   // Fetch Products
   const fetchSuppliers = () => {
     axios
-      .get("/api/suppliers", {
+      .get("/api/all_suppliers", {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),

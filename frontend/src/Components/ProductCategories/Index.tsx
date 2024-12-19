@@ -31,6 +31,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import AlertDialogbox from "./Delete";
+import { useDeleteData } from "@/lib/HTTP/DELETE";
 
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
@@ -137,29 +139,6 @@ export default function TableDemo() {
     return <div>{error}</div>;
   }
 
-  // Delete Supplier
-  const handleDelete = (productCategoryId: string) => {
-    axios
-      .delete(`/api/product_categories/${productCategoryId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then(() => {
-        setProductCategories(
-          productCategories.filter(
-            (productCategory) => productCategory.id !== productCategoryId
-          )
-        );
-        fetchProductCategories();
-        // window.location.reload();
-      })
-      .catch(() => {
-        setError("Failed to delete Product Category");
-      });
-  };
-
   // Open the edit dialog and populate form with Product Category data
   const handleEdit = (productCategory: ProductCategory) => {
     setEditProductCategory(productCategory);
@@ -221,12 +200,10 @@ export default function TableDemo() {
               <TableRow key={productCategory.id}>
                 <TableCell>{productCategory.product_category}</TableCell>
                 <TableCell className="text-right">
-                  <button
-                    onClick={() => handleDelete(productCategory.id)}
-                    className="text-red-500 hover:text-red-700 pr-1"
-                  >
-                    Delete
-                  </button>
+                  <AlertDialogbox
+                    fetchProductCategories={fetchProductCategories}
+                    url={productCategory.id}
+                  />
                   <button
                     onClick={() => handleEdit(productCategory)}
                     className="text-blue-500 hover:text-blue-700"

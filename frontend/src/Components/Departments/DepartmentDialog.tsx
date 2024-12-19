@@ -43,6 +43,7 @@ import { z } from "zod";
 import { usePostData } from "@/lib/HTTP/POST";
 import { usePutData } from "@/lib/HTTP/PUT";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Supplier type
 type Department = {
@@ -67,6 +68,7 @@ const DepartmentDialog = ({
   setError,
   setEditDepartment,
   fetchDepartments,
+  handleInvalidateQuery,
 }) => {
   // Add Department mutation function
   type FormValues = z.infer<typeof FormSchema>;
@@ -76,7 +78,8 @@ const DepartmentDialog = ({
       onSuccess: (data) => {
         console.log("department data", data);
         form.reset();
-        fetchDepartments();
+        handleInvalidateQuery();
+        // fetchDepartments();
         handleDialogClose();
       },
       onError: (error) => {
@@ -97,9 +100,6 @@ const DepartmentDialog = ({
       },
     },
   });
-  // const { id } = useParams();
-  // const { id } = useParams();
-  // const { id } = useParams();
 
   //update department mutation function
   const updateDepartmentData = usePutData({
@@ -108,7 +108,8 @@ const DepartmentDialog = ({
       onSuccess: (data) => {
         setEditDepartment(null); // Reset edit mode
         form.reset();
-        fetchDepartments();
+        // fetchDepartments();
+        handleInvalidateQuery();
         handleDialogClose();
         setLoading(false);
       },
@@ -162,13 +163,12 @@ const DepartmentDialog = ({
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-
             <DialogTitle>
               {editDepartment ? "Edit" : "Add"} Departments
             </DialogTitle>
             <DialogDescription>
-              {editDepartment ? "Edit" : "Add"} your department details here. Click save
-              when you're done.
+              {editDepartment ? "Edit" : "Add"} your department details here.
+              Click save when you're done.
             </DialogDescription>
           </DialogHeader>
 

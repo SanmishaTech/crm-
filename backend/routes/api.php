@@ -34,5 +34,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::post('/purchase', [PurchasesController::class, 'purchase'])->name("purchase.products");
    Route::get('/purchase/{id}', [PurchasesController::class, 'show'])->name("purchase.show");
    Route::get('/purchase', [PurchasesController::class, 'index'])->name("purchase.index");
+   Route::get('/all_product_categories', [ProductCategoriesController::class, 'allProductCategories'])->name("product_categories.all");
+   Route::get('/all_suppliers', [SuppliersController::class, 'allSuppliers'])->name("suppliers.all");
 
 });
