@@ -48,11 +48,10 @@ const formSchema = z.object({
     .max(50, {
       message: "Manufacturer field must have no more than 50 characters.",
     }),
-  opening_qty: z
-    .union([z.string(), z.number()])
-    .refine((val) => val !== "" && val !== undefined, {
-      message: "Opening Quantity field is required",
-    }),
+
+  opening_qty: z.coerce
+    .number()
+    .min(0, { message: "Opening quantity field is required." }),
   // product_category_id: z.union([z.string(), z.number()]),
   // supplier_id: z.union([z.string(), z.number()]),
   product_category_id: z
@@ -67,17 +66,24 @@ const formSchema = z.object({
       message: "Supplier field is required",
     }),
 
-  closing_qty: z
-    .union([z.string(), z.number()])
-    .refine((val) => val !== "" && val !== undefined, {
-      message: "Closing Quantity field is required",
-    }),
+  closing_qty: z.coerce
+    .number()
+    .min(0, { message: "Closing quantity field is required." }),
 
-  last_traded_price: z
-    .union([z.string(), z.number()])
-    .refine((val) => val !== "" && val !== undefined, {
-      message: "Last traded price field is required.",
-    }),
+  last_traded_price: z.coerce
+    .number()
+    .min(0, { message: "Last Traded Price field is required." }),
+  hsn_code: z.coerce
+    .number()
+    .min(100000, { message: "HSN Code must be at least 6 digits." })
+    .max(9999999999, { message: "HSN Code should not exceed 10 digits." }),
+  product_gstin: z
+    .string()
+    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+      message: "Invalid GST Number. Please enter a valid GSTIN.",
+    })
+    .max(15, "GST Number must be exactly 15 characters")
+    .min(15, "GST Number must be exactly 15 characters"),
 });
 
 export default function EditProductPage() {
@@ -93,13 +99,15 @@ export default function EditProductPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       product: "",
+      product_gstin: "",
+      hsn_code: null,
       product_category_id: "",
       supplier_id: "",
       model: "",
       manufacturer: "",
-      opening_qty: "",
-      closing_qty: "",
-      last_traded_price: "",
+      opening_qty: null,
+      closing_qty: null,
+      last_traded_price: null,
     },
   });
 
@@ -170,6 +178,9 @@ export default function EditProductPage() {
       const newData = data.data.Product;
       form.reset({
         product: newData.product || "",
+        product_gstin: newData.product_gstin || "",
+        hsn_code: newData.hsn_code || "",
+
         supplier_id: newData.supplier_id || "",
         product_category_id: newData.product_category_id || "",
         model: newData.model || "",
@@ -325,12 +336,55 @@ export default function EditProductPage() {
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
+              name="hsn_code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>HSN Code:</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      className="justify-left"
+                      placeholder="Enter hsn code"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>Enter the HSN Code.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="product_gstin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>GST IN</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      maxLength={15}
+                      {...field}
+                      style={{ textTransform: "uppercase" }}
+                      placeholder="Enter Gst Number"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    The GST Number must be 15 characters long and should follow
+                    this format:<strong>22ABCDE0123A1Z5</strong>
+                  </FormDescription>{" "}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="opening_qty"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Opening Quantity</FormLabel>
                   <FormControl>
                     <Input
+                      type="number"
                       className="justify-left"
                       placeholder="Enter City"
                       {...field}
@@ -341,6 +395,9 @@ export default function EditProductPage() {
                 </FormItem>
               )}
             />
+          </div>
+          {/* Feilds Second Row Ends */}
+          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="closing_qty"
@@ -348,7 +405,11 @@ export default function EditProductPage() {
                 <FormItem>
                   <FormLabel>Closing Quantity</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter closing quantity" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Enter closing quantity"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>Enter the Closing quantity.</FormDescription>
                   <FormMessage />
@@ -362,7 +423,11 @@ export default function EditProductPage() {
                 <FormItem>
                   <FormLabel>Last traded Price</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter last traded price" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Enter last traded price"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     Enter the Last traded price.
@@ -371,9 +436,6 @@ export default function EditProductPage() {
                 </FormItem>
               )}
             />
-          </div>
-          {/* Feilds Second Row Ends */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="product_category_id"
@@ -414,6 +476,9 @@ export default function EditProductPage() {
                 </FormItem>
               )}
             />
+          </div>
+          {/* Feilds Third Row Starts */}
+          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="supplier_id"
@@ -451,8 +516,6 @@ export default function EditProductPage() {
               )}
             />
           </div>
-          {/* Feilds Third Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4"></div>
           {/* Feilds Fifth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Buttons For Submit and Cancel */}

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger("product_category_id")->nullable();
             $table->unsignedBigInteger("supplier_id")->nullable();
             $table->string("product")->nullable();
+            $table->string("product_gstin",30)->nullable();
+            $table->integer("hsn_code")->nullable();
             $table->string("model")->nullable();
             $table->string("manufacturer")->nullable();
             $table->integer("opening_qty")->nullable();

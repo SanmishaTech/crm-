@@ -51,12 +51,10 @@ const FormSchema = z.object({
     .max(50, {
       message: "Manufacturer field must have no more than 50 characters.",
     }),
-  opening_qty: z
-    .string()
-    .min(1, { message: "Opening quantity field is required." })
-    .max(50, {
-      message: "Opening quantity field must have no more than 50 characters.",
-    }),
+
+  opening_qty: z.coerce
+    .number()
+    .min(0, { message: "Opening quantity field is required." }),
   // product_category_id: z.union([z.string(), z.number()]),
   // supplier_id: z.union([z.string(), z.number()]),
   product_category_id: z
@@ -71,23 +69,24 @@ const FormSchema = z.object({
       message: "Supplier field is required",
     }),
 
-  closing_qty: z
+  closing_qty: z.coerce
+    .number()
+    .min(0, { message: "Closing quantity field is required." }),
+
+  last_traded_price: z.coerce
+    .number()
+    .min(0, { message: "Last Traded Price field is required." }),
+  hsn_code: z.coerce
+    .number()
+    .min(100000, { message: "HSN Code must be at least 6 digits." })
+    .max(9999999999, { message: "HSN Code should not exceed 10 digits." }),
+  product_gstin: z
     .string()
-    .min(1, { message: "Closing quantity field is required." })
-    .max(50, {
-      message: "Closing quantity field must have no more than 50 characters.",
-    }),
-  // last_traded_price: z
-  //   .number()
-  //   .min(1, { message: "Last traded price field is required." })
-  //   .max(50, {
-  //     message: "Last traded price field must have no more than 50 characters.",
-  //   }),
-  last_traded_price: z
-    .union([z.string(), z.number()])
-    .refine((val) => val !== "" && val !== undefined, {
-      message: "Last traded price field is required.",
-    }),
+    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+      message: "Invalid GST Number. Please enter a valid GSTIN.",
+    })
+    .max(15, "GST Number must be exactly 15 characters")
+    .min(15, "GST Number must be exactly 15 characters"),
 });
 
 export default function InputForm() {
@@ -105,9 +104,11 @@ export default function InputForm() {
       product: "",
       model: "",
       manufacturer: "",
-      opening_qty: "",
-      closing_qty: "",
-      last_traded_price: "",
+      product_gstin: "",
+      hsn_code: null,
+      opening_qty: null,
+      closing_qty: null,
+      last_traded_price: null,
       product_category_id: "",
       supplier_id: "",
     },
@@ -246,12 +247,55 @@ export default function InputForm() {
           <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
+              name="hsn_code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>HSN Code:</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      className="justify-left"
+                      placeholder="Enter hsn code"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>Enter the HSN Code.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="product_gstin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>GST IN</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      maxLength={15}
+                      {...field}
+                      style={{ textTransform: "uppercase" }}
+                      placeholder="Enter Gst Number"
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    The GST Number must be 15 characters long and should follow
+                    this format:<strong>22ABCDE0123A1Z5</strong>
+                  </FormDescription>{" "}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="opening_qty"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Opening Quantity(units)</FormLabel>
                   <FormControl>
                     <Input
+                      type="number"
                       className="justify-left"
                       placeholder="Enter Opening Quantity"
                       {...field}
@@ -262,6 +306,10 @@ export default function InputForm() {
                 </FormItem>
               )}
             />
+          </div>
+          {/* Feilds Second Row Ends */}
+          {/* Feilds Third Row Starts */}
+          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="closing_qty"
@@ -269,7 +317,11 @@ export default function InputForm() {
                 <FormItem>
                   <FormLabel>Closing Quantity (units)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Closing Quantity" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Enter Closing Quantity"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>Enter the Closing Quantity.</FormDescription>
                   <FormMessage />
@@ -283,7 +335,11 @@ export default function InputForm() {
                 <FormItem>
                   <FormLabel>Last Traded Price (Rs)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Last Traded Price" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Enter Last Traded Price"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     Enter the Last Traded Price.
@@ -292,10 +348,6 @@ export default function InputForm() {
                 </FormItem>
               )}
             />
-          </div>
-          {/* Feilds Second Row Ends */}
-          {/* Feilds Third Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="product_category_id"
@@ -336,7 +388,8 @@ export default function InputForm() {
                 </FormItem>
               )}
             />
-
+          </div>
+          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="supplier_id"
