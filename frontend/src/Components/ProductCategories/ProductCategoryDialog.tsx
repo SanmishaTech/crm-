@@ -43,7 +43,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 import { usePutData } from "@/lib/HTTP/PUT";
-
+import { useQueryClient } from "@tanstack/react-query";
 // Supplier type
 type ProductCategory = {
   id: string;
@@ -64,18 +64,18 @@ const ProductCategoryDialog = ({
   editProductCategory,
   setError,
   setEditProductCategory,
-  fetchProductCategories,
   loading,
   setLoading,
 }) => {
   // Add Product Category mutation function
+  const queryClient = useQueryClient();
   type FormValues = z.infer<typeof FormSchema>;
   const storeProductCategoryData = usePostData({
     endpoint: "/api/product_categories",
     params: {
       onSuccess: (data) => {
         form.reset();
-        fetchProductCategories();
+        queryClient.invalidateQueries("product_categories");
         handleDialogClose();
       },
       onError: (error) => {
@@ -104,7 +104,7 @@ const ProductCategoryDialog = ({
       onSuccess: (data) => {
         setEditProductCategory(null); // Reset edit mode
         form.reset();
-        fetchProductCategories();
+        queryClient.invalidateQueries("product_categories");
         handleDialogClose();
         setLoading(false);
       },

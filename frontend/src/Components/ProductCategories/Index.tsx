@@ -40,6 +40,8 @@ import { useNavigate } from "react-router-dom";
 import ProductCategoryDialog from "./ProductCategoryDialog";
 import PaginationComponent from "../Departments/PaginationComponent";
 import AddDepartment from "../Departments/AddDepartment";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGetData } from "@/lib/HTTP/GET";
 // Supplier type
 type ProductCategory = {
   id: string;
@@ -78,7 +80,7 @@ export default function TableDemo() {
   const [itemsPerPage] = useState(5);
   const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
   const navigate = useNavigate();
-
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -86,34 +88,32 @@ export default function TableDemo() {
     },
   });
 
-  // Fetch Product Categoriess
-  const fetchProductCategories = () => {
-    axios
-      .get("/api/product_categories", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        params: {
-          page: currentPage,
-          limit: itemsPerPage,
-          search: searchTerm, // Include search term in the query params
-        },
-      })
-      .then((response) => {
-        setProductCategories(response.data.data.ProductCategories);
-        setPagination(response.data.data.Pagination);
-        setLoading(false); // Stop loading
-      })
-      .catch(() => {
-        setError("Failed to load data");
-        setLoading(false); // Stop loading even if there's an error
-      });
-  };
+  //Fetch Product Categories
+  const { data: ProductCategoriesDate } = useGetData({
+    endpoint: `/api/product_categories?search=${searchTerm}&page=${currentPage}`,
+    params: {
+      queryKey: ["product_categories", searchTerm],
+      retry: 1,
+
+      onSuccess: (data) => {
+        console.log("test-test", data);
+        setProductCategories(data.data.ProductCategories);
+        setPagination(data.data.Pagination);
+        setLoading(false);
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate supplier")) {
+          toast.error("Supplier name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch supplier data. Please try again.");
+        }
+      },
+    },
+  });
 
   useEffect(() => {
-    fetchProductCategories();
-  }, [currentPage, itemsPerPage, searchTerm]); // Add searchTerm as a dependency
+    queryClient.invalidateQueries("product_categories");
+  }, [ProductCategoriesDate, currentPage, itemsPerPage, searchTerm]); // Add searchTerm as a dependency
 
   // Sorting function
   const handleSort = (key: keyof ProductCategory) => {
@@ -174,7 +174,6 @@ export default function TableDemo() {
             setEditProductCategory={setEditProductCategory}
             setError={setError}
             form={form}
-            fetchProductCategories={fetchProductCategories}
             loading={loading}
             setLoading={setLoading}
           />
@@ -200,10 +199,7 @@ export default function TableDemo() {
               <TableRow key={productCategory.id}>
                 <TableCell>{productCategory.product_category}</TableCell>
                 <TableCell className="text-right">
-                  <AlertDialogbox
-                    fetchProductCategories={fetchProductCategories}
-                    url={productCategory.id}
-                  />
+                  <AlertDialogbox url={productCategory.id} />
                   <button
                     onClick={() => handleEdit(productCategory)}
                     className="text-blue-500 hover:text-blue-700"
