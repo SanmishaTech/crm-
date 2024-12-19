@@ -31,7 +31,7 @@ class ProductsController extends BaseController
                 $query->where('product', 'like', '%' . $searchTerm . '%');
             });
         }
-        $products = $query->orderBy('id', 'DESC')->paginate(15);
+        $products = $query->orderBy('id', 'DESC')->paginate(5);
 
         return $this->sendResponse(["Products"=>ProductResource::collection($products),
         'Pagination' => [

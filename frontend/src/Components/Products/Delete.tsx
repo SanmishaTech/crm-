@@ -13,7 +13,7 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 
-export default function AlertDialogbox({ url, fetchProducts }) {
+export default function AlertDialogbox({ url }) {
   const queryClient = useQueryClient();
   return (
     <AlertDialog>
@@ -43,9 +43,8 @@ export default function AlertDialogbox({ url, fetchProducts }) {
                   Authorization: "Bearer " + localStorage.getItem("token"),
                 },
               });
-              fetchProducts();
-              queryClient.invalidateQueries({ queryKey: ["supplier"] });
-              queryClient.invalidateQueries({ queryKey: ["supplier", url] });
+              queryClient.invalidateQueries({ queryKey: ["products"] });
+              queryClient.invalidateQueries({ queryKey: ["products", url] });
             }}
           >
             Continue
