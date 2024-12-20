@@ -166,10 +166,12 @@ export default function EditSupplierPage() {
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
       <h3 className="text-2xl font-semibold text-center">Edit Contact</h3>
       <p className="text-center text-xs mb-9">Edit & Update Contact.</p>
+      <h2 className="text-xl font-semibold text-left">Contact Information</h2>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="client_id"
@@ -181,7 +183,7 @@ export default function EditSupplierPage() {
                       value={String(field.value) || ""} // Ensure the value is a string, and it's properly assigned
                       onValueChange={field.onChange}
                     >
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="">
                         <SelectValue placeholder="Select Client" />
                       </SelectTrigger>
                       <SelectContent>
@@ -220,8 +222,10 @@ export default function EditSupplierPage() {
                 </FormItem>
               )}
             />
+          </div>
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
             <FormField
-              control={form.control}  
+              control={form.control}
               name="department"
               render={({ field }) => (
                 <FormItem>
@@ -234,8 +238,6 @@ export default function EditSupplierPage() {
                 </FormItem>
               )}
             />
-          </div>
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="designation"
@@ -250,7 +252,8 @@ export default function EditSupplierPage() {
                 </FormItem>
               )}
             />
-
+          </div>
+          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
             <FormField
               control={form.control}
               name="mobile_1"
@@ -309,26 +312,25 @@ export default function EditSupplierPage() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="justify-left"
+                      placeholder="Enter Email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>Enter the Email.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-          {/* Feilds Third Row Ends */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input
-                    className="justify-left"
-                    placeholder="Enter Email"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>Enter the Email.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">

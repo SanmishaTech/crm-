@@ -63,16 +63,19 @@ const Dashboard = () => {
         {location.pathname === "/dashboard" && <Dashboardcomponent />}
         {location.pathname === "/suppliers" && <Suppliers />}
         {location.pathname === "/suppliers/add" && <SuppliersAdd />}
-        {location.pathname === "/suppliers/edit/:id" && <SuppliersEdit />}
+        {/\/suppliers\/edit\/\d+/.test(location.pathname) && <SuppliersEdit />}
         {location.pathname === "/contacts" && <Contacts />}
         {location.pathname === "/contacts/add" && <ContactsAdd />}
-        {location.pathname === "/contacts/edit/:id" && <ContactsEdit />}
+        {/\/contacts\/edit\/\d+/.test(location.pathname) && <ContactsEdit />}
+
         {location.pathname === "/clients" && <Clients />}
         {location.pathname === "/clients/add" && <ClientsAdd />}
-        {location.pathname === "/clients/edit/:id" && <ClientsEdit />}
+        {/\/clients\/edit\/\d+/.test(location.pathname) && <ClientsEdit />}
+
         {location.pathname === "/leads" && <Leads />}
         {location.pathname === "/leads/add" && <LeadsAdd />}
-        {location.pathname === "/leads/edit/:id" && <LeadsEdit />}
+        {/\/leads\/edit\/\d+/.test(location.pathname) && <LeadsEdit />}
+
         {location.pathname === "/departments" && <Departments />}
         {location.pathname === "/departments/add" && <DepartmentsDialog />}
         {location.pathname === "/productCategories" && <ProductCategories />}
@@ -81,7 +84,7 @@ const Dashboard = () => {
         )}
         {location.pathname === "/products" && <Products />}
         {location.pathname === "/products/add" && <ProductsAdd />}
-        {location.pathname === "/products/edit/:id" && <ProductsEdit />}
+        {/\/products\/edit\/\d+/.test(location.pathname) && <ProductsEdit />}
       </main>
     </div>
   );

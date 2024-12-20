@@ -18,7 +18,7 @@ export default function AlertDialogbox({ url }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" className="w-full">
+        <Button variant="ghost" size="sm" className="w-full text-sm ">
           Delete
         </Button>
       </AlertDialogTrigger>

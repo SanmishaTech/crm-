@@ -30,7 +30,7 @@ class LeadsController extends BaseController
                 $query->where('lead_owner', 'like', '%' . $searchTerm . '%');
             });
         }
-        $leads = $query->paginate(15);
+        $leads = $query->paginate(5);
 
         return $this->sendResponse(["Lead"=>LeadResource::collection($leads),
         'pagination' => [

@@ -11,6 +11,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  File,
+  PlusCircle,
+  Search,
+  Pencil,
+  Trash,
+  MoreHorizontal,
+  ListFilter,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -68,7 +86,7 @@ export default function TableDemo() {
     []
   );
   const [open, setOpen] = useState(false); // Manage the dialog state
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
@@ -92,14 +110,14 @@ export default function TableDemo() {
   const { data: ProductCategoriesDate } = useGetData({
     endpoint: `/api/product_categories?search=${searchTerm}&page=${currentPage}`,
     params: {
-      queryKey: ["product_categories", searchTerm],
+      queryKey: ["product_categories"],
       retry: 1,
 
       onSuccess: (data) => {
-        console.log("test-test", data);
-        setProductCategories(data.data.ProductCategories);
+        console.log("c product categories", data);
+        const pCategories = data?.data?.ProductCategories; //this is imp cause we r not using async
+        setProductCategories(pCategories);
         setPagination(data.data.Pagination);
-        setLoading(false);
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate supplier")) {
@@ -199,13 +217,39 @@ export default function TableDemo() {
               <TableRow key={productCategory.id}>
                 <TableCell>{productCategory.product_category}</TableCell>
                 <TableCell className="text-right">
-                  <AlertDialogbox url={productCategory.id} />
-                  <button
+                  {/* <button
                     onClick={() => handleEdit(productCategory)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Edit
                   </button>
+                  <AlertDialogbox url={productCategory.id} /> */}
+                  <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="center"
+                        className="w-full flex-col items-center flex justify-center"
+                      >
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEdit(productCategory)}
+                          className="w-full text-sm"
+                        >
+                          Edit
+                        </Button>
+                        {/* <DropdownMenuSeparator /> */}
+                        <AlertDialogbox
+                          url={productCategory.id}
+                        />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
