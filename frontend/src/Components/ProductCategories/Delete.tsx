@@ -18,10 +18,7 @@ export default function AlertDialogbox({ url }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          variant="ghost"
-          className=" text-red-500 hover:text-red-700 pr-1"
-        >
+        <Button variant="ghost" size="sm" className="w-full text-sm ">
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -46,7 +43,9 @@ export default function AlertDialogbox({ url }) {
               queryClient.invalidateQueries({
                 queryKey: ["product_categories"],
               });
-              queryClient.invalidateQueries({ queryKey: ["product_categories", url] });
+              queryClient.invalidateQueries({
+                queryKey: ["product_categories", url],
+              });
             }}
           >
             Continue

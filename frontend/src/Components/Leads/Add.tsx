@@ -126,7 +126,7 @@ export default function InputForm() {
                       value={field.value}
                       onValueChange={(value) => field.onChange(value)}
                     >
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="">
                         <SelectValue placeholder="Select Contact" />
                       </SelectTrigger>
                       <SelectContent>

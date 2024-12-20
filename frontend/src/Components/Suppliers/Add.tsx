@@ -113,17 +113,17 @@ export default function InputForm() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
-      <h2 className="text-2xl font-semibold   text-center">
-        Supplier Information
-      </h2>
+      <h2 className="text-2xl font-semibold   text-center">Supplier Form</h2>
       <p className="text-center text-xs mb-9">
         Add a new supplier to the database.
       </p>
+      <h2 className="text-xl font-semibold text-left">Supplier Information</h2>
+
       {/* Form Fields */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="supplier"
@@ -134,113 +134,6 @@ export default function InputForm() {
                     <Input placeholder="Enter Supplier Name" {...field} />
                   </FormControl>
                   <FormDescription>Enter the Supplier name.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="street_address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Street Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Street Address" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Street Address.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="area"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Area</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Area" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Area.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Feilds First Row Ends */}
-          {/* Feilds Second Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter City"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the City.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="state"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>State</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter State" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the State.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="pincode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Pincode</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Pincode"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{6}"
-                      maxLength={6}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Pincode.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Feilds Second Row Ends */}
-          {/* Feilds Third Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Country"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Country.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -268,33 +161,8 @@ export default function InputForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="contact_no"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contact</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Contact"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={10}
-                      value={field.value}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Enter the Contact (e.g:- 12-3456-7890).
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
-          {/* Feilds Third Row Ends */}
-          {/* Feilds Fourth Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="department"
@@ -331,71 +199,214 @@ export default function InputForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="mobile_1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile-1</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Mobile"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{10}"
-                      maxLength={10}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Mobile.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </div>
-          {/* Feilds Fourth Row Ends */}
-          {/* Feilds Fifth Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-xl font-semibold  text-left">
+            Contact Information
+            </h2>
+            <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="mobile_1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile-1</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Mobile"
+                        {...field}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="\d{10}"
+                        maxLength={10}
+                      />
+                    </FormControl>
+                    <FormDescription>Enter the Mobile.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="mobile_2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile-2</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Mobile"
+                        {...field}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="\d{10}"
+                        maxLength={10}
+                      />
+                    </FormControl>
+                    <FormDescription>Enter the Mobile.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="justify-left"
+                        placeholder="Enter Email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>Enter the Email.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <h2 className="text-xl font-semibold  text-left">
+            Address Information
+            </h2>
+            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="street_address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Street Address</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Street Address" {...field} />
+                    </FormControl>
+                    <FormDescription>Enter the Street Address.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="area"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Area</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Area" {...field} />
+                    </FormControl>
+                    <FormDescription>Enter the Area.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="mobile_2"
+              name="city"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mobile-2</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Mobile"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{10}"
-                      maxLength={10}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Mobile.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>City</FormLabel>
                   <FormControl>
                     <Input
                       className="justify-left"
-                      placeholder="Enter Email"
+                      placeholder="Enter City"
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>Enter the Email.</FormDescription>
+                  <FormDescription>Enter the City.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="state"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>State</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter State" {...field} />
+                  </FormControl>
+                  <FormDescription>Enter the State.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="pincode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Pincode</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter Pincode"
+                      {...field}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="\d{6}"
+                      maxLength={6}
+                    />
+                  </FormControl>
+                  <FormDescription>Enter the Pincode.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Country</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="justify-left"
+                      placeholder="Enter Country"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>Enter the Country.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="contact_no"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Contact</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter Contact"
+                      {...field}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={field.value}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Enter the Contact (e.g:- 12-3456-7890).
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          {/* Feilds Third Row Ends */}
+          {/* Feilds Fourth Row Starts */}
+          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4"></div>
           {/* Feilds Fifth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Error Message */}

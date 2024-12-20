@@ -14,7 +14,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
+import {
+  File,
+  PlusCircle,
+  Search,
+  Pencil,
+  Trash,
+  MoreHorizontal,
+  ListFilter,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Pagination,
   PaginationContent,
@@ -210,7 +227,7 @@ export default function TableDemo() {
               </TableHead>
               <TableHead onClick={() => handleSort("area")}>Area</TableHead>
               <TableHead onClick={() => handleSort("city")}>City</TableHead>
-              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
@@ -221,8 +238,14 @@ export default function TableDemo() {
                 <TableCell>{client.street_address}</TableCell>
                 <TableCell>{client.area}</TableCell>
                 <TableCell>{client.city}</TableCell>
-                <TableCell className="flex justify-items  space-x-2">
-                  <AlertDialogbox url={client.id} />
+                <TableCell className="text-right">
+                  {/* <button
+                    onClick={() => navigate(`/clients/edit/${client.id}`)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    Edit
+                  </button>
+                  <AlertDialogbox url={client.id} /> */}
 
                   {/* <button
                     onClick={() => handleDelete(client.id)}
@@ -230,12 +253,35 @@ export default function TableDemo() {
                   >
                     Delete
                   </button> */}
-                  <button
-                    onClick={() => navigate(`/clients/edit/${client.id}`)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Edit
-                  </button>
+                  {/*  */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="center"
+                      className="w-full flex-col items-center flex justify-center"
+                    >
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          navigate(`/clients/edit/${client.id}`);
+                        }}
+                        className="w-full text-sm"
+                      >
+                        Edit
+                      </Button>
+                      {/* <DropdownMenuSeparator /> */}
+                      <AlertDialogbox
+                        url={client.id}
+                      />
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

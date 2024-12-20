@@ -162,7 +162,7 @@ export default function EditLeadPage() {
                       value={String(field.value)} // Ensure the value is a string and correctly selected
                       onValueChange={field.onChange}
                     >
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="">
                         <SelectValue placeholder="Select Contact" />
                       </SelectTrigger>
                       <SelectContent>

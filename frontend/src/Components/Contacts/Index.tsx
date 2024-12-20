@@ -15,6 +15,24 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
+  File,
+  PlusCircle,
+  Search,
+  Pencil,
+  Trash,
+  MoreHorizontal,
+  ListFilter,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -223,7 +241,7 @@ export default function TableDemo() {
                 Designation
               </TableHead>
               <TableHead onClick={() => handleSort("email")}>Email</TableHead>
-              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
@@ -235,21 +253,33 @@ export default function TableDemo() {
                 <TableCell>{contact.department}</TableCell>
                 <TableCell>{contact.designation}</TableCell>
                 <TableCell>{contact.email}</TableCell>
-                <TableCell className="flex justify-items  space-x-2">
-                  {/* <button
-                    onClick={() => handleDelete(contact.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Delete
-                  </button> */}
-                  <AlertDialogbox url={contact.id} />
-
-                  <button
-                    onClick={() => navigate(`/contacts/edit/${contact.id}`)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Edit
-                  </button>
+                <TableCell className="text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="center"
+                      className="w-full flex-col items-center flex justify-center"
+                    >
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          navigate(`/contacts/edit/${contact.id}`);
+                        }}
+                        className="w-full text-sm"
+                      >
+                        Edit
+                      </Button>
+                      {/* <DropdownMenuSeparator /> */}
+                      <AlertDialogbox url={contact.id} />
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

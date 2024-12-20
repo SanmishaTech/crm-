@@ -27,6 +27,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import {
   Select,
   SelectContent,
@@ -68,7 +69,7 @@ export default function InputForm() {
       department: "",
       designation: "",
       mobile_1: "",
-      mobile_2: "", 
+      mobile_2: "",
       email: "",
     },
   });
@@ -122,18 +123,17 @@ export default function InputForm() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
-      <h2 className="text-2xl font-semibold   text-center">
-        Contact Information
-      </h2>
+      <h2 className="text-2xl font-semibold   text-center">Contact Form</h2>
       <p className="text-center text-xs mb-9">
         Add a new contact to the database.
       </p>
       {/* Form Fields */}
+      <h2 className="text-xl font-semibold text-left">Contact Information</h2>
 
       <div></div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="flex justify-center">
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="client_id"
@@ -145,7 +145,7 @@ export default function InputForm() {
                       value={String(field.value)}
                       onValueChange={field.onChange}
                     >
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="">
                         <SelectValue placeholder="Select Client" />
                       </SelectTrigger>
                       <SelectContent>
@@ -169,10 +169,7 @@ export default function InputForm() {
                 </FormItem>
               )}
             />
-          </div>
-          {/* Feilds First Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
+              <FormField
               control={form.control}
               name="contact_person"
               render={({ field }) => (
@@ -186,6 +183,10 @@ export default function InputForm() {
                 </FormItem>
               )}
             />
+          </div>
+          {/* Feilds First Row */}
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+          
             <FormField
               control={form.control}
               name="department"

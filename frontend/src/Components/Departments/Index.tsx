@@ -16,6 +16,24 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
+  File,
+  PlusCircle,
+  Search,
+  Pencil,
+  Trash,
+  MoreHorizontal,
+  ListFilter,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -187,16 +205,44 @@ export default function TableDemo() {
                 <TableRow key={department.id}>
                   <TableCell>{department.department_name}</TableCell>
                   <TableCell className="text-right">
-                    <AlertDialogbox
-                    handleInvalidateQuery={handleInvalidateQuery}
-                      url={department.id}
-                    />
-                    <button
+                    {/* <button
                       onClick={() => handleEdit(department)}
                       className="text-blue-500 hover:text-blue-700"
                     >
                       Edit
                     </button>
+                    <AlertDialogbox
+                      handleInvalidateQuery={handleInvalidateQuery}
+                      url={department.id}
+                    /> */}
+                    {/*  */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="center"
+                        className="w-full flex-col items-center flex justify-center"
+                      >
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEdit(department)}
+                          className="w-full text-sm"
+                        >
+                          Edit
+                        </Button>
+                        {/* <DropdownMenuSeparator /> */}
+                        <AlertDialogbox
+                          handleInvalidateQuery={handleInvalidateQuery}
+                          url={department.id}
+                        />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

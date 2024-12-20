@@ -51,7 +51,7 @@ const formSchema = z.object({
 
   opening_qty: z.coerce
     .number()
-    .min(0, { message: "Opening quantity field is required." }),
+    .min(1, { message: "Opening quantity field is required." }),
   // product_category_id: z.union([z.string(), z.number()]),
   // supplier_id: z.union([z.string(), z.number()]),
   product_category_id: z
@@ -68,11 +68,11 @@ const formSchema = z.object({
 
   closing_qty: z.coerce
     .number()
-    .min(0, { message: "Closing quantity field is required." }),
+    .min(1, { message: "Closing quantity field is required." }),
 
   last_traded_price: z.coerce
     .number()
-    .min(0, { message: "Last Traded Price field is required." }),
+    .min(1, { message: "Last Traded Price field is required." }),
   hsn_code: z.coerce
     .number()
     .min(100000, { message: "HSN Code must be at least 6 digits." })
@@ -111,44 +111,43 @@ export default function EditProductPage() {
     },
   });
 
+  // Fetch Product categories
+  const fetchProductCategories = () => {
+    axios
+      .get("/api/all_product_categories", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        // setProductCategories(response.data.data.ProductCategories);
+        const category = response.data.data.ProductCategories;
+        setProductCategories(category);
+        console.log("callled");
+      })
+      .catch(() => {
+        setError("Failed to load Product categories");
+      });
+  };
+
+  // Fetch Products
+  const fetchSuppliers = () => {
+    axios
+      .get("/api/all_suppliers", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        setSuppliers(response.data.data.Suppliers);
+      })
+      .catch(() => {
+        setError("Failed to load Suppliers");
+      });
+  };
   useEffect(() => {
-    // Fetch Product categories
-    const fetchProductCategories = () => {
-      axios
-        .get("/api/all_product_categories", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        })
-        .then((response) => {
-          // setProductCategories(response.data.data.ProductCategories);
-          const category = response.data.data.ProductCategories;
-          setProductCategories(category);
-          console.log("callled");
-        })
-        .catch(() => {
-          setError("Failed to load Product categories");
-        });
-    };
-
-    // Fetch Products
-    const fetchSuppliers = () => {
-      axios
-        .get("/api/all_suppliers", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        })
-        .then((response) => {
-          setSuppliers(response.data.data.Suppliers);
-        })
-        .catch(() => {
-          setError("Failed to load Suppliers");
-        });
-    };
-
     fetchProductCategories();
     fetchSuppliers();
   }, []);
@@ -277,13 +276,18 @@ export default function EditProductPage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
-      <h3 className="text-2xl font-semibold text-center">Edit Product</h3>
-      <p className="text-center text-xs mb-9">Edit & Update product.</p>
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+      <h2 className="text-2xl font-semibold   text-center">Products Form</h2>
+      <p className="text-center text-xs mb-9">
+        Edit and update the product information.
+      </p>
+      <h2 className="text-xl font-semibold text-left">Product Information</h2>
+
+      {/* Form Fields */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="product"
@@ -291,13 +295,65 @@ export default function EditProductPage() {
                 <FormItem>
                   <FormLabel>Product</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter Product Name"
-                      {...field}
-                      value={field.value}
-                    />
+                    <Input placeholder="Enter Product Name" {...field} />
                   </FormControl>
                   <FormDescription>Enter the Product name.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="product_category_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Category</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={String(field.value)}
+                      onValueChange={field.onChange}
+                    >
+                      <SelectTrigger className="">
+                        <SelectValue placeholder="Select Product Category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {loading ? (
+                          <SelectItem disabled>Loading...</SelectItem>
+                        ) : (
+                          productCategories.map((ProductCategory) => (
+                            <SelectItem
+                              key={ProductCategory.id}
+                              value={String(ProductCategory.id)}
+                            >
+                              {ProductCategory.product_category}
+                            </SelectItem>
+                          ))
+                        )}
+                        <div className="px-5 py-1">
+                          <AddProductCategory
+                            fetchProductCategories={fetchProductCategories}
+                          />
+                        </div>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>Enter the Product Category.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="manufacturer"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Manufacturer</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter manufacturer" {...field} />
+                  </FormControl>
+                  <FormDescription>Enter the manufacturer.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -309,23 +365,9 @@ export default function EditProductPage() {
                 <FormItem>
                   <FormLabel>Model</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Model" {...field} />
+                    <Input placeholder="Enter model" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the Model.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="manufacturer"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Area</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter manufacturer" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the manufacturer.</FormDescription>
+                  <FormDescription>Enter the model.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -333,203 +375,184 @@ export default function EditProductPage() {
           </div>
           {/* Feilds First Row Ends */}
           {/* Feilds Second Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="hsn_code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>HSN Code:</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      className="justify-left"
-                      placeholder="Enter hsn code"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the HSN Code.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="product_gstin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>GST IN</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      maxLength={15}
-                      {...field}
-                      style={{ textTransform: "uppercase" }}
-                      placeholder="Enter Gst Number"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The GST Number must be 15 characters long and should follow
-                    this format:<strong>22ABCDE0123A1Z5</strong>
-                  </FormDescription>{" "}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="opening_qty"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Opening Quantity</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      className="justify-left"
-                      placeholder="Enter City"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Opening Quantity.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="flex flex-col gap-1">
+            <h2 className="text-xl font-semibold  text-left">
+              Pricing & Tax Info
+            </h2>
+            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="hsn_code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>HSN Code:</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        className="justify-left"
+                        placeholder="Enter hsn code"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>Enter the HSN Code.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="product_gstin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GST IN</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        maxLength={15}
+                        {...field}
+                        style={{ textTransform: "uppercase" }}
+                        placeholder="Enter Gst Number"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      The GST Number must be 15 characters long and should
+                      follow this format:<strong>22ABCDE0123A1Z5</strong>
+                    </FormDescription>{" "}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="last_traded_price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Traded Price (Rs)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter Last Traded Price"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Enter the Last Traded Price.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           {/* Feilds Second Row Ends */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="closing_qty"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Closing Quantity</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter closing quantity"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Closing quantity.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="last_traded_price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last traded Price</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter last traded price"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Enter the Last traded price.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="product_category_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Product Category</FormLabel>
-                  <Select
-                    value={String(field.value || "")}
-                    onValueChange={field.onChange}
-                    // value={field.value}
-                  >
+          <div className="flex flex-col gap-1">
+            <h2 className="text-xl font-semibold  text-left">
+              Inventory Details
+            </h2>
+            {/* Feilds Third Row Starts */}
+            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="opening_qty"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Opening Quantity(units)</FormLabel>
                     <FormControl>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select Product Category" />
-                      </SelectTrigger>
+                      <Input
+                        type="number"
+                        className="justify-left"
+                        placeholder="Enter Opening Quantity"
+                        {...field}
+                      />
                     </FormControl>
-
-                    <SelectContent>
-                      {loading ? (
-                        <SelectItem disabled>Loading...</SelectItem>
-                      ) : (
-                        productCategories.map((ProductCategory) => (
-                          <SelectItem
-                            key={ProductCategory.id}
-                            value={String(ProductCategory.id)}
-                          >
-                            {ProductCategory.product_category}
-                          </SelectItem>
-                        ))
-                      )}
-                      <div className="px-5 py-1">
-                        <AddProductCategory />
-                      </div>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Enter the Product Category.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormDescription>
+                      Enter the Opening Quantity.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="closing_qty"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Closing Quantity (units)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter Closing Quantity"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Enter the Closing Quantity.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
-          {/* Feilds Third Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="supplier_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Supplier</FormLabel>
-                  <FormControl>
-                    <Select
-                      // value={String(field.value)}
-                      onValueChange={field.onChange}
-                      value={String(field.value)}
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select Supplier" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {loading ? (
-                          <SelectItem disabled>Loading...</SelectItem>
-                        ) : (
-                          suppliers.map((supplier) => (
-                            <SelectItem
-                              key={supplier.id}
-                              value={String(supplier.id)}
-                            >
-                              {supplier.supplier}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>Enter the Supplier.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="flex flex-col gap-1">
+            <h2 className="text-xl font-semibold  text-left">
+              Supplier Information
+            </h2>
+            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="supplier_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Supplier</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={String(field.value)}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="">
+                          <SelectValue placeholder="Select Supplier" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {loading ? (
+                            <SelectItem disabled>Loading...</SelectItem>
+                          ) : (
+                            suppliers.map((supplier) => (
+                              <SelectItem
+                                key={supplier.id}
+                                value={String(supplier.id)}
+                              >
+                                {supplier.supplier}
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormDescription>Enter the Supplier.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           {/* Feilds Fifth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
+          {/* Error Message */}
           {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">
             <Button
               type="button"
-              onClick={() => {
-                navigate("/products");
-                queryClient.invalidateQueries({ queryKey: ["product", id] });
-              }}
+              onClick={() => navigate("/products")}
+              className="align-self-center"
             >
               Cancel
             </Button>
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" className="align-self-center hover:pointer">
+              Submit
+            </Button>
           </div>
         </form>
       </Form>

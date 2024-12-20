@@ -8,7 +8,7 @@ import { useLocation } from "react-router-dom";
 import Edit from "./Components/Suppliers/Edit";
 import EditContacts from "./Components/Contacts/Edit";
 import EditClients from "./Components/Clients/Edit";
-import EditProducts from "./Components/Products/Edit";
+// import EditProducts from "./Components/Products/Edit";
 import EditLeads from "./Components/Leads/Edit";
 
 import {
@@ -116,16 +116,16 @@ function App() {
         <Route path="/registrationlist" element={<Dashboard />} />
         <Route path="/suppliers" element={<Dashboard />} />
         <Route path="/suppliers/add" element={<Dashboard />} />
-        <Route path="/suppliers/edit/:id" element={<Edit />} />
+        <Route path="/suppliers/edit/:id" element={<Dashboard />} />
         <Route path="/contacts" element={<Dashboard />} />
         <Route path="/contacts/add" element={<Dashboard />} />
-        <Route path="/contacts/edit/:id" element={<EditContacts />} />
+        <Route path="/contacts/edit/:id" element={<Dashboard />} />
         <Route path="/clients" element={<Dashboard />} />
         <Route path="/clients/add" element={<Dashboard />} />
-        <Route path="/clients/edit/:id" element={<EditClients />} />
+        <Route path="/clients/edit/:id" element={<Dashboard />} />
         <Route path="/leads" element={<Dashboard />} />
         <Route path="/leads/add" element={<Dashboard />} />
-        <Route path="/leads/edit/:id" element={<EditLeads />} />
+        <Route path="/leads/edit/:id" element={<Dashboard />} />
 
         <Route path="/departments" element={<Dashboard />} />
         <Route path="/departments/add" element={<Dashboard />} />
@@ -133,7 +133,7 @@ function App() {
         <Route path="/productCategories/add" element={<Dashboard />} />
         <Route path="/products" element={<Dashboard />} />
         <Route path="/products/add" element={<Dashboard />} />
-        <Route path="/products/edit/:id" element={<EditProducts />} />
+        <Route path="/products/edit/:id" element={<Dashboard />} />
       </Routes>
     </div>
   );

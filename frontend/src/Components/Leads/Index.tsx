@@ -14,7 +14,24 @@ import {
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
+import {
+  File,
+  PlusCircle,
+  Search,
+  Pencil,
+  Trash,
+  MoreHorizontal,
+  ListFilter,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Pagination,
   PaginationContent,
@@ -150,7 +167,7 @@ export default function TableDemo() {
               <TableHead onClick={() => handleSort("lead_status")}>
                 Lead Status
               </TableHead>
-              <TableHead className="text-center">Action</TableHead>
+              <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
@@ -162,14 +179,43 @@ export default function TableDemo() {
                   <TableCell>{lead?.contact?.contact_person}</TableCell>
                   <TableCell>{lead.lead_source}</TableCell>
                   <TableCell>{lead.lead_status}</TableCell>
-                  <TableCell className="flex justify-items space-x-2">
-                    <AlertDialogbox url={lead.id} />
-                    <button
+                  <TableCell className="text-right">
+                  {/* <button
                       onClick={() => navigate(`/leads/edit/${lead.id}`)}
                       className="text-blue-500 hover:text-blue-700"
                     >
                       Edit
                     </button>
+                    <AlertDialogbox url={lead.id} /> */}
+                   {/*  */}
+                   <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="center"
+                      className="w-full flex-col items-center flex justify-center"
+                    >
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          navigate(`/leads/edit/${lead.id}`);
+                        }}
+                        className="w-full text-sm"
+                      >
+                        Edit
+                      </Button>
+                      {/* <DropdownMenuSeparator /> */}
+                      <AlertDialogbox
+                        url={lead.id}
+                      />
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}
