@@ -41,11 +41,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": {
-        target: "http://localhost:8000",
-
-        changeOrigin: true,
-      },
-    },
+      '/api': 'http://127.0.0.1:8000', // Use IPv4 address explicitly
+    } 
   },
 });
