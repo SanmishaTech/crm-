@@ -32,6 +32,14 @@ const FormSchema = z.object({
   contact_id: z.string().optional(),
   lead_source: z.string().optional(),
   lead_status: z.string().optional(),
+  lead_type: z.string().optional(),
+  tender_number: z.string().optional(),
+  bid_end_date: z.string().optional(),
+  portal: z.string().optional(),
+  tender_category: z.string().optional(),
+  emd_required: z.string().optional(),
+  emd_status: z.string().optional(),
+  tender_status: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -44,6 +52,14 @@ export default function InputForm() {
       contact_id: "",
       lead_source: "",
       lead_status: "",
+      lead_type: "",
+      tender_number: "",
+      bid_end_date: "",
+      portal: "",
+      tender_category: "",
+      emd_required: "",
+      emd_status: "",
+      tender_status: "",
     },
   });
   const queryClient = useQueryClient();
@@ -191,7 +207,218 @@ export default function InputForm() {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="lead_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Lead Type</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Lead Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="basic">Basic</SelectItem>
+                        <SelectItem value="tender">Tender</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>Select the lead type.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
+
+          {form.watch("lead_type") === "tender" && (
+            <div className="space-y-6">
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4 mt-4">
+                <FormField
+                  control={form.control}
+                  name="tender_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tender Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Tender Number" {...field} />
+                      </FormControl>
+                      <FormDescription>Enter the tender number.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="bid_end_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bid End Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormDescription>Select the tender date.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="portal"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Portal</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Portal Name" {...field} />
+                      </FormControl>
+                      <FormDescription>Enter the Portal name.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="tender_category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tender Category</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value}
+                            onValueChange={(value) => field.onChange(value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Tender Type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="open">Open</SelectItem>
+                              <SelectItem value="limited">Limited</SelectItem>
+                              <SelectItem value="boq">BOQ</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormDescription>Select the tender type.</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                <FormField
+                  control={form.control}
+                  name="emd_required"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>EMD Required</FormLabel>
+                      <FormControl>
+                        <div className="flex space-x-4">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="emd-yes"
+                              {...field}
+                              value="yes"
+                              checked={field.value === "yes"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="emd-yes">Yes</label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="emd-no"
+                              {...field}
+                              value="no"
+                              checked={field.value === "no"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="emd-no">No</label>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {form.watch("emd_required") === "yes" && (
+                  <FormField
+                    control={form.control}
+                    name="emd_status"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel>EMD Status</FormLabel>
+                        <FormControl>
+                          <div className="flex space-x-4">
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="emd-paid"
+                                {...field}
+                                value="paid"
+                                checked={field.value === "paid"}
+                                className="h-4 w-4"
+                              />
+                              <label htmlFor="emd-paid">Paid</label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                id="emd-pending"
+                                {...field}
+                                value="pending"
+                                checked={field.value === "pending"}
+                                className="h-4 w-4"
+                              />
+                              <label htmlFor="emd-pending">Pending</label>
+                            </div>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                 <FormField
+                  control={form.control}
+                  name="tender_status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tender Status</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Tender Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="quoted">Quoted</SelectItem>
+                            <SelectItem value="toBeQuoted">To be Quoted</SelectItem>
+                            <SelectItem value="evaluationStage">Evaluation Stage</SelectItem>
+                            <SelectItem value="close">Close</SelectItem>
+                            <SelectItem value="Awaiting">Awaiting</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription>Select the tender type.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          )}
+
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Error Message */}
           <div className="flex justify-end space-x-2">
