@@ -18,9 +18,9 @@ class CreateMemberUserSeeder extends Seeder
     public function run(): void
     {
         $user = User::updateOrCreate(
-            ['email' => 'ganesh@gmail.com'], // Search for user by email
+            ['email' => 'user2@gmail.com'], // Search for user by email
             [
-                'name' => 'ganesh',
+                'name' => 'user2',
                 'password' => Hash::make('abcd123') // Hash the password
             ]
         );
