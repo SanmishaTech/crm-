@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    public function leadProducts()
-    {
-        return $this->belongsToMany(Lead::class, 'lead_product')
-                    ->withPivot('quantity'); 
-    }
-
     public function purchaseDetails()
     {
       return $this->belongsToMany(Purchase::class, 'purchase_details');    
     }
+
+    // public function updateLeadProducts()
+    // {  //for sync operation
+    //     return $this->belongsToMany(Lead::class, 'lead_products')
+    //     ->withPivot('id','lead_id',"product_id",'quantity');
+    // }
 }
