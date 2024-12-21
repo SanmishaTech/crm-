@@ -37,8 +37,7 @@ const FormSchema = z.object({
   bid_end_date: z.string().optional(),
   portal: z.string().optional(),
   tender_category: z.string().optional(),
-  emd_required: z.string().optional(),
-  emd_status: z.string().optional(),
+   emd: z.string().optional(),
   tender_status: z.string().optional(),
 });
 
@@ -57,8 +56,7 @@ export default function InputForm() {
       bid_end_date: "",
       portal: "",
       tender_category: "",
-      emd_required: "",
-      emd_status: "",
+       emd: "",
       tender_status: "",
     },
   });
@@ -236,7 +234,7 @@ export default function InputForm() {
           </div>
 
           {form.watch("lead_type") === "tender" && (
-            <div className="space-y-6">
+              <div className=" space-y-6">
               <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4 mt-4">
                 <FormField
                   control={form.control}
@@ -311,48 +309,9 @@ export default function InputForm() {
                       </FormItem>
                     )}
                   />
-
-                <FormField
-                  control={form.control}
-                  name="emd_required"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>EMD Required</FormLabel>
-                      <FormControl>
-                        <div className="flex space-x-4">
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              id="emd-yes"
-                              {...field}
-                              value="yes"
-                              checked={field.value === "yes"}
-                              className="h-4 w-4"
-                            />
-                            <label htmlFor="emd-yes">Yes</label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              id="emd-no"
-                              {...field}
-                              value="no"
-                              checked={field.value === "no"}
-                              className="h-4 w-4"
-                            />
-                            <label htmlFor="emd-no">No</label>
-                          </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {form.watch("emd_required") === "yes" && (
                   <FormField
                     control={form.control}
-                    name="emd_status"
+                    name="emd"
                     render={({ field }) => (
                       <FormItem className="space-y-3">
                         <FormLabel>EMD Status</FormLabel>
@@ -361,10 +320,10 @@ export default function InputForm() {
                             <div className="flex items-center space-x-2">
                               <input
                                 type="radio"
-                                id="emd-paid"
+                                id="emd"
                                 {...field}
-                                value="paid"
-                                checked={field.value === "paid"}
+                                value="0"
+                                checked={field.value === "0"}
                                 className="h-4 w-4"
                               />
                               <label htmlFor="emd-paid">Paid</label>
@@ -372,10 +331,10 @@ export default function InputForm() {
                             <div className="flex items-center space-x-2">
                               <input
                                 type="radio"
-                                id="emd-pending"
+                                id="emd"
                                 {...field}
-                                value="pending"
-                                checked={field.value === "pending"}
+                                value="1"
+                                checked={field.value === "1"}
                                 className="h-4 w-4"
                               />
                               <label htmlFor="emd-pending">Pending</label>
@@ -386,7 +345,6 @@ export default function InputForm() {
                       </FormItem>
                     )}
                   />
-                )}
                  <FormField
                   control={form.control}
                   name="tender_status"
@@ -417,6 +375,7 @@ export default function InputForm() {
                 />
               </div>
             </div>
+            
           )}
 
           {error && <div className="text-red-500">{error}</div>}{" "}
