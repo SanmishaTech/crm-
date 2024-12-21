@@ -66,6 +66,7 @@ const ProductCategoryDialog = ({
   setEditProductCategory,
   loading,
   setLoading,
+  handleProductCategoryInvalidateQuery,
 }) => {
   // Add Product Category mutation function
   const queryClient = useQueryClient();
@@ -75,7 +76,8 @@ const ProductCategoryDialog = ({
     params: {
       onSuccess: (data) => {
         form.reset();
-        queryClient.invalidateQueries("product_categories");
+        handleProductCategoryInvalidateQuery();
+        // queryClient.invalidateQueries("product_categories");
         handleDialogClose();
       },
       onError: (error) => {
@@ -104,8 +106,9 @@ const ProductCategoryDialog = ({
       onSuccess: (data) => {
         setEditProductCategory(null); // Reset edit mode
         form.reset();
-        queryClient.invalidateQueries("product_categories");
-        handleDialogClose();
+        handleProductCategoryInvalidateQuery(),
+          // queryClient.invalidateQueries("product_categories");
+          handleDialogClose();
         setLoading(false);
       },
       onError: (error) => {

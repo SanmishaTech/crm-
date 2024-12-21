@@ -13,7 +13,10 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 
-export default function AlertDialogbox({ url }) {
+export default function AlertDialogbox({
+  url,
+  handleProductCategoryInvalidateQuery,
+}) {
   const queryClient = useQueryClient();
   return (
     <AlertDialog>
@@ -40,12 +43,13 @@ export default function AlertDialogbox({ url }) {
                   Authorization: "Bearer " + localStorage.getItem("token"),
                 },
               });
-              queryClient.invalidateQueries({
-                queryKey: ["product_categories"],
-              });
-              queryClient.invalidateQueries({
-                queryKey: ["product_categories", url],
-              });
+              handleProductCategoryInvalidateQuery();
+              // queryClient.invalidateQueries({
+              //   queryKey: ["product_categories"],
+              // });
+              // queryClient.invalidateQueries({
+              //   queryKey: ["product_categories", url],
+              // });
             }}
           >
             Continue

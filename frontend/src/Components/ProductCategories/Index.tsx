@@ -60,6 +60,7 @@ import PaginationComponent from "../Departments/PaginationComponent";
 import AddDepartment from "../Departments/AddDepartment";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetData } from "@/lib/HTTP/GET";
+import useFetchData from "@/lib/HTTP/useFetchData";
 // Supplier type
 type ProductCategory = {
   id: string;
@@ -106,32 +107,70 @@ export default function TableDemo() {
     },
   });
 
-  //Fetch Product Categories
-  const { data: ProductCategoriesDate } = useGetData({
-    endpoint: `/api/product_categories?search=${searchTerm}&page=${currentPage}`,
-    params: {
-      queryKey: ["product_categories"],
-      retry: 1,
+  // component start
 
-      onSuccess: (data) => {
-        console.log("c product categories", data);
-        const pCategories = data?.data?.ProductCategories; //this is imp cause we r not using async
-        setProductCategories(pCategories);
-        setPagination(data.data.Pagination);
-      },
-      onError: (error) => {
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to fetch supplier data. Please try again.");
-        }
-      },
-    },
-  });
+  const params = {
+    page: currentPage,
+    limit: itemsPerPage,
+    search: searchTerm,
+  };
+
+  const options = {
+    enabled: true,
+    refetchOnWindowFocus: true,
+    retry: 3,
+  };
+
+  const {
+    data: ProductCategoriesDate,
+    isLoading: isProductCategoriesLoading,
+    error: isProductCategoriesError,
+    isSuccess: isProductCategoriesSuccess,
+  } = useFetchData("product_categories", null, options, params);
+
+  const handleProductCategoryInvalidateQuery = () => {
+    // Invalidate the 'departments' query to trigger a refetch
+    queryClient.invalidateQueries(["product_categories", null, params]);
+  };
 
   useEffect(() => {
-    queryClient.invalidateQueries("product_categories");
-  }, [ProductCategoriesDate, currentPage, itemsPerPage, searchTerm]); // Add searchTerm as a dependency
+    if (isProductCategoriesSuccess) {
+      setProductCategories(ProductCategoriesDate.data.ProductCategories);
+      setPagination(ProductCategoriesDate.data.Pagination);
+    }
+    if (isProductCategoriesError) {
+      console.log("Error", isDepartmentError.message);
+    }
+
+    handleProductCategoryInvalidateQuery();
+  }, [ProductCategoriesDate, params]);
+
+  // //Fetch Product Categories
+  // const { data: ProductCategoriesDate } = useGetData({
+  //   endpoint: `/api/product_categories?search=${searchTerm}&page=${currentPage}`,
+  //   params: {
+  //     queryKey: ["product_categories"],
+  //     retry: 1,
+
+  //     onSuccess: (data) => {
+  //       console.log("c product categories", data);
+  //       const pCategories = data?.data?.ProductCategories; //this is imp cause we r not using async
+  //       setProductCategories(pCategories);
+  //       setPagination(data.data.Pagination);
+  //     },
+  //     onError: (error) => {
+  //       if (error.message && error.message.includes("duplicate supplier")) {
+  //         toast.error("Supplier name is duplicated. Please use a unique name.");
+  //       } else {
+  //         toast.error("Failed to fetch supplier data. Please try again.");
+  //       }
+  //     },
+  //   },
+  // });
+
+  // useEffect(() => {
+  //   queryClient.invalidateQueries("product_categories");
+  // }, [ProductCategoriesDate, currentPage, itemsPerPage, searchTerm]); // Add searchTerm as a dependency
 
   // Sorting function
   const handleSort = (key: keyof ProductCategory) => {
@@ -156,7 +195,7 @@ export default function TableDemo() {
   if (error) {
     return <div>{error}</div>;
   }
-
+  
   // Open the edit dialog and populate form with Product Category data
   const handleEdit = (productCategory: ProductCategory) => {
     setEditProductCategory(productCategory);
@@ -193,6 +232,9 @@ export default function TableDemo() {
             setError={setError}
             form={form}
             loading={loading}
+            handleProductCategoryInvalidateQuery={
+              handleProductCategoryInvalidateQuery
+            }
             setLoading={setLoading}
           />
           {/* Add(Dialog) Ends */}
@@ -225,31 +267,29 @@ export default function TableDemo() {
                   </button>
                   <AlertDialogbox url={productCategory.id} /> */}
                   <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="w-full flex-col items-center flex justify-center"
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="center"
+                      className="w-full flex-col items-center flex justify-center"
+                    >
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEdit(productCategory)}
+                        className="w-full text-sm"
                       >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(productCategory)}
-                          className="w-full text-sm"
-                        >
-                          Edit
-                        </Button>
-                        {/* <DropdownMenuSeparator /> */}
-                        <AlertDialogbox
-                          url={productCategory.id}
-                        />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        Edit
+                      </Button>
+                      {/* <DropdownMenuSeparator /> */}
+                      <AlertDialogbox url={productCategory.id} handleProductCategoryInvalidateQuery={handleProductCategoryInvalidateQuery} />
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
