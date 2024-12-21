@@ -6,10 +6,16 @@ use App\Models\Contact;
 use App\Models\Product;
 use App\Models\Employee;
 use App\Models\FollowUp;
+use App\Models\LeadProduct;
 use Illuminate\Database\Eloquent\Model;
 
 class Lead extends Model
 {
+
+    protected $casts = [
+        'bid_end_date' => 'date:Y-m-d',
+    ];
+    
    public function contact()
    {
        return $this->belongsTo(Contact::class, 'contact_id');
@@ -25,11 +31,16 @@ class Lead extends Model
        return $this->hasOne(FollowUp::class, 'lead_id');
    }
 
-   public function leadProducts()
-   {
-       return $this->belongsToMany(Product::class, 'lead_products')
-                   ->withPivot('quantity'); 
-   }
+    public function leadProducts()
+    {
+        return $this->hasMany(LeadProduct::class);
+    }
+
+    // public function updateLeadProducts()
+    // {
+    //     return $this->belongsToMany(Product::class, 'lead_products')
+    //     ->withPivot('id','lead_id',"product_id",'quantity');
+    // }
 
    
 }

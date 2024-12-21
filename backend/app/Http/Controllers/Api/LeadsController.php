@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Lead;
+use App\Models\LeadProduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
@@ -53,11 +54,32 @@ class LeadsController extends BaseController
         $lead = new Lead();
         $lead->employee_id = $employee->id;
         $lead->contact_id = $request->input("contact_id");
-        $lead->lead_owner = $employee->employee_name;
+        // $lead->lead_owner = $employee->employee_name;
+        $lead->lead_type = $request->input("lead_type");
+        $lead->tender_number = $request->input("tender_number");
+        $lead->portal = $request->input("portal");
+        $lead->tender_category = $request->input("tender_category");
+        $lead->emd = $request->input("emd");
+        $lead->bid_end_date = $request->input("bid_end_date");
+        $lead->tender_status = $request->input("tender_status");
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
         $lead->save();
 
+        $products = $request->input('products');
+          
+        if($products){
+            // Prepare the product details for insertion
+        $productDetails = [];
+        foreach ($products as $product) {
+        $productDetails[] = new LeadProduct([
+            'product_id' => $product['product_id'],
+            'quantity' => $product['quantity'],
+             ]);
+          }
+            //one to many relatonship for stroing products and for fetching
+         $lead->leadProducts()->saveMany($productDetails);
+        }
         
         return $this->sendResponse(['Lead'=> new LeadResource($lead)], 'Lead Created Successfully');
     }
@@ -78,10 +100,39 @@ class LeadsController extends BaseController
             }
             
         $lead->contact_id = $request->input("contact_id");
+        $lead->lead_type = $request->input("lead_type");
+        $lead->tender_number = $request->input("tender_number");
+        $lead->portal = $request->input("portal");
+        $lead->tender_category = $request->input("tender_category");
+        $lead->bid_end_date = $request->input("bid_end_date");
+        $lead->tender_status = $request->input("tender_status");
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
         $lead->save();
-        
+
+        $products = $request->input('products');
+
+        // // Prepare the product data for syncing (associating product_id with quantity)
+        // $productData = [];
+        // foreach ($products as $product) {
+        //     $productData[
+        //     $product['product_id']] = ['quantity' => $product['quantity']];
+        // }
+    
+        // // Sync the products to the lead (this will add, update or remove products)
+        //  //many to many relatonship for updating products
+        // $lead->updateLeadProducts()->sync($productData);
+        //end
+        $previousProducts = LeadProduct::where("lead_id",$lead->id)->delete();
+        $productDetails = [];
+        foreach ($products as $product) {
+        $productDetails[] = new LeadProduct([
+            'product_id' => $product['product_id'],
+            'quantity' => $product['quantity'],
+             ]);
+          }
+            //one to many relatonship for stroing products and for fetching
+         $lead->leadProducts()->saveMany($productDetails);
         return $this->sendResponse(['Lead'=> new LeadResource($lead)], 'Lead Updated Successfully');
     }
     
@@ -109,9 +160,7 @@ class LeadsController extends BaseController
         if(!$lead){
             return $this->sendError("lead not found", ['error'=>'lead not found']);
         }
-
         $lead->delete();
-
         return $this->sendResponse([], "Lead deleted successfully");
     }
 }
