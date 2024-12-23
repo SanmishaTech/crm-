@@ -202,13 +202,14 @@ export default function InputForm() {
   }, []);
 
   const onSubmit = async (data: FormValues) => {
-    // Combine the product_id (selected product) with the form data
+    // Combine the form data with the selected product_id
     const payload = {
       ...data,
-      product_id: value, // Add the selected product_id to the payload
+      product_id: value, // This is where you include the selected product ID
     };
 
-    formData.mutate(payload); // Send the payload with the product_id
+    // Call the mutate function with the payload
+    formData.mutate(payload);
   };
 
   return (
@@ -522,10 +523,15 @@ export default function InputForm() {
                                   key={framework.value}
                                   value={framework.value}
                                   onSelect={(currentValue) => {
+                                    // Set the selected value
                                     setValue(
                                       currentValue === value ? "" : currentValue
                                     );
                                     setOpen(false);
+                                    // You can now use currentValue as the ID to send or use
+                                    const selectedID = currentValue; // This is the ID you're looking for
+                                    console.log("Selected ID:", selectedID);
+                                    // You can send the ID to a server, update state, or perform other actions with it
                                   }}
                                 >
                                   {framework.label}
