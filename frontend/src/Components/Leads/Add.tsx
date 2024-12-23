@@ -75,8 +75,8 @@ const FormSchema = z.object({
   tender_category: z.string().optional(),
   emd: z.string().optional(),
   tender_status: z.string().optional(),
-  quantity: z.string().optional(),
-  product_id: z.string().optional(),
+  // Remove the quantity field from here
+  // product_id: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -105,6 +105,11 @@ export default function InputForm() {
   const queryClient = useQueryClient();
   const navigate = useNavigate(); // Use For Navigation
   const [frameworks, setFrameworks] = useState<any[]>([]); // Initialize as an empty array
+  const [productRows, setProductRows] = useState<any[]>([]); // Initialize productRows as an empty array
+
+  const addRow = () => {
+    setProductRows([...productRows, { product_id: "", quantity: "" }]);
+  };
 
   const invoices = [
     {
@@ -202,13 +207,11 @@ export default function InputForm() {
   }, []);
 
   const onSubmit = async (data: FormValues) => {
-    // Combine the form data with the selected product_id
     const payload = {
       ...data,
-      product_id: value, // This is where you include the selected product ID
+      products: productRows.filter((row) => row.product_id && row.quantity), // Only send rows with both values
     };
 
-    // Call the mutate function with the payload
     formData.mutate(payload);
   };
 
@@ -479,7 +482,7 @@ export default function InputForm() {
           <div className="flex justify-center">
             <Label>Add your Product & Quantity</Label>
           </div>
-          <Button onClick={""} variant="outline" className="mb-4">
+          <Button onClick={addRow} variant="outline" className="mb-4">
             Add Row
           </Button>
           <Table>
@@ -492,10 +495,9 @@ export default function InputForm() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {invoices.map((invoice) => (
-                <TableRow key={invoice.invoice}>
+              {productRows.map((row, index) => (
+                <TableRow key={index}>
                   <TableCell>
-                    {/* products combobox  */}
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
@@ -504,9 +506,10 @@ export default function InputForm() {
                           aria-expanded={open}
                           className="w-[200px] justify-between"
                         >
-                          {value
+                          {row.product_id
                             ? frameworks.find(
-                                (framework) => framework.value === value
+                                (framework) =>
+                                  framework.value === row.product_id
                               )?.label
                             : "Select products..."}
                           <ChevronsUpDown className="opacity-50" />
@@ -521,30 +524,22 @@ export default function InputForm() {
                           <CommandList>
                             <CommandEmpty>No products found.</CommandEmpty>
                             <CommandGroup>
-                              {console.log(frameworks)}
                               {frameworks.map((framework) => (
                                 <CommandItem
                                   key={framework.value}
                                   value={framework.value}
-                                  onSelect={(currentValue) => {
-                                    console.log("framework", framework.value);
-                                    setValue(
-                                      framework.value === value
-                                        ? ""
-                                        : framework.value
-                                    );
+                                  onSelect={() => {
+                                    const newRows = [...productRows];
+                                    newRows[index].product_id = framework.value;
+                                    setProductRows(newRows);
                                     setOpen(false);
-                                    console.log(
-                                      "Selected ID:",
-                                      framework.value
-                                    );
                                   }}
                                 >
                                   {framework.label}
                                   <Check
                                     className={cn(
                                       "ml-auto",
-                                      value === framework.value
+                                      row.product_id === framework.value
                                         ? "opacity-100"
                                         : "opacity-0"
                                     )}
@@ -558,22 +553,28 @@ export default function InputForm() {
                     </Popover>
                   </TableCell>
                   <TableCell>
-                    <FormField
-                      control={form.control}
-                      name="quantity"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input placeholder="Enter Quantity" {...field} />
-                          </FormControl>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                    <Input
+                      placeholder="Enter Quantity"
+                      value={row.quantity}
+                      onChange={(e) => {
+                        const newRows = [...productRows];
+                        newRows[index].quantity = e.target.value;
+                        setProductRows(newRows);
+                      }}
                     />
-                  </TableCell>{" "}
+                  </TableCell>
                   <TableCell className="flex justify-end">
-                    <X />
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        const newRows = productRows.filter(
+                          (_, i) => i !== index
+                        );
+                        setProductRows(newRows);
+                      }}
+                    >
+                      <X />
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
