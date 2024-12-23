@@ -201,34 +201,14 @@ export default function InputForm() {
     fetchProduct();
   }, []);
 
-  const [selectedProducts, setSelectedProducts] = useState<
-    { productId: string; quantity: string }[]
-  >([]);
-
-  // Handle the product selection and update state
-  const handleProductSelection = (productId: string, quantity: string) => {
-    // Check if the product already exists in the selected products
-    setSelectedProducts((prevProducts) => {
-      const existingProductIndex = prevProducts.findIndex(
-        (product) => product.productId === productId
-      );
-
-      if (existingProductIndex > -1) {
-        // Update the existing product's quantity
-        const updatedProducts = [...prevProducts];
-        updatedProducts[existingProductIndex] = { productId, quantity };
-        return updatedProducts;
-      }
-
-      // Add new product if not already selected
-      return [...prevProducts, { productId, quantity }];
-    });
-  };
-
   const onSubmit = async (data: FormValues) => {
-    const formDataWithProducts = { ...data, products: selectedProducts };
-    formData.mutate(formDataWithProducts);
-    formData.mutate(data);
+    // Combine the product_id (selected product) with the form data
+    const payload = {
+      ...data,
+      product_id: value, // Add the selected product_id to the payload
+    };
+
+    formData.mutate(payload); // Send the payload with the product_id
   };
 
   return (
