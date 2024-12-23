@@ -62,12 +62,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-const frameworks = [
-  {
-    value: "product",
-    label: "product",
-  },
-];
 
 const invoices = [
   {
@@ -89,7 +83,7 @@ const FormSchema = z.object({
   tender_category: z.string().optional(),
   emd: z.string().optional(),
   tender_status: z.string().optional(),
-  quantity: z.number().optional(),
+  quantity: z.string().optional(),
   product_id: z.string().optional(),
 });
 
@@ -105,17 +99,20 @@ export default function InputForm() {
       contact_id: "",
       lead_source: "",
       lead_status: "",
-      lead_type: "",
+      lead_type: "basic",
       tender_number: "",
       bid_end_date: "",
       portal: "",
       tender_category: "",
       emd: "",
       tender_status: "",
+      quantity: "",
+      product_id: "",
     },
   });
   const queryClient = useQueryClient();
   const navigate = useNavigate(); // Use For Navigation
+  const [frameworks, setFrameworks] = useState<any[]>([]); // Initialize as an empty array
 
   type FormValues = z.infer<typeof FormSchema>;
   const formData = usePostData({
@@ -169,7 +166,68 @@ export default function InputForm() {
       .catch((err) => console.error("Failed to fetch contacts", err));
   };
 
+  const fetchProduct = () => {
+    setLoading(true);
+    axios
+      .get("/api/products", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        const fetchedProducts = response.data.data.Products;
+        if (Array.isArray(fetchedProducts) && fetchedProducts.length > 0) {
+          setFrameworks(
+            fetchedProducts.map((product) => ({
+              value: product.id,
+              label: product.product,
+            }))
+          );
+        } else {
+          toast.error("No products available.");
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch products", err);
+        toast.error("Failed to fetch products.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchProduct();
+  }, []);
+
+  const [selectedProducts, setSelectedProducts] = useState<
+    { productId: string; quantity: string }[]
+  >([]);
+
+  // Handle the product selection and update state
+  const handleProductSelection = (productId: string, quantity: string) => {
+    // Check if the product already exists in the selected products
+    setSelectedProducts((prevProducts) => {
+      const existingProductIndex = prevProducts.findIndex(
+        (product) => product.productId === productId
+      );
+
+      if (existingProductIndex > -1) {
+        // Update the existing product's quantity
+        const updatedProducts = [...prevProducts];
+        updatedProducts[existingProductIndex] = { productId, quantity };
+        return updatedProducts;
+      }
+
+      // Add new product if not already selected
+      return [...prevProducts, { productId, quantity }];
+    });
+  };
+
   const onSubmit = async (data: FormValues) => {
+    const formDataWithProducts = { ...data, products: selectedProducts };
+    formData.mutate(formDataWithProducts);
     formData.mutate(data);
   };
 
@@ -453,6 +511,7 @@ export default function InputForm() {
               {invoices.map((invoice) => (
                 <TableRow key={invoice.invoice}>
                   <TableCell>
+                    {/* products combobox  */}
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
                         <Button
@@ -510,7 +569,6 @@ export default function InputForm() {
                     <FormField
                       control={form.control}
                       name="quantity"
-                      type="numeric"
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
