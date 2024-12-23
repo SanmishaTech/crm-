@@ -37,7 +37,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { MoreHorizontal, Check, ChevronsUpDown } from "lucide-react";
+import { X, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -62,14 +62,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const invoices = [
-  {
-    invoice: "1",
-    paymentStatus: "Paid",
-    paymentMethod: "Credit Card",
-  },
-];
 
 // Form Schema
 const FormSchema = z.object({
@@ -113,6 +105,14 @@ export default function InputForm() {
   const queryClient = useQueryClient();
   const navigate = useNavigate(); // Use For Navigation
   const [frameworks, setFrameworks] = useState<any[]>([]); // Initialize as an empty array
+
+  const invoices = [
+    {
+      invoice: "1",
+      paymentStatus: "Paid",
+      paymentMethod: "Credit Card",
+    },
+  ];
 
   type FormValues = z.infer<typeof FormSchema>;
   const formData = usePostData({
@@ -479,6 +479,9 @@ export default function InputForm() {
           <div className="flex justify-center">
             <Label>Add your Product & Quantity</Label>
           </div>
+          <Button onClick={""} variant="outline" className="mb-4">
+            Add Row
+          </Button>
           <Table>
             <TableCaption>A list of your products.</TableCaption>
             <TableHeader>
@@ -518,20 +521,23 @@ export default function InputForm() {
                           <CommandList>
                             <CommandEmpty>No products found.</CommandEmpty>
                             <CommandGroup>
+                              {console.log(frameworks)}
                               {frameworks.map((framework) => (
                                 <CommandItem
                                   key={framework.value}
                                   value={framework.value}
                                   onSelect={(currentValue) => {
-                                    // Set the selected value
+                                    console.log("framework", framework.value);
                                     setValue(
-                                      currentValue === value ? "" : currentValue
+                                      framework.value === value
+                                        ? ""
+                                        : framework.value
                                     );
                                     setOpen(false);
-                                    // You can now use currentValue as the ID to send or use
-                                    const selectedID = currentValue; // This is the ID you're looking for
-                                    console.log("Selected ID:", selectedID);
-                                    // You can send the ID to a server, update state, or perform other actions with it
+                                    console.log(
+                                      "Selected ID:",
+                                      framework.value
+                                    );
                                   }}
                                 >
                                   {framework.label}
@@ -566,42 +572,8 @@ export default function InputForm() {
                       )}
                     />
                   </TableCell>{" "}
-                  <TableCell className="text-right">
-                    {/* <button
-                      onClick={() => navigate(`/leads/edit/${lead.id}`)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      Edit
-                    </button>
-                    <AlertDialogbox url={lead.id} /> */}
-                    {/*  */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="w-full flex-col items-center flex justify-center"
-                      >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            navigate(`/leads/edit/${lead.id}`);
-                          }}
-                          className="w-full text-sm"
-                        >
-                          Edit
-                        </Button>
-
-                        {/* <DropdownMenuSeparator /> */}
-                        {/* <AlertDialogbox url={lead.id} /> */}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <TableCell className="flex justify-end">
+                    <X />
                   </TableCell>
                 </TableRow>
               ))}
