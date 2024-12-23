@@ -82,7 +82,7 @@ const FormSchema = z.object({
 export default function InputForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false); // To handle loading state
-  const [open, setOpen] = React.useState(false);
+  // const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [contacts, setContacts] = useState<any[]>([]); // Initialize as an empty array
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -105,12 +105,14 @@ export default function InputForm() {
   const queryClient = useQueryClient();
   const navigate = useNavigate(); // Use For Navigation
   const [frameworks, setFrameworks] = useState<any[]>([]); // Initialize as an empty array
-  const [productRows, setProductRows] = useState<any[]>([]); // Initialize productRows as an empty array
+  const [productRows, setProductRows] = useState<any[]>([]);
 
   const addRow = () => {
-    setProductRows([...productRows, { product_id: "", quantity: "" }]);
+    setProductRows([
+      ...productRows,
+      { product_id: "", quantity: "", isOpen: false },
+    ]);
   };
-
   const invoices = [
     {
       invoice: "1",
@@ -482,7 +484,12 @@ export default function InputForm() {
           <div className="flex justify-center">
             <Label>Add your Product & Quantity</Label>
           </div>
-          <Button onClick={addRow} variant="outline" className="mb-4">
+          <Button
+            type="button"
+            onClick={addRow}
+            variant="outline"
+            className="mb-4"
+          >
             Add Row
           </Button>
           <Table>
@@ -498,29 +505,30 @@ export default function InputForm() {
               {productRows.map((row, index) => (
                 <TableRow key={index}>
                   <TableCell>
-                    <Popover open={open} onOpenChange={setOpen}>
+                    <Popover 
+                      open={row.isOpen} 
+                      onOpenChange={(isOpen) => {
+                        const newRows = [...productRows];
+                        newRows[index].isOpen = isOpen;
+                        setProductRows(newRows);
+                      }}
+                    >
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
                           role="combobox"
-                          aria-expanded={open}
+                          aria-expanded={row.isOpen}
                           className="w-[200px] justify-between"
                         >
                           {row.product_id
-                            ? frameworks.find(
-                                (framework) =>
-                                  framework.value === row.product_id
-                              )?.label
+                            ? frameworks.find((framework) => framework.value === row.product_id)?.label
                             : "Select products..."}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
-                          <CommandInput
-                            placeholder="Search products..."
-                            className="h-9"
-                          />
+                          <CommandInput placeholder="Search products..." className="h-9" />
                           <CommandList>
                             <CommandEmpty>No products found.</CommandEmpty>
                             <CommandGroup>
@@ -531,8 +539,8 @@ export default function InputForm() {
                                   onSelect={() => {
                                     const newRows = [...productRows];
                                     newRows[index].product_id = framework.value;
+                                    newRows[index].isOpen = false; // Close the popover after selection
                                     setProductRows(newRows);
-                                    setOpen(false);
                                   }}
                                 >
                                   {framework.label}
