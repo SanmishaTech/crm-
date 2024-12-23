@@ -484,14 +484,6 @@ export default function InputForm() {
           <div className="flex justify-center">
             <Label>Add your Product & Quantity</Label>
           </div>
-          <Button
-            type="button"
-            onClick={addRow}
-            variant="outline"
-            className="mb-4"
-          >
-            Add Row
-          </Button>
           {/* Table Start */}
           <Table>
             <TableCaption>A list of your products.</TableCaption>
@@ -570,6 +562,7 @@ export default function InputForm() {
                   <TableCell>
                     <Input
                       placeholder="Enter Quantity"
+                      name="quantity"
                       value={row.quantity}
                       onChange={(e) => {
                         const newRows = [...productRows];
@@ -600,6 +593,14 @@ export default function InputForm() {
             </TableFooter>
           </Table>
           {/* Table End */}
+          <Button
+            type="button"
+            onClick={addRow}
+            variant="outline"
+            className="mb-4"
+          >
+            Add Row
+          </Button>
           {/* Error Message */}
           <div className="flex justify-end space-x-2">
             <Button
