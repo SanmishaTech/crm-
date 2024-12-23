@@ -54,7 +54,7 @@ import {
 
 // Form validation schema
 const formSchema = z.object({
-  contact_id: z.string().optional(),
+  contact_id: z.any().optional(),
   lead_status: z.string().optional(),
   lead_source: z.string().optional(),
 
@@ -137,7 +137,6 @@ export default function EditLeadPage() {
       queryKey: ["editlead", id],
       retry: 1,
       onSuccess: (data) => {
-        console.log("GetData", data);
         setData(data?.Lead);
         setContacts(data?.data?.Lead?.contact_id); // Store contact_id for later use
         setLoading(false);
@@ -152,6 +151,16 @@ export default function EditLeadPage() {
       enabled: !!id,
     },
   });
+  useEffect(() => {
+    if (editData?.data?.Lead?.products) {
+      const products = editData.data.Lead.products.map((product) => ({
+        product_id: product.product_id,
+        quantity: product.quantity,
+        isOpen: false, // Add isOpen property for managing the popover state
+      }));
+      setProductRows(products);
+    }
+  }, [editData]); // Make sure to use editData here
 
   useEffect(() => {
     if (editData?.data?.Lead) {
@@ -403,10 +412,10 @@ export default function EditLeadPage() {
                           <div className="flex items-center space-x-2">
                             <input
                               type="radio"
-                              id="emd"
+                              id="emd-paid"
                               {...field}
-                              value={Number(0)}
-                              checked={field.value === Number(0)}
+                              value="1"
+                              checked={field.value === "1"}
                               className="h-4 w-4"
                             />
                             <label htmlFor="emd-paid">Paid</label>
@@ -414,10 +423,10 @@ export default function EditLeadPage() {
                           <div className="flex items-center space-x-2">
                             <input
                               type="radio"
-                              id="emd"
+                              id="emd-pending"
                               {...field}
-                              value="1"
-                              checked={field.value === "1"}
+                              value="0"
+                              checked={field.value === "0"}
                               className="h-4 w-4"
                             />
                             <label htmlFor="emd-pending">Pending</label>
@@ -428,6 +437,7 @@ export default function EditLeadPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="tender_status"
@@ -558,7 +568,6 @@ export default function EditLeadPage() {
                     <Button
                       variant="ghost"
                       onClick={() => {
-                        // Filter out the row at the given index and update the state
                         const newRows = productRows.filter(
                           (_, i) => i !== index
                         );
