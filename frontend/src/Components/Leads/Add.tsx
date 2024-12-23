@@ -26,6 +26,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+const invoices = [
+  {
+    invoice: "1",
+    paymentStatus: "Paid",
+    paymentMethod: "Credit Card",
+  },
+  {
+    invoice: "2",
+    paymentStatus: "Pending",
+    paymentMethod: "PayPal",
+  },
+  {
+    invoice: "3",
+    paymentStatus: "Unpaid",
+    paymentMethod: "Bank Transfer",
+  },
+];
 
 // Form Schema
 const FormSchema = z.object({
@@ -37,7 +65,7 @@ const FormSchema = z.object({
   bid_end_date: z.string().optional(),
   portal: z.string().optional(),
   tender_category: z.string().optional(),
-   emd: z.string().optional(),
+  emd: z.string().optional(),
   tender_status: z.string().optional(),
 });
 
@@ -56,7 +84,7 @@ export default function InputForm() {
       bid_end_date: "",
       portal: "",
       tender_category: "",
-       emd: "",
+      emd: "",
       tender_status: "",
     },
   });
@@ -232,9 +260,8 @@ export default function InputForm() {
               )}
             />
           </div>
-
           {form.watch("lead_type") === "tender" && (
-              <div className=" space-y-6">
+            <div className=" space-y-6">
               <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4 mt-4">
                 <FormField
                   control={form.control}
@@ -245,12 +272,14 @@ export default function InputForm() {
                       <FormControl>
                         <Input placeholder="Enter Tender Number" {...field} />
                       </FormControl>
-                      <FormDescription>Enter the tender number.</FormDescription>
+                      <FormDescription>
+                        Enter the tender number.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="bid_end_date"
@@ -283,69 +312,69 @@ export default function InputForm() {
               </div>
 
               <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="tender_category"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tender Category</FormLabel>
-                        <FormControl>
-                          <Select
-                            value={field.value}
-                            onValueChange={(value) => field.onChange(value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select Tender Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="open">Open</SelectItem>
-                              <SelectItem value="limited">Limited</SelectItem>
-                              <SelectItem value="boq">BOQ</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormDescription>Select the tender type.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="emd"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormLabel>EMD Status</FormLabel>
-                        <FormControl>
-                          <div className="flex space-x-4">
-                            <div className="flex items-center space-x-2">
-                              <input
-                                type="radio"
-                                id="emd"
-                                {...field}
-                                value="0"
-                                checked={field.value === "0"}
-                                className="h-4 w-4"
-                              />
-                              <label htmlFor="emd-paid">Paid</label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <input
-                                type="radio"
-                                id="emd"
-                                {...field}
-                                value="1"
-                                checked={field.value === "1"}
-                                className="h-4 w-4"
-                              />
-                              <label htmlFor="emd-pending">Pending</label>
-                            </div>
+                <FormField
+                  control={form.control}
+                  name="tender_category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tender Category</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Tender Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="open">Open</SelectItem>
+                            <SelectItem value="limited">Limited</SelectItem>
+                            <SelectItem value="boq">BOQ</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription>Select the tender type.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="emd"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>EMD Status</FormLabel>
+                      <FormControl>
+                        <div className="flex space-x-4">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="emd"
+                              {...field}
+                              value="0"
+                              checked={field.value === "0"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="emd-paid">Paid</label>
                           </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                 <FormField
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="emd"
+                              {...field}
+                              value="1"
+                              checked={field.value === "1"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="emd-pending">Pending</label>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
                   control={form.control}
                   name="tender_status"
                   render={({ field }) => (
@@ -361,8 +390,12 @@ export default function InputForm() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="quoted">Quoted</SelectItem>
-                            <SelectItem value="toBeQuoted">To be Quoted</SelectItem>
-                            <SelectItem value="evaluationStage">Evaluation Stage</SelectItem>
+                            <SelectItem value="toBeQuoted">
+                              To be Quoted
+                            </SelectItem>
+                            <SelectItem value="evaluationStage">
+                              Evaluation Stage
+                            </SelectItem>
                             <SelectItem value="close">Close</SelectItem>
                             <SelectItem value="Awaiting">Awaiting</SelectItem>
                           </SelectContent>
@@ -375,10 +408,33 @@ export default function InputForm() {
                 />
               </div>
             </div>
-            
           )}
-
           {error && <div className="text-red-500">{error}</div>}{" "}
+          <Table>
+            <TableCaption>A list of your recent invoices.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">ID</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead className="text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {invoices.map((invoice) => (
+                <TableRow key={invoice.invoice}>
+                  <TableCell className="font-medium">
+                    {invoice.invoice}
+                  </TableCell>
+                  <TableCell>{invoice.paymentStatus}</TableCell>
+                  <TableCell>{invoice.paymentMethod}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow></TableRow>
+            </TableFooter>
+          </Table>
           {/* Error Message */}
           <div className="flex justify-end space-x-2">
             <Button
