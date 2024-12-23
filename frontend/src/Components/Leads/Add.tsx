@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -26,6 +26,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import { MoreHorizontal, Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Table,
   TableBody,
@@ -36,22 +62,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+const frameworks = [
+  {
+    value: "product",
+    label: "product",
+  },
+];
 
 const invoices = [
   {
     invoice: "1",
     paymentStatus: "Paid",
     paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "2",
-    paymentStatus: "Pending",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "3",
-    paymentStatus: "Unpaid",
-    paymentMethod: "Bank Transfer",
   },
 ];
 
@@ -67,11 +89,15 @@ const FormSchema = z.object({
   tender_category: z.string().optional(),
   emd: z.string().optional(),
   tender_status: z.string().optional(),
+  quantity: z.number().optional(),
+  product_id: z.string().optional(),
 });
 
 export default function InputForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false); // To handle loading state
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState("");
   const [contacts, setContacts] = useState<any[]>([]); // Initialize as an empty array
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -233,7 +259,8 @@ export default function InputForm() {
                 </FormItem>
               )}
             />
-
+          </div>
+          <div className="space-x-6 ">
             <FormField
               control={form.control}
               name="lead_type"
@@ -410,12 +437,14 @@ export default function InputForm() {
             </div>
           )}
           {error && <div className="text-red-500">{error}</div>}{" "}
+          <div className="flex justify-center">
+            <Label>Add your Product & Quantity</Label>
+          </div>
           <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
+            <TableCaption>A list of your products.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">ID</TableHead>
-                <TableHead>Product</TableHead>
+                <TableHead>Products</TableHead>
                 <TableHead>Quantity</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
@@ -423,11 +452,113 @@ export default function InputForm() {
             <TableBody>
               {invoices.map((invoice) => (
                 <TableRow key={invoice.invoice}>
-                  <TableCell className="font-medium">
-                    {invoice.invoice}
+                  <TableCell>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={open}
+                          className="w-[200px] justify-between"
+                        >
+                          {value
+                            ? frameworks.find(
+                                (framework) => framework.value === value
+                              )?.label
+                            : "Select products..."}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[200px] p-0">
+                        <Command>
+                          <CommandInput
+                            placeholder="Search products..."
+                            className="h-9"
+                          />
+                          <CommandList>
+                            <CommandEmpty>No products found.</CommandEmpty>
+                            <CommandGroup>
+                              {frameworks.map((framework) => (
+                                <CommandItem
+                                  key={framework.value}
+                                  value={framework.value}
+                                  onSelect={(currentValue) => {
+                                    setValue(
+                                      currentValue === value ? "" : currentValue
+                                    );
+                                    setOpen(false);
+                                  }}
+                                >
+                                  {framework.label}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      value === framework.value
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                   </TableCell>
-                  <TableCell>{invoice.paymentStatus}</TableCell>
-                  <TableCell>{invoice.paymentMethod}</TableCell>
+                  <TableCell>
+                    <FormField
+                      control={form.control}
+                      name="quantity"
+                      type="numeric"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Enter Quantity" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>{" "}
+                  <TableCell className="text-right">
+                    {/* <button
+                      onClick={() => navigate(`/leads/edit/${lead.id}`)}
+                      className="text-blue-500 hover:text-blue-700"
+                    >
+                      Edit
+                    </button>
+                    <AlertDialogbox url={lead.id} /> */}
+                    {/*  */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="center"
+                        className="w-full flex-col items-center flex justify-center"
+                      >
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            navigate(`/leads/edit/${lead.id}`);
+                          }}
+                          className="w-full text-sm"
+                        >
+                          Edit
+                        </Button>
+
+                        {/* <DropdownMenuSeparator /> */}
+                        {/* <AlertDialogbox url={lead.id} /> */}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
