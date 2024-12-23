@@ -79,8 +79,8 @@ export default function EditLeadPage() {
   const [loading, setLoading] = useState(false);
   const [contacts, setContacts] = useState<any[]>([]);
   const [productRows, setProductRows] = useState<any[]>([]);
-const [frameworks, setFrameworks] = useState<any[]>([]); // Initialize as an empty array
-  
+  const [frameworks, setFrameworks] = useState<any[]>([]); // Initialize as an empty array
+
   const addRow = () => {
     setProductRows([
       ...productRows,
@@ -328,16 +328,25 @@ const [frameworks, setFrameworks] = useState<any[]>([]); // Initialize as an emp
                 <FormField
                   control={form.control}
                   name="bid_end_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bid End Date</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormDescription>Select the tender date.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    const formattedDate = field.value
+                      ? field.value.split("T")[0]
+                      : "";
+
+                    return (
+                      <FormItem>
+                        <FormLabel>Bid End Date</FormLabel>
+                        <FormControl>
+                          {/* Set the formatted date */}
+                          <Input type="date" {...field} value={formattedDate} />
+                        </FormControl>
+                        <FormDescription>
+                          Select the tender date.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 <FormField
@@ -396,8 +405,8 @@ const [frameworks, setFrameworks] = useState<any[]>([]); // Initialize as an emp
                               type="radio"
                               id="emd"
                               {...field}
-                              value="0"
-                              checked={field.value === "0"}
+                              value={Number(0)}
+                              checked={field.value === Number(0)}
                               className="h-4 w-4"
                             />
                             <label htmlFor="emd-paid">Paid</label>
