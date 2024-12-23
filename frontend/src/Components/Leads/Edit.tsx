@@ -110,8 +110,7 @@ export default function EditLeadPage() {
     endpoint: `/api/leads/${id}`,
     queryKey: ["editlead", id],
     params: {
-      onSuccess: (data) => {
-        console.log("editdata", data);
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["editlead"] });
         queryClient.invalidateQueries({ queryKey: ["editlead", id] });
         toast.success("Lead updated successfully");
@@ -126,6 +125,48 @@ export default function EditLeadPage() {
       },
     },
   });
+
+  const { refetch } = useGetData({
+    endpoint: `/api/products`,
+    params: {
+      queryKey: ["editProducts"],
+      retry: 1,
+      onSuccess: (data) => {
+        if (Array.isArray(data?.Products) && data?.Products.length > 0) {
+          setFrameworks(
+            data?.Products.map((product) => ({
+              value: product.id,
+              label: product.product,
+            }))
+          );
+        } else {
+          toast.error("No products available.");
+        }
+
+        setContacts(data?.Products?.product_id);
+
+        setLoading(false);
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate lead")) {
+          toast.error("Lead name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch products. Please try again.");
+        }
+        setLoading(false);
+      },
+      enabled: !!id,
+    },
+  });
+
+  useEffect(() => {
+    // Automatically fetch when component mounts if `enabled` condition is true
+    if (id) {
+      refetch(); // This manually triggers the refetch if you need to call it
+    }
+  }, [id, refetch]); // Refetch only when the `id` or `refetch` function changes
+
+  // You can use `isLoading` and `error` to manage loading states and errors
 
   const {
     data: editData,
@@ -165,7 +206,6 @@ export default function EditLeadPage() {
   useEffect(() => {
     if (editData?.data?.Lead) {
       const newData = editData?.data?.Lead;
-      console.log("Lead", newData);
       form.reset({
         contact_id: newData?.contact_id || "", // Preselect the contact_id from the fetched data
         lead_status: newData?.lead_status || "",
@@ -190,7 +230,7 @@ export default function EditLeadPage() {
       retry: 1,
       onSuccess: (data) => {
         console.log("GetData", data);
-        setContacts(data?.data?.Contact || []); // Set contacts array after fetching
+        setContacts(data?.data?.Contact || []);
         setLoading(false);
       },
       onError: (error) => {
@@ -206,6 +246,7 @@ export default function EditLeadPage() {
 
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
+    fetchProducts.mutate(data);
     getData.mutate(data);
     queryClient.invalidateQueries({ queryKey: ["supplier"] });
     queryClient.invalidateQueries({ queryKey: ["supplier", id] });

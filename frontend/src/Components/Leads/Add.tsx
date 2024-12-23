@@ -81,10 +81,9 @@ const FormSchema = z.object({
 
 export default function InputForm() {
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false); // To handle loading state
-  // const [open, setOpen] = React.useState(false);
+  const [loading, setLoading] = useState(false);
   const [value, setValue] = React.useState("");
-  const [contacts, setContacts] = useState<any[]>([]); // Initialize as an empty array
+  const [contacts, setContacts] = useState<any[]>([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
