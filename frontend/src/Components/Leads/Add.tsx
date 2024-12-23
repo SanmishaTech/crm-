@@ -492,6 +492,7 @@ export default function InputForm() {
           >
             Add Row
           </Button>
+          {/* Table Start */}
           <Table>
             <TableCaption>A list of your products.</TableCaption>
             <TableHeader>
@@ -505,12 +506,12 @@ export default function InputForm() {
               {productRows.map((row, index) => (
                 <TableRow key={index}>
                   <TableCell>
-                    <Popover 
-                      open={row.isOpen} 
+                    <Popover
+                      open={row.isOpen}
                       onOpenChange={(isOpen) => {
                         const newRows = [...productRows];
                         newRows[index].isOpen = isOpen;
-                        setProductRows(newRows);
+                        setProductRows(newRows); // Update the productRows state
                       }}
                     >
                       <PopoverTrigger asChild>
@@ -521,14 +522,20 @@ export default function InputForm() {
                           className="w-[200px] justify-between"
                         >
                           {row.product_id
-                            ? frameworks.find((framework) => framework.value === row.product_id)?.label
+                            ? frameworks.find(
+                                (framework) =>
+                                  framework.value === row.product_id
+                              )?.label
                             : "Select products..."}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
-                          <CommandInput placeholder="Search products..." className="h-9" />
+                          <CommandInput
+                            placeholder="Search products..."
+                            className="h-9"
+                          />
                           <CommandList>
                             <CommandEmpty>No products found.</CommandEmpty>
                             <CommandGroup>
@@ -540,7 +547,7 @@ export default function InputForm() {
                                     const newRows = [...productRows];
                                     newRows[index].product_id = framework.value;
                                     newRows[index].isOpen = false; // Close the popover after selection
-                                    setProductRows(newRows);
+                                    setProductRows(newRows); // Update the state
                                   }}
                                 >
                                   {framework.label}
@@ -567,7 +574,7 @@ export default function InputForm() {
                       onChange={(e) => {
                         const newRows = [...productRows];
                         newRows[index].quantity = e.target.value;
-                        setProductRows(newRows);
+                        setProductRows(newRows); // Update the state with the new quantity
                       }}
                     />
                   </TableCell>
@@ -575,10 +582,11 @@ export default function InputForm() {
                     <Button
                       variant="ghost"
                       onClick={() => {
+                        // Filter out the row at the given index and update the state
                         const newRows = productRows.filter(
                           (_, i) => i !== index
                         );
-                        setProductRows(newRows);
+                        setProductRows(newRows); // Update the state with the new rows
                       }}
                     >
                       <X />
@@ -591,6 +599,7 @@ export default function InputForm() {
               <TableRow></TableRow>
             </TableFooter>
           </Table>
+          {/* Table End */}
           {/* Error Message */}
           <div className="flex justify-end space-x-2">
             <Button
