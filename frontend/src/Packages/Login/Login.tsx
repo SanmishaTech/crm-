@@ -11,24 +11,19 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const navigate = useNavigate();
 
-  // Add useEffect to handle tab close
   React.useEffect(() => {
-    // Handler to clear token when tab/window closes
     const handleTabClose = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
     };
 
-    // Add event listener for beforeunload
     window.addEventListener("beforeunload", handleTabClose);
 
-    // Cleanup function to remove event listener
     return () => {
       window.removeEventListener("beforeunload", handleTabClose);
     };
   }, []);
 
-  // Check for existing token on component mount and clear if present
   React.useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -42,13 +37,11 @@ const Login = () => {
     password: "",
   };
   const onSubmit = async (data: Record<string, any>) => {
-    // Assuming userId is available globally or in localStorage
-    const userId = localStorage.getItem("userId") || "defaultUserId"; // Replace with actual way of getting userId
+    const userId = localStorage.getItem("userId") || "defaultUserId";
 
-    // Include userId in the login payload
     const loginData = {
       ...data,
-      userId, // Add userId here
+      userId,
     };
 
     try {

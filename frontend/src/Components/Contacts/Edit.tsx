@@ -140,8 +140,7 @@ export default function EditSupplierPage() {
       queryKey: ["clients"],
       retry: 1,
       onSuccess: (data) => {
-        console.log("GetData", data);
-        setClients(data.data.Client);
+         setClients(data.data.Client);
         setLoading(false);
       },
       onError: (error) => {

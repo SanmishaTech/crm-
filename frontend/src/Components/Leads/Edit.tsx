@@ -92,7 +92,9 @@ export default function EditLeadPage() {
   const [loading, setLoading] = useState(false);
   const [contacts, setContacts] = useState<any[]>([]);
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
-  const [frameworks, setFrameworks] = useState<{ value: string; label: string }[]>([]);
+  const [frameworks, setFrameworks] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   const addRow = () => {
     setProductRows([
@@ -226,7 +228,6 @@ export default function EditLeadPage() {
       queryKey: ["contacts"],
       retry: 1,
       onSuccess: (data) => {
-        console.log("GetData", data);
         setContacts(data?.data?.Contact || []);
         setLoading(false);
       },
@@ -245,12 +246,12 @@ export default function EditLeadPage() {
     // Include product rows in the submission data
     const submissionData = {
       ...data,
-      products: productRows.map(row => ({
+      products: productRows.map((row) => ({
         product_id: row.product_id,
-        quantity: row.quantity
-      }))
+        quantity: row.quantity,
+      })),
     };
-    
+
     fetchData.mutate(submissionData);
     queryClient.invalidateQueries({ queryKey: ["supplier"] });
     queryClient.invalidateQueries({ queryKey: ["supplier", id] });
@@ -459,7 +460,7 @@ export default function EditLeadPage() {
                               type="radio"
                               id="emd-paid"
                               {...field}
-                              value="1"
+                              value={1}
                               checked={field.value === "1"}
                               className="h-4 w-4"
                             />
@@ -470,7 +471,7 @@ export default function EditLeadPage() {
                               type="radio"
                               id="emd-pending"
                               {...field}
-                              value="0"
+                              value={0}
                               checked={field.value === "0"}
                               className="h-4 w-4"
                             />
@@ -553,7 +554,8 @@ export default function EditLeadPage() {
                         >
                           {row.product_id
                             ? frameworks.find(
-                                (framework) => framework.value === row.product_id
+                                (framework) =>
+                                  framework.value === row.product_id
                               )?.label || "Select products..."
                             : "Select products..."}
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
