@@ -10,6 +10,33 @@ import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+
+  // Add useEffect to handle tab close
+  React.useEffect(() => {
+    // Handler to clear token when tab/window closes
+    const handleTabClose = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    };
+
+    // Add event listener for beforeunload
+    window.addEventListener("beforeunload", handleTabClose);
+
+    // Cleanup function to remove event listener
+    return () => {
+      window.removeEventListener("beforeunload", handleTabClose);
+    };
+  }, []);
+
+  // Check for existing token on component mount and clear if present
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    }
+  }, []);
+
   const defaultValues = {
     email: "",
     password: "",
@@ -148,14 +175,14 @@ const Login = () => {
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
-              to="/terms"
+              to="#"
               className="underline underline-offset-4 hover:text-primary"
             >
               Terms of Service
             </Link>{" "}
             and{" "}
             <Link
-              to="/privacy"
+              to="#"
               className="underline underline-offset-4 hover:text-primary"
             >
               Privacy Policy
