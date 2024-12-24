@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Sidebar from "@/Dashboard/Sidebar";
 import Dashboardcomponent from "@/Components/Dashboard/Dashboard";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Suppliers from "@/Components/Suppliers/Index";
 import SuppliersAdd from "@/Components/Suppliers/Add";
 import SuppliersEdit from "@/Components/Suppliers/Edit";
@@ -21,38 +21,17 @@ import ProductCategoryDialog from "@/Components/ProductCategories/ProductCategor
 import Products from "@/Components/Products/Index";
 import ProductsAdd from "@/Components/Products/Add";
 import ProductsEdit from "@/Components/Products/Edit";
-import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // const user = localStorage.getItem("user");
-  // // const User = JSON.parse(user);
-  // const User = user ? JSON.parse(user) : null;
 
-  // useEffect(() => {
-  //   if (!User?._id) {
-  //     navigate("/");
-  //   }
-  // }, [location, User]);
-
-  // Get user from localStorage
-  //  const user = localStorage.getItem("user");
-
-  //  useEffect(() => {
-  //    if (user && user !== "undefined") {
-  //      const User = JSON.parse(user);
-
-  //      if (!User._id) {
-  //        navigate("/dashboard");  // If _id doesn't exist, navigate to dashboard
-  //      } else {
-  //        navigate("/");  // If _id exists, navigate to dashboard
-  //      }
-  //    } else {
-  //      console.log("User data is not available.");
-  //      navigate("/login");  // If no user data, go to login page
-  //    }
-  //  }, [user, navigate]);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   return (
     <div className="flex bg-background w-[100vw] h-full relative min-h-screen">
@@ -77,10 +56,33 @@ const Dashboard = () => {
         {/\/leads\/edit\/\d+/.test(location.pathname) && <LeadsEdit />}
 
         {location.pathname === "/departments" && <Departments />}
-        {location.pathname === "/departments/add" && <DepartmentsDialog />}
+        {location.pathname === "/departments/add" && (
+          <DepartmentsDialog 
+            loading={false}
+            setLoading={() => {}}
+            open={true}
+            setOpen={() => {}}
+            form={{}}
+            editDepartment={null}
+            setError={() => {}}
+            setEditDepartment={() => {}}
+            fetchDepartments={() => {}}
+            handleInvalidateQuery={() => {}}
+          />
+        )}
         {location.pathname === "/productCategories" && <ProductCategories />}
         {location.pathname === "/productCategories/add" && (
-          <ProductCategoryDialog />
+          <ProductCategoryDialog 
+            open={true}
+            form={{}}
+            setOpen={() => {}}
+            editProductCategory={null}
+            setError={() => {}}
+            setEditProductCategory={() => {}}
+            loading={false}
+            setLoading={() => {}}
+            handleProductCategoryInvalidateQuery={() => {}}
+          />
         )}
         {location.pathname === "/products" && <Products />}
         {location.pathname === "/products/add" && <ProductsAdd />}
