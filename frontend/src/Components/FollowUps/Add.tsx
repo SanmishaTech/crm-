@@ -23,6 +23,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useGetData } from "@/lib/HTTP/GET";
 import { useParams } from "react-router-dom";
 import Summary from "./Summary";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Get QueryClient from the context
 // Form Schema
@@ -88,87 +89,106 @@ export default function InputForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
-      <h2 className="text-2xl font-semibold   text-center">Follow Up Form</h2>
-      <p className="text-center text-xs mb-9">
-        Add a Follow Up to the database.
-      </p>
-      <h2 className="text-xl font-semibold text-left">Follow Up</h2>
-      {/* Form Fields */}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Feilds First Row */}
-          <Summary leads={leads} />
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="follow_up_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Follow Up Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormDescription>Select the Follow Up Date.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="next_follow_up_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Next Follow Up Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Select the Next Follow Up Date.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div>
-            {" "}
-            <FormField
-              control={form.control}
-              name="remark"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Remark</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="justify-left"
-                      placeholder="Enter Remark"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Remark.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {error && <div className="text-red-500">{error}</div>}{" "}
-          {/* Error Message */}
-          {/* Buttons For Submit and Cancel */}
-          <div className="flex justify-end space-x-2">
-            <Button
-              onClick={() => navigate("/leads")}
-              className="align-self-center"
-              type="button"
-            >
-              Cancel
-            </Button>
-            <Button type="submit" className="align-self-center hover:pointer">
-              Submit
-            </Button>
-          </div>
-        </form>
-      </Form>
+    <div className="max-w-4xl mx-auto p-  ">
+      <Tabs defaultValue="followUp">
+        <div className="flex justify-center">
+          <TabsList>
+            <TabsTrigger value="followUp">Add Follow up</TabsTrigger>
+            <TabsTrigger value="summary">Show Summary</TabsTrigger>
+          </TabsList>
+        </div>
+        <TabsContent value="followUp">
+          <h2 className="text-2xl font-semibold   text-center">
+            Follow Up Form
+          </h2>
+          <p className="text-center text-xs mb-9">
+            Add a Follow Up to the database.
+          </p>
+          <h2 className="text-xl font-semibold text-left">Follow Up</h2>
+          {/* Form Fields */}
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Feilds First Row */}
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="follow_up_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Follow Up Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Select the Follow Up Date.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="next_follow_up_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Next Follow Up Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Select the Next Follow Up Date.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div>
+                {" "}
+                <FormField
+                  control={form.control}
+                  name="remark"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Remark</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          className="justify-left"
+                          placeholder="Enter Remark"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Enter the Remark.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {error && <div className="text-red-500">{error}</div>}{" "}
+              {/* Error Message */}
+              {/* Buttons For Submit and Cancel */}
+              <div className="flex justify-end space-x-2">
+                <Button
+                  onClick={() => navigate("/leads")}
+                  className="align-self-center"
+                  type="button"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="align-self-center hover:pointer"
+                >
+                  Submit
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </TabsContent>
+        <TabsContent value="summary">
+          <Summary leads={leads} />.
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
