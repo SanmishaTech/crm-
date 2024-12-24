@@ -23,7 +23,8 @@ class FollowUpsController extends BaseController
    {
     $followUp = new FollowUp();
     $followUp->lead_id = $request->input('lead_id');
-    $followUp->follow_up_date = $request->input('follow_up_date');
+    $followUp->follow_up_date = $request->input('follow_up_date'); // now()->format('Y-m-d');
+    $followUp->next_follow_up_date = $request->input('next_follow_up_date');
     $followUp->remarks = $request->input('remarks');
     $followUp->save();
     return $this->sendResponse(['FollowUp'=> new FollowUpResource($followUp)], 'Follow-Up Created Successfully');

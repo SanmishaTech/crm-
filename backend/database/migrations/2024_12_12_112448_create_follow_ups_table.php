@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('lead_id'); 
             $table->date("follow_up_date")->nullable();
+            $table->date("next_follow_up_date")->nullable();
             $table->string("remarks")->nullable();
             $table->timestamps();
         });

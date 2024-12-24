@@ -9,6 +9,7 @@ class FollowUp extends Model
 {
     protected $casts = [
         'follow_up_date' => 'date:Y-m-d',
+        'next_follow_up_date' => 'date:Y-m-d',
     ];
     
     public function lead(){

@@ -73,7 +73,8 @@ const FormSchema = z.object({
   bid_end_date: z.string().optional(),
   portal: z.string().optional(),
   tender_category: z.string().optional(),
-  emd: z.string().optional(),
+  // emd: z.string().optional(),
+  emd: z.coerce.number().optional(),
   tender_status: z.string().optional(),
   // Remove the quantity field from here
   // product_id: z.string().optional(),
@@ -434,7 +435,7 @@ export default function InputForm() {
                               {...field}
                               value="1"
                               checked={field.value === "1"}
-                              className="h-4 w-4" 
+                              className="h-4 w-4"
                             />
                             <label htmlFor="emd-pending">Pending</label>
                           </div>
