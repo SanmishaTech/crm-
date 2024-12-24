@@ -15,8 +15,8 @@ const Summary = ({ leads }) => {
     return <div>Loading lead data...</div>;
   }
 
-  const { id, employee_id, contact } = leads; // Destructure relevant data
-  const contactName = contact?.contact_person || "Unknown"; // Fallback for missing name
+  const { id, employee_id, contact } = leads;
+  const contactName = contact?.contact_person || "Unknown";
 
   return (
     <div className="overflow-hidden py-2 grid grid-cols-3 gap-4">
@@ -89,8 +89,21 @@ const Summary = ({ leads }) => {
       </div>
 
       <div className="col-span-1 space-y-3">
-        <h3 className="text-lg font-bold">Products</h3>
-        
+        <h3 className="text-lg font-bold text-center">Products</h3>
+        <div className="flex space-x-4">
+          <div className="flex-1 text-center font-bold">Product</div>
+          <div className="flex-1 text-center font-bold">Quantity</div>
+        </div>
+        {leads.products && leads.products.length > 0 ? (
+          leads.products.map((product, index) => (
+            <div key={index} className="flex space-x-4">
+              <div className="flex-1">{product.name}</div>
+              <div className="flex-1 text-center">{product.quantity}</div>
+            </div>
+          ))
+        ) : (
+          <p>No products available</p>
+        )}
       </div>
     </div>
   );

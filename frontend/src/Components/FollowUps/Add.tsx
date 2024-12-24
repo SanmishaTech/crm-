@@ -89,14 +89,13 @@ export default function InputForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-  ">
+    <div className="max-w-4xl mx-auto  ">
       <Tabs defaultValue="followUp">
-        <div className="flex justify-center">
-          <TabsList>
-            <TabsTrigger value="followUp">Add Follow up</TabsTrigger>
-            <TabsTrigger value="summary">Show Summary</TabsTrigger>
-          </TabsList>
-        </div>
+        <TabsList>
+          <TabsTrigger value="followUp">Add Follow up</TabsTrigger>
+          <TabsTrigger value="summary">Show Summary</TabsTrigger>
+        </TabsList>   
+
         <TabsContent value="followUp">
           <h2 className="text-2xl font-semibold   text-center">
             Follow Up Form
@@ -107,7 +106,7 @@ export default function InputForm() {
           <h2 className="text-xl font-semibold text-left">Follow Up</h2>
           {/* Form Fields */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Feilds First Row */}
               <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
                 <FormField
