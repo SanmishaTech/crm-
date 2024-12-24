@@ -133,7 +133,6 @@ export default function InputForm() {
                   <FormControl>
                     <Input placeholder="Enter Supplier Name" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the Supplier name.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -153,10 +152,7 @@ export default function InputForm() {
                       placeholder="Enter Gst Number"
                     />
                   </FormControl>
-                  <FormDescription>
-                    The GST Number must be 15 characters long and should follow
-                    this format:<strong>22ABCDE0123A1Z5</strong>
-                  </FormDescription>{" "}
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -176,7 +172,6 @@ export default function InputForm() {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>Enter the Department.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -194,7 +189,6 @@ export default function InputForm() {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>Enter the Designation.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -202,7 +196,7 @@ export default function InputForm() {
           </div>
           <div className="flex flex-col gap-1">
             <h2 className="text-xl font-semibold  text-left">
-            Contact Information
+              Contact Information
             </h2>
             <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
               <FormField
@@ -221,7 +215,6 @@ export default function InputForm() {
                         maxLength={10}
                       />
                     </FormControl>
-                    <FormDescription>Enter the Mobile.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -243,7 +236,6 @@ export default function InputForm() {
                         maxLength={10}
                       />
                     </FormControl>
-                    <FormDescription>Enter the Mobile.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -261,7 +253,6 @@ export default function InputForm() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Enter the Email.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -270,7 +261,7 @@ export default function InputForm() {
           </div>
           <div className="flex flex-col gap-1">
             <h2 className="text-xl font-semibold  text-left">
-            Address Information
+              Address Information
             </h2>
             <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
               <FormField
@@ -282,7 +273,6 @@ export default function InputForm() {
                     <FormControl>
                       <Input placeholder="Enter Street Address" {...field} />
                     </FormControl>
-                    <FormDescription>Enter the Street Address.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -296,7 +286,6 @@ export default function InputForm() {
                     <FormControl>
                       <Input placeholder="Enter Area" {...field} />
                     </FormControl>
-                    <FormDescription>Enter the Area.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -317,7 +306,6 @@ export default function InputForm() {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>Enter the City.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -331,7 +319,6 @@ export default function InputForm() {
                   <FormControl>
                     <Input placeholder="Enter State" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the State.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -354,7 +341,6 @@ export default function InputForm() {
                       maxLength={6}
                     />
                   </FormControl>
-                  <FormDescription>Enter the Pincode.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -373,7 +359,6 @@ export default function InputForm() {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>Enter the Country.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -396,9 +381,6 @@ export default function InputForm() {
                       value={field.value}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Enter the Contact (e.g:- 12-3456-7890).
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
