@@ -21,6 +21,7 @@ import ProductCategoryDialog from "@/Components/ProductCategories/ProductCategor
 import Products from "@/Components/Products/Index";
 import ProductsAdd from "@/Components/Products/Add";
 import ProductsEdit from "@/Components/Products/Edit";
+import FollowUps from "@/Components/FollowUps/Add";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -54,10 +55,11 @@ const Dashboard = () => {
         {location.pathname === "/leads" && <Leads />}
         {location.pathname === "/leads/add" && <LeadsAdd />}
         {/\/leads\/edit\/\d+/.test(location.pathname) && <LeadsEdit />}
+        {/\/followUps\/\d+/.test(location.pathname) && <FollowUps />}
 
         {location.pathname === "/departments" && <Departments />}
         {location.pathname === "/departments/add" && (
-          <DepartmentsDialog 
+          <DepartmentsDialog
             loading={false}
             setLoading={() => {}}
             open={true}
@@ -72,7 +74,7 @@ const Dashboard = () => {
         )}
         {location.pathname === "/productCategories" && <ProductCategories />}
         {location.pathname === "/productCategories/add" && (
-          <ProductCategoryDialog 
+          <ProductCategoryDialog
             open={true}
             form={{}}
             setOpen={() => {}}

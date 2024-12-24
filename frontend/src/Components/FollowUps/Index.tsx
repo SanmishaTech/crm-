@@ -1,6 +1,5 @@
 //@ts-nocheck
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Table,
   TableBody,
@@ -14,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import {
   File,
   PlusCircle,
@@ -45,14 +43,19 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useGetData } from "@/lib/HTTP/GET";
-import AlertDialogbox from "./AlertBox";
+import AlertDialogbox from "./Delete";
 
 // Supplier type
 type Supplier = {
   id: string;
-  contact_id: string;
-  lead_source: string;
-  lead_status: string;
+  supplier: string;
+  street_address: string;
+  area: string;
+  city: string;
+  state: string;
+  pincode: string;
+  country: string;
+  gstin: string;
 };
 
 type PaginationData = {
@@ -64,9 +67,14 @@ type PaginationData = {
 
 // Form Validation Schema
 const formSchema = z.object({
-  contact_id: z.string().min(2).max(50),
-  lead_source: z.string().min(2).max(50),
-  lead_status: z.string().min(2).max(50),
+  supplier: z.string().min(2).max(50),
+  street_address: z.string().min(2).max(50),
+  area: z.string().min(2).max(50),
+  city: z.string().min(2).max(50),
+  state: z.string().min(2).max(50),
+  pincode: z.string().min(2).max(50),
+  country: z.string().min(2).max(50),
+  gstin: z.string().min(2).max(50),
 });
 
 export default function TableDemo() {
@@ -84,18 +92,21 @@ export default function TableDemo() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      contact_id: "",
+      supplier: "",
     },
   });
 
+  //Fetch Suppliers
   const { data: Sup } = useGetData({
-    endpoint: `/api/leads`,
+    endpoint: `/api/suppliers?search=${searchTerm}&page=${currentPage}`,
     params: {
-      queryKey: ["lead"],
+      queryKey: ["supplier", searchTerm],
       retry: 1,
+
       onSuccess: (data) => {
-        setSuppliers(data?.Lead);
-        setPagination(data.data.pagination);
+        console.log("test-test", data);
+        setSuppliers(data.Suppliers);
+        setPagination(data.pagination);
         setLoading(false);
       },
       onError: (error) => {
@@ -132,13 +143,13 @@ export default function TableDemo() {
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Leads List</h3>
+        <h3 className="text-lg font-semibold">Suppliers List</h3>
       </div>
       <div className="flex justify-between items-center space-x-2 w-full">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">
           <Input
-            placeholder="Search leads..."
+            placeholder="Search suppliers..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -146,10 +157,9 @@ export default function TableDemo() {
         {/* Search Bar Ends */}
         <div className="flex space-x-2">
           {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/leads/add")}>
-            Add Leads
+          <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
+            Add Supplier
           </Button>
-
           {/* Add(Page) Ends */}
         </div>
       </div>
@@ -160,75 +170,65 @@ export default function TableDemo() {
           <TableCaption>A list of your recent suppliers.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead onClick={() => handleSort("contact_id")}>
-                Contact
+              <TableHead onClick={() => handleSort("supplier")}>
+                Suppliers
               </TableHead>
-              <TableHead onClick={() => handleSort("lead_source")}>
-                Lead Source
+              <TableHead onClick={() => handleSort("street_address")}>
+                Street Address
               </TableHead>
-              <TableHead onClick={() => handleSort("lead_status")}>
-                Lead Status
-              </TableHead>
+              <TableHead onClick={() => handleSort("area")}>Area</TableHead>
+              <TableHead onClick={() => handleSort("city")}>City</TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
           <TableBody>
-            {Sup?.data?.Lead &&
-              Array.isArray(Sup.data.Lead) &&
-              Sup.data.Lead.map((lead) => (
-                <TableRow key={lead.id}>
-                  <TableCell>{lead?.contact?.contact_person}</TableCell>
-                  <TableCell>{lead.lead_source}</TableCell>
-                  <TableCell>{lead.lead_status}</TableCell>
-                  <TableCell className="text-right">
-                    {/* <button
-                      onClick={() => navigate(`/leads/edit/${lead.id}`)}
-                      className="text-blue-500 hover:text-blue-700"
+            {console.log("sup", Sup)}
+            {Sup?.data?.Suppliers?.map((supplier) => (
+              <TableRow key={supplier.id}>
+                <TableCell>{supplier.supplier}</TableCell>
+                <TableCell>{supplier.street_address}</TableCell>
+                <TableCell>{supplier.area}</TableCell>
+                <TableCell>{supplier.city}</TableCell>
+                <TableCell className="text-right">
+                  {/* <button
+                    onClick={() => navigate(`/suppliers/edit/${supplier.id}`)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    Edit
+                  </button>
+                  <AlertDialogbox url={supplier.id} /> */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="center"
+                      className="w-full flex-col items-center flex justify-center"
                     >
-                      Edit
-                    </button>
-                    <AlertDialogbox url={lead.id} /> */}
-                    {/*  */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="w-full flex-col items-center flex justify-center"
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          navigate(`/suppliers/edit/${supplier.id}`);
+                        }}
+                        className="w-full text-sm"
                       >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            navigate(`/leads/edit/${lead.id}`);
-                          }}
-                          className="w-full text-sm"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            navigate(`/leads/followUps/${lead.id}`);
-                          }}
-                          className="w-full text-sm"
-                        >
-                          Follow Up
-                        </Button>
-                        {/* <DropdownMenuSeparator /> */}
-                        <AlertDialogbox url={lead.id} />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+                        Edit
+                      </Button>
+                      {/* <DropdownMenuSeparator /> */}
+                      <AlertDialogbox
+                        url={supplier.id}
+                      />
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
         {/* Table End */}
