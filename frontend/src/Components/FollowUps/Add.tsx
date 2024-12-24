@@ -22,14 +22,14 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetData } from "@/lib/HTTP/GET";
 import { useParams } from "react-router-dom";
+import Summary from "./Summary";
 
 // Get QueryClient from the context
 // Form Schema
 const FormSchema = z.object({
- 
   remark: z.string().optional(),
-  
-  
+  follow_up_date: z.string().optional(),
+  next_follow_up_date: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -38,15 +38,17 @@ export default function InputForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-     remark: "",
+      remark: "",
+      follow_up_date: "",
+      next_follow_up_date: "",
     },
   });
   const queryClient = useQueryClient();
-  const id = useParams();
+  const { id } = useParams();
 
   const navigate = useNavigate(); // Use For Navigation
 
-  type FormValues = z.infer<typeof FormSchema>; 
+  type FormValues = z.infer<typeof FormSchema>;
   const formData = usePostData({
     endpoint: "/api/leads",
     params: {
@@ -67,32 +69,21 @@ export default function InputForm() {
     },
   });
 
-  // const leadData = useGetData({
-  //   endpoint: `/api/leads`,
-  //   params: {
-  //     queryKey: ["leads"],
-  //     retry: 1,
-  //     onSuccess: (data) => {
-  //       if (data?.data?.Lead) {
-  //         setLeads(data.data.Lead);
-  //       }
-  //     },
-  //   },
-  // });
-
-  // useEffect(() => {
-  //   if (leadData.data?.data?.Lead) {
-  //     setLeads(leadData.data.data.Lead);
-  //   }
-  // }, [leadData]);
+  const leadData = useGetData({
+    endpoint: `/api/leads/${id}`,
+    params: {
+      queryKey: ["leads"],
+      retry: 1,
+      onSuccess: (data) => {
+        if (data?.data?.Lead) {
+          setLeads(data.data.Lead);
+        }
+      },
+    },
+    enabled: !!id,
+  });
 
   const onSubmit = async (data: FormValues) => {
-    // const dataa = {
-    //   lead_id: leads[0].id,
-    //   follow_up_date: data.bid_end_date,
-    //   remarks: data.remark,
-    // };
-    followUpData.mutate(dataa);
     formData.mutate(data);
   };
 
@@ -107,10 +98,11 @@ export default function InputForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
+          <Summary leads={leads} />
           <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
-              name="bid_end_date"
+              name="follow_up_date"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Follow Up Date</FormLabel>
@@ -124,7 +116,7 @@ export default function InputForm() {
             />
             <FormField
               control={form.control}
-              name="bid_end_date"
+              name="next_follow_up_date"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Next Follow Up Date</FormLabel>

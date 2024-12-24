@@ -126,6 +126,7 @@ function App() {
         <Route path="/leads" element={<Dashboard />} />
         <Route path="/leads/add" element={<Dashboard />} />
         <Route path="/leads/edit/:id" element={<Dashboard />} />
+        <Route path="/leads/followUps/:id" element={<Dashboard />} />
 
         <Route path="/departments" element={<Dashboard />} />
         <Route path="/departments/add" element={<Dashboard />} />
@@ -134,7 +135,6 @@ function App() {
         <Route path="/products" element={<Dashboard />} />
         <Route path="/products/add" element={<Dashboard />} />
         <Route path="/products/edit/:id" element={<Dashboard />} />
-        <Route path="/leads/followUps/:id" element={<Dashboard />} />
       </Routes>
     </div>
   );
