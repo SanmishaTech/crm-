@@ -18,6 +18,7 @@ class FollowUpResource extends JsonResource
             'id' => $this->id,
             'lead_id' => $this->lead_id,
             'follow_up_date' => $this->follow_up_date,
+            'follow_up_type' => $this->follow_up_type,
             'remarks' => $this->remarks,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
