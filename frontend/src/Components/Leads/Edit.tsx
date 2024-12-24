@@ -70,6 +70,19 @@ const formSchema = z.object({
 // Move FormValues type definition outside the component
 type FormValues = z.infer<typeof formSchema>;
 
+// First, let's define proper types for the data
+interface Product {
+  id: number;
+  product: string;
+  quantity?: string;
+}
+
+interface ProductRow {
+  product_id: string;
+  quantity: string;
+  isOpen: boolean;
+}
+
 export default function EditLeadPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -78,8 +91,8 @@ export default function EditLeadPage() {
   const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [contacts, setContacts] = useState<any[]>([]);
-  const [productRows, setProductRows] = useState<any[]>([]);
-  const [frameworks, setFrameworks] = useState<any[]>([]); // Initialize as an empty array
+  const [productRows, setProductRows] = useState<ProductRow[]>([]);
+  const [frameworks, setFrameworks] = useState<{ value: string; label: string }[]>([]);
 
   const addRow = () => {
     setProductRows([
@@ -126,47 +139,30 @@ export default function EditLeadPage() {
     },
   });
 
-  const { refetch } = useGetData({
+  const { data: productsData } = useGetData({
     endpoint: `/api/products`,
     params: {
-      queryKey: ["editProducts"],
+      queryKey: ["products"],
       retry: 1,
       onSuccess: (data) => {
-        if (Array.isArray(data?.Products) && data?.Products.length > 0) {
+        if (data?.data?.Products) {
           setFrameworks(
-            data?.Products.map((product) => ({
-              value: product.id,
+            data.data.Products.map((product: Product) => ({
+              value: product.id.toString(),
               label: product.product,
             }))
           );
         } else {
           toast.error("No products available.");
         }
-
-        setContacts(data?.Products?.product_id);
-
         setLoading(false);
       },
       onError: (error) => {
-        if (error.message && error.message.includes("duplicate lead")) {
-          toast.error("Lead name is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to fetch products. Please try again.");
-        }
+        toast.error("Failed to fetch products. Please try again.");
         setLoading(false);
       },
-      enabled: !!id,
     },
   });
-
-  useEffect(() => {
-    // Automatically fetch when component mounts if `enabled` condition is true
-    if (id) {
-      refetch(); // This manually triggers the refetch if you need to call it
-    }
-  }, [id, refetch]); // Refetch only when the `id` or `refetch` function changes
-
-  // You can use `isLoading` and `error` to manage loading states and errors
 
   const {
     data: editData,
@@ -192,16 +188,17 @@ export default function EditLeadPage() {
       enabled: !!id,
     },
   });
+
   useEffect(() => {
     if (editData?.data?.Lead?.products) {
-      const products = editData.data.Lead.products.map((product) => ({
-        product_id: product.product_id,
-        quantity: product.quantity,
-        isOpen: false, // Add isOpen property for managing the popover state
+      const products = editData.data.Lead.products.map((product: any) => ({
+        product_id: product.product_id.toString(),
+        quantity: product.quantity || "",
+        isOpen: false,
       }));
       setProductRows(products);
     }
-  }, [editData]); // Make sure to use editData here
+  }, [editData]);
 
   useEffect(() => {
     if (editData?.data?.Lead) {
@@ -245,9 +242,16 @@ export default function EditLeadPage() {
   });
 
   const onSubmit = (data: FormValues) => {
-    fetchData.mutate(data);
-    fetchProducts.mutate(data);
-    getData.mutate(data);
+    // Include product rows in the submission data
+    const submissionData = {
+      ...data,
+      products: productRows.map(row => ({
+        product_id: row.product_id,
+        quantity: row.quantity
+      }))
+    };
+    
+    fetchData.mutate(submissionData);
     queryClient.invalidateQueries({ queryKey: ["supplier"] });
     queryClient.invalidateQueries({ queryKey: ["supplier", id] });
   };
@@ -537,7 +541,7 @@ export default function EditLeadPage() {
                       onOpenChange={(isOpen) => {
                         const newRows = [...productRows];
                         newRows[index].isOpen = isOpen;
-                        setProductRows(newRows); // Update the productRows state
+                        setProductRows(newRows);
                       }}
                     >
                       <PopoverTrigger asChild>
@@ -549,19 +553,15 @@ export default function EditLeadPage() {
                         >
                           {row.product_id
                             ? frameworks.find(
-                                (framework) =>
-                                  framework.value === row.product_id
-                              )?.label
+                                (framework) => framework.value === row.product_id
+                              )?.label || "Select products..."
                             : "Select products..."}
-                          <ChevronsUpDown className="opacity-50" />
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-[200px] p-0">
                         <Command>
-                          <CommandInput
-                            placeholder="Search products..."
-                            className="h-9"
-                          />
+                          <CommandInput placeholder="Search products..." />
                           <CommandList>
                             <CommandEmpty>No products found.</CommandEmpty>
                             <CommandGroup>
@@ -572,19 +572,19 @@ export default function EditLeadPage() {
                                   onSelect={() => {
                                     const newRows = [...productRows];
                                     newRows[index].product_id = framework.value;
-                                    newRows[index].isOpen = false; // Close the popover after selection
-                                    setProductRows(newRows); // Update the state
+                                    newRows[index].isOpen = false;
+                                    setProductRows(newRows);
                                   }}
                                 >
-                                  {framework.label}
                                   <Check
                                     className={cn(
-                                      "ml-auto",
+                                      "mr-2 h-4 w-4",
                                       row.product_id === framework.value
                                         ? "opacity-100"
                                         : "opacity-0"
                                     )}
                                   />
+                                  {framework.label}
                                 </CommandItem>
                               ))}
                             </CommandGroup>
