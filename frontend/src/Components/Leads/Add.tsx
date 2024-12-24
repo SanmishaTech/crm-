@@ -73,7 +73,7 @@ const FormSchema = z.object({
   bid_end_date: z.string().optional(),
   portal: z.string().optional(),
   tender_category: z.string().optional(),
-  emd: z.number().optional(),
+  emd: z.string().optional(),
   tender_status: z.string().optional(),
   // Remove the quantity field from here
   // product_id: z.string().optional(),
@@ -421,7 +421,7 @@ export default function InputForm() {
                               type="radio"
                               id="emd"
                               {...field}
-                              value={0}
+                              value="0"
                               checked={field.value === "0"}
                               className="h-4 w-4"
                             />
@@ -432,9 +432,9 @@ export default function InputForm() {
                               type="radio"
                               id="emd"
                               {...field}
-                              value={1}
+                              value="1"
                               checked={field.value === "1"}
-                              className="h-4 w-4"
+                              className="h-4 w-4" 
                             />
                             <label htmlFor="emd-pending">Pending</label>
                           </div>

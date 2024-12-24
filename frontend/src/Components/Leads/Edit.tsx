@@ -57,7 +57,6 @@ const formSchema = z.object({
   contact_id: z.any().optional(),
   lead_status: z.string().optional(),
   lead_source: z.string().optional(),
-
   lead_type: z.string().optional(),
   tender_number: z.string().optional(),
   bid_end_date: z.string().optional(),
@@ -243,15 +242,16 @@ export default function EditLeadPage() {
   });
 
   const onSubmit = (data: FormValues) => {
-    // Include product rows in the submission data
     const submissionData = {
       ...data,
+
       products: productRows.map((row) => ({
         product_id: row.product_id,
         quantity: row.quantity,
       })),
     };
 
+    // window.location.reload();
     fetchData.mutate(submissionData);
     queryClient.invalidateQueries({ queryKey: ["supplier"] });
     queryClient.invalidateQueries({ queryKey: ["supplier", id] });
@@ -286,7 +286,7 @@ export default function EditLeadPage() {
                           contacts.map((contact) => (
                             <SelectItem
                               key={contact.id}
-                              value={String(contact.id)} // Ensure value is a string
+                              value={String(contact.id)}
                             >
                               {contact.contact_person}
                             </SelectItem>
@@ -460,8 +460,10 @@ export default function EditLeadPage() {
                               type="radio"
                               id="emd-paid"
                               {...field}
-                              value={1}
-                              checked={field.value === "1"}
+                              // value={0}
+                              // checked={Number(field.value) === 0}
+                              value="0"
+                              checked={field.value === "0"}
                               className="h-4 w-4"
                             />
                             <label htmlFor="emd-paid">Paid</label>
@@ -471,8 +473,10 @@ export default function EditLeadPage() {
                               type="radio"
                               id="emd-pending"
                               {...field}
-                              value={0}
-                              checked={field.value === "0"}
+                              // value={1}
+                              // checked={Number(field.value) === 1}
+                              value="1"
+                              checked={field.value === "1"}
                               className="h-4 w-4"
                             />
                             <label htmlFor="emd-pending">Pending</label>
@@ -603,7 +607,7 @@ export default function EditLeadPage() {
                       onChange={(e) => {
                         const newRows = [...productRows];
                         newRows[index].quantity = e.target.value;
-                        setProductRows(newRows); // Update the state with the new quantity
+                        setProductRows(newRows);
                       }}
                     />
                   </TableCell>
@@ -614,7 +618,7 @@ export default function EditLeadPage() {
                         const newRows = productRows.filter(
                           (_, i) => i !== index
                         );
-                        setProductRows(newRows); // Update the state with the new rows
+                        setProductRows(newRows);
                       }}
                     >
                       <X />
@@ -640,9 +644,9 @@ export default function EditLeadPage() {
           <div className="flex justify-end space-x-2">
             <Button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
+              onClick={() => {
                 navigate("/leads");
+                window.location.reload();
               }}
             >
               Cancel
