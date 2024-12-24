@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('employee_id'); 
             $table->unsignedBigInteger('contact_id');
+            $table->unsignedBigInteger("lead_number")->nullable(); 
             $table->string("lead_owner")->nullable(); 
             $table->string("lead_type",100)->nullable();
             $table->string("tender_number")->nullable();

@@ -18,6 +18,23 @@ use App\Http\Controllers\Api\BaseController;
     
 class LeadsController extends BaseController
 {
+
+    public static function generateLeadNumber(): string
+    {
+        // Find the latest profile number for the current month and year
+        $latestNumber = Lead::where('lead_number', 'like', date('my') . '%')
+                        ->orderBy('lead_number', 'DESC')
+                        ->first();
+
+        // Increment the numeric part of the profile number
+        $lastNumber = 1;
+
+        if ($latestNumber) {
+            $lastNumber = intval(substr($latestNumber->lead_number, 4)) + 1;
+        }
+        return date('my') . str_pad($lastNumber, 3, '0', STR_PAD_LEFT);
+    }
+    
     /**
      * All Leads .
      */
@@ -54,7 +71,8 @@ class LeadsController extends BaseController
         $lead = new Lead();
         $lead->employee_id = $employee->id;
         $lead->contact_id = $request->input("contact_id");
-        // $lead->lead_owner = $employee->employee_name;
+        $lead->lead_number = $this->generateLeadNumber();
+        $lead->lead_owner = $employee->employee_name;
         $lead->lead_type = $request->input("lead_type");
         $lead->tender_number = $request->input("tender_number");
         $lead->portal = $request->input("portal");
@@ -106,6 +124,7 @@ class LeadsController extends BaseController
         $lead->tender_category = $request->input("tender_category");
         $lead->bid_end_date = $request->input("bid_end_date");
         $lead->tender_status = $request->input("tender_status");
+        $lead->emd = $request->input("emd");
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
         $lead->save();
@@ -125,6 +144,7 @@ class LeadsController extends BaseController
         //end
         $previousProducts = LeadProduct::where("lead_id",$lead->id)->delete();
         $productDetails = [];
+        if($products){
         foreach ($products as $product) {
         $productDetails[] = new LeadProduct([
             'product_id' => $product['product_id'],
@@ -133,6 +153,7 @@ class LeadsController extends BaseController
           }
             //one to many relatonship for stroing products and for fetching
          $lead->leadProducts()->saveMany($productDetails);
+        }
         return $this->sendResponse(['Lead'=> new LeadResource($lead)], 'Lead Updated Successfully');
     }
     

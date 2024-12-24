@@ -26,9 +26,9 @@ class Lead extends Model
        return $this->belongsTo(Employee::class, 'employee_id');
    }
 
-   public function followUp()
+   public function followUps()
    {
-       return $this->hasOne(FollowUp::class, 'lead_id');
+       return $this->hasMany(FollowUp::class, 'lead_id');
    }
 
     public function leadProducts()
