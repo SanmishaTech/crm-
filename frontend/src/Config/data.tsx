@@ -1,5 +1,4 @@
 import { NavItem } from "@/types";
-import { Icon } from "lucide-react";
 
 export const navItems: NavItem[] = [
   {

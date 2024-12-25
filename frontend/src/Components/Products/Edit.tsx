@@ -77,7 +77,7 @@ const formSchema = z.object({
     .number()
     .min(100000, { message: "HSN Code must be at least 6 digits." })
     .max(9999999999, { message: "HSN Code should not exceed 10 digits." }),
-  product_gstin: z
+  gst_rate: z
     .string()
     .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
       message: "Invalid GST Number. Please enter a valid GSTIN.",
@@ -99,7 +99,7 @@ export default function EditProductPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       product: "",
-      product_gstin: "",
+      gst_rate: "",
       hsn_code: null,
       product_category_id: "",
       supplier_id: "",
@@ -177,7 +177,7 @@ export default function EditProductPage() {
       const newData = data.data.Product;
       form.reset({
         product: newData.product || "",
-        product_gstin: newData.product_gstin || "",
+        gst_rate: newData.gst_rate || "",
         hsn_code: newData.hsn_code || "",
 
         supplier_id: newData.supplier_id || "",
@@ -401,7 +401,7 @@ export default function EditProductPage() {
               />
               <FormField
                 control={form.control}
-                name="product_gstin"
+                name="gst_rate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>GST IN</FormLabel>

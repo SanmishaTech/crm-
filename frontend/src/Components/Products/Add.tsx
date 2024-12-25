@@ -80,13 +80,7 @@ const FormSchema = z.object({
     .number()
     .min(100000, { message: "HSN Code must be at least 6 digits." })
     .max(9999999999, { message: "HSN Code should not exceed 10 digits." }),
-  product_gstin: z
-    .string()
-    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-      message: "Invalid GST Number. Please enter a valid GSTIN.",
-    })
-    .max(15, "GST Number must be exactly 15 characters")
-    .min(15, "GST Number must be exactly 15 characters"),
+  gst_rate: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -104,7 +98,7 @@ export default function InputForm() {
       product: "",
       model: "",
       manufacturer: "",
-      product_gstin: "",
+      gst_rate: "",
       hsn_code: null,
       opening_qty: null,
       closing_qty: null,
@@ -287,122 +281,125 @@ export default function InputForm() {
           {/* Feilds First Row Ends */}
           {/* Feilds Second Row */}
           <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-semibold  text-left">
-            Pricing & Tax Info
-          </h2>
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="hsn_code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>HSN Code:</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      className="justify-left"
-                      placeholder="Enter hsn code"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the HSN Code.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="product_gstin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>GST IN</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      maxLength={15}
-                      {...field}
-                      style={{ textTransform: "uppercase" }}
-                      placeholder="Enter Gst Number"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The GST Number must be 15 characters long and should follow
-                    this format:<strong>22ABCDE0123A1Z5</strong>
-                  </FormDescription>{" "}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="last_traded_price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Traded Price (Rs)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter Last Traded Price"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Enter the Last Traded Price.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+            <h2 className="text-xl font-semibold  text-left">
+              Pricing & Tax Info
+            </h2>
+            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="hsn_code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>HSN Code:</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        className="justify-left"
+                        placeholder="Enter hsn code"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>Enter the HSN Code.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="gst_rate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GST Rate (in %)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        maxLength={15}
+                        {...field}
+                        style={{ textTransform: "uppercase" }}
+                        placeholder="Enter Gst Number"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      The GST Number must be 15 characters long and should
+                      follow this format:<strong>22ABCDE0123A1Z5</strong>
+                    </FormDescription>{" "}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="last_traded_price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Last Traded Price (Rs)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter Last Traded Price"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Enter the Last Traded Price.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           {/* Feilds Second Row Ends */}
           <div className="flex flex-col gap-1">
-
-          <h2 className="text-xl font-semibold  text-left">
-            Inventory Details
-          </h2>
-          {/* Feilds Third Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="opening_qty"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Opening Quantity(units)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      className="justify-left"
-                      placeholder="Enter Opening Quantity"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Opening Quantity.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="closing_qty"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Closing Quantity (units)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter Closing Quantity"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Closing Quantity.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+            <h2 className="text-xl font-semibold  text-left">
+              Inventory Details
+            </h2>
+            {/* Feilds Third Row Starts */}
+            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="opening_qty"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Opening Quantity(units)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        className="justify-left"
+                        placeholder="Enter Opening Quantity"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Enter the Opening Quantity.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="closing_qty"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Closing Quantity (units)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter Closing Quantity"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Enter the Closing Quantity.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           <div className="flex flex-col gap-1">
             <h2 className="text-xl font-semibold  text-left">

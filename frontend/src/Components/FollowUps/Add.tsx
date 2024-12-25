@@ -172,7 +172,7 @@ export default function InputForm() {
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="email">Email</SelectItem>
-                          <SelectItem value="quotation">Quotation</SelectItem>
+                          <SelectItem value="call">Call</SelectItem>
                           <SelectItem value="inPersonMeet">
                             In Person Meet
                           </SelectItem>

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
 import { X, Check, ChevronsUpDown } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -64,7 +65,7 @@ const formSchema = z.object({
   tender_category: z.string().optional(),
   // emd: z.string().optional(),
   emd: z.coerce.number().optional(),
-
+  lead_closing_reason: z.string().optional(),
   tender_status: z.string().optional(),
 });
 
@@ -95,6 +96,7 @@ export default function EditLeadPage() {
   const [loading, setLoading] = useState(false);
   const [contacts, setContacts] = useState<any[]>([]);
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
+  const [file, setFile] = useState<File | null>(null);
   const [frameworks, setFrameworks] = useState<
     { value: string; label: string }[]
   >([]);
@@ -122,6 +124,8 @@ export default function EditLeadPage() {
       quantity: "",
       rate: "",
       product_id: "",
+      lead_closing_reason: "",
+      lead_attachment: "",
     },
   });
 
@@ -129,6 +133,9 @@ export default function EditLeadPage() {
     endpoint: `/api/leads/${id}`,
     queryKey: ["editlead", id],
     params: {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["editlead"] });
         queryClient.invalidateQueries({ queryKey: ["editlead", id] });
@@ -251,6 +258,7 @@ export default function EditLeadPage() {
   const onSubmit = (data: FormValues) => {
     const submissionData = {
       ...data,
+      lead_attachment: file,
 
       products: productRows.map((row) => ({
         product_id: row.product_id,
@@ -258,6 +266,7 @@ export default function EditLeadPage() {
         rate: row.rate,
       })),
     };
+    console.log(submissionData);
 
     // window.location.reload();
     fetchData.mutate(submissionData);
@@ -272,7 +281,7 @@ export default function EditLeadPage() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Fields First Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
               name="contact_id"
@@ -312,20 +321,7 @@ export default function EditLeadPage() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="lead_status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lead Status</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Lead Status" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Lead Status.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
             <FormField
               control={form.control}
               name="lead_source"
@@ -364,6 +360,81 @@ export default function EditLeadPage() {
                   </FormControl>
                   <FormDescription>Select the lead type.</FormDescription>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="space-x-6 ">
+            <FormField
+              control={form.control}
+              name="lead_status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Lead Status</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Lead Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="open">Open</SelectItem>
+                        <SelectItem value="inProgress">In Progress</SelectItem>
+                        <SelectItem value="quotation">Quotation</SelectItem>
+                        <SelectItem value="close">Close</SelectItem>
+                        <SelectItem value="dealStatus">Deal Status</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>Enter the Lead Status.</FormDescription>
+                  <FormMessage />
+                  {field.value === "close" && (
+                    <FormField
+                      control={form.control}
+                      name="lead_closing_reason"
+                      render={({ field: closeField }) => (
+                        <FormItem>
+                          <FormLabel>Reason for Closing</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              className="w-full" // Full width applied here
+                              placeholder="Enter reason for closing the lead"
+                              {...closeField} // Bind the close field to the Textarea
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Provide a reason for closing the lead.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                  {field.value === "quotation" && (
+                    <FormField
+                      control={form.control}
+                      name="lead_attachment"
+                      render={({ field: pdfField }) => (
+                        <FormItem>
+                          <FormLabel>Upload PDF</FormLabel>
+                          <FormControl>
+                            <input
+                              id="pdf-upload"
+                              type="file"
+                              onChange={(e) => {
+                                setFile(e.target.files[0]);
+                              }}
+                              className="w-full border p-2"
+                              accept="application/pdf" // Accept only PDF files
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Upload a PDF to accompany your closing reason.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </FormItem>
               )}
             />
