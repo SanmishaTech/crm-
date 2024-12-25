@@ -100,14 +100,19 @@ class LeadsController extends BaseController
         $lead->save();
 
         $products = $request->input('products');
-          
+          $gstRate = 18;
         if($products){
             // Prepare the product details for insertion
         $productDetails = [];
         foreach ($products as $product) {
+            $amount = $product['quantity'] * $product['rate'];
+            $amount = amount
         $productDetails[] = new LeadProduct([
             'product_id' => $product['product_id'],
             'quantity' => $product['quantity'],
+            'rate' => $product['rate'],
+            'gst_rate' => $gstRate,
+            'amount' => $product['quantity'],
              ]);
           }
             //one to many relatonship for stroing products and for fetching
@@ -263,7 +268,7 @@ class LeadsController extends BaseController
 
     public function generateQuotation(string $id)
     {
-        $lead = Lead::with('updateLeadProducts')->find($id);
+        $leads = Lead::with('updateLeadProducts')->find($id);
         // 
         $user = auth()->user();
         $employee = $user->employee->first();
@@ -273,14 +278,14 @@ class LeadsController extends BaseController
         }
         
         
-        if (!$lead) {
+        if (!$leads) {
             return response()->json(['message' => 'Lead not found'], 404);
         }
         
         $data = [
             'user' => $user,
             'employee' => $employee,
-            'lead' => $lead,
+            'leads' => $leads,
         ];
 
         // Render the Blade view to HTML
@@ -295,8 +300,8 @@ class LeadsController extends BaseController
         // Define the file path for saving the PDF
         $filePath = 'public/Lead/generated_quotations/quotation_' . time(). $user->id . '.pdf'; // Store in 'storage/app/invoices'
         $fileName = basename($filePath); // Extracts 'invoice_{timestamp}{user_id}.pdf'
-        $lead->lead_quotation = $fileName;
-        $lead->save();
+        $leads->lead_quotation = $fileName;
+        $leads->save();
         // Save PDF to storage
         Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
 
