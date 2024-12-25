@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('lead_id'); 
             $table->unsignedBigInteger('product_id');
-            $table->string('product_name')->nullable();
             $table->integer("quantity")->nullable();
             $table->decimal("rate",10,2)->nullable();
             $table->integer("gst_rate")->nullable();
