@@ -53,6 +53,7 @@ type Supplier = {
   contact_id: string;
   lead_source: string;
   lead_status: string;
+  follow_up_type: string;
 };
 
 type PaginationData = {
@@ -67,6 +68,7 @@ const formSchema = z.object({
   contact_id: z.string().min(2).max(50),
   lead_source: z.string().min(2).max(50),
   lead_status: z.string().min(2).max(50),
+  follow_up_type: z.string().min(2).max(50),
 });
 
 export default function TableDemo() {
@@ -169,6 +171,9 @@ export default function TableDemo() {
               <TableHead onClick={() => handleSort("lead_status")}>
                 Lead Status
               </TableHead>
+              <TableHead onClick={() => handleSort("follow_up_type")}>
+                Follow Up Type
+              </TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -180,7 +185,21 @@ export default function TableDemo() {
                 <TableRow key={lead.id}>
                   <TableCell>{lead?.contact?.contact_person}</TableCell>
                   <TableCell>{lead.lead_source}</TableCell>
-                  <TableCell>{lead.lead_status}</TableCell>
+                  <TableCell>
+                    {lead.lead_status
+                      ? lead.lead_status.charAt(0).toUpperCase() +
+                        lead.lead_status.slice(1)
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell>
+                    {lead.follow_ups?.[0]?.follow_up_type
+                      ? lead.follow_ups[0].follow_up_type
+                          .charAt(0)
+                          .toUpperCase() +
+                        lead.follow_ups[0].follow_up_type.slice(1)
+                      : "N/A"}
+                  </TableCell>
+
                   <TableCell className="text-right">
                     {/* <button
                       onClick={() => navigate(`/leads/edit/${lead.id}`)}

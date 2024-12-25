@@ -13,7 +13,7 @@ const History = ({ leads }) => {
     return <div>Loading lead data...</div>;
   }
 
-  const followUps = leads.follow_ups; // Get all follow-ups
+  const followUps = leads.follow_ups;  
 
   // Log the leads data for debugging
   console.log(followUps);

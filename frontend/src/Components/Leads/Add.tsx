@@ -90,7 +90,7 @@ export default function InputForm() {
     defaultValues: {
       contact_id: "",
       lead_source: "",
-      lead_status: "",
+      lead_status: "Open",
       lead_type: "basic",
       tender_number: "",
       bid_end_date: "",
@@ -274,7 +274,6 @@ export default function InputForm() {
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormDescription>Select the Contact.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -289,7 +288,6 @@ export default function InputForm() {
                   <FormControl>
                     <Input placeholder="Enter Lead Source Name" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the Lead Source name.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -301,9 +299,12 @@ export default function InputForm() {
                 <FormItem>
                   <FormLabel>Lead Status</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Lead Status" {...field} />
+                    <Input
+                      placeholder="Enter Lead Status"
+                      {...field}
+                      disabled
+                    />
                   </FormControl>
-                  <FormDescription>Enter the Lead Status.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -330,7 +331,6 @@ export default function InputForm() {
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormDescription>Select the lead type.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -348,9 +348,7 @@ export default function InputForm() {
                       <FormControl>
                         <Input placeholder="Enter Tender Number" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Enter the tender number.
-                      </FormDescription>
+
                       <FormMessage />
                     </FormItem>
                   )}
@@ -365,7 +363,6 @@ export default function InputForm() {
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
-                      <FormDescription>Select the tender date.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -380,7 +377,6 @@ export default function InputForm() {
                       <FormControl>
                         <Input placeholder="Enter Portal Name" {...field} />
                       </FormControl>
-                      <FormDescription>Enter the Portal name.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -409,7 +405,6 @@ export default function InputForm() {
                           </SelectContent>
                         </Select>
                       </FormControl>
-                      <FormDescription>Select the tender type.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -477,7 +472,6 @@ export default function InputForm() {
                           </SelectContent>
                         </Select>
                       </FormControl>
-                      <FormDescription>Select the tender type.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -496,7 +490,7 @@ export default function InputForm() {
               <TableRow>
                 <TableHead>Products</TableHead>
                 <TableHead>Quantity</TableHead>
-                <TableHead>Rate</TableHead> 
+                <TableHead>Rate</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>

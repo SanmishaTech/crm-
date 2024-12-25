@@ -119,7 +119,6 @@ export default function InputForm() {
                   <FormControl>
                     <Input placeholder="Enter Client Name" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the Client name.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -139,10 +138,7 @@ export default function InputForm() {
                       placeholder="Enter Gst Number"
                     />
                   </FormControl>
-                  <FormDescription>
-                    The GST Number must be 15 characters long and should follow
-                    this format:<strong>22ABCDE0123A1Z5</strong>
-                  </FormDescription>{" "}
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -165,9 +161,7 @@ export default function InputForm() {
                       value={field.value}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Enter the Contact (e.g:- 12-3456-7890).
-                  </FormDescription>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -186,122 +180,114 @@ export default function InputForm() {
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>Enter the Email.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
           <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-semibold  text-left">
-            Address Information
-          </h2>
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="street_address"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Street Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Street Address" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Street Address.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="area"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Area</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Area" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Area.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter City"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the City.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Feilds Second Row Ends */}
-          {/* Feilds Third Row Starts */}
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="state"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>State</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter State" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the State.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="pincode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Pincode</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Pincode"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{6}"
-                      maxLength={6}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Pincode.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Country</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Country"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Country.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-                      </div>
-
+            <h2 className="text-xl font-semibold  text-left">
+              Address Information
+            </h2>
+            <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="street_address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Street Address</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Street Address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="area"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Area</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Area" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="justify-left"
+                        placeholder="Enter City"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            {/* Feilds Second Row Ends */}
+            {/* Feilds Third Row Starts */}
+            <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+              <FormField
+                control={form.control}
+                name="state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>State</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter State" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="pincode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Pincode</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Pincode"
+                        {...field}
+                        type="text"
+                        inputMode="numeric"
+                        pattern="\d{6}"
+                        maxLength={6}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="justify-left"
+                        placeholder="Enter Country"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           {/* Feilds Fourth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
