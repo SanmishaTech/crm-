@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\LeadResource;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Resources\ContactResource;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Api\BaseController;
 
     /**
@@ -67,6 +68,15 @@ class LeadsController extends BaseController
      */
     public function store(StoreLeadRequest $request): JsonResponse
     {
+
+        if($request->hasFile('lead_attachment')){
+            $quotationFileNameWithExtention = $request->file('lead_attachment')->getClientOriginalName();
+            $quotationFilename = pathinfo($quotationFileNameWithExtention, PATHINFO_FILENAME);
+            $fileExtention = $request->file('lead_attachment')->getClientOriginalExtension();
+            $quotationFileNameToStore = $quotationFilename.'_'.time().'.'.$fileExtention;
+            $quotationFilePath = $request->file('lead_attachment')->storeAs('public/Lead/lead_attachment', $quotationFileNameToStore);
+         }
+
         $employee = auth()->user()->employee;
         $lead = new Lead();
         $lead->employee_id = $employee->id;
@@ -82,6 +92,9 @@ class LeadsController extends BaseController
         $lead->tender_status = $request->input("tender_status");
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
+        if($request->hasFile('lead_attachment')){
+            $lead->lead_attachment = $quotationFileNameToStore;
+         } 
         $lead->save();
 
         $products = $request->input('products');
@@ -101,6 +114,7 @@ class LeadsController extends BaseController
         
         return $this->sendResponse(['Lead'=> new LeadResource($lead)], 'Lead Created Successfully');
     }
+    
 
      /**
      * Update Lead.
@@ -113,9 +127,21 @@ class LeadsController extends BaseController
         $employee = auth()->user()->employee;
         $lead = Lead::find($id);
         //   $lead = Lead::with(['leadProducts', 'employee', 'followUp', 'contact'])->find($id);
-            if(!$lead){
-                return $this->sendError("Lead not found", ['error'=>['lead not found']]);
+        if(!$lead){
+            return $this->sendError("Lead not found", ['error'=>['lead not found']]);
+        }
+
+        if($request->hasFile('lead_attachment')){
+            if(!empty($lead->lead_attachment) && Storage::exists('public/Lead/lead_attachment'.$lead->lead_attachment)) {
+                Storage::delete('public/Lead/lead_attachment'.$lead->lead_attachment);
             }
+            $quotationFileNameWithExtention = $request->file('lead_attachment')->getClientOriginalName();
+            $quotationFilename = pathinfo($quotationFileNameWithExtention, PATHINFO_FILENAME);
+            $fileExtention = $request->file('lead_attachment')->getClientOriginalExtension();
+            $quotationFileNameToStore = $quotationFilename.'_'.time().'.'.$fileExtention;
+            $quotationFilePath = $request->file('lead_attachment')->storeAs('public/Lead/lead_attachment', $quotationFileNameToStore);
+        }
+    
             
         $lead->contact_id = $request->input("contact_id");
         $lead->lead_type = $request->input("lead_type");
@@ -127,6 +153,10 @@ class LeadsController extends BaseController
         $lead->emd = $request->input("emd");
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
+        $lead->lead_closing_reason = $request->input("lead_closing_reason");
+        if($request->hasFile('lead_attachment')){
+            $lead->lead_attachment = $quotationFileNameToStore;
+         } 
         $lead->save();
 
         $products = $request->input('products');
@@ -189,12 +219,42 @@ class LeadsController extends BaseController
      /**
      * Follow Up Types.
      */
-    public function follow_up_types(string $id): JsonResponse
+    public function follow_up_types(): JsonResponse
     {
           $follow_up_types = config("data.follow_up_types");
         if(!$follow_up_types){
             return $this->sendError("Follow up Types not found", ['error'=>'Follow up Types not found']);
         }
         return $this->sendResponse(["FollowUpTypes"=>$follow_up_types], "Follow up Types retrived successfully");
+    }
+
+     /**
+     * Lead Status.
+     */
+     public function leadStatus(string $id): JsonResponse
+    {
+          $lead_status = config("data.lead_status");
+        if(!$lead_status){
+            return $this->sendError("Lead Status not found", ['error'=>'Lead Status not found']);
+        }
+        return $this->sendResponse(["LeadStatus"=>$follolead_statusw_up_types], "Lead Status retrieved successfully");
+    }
+
+     /**
+     * Close Lead.
+     */
+    public function closeLead(Request $request, string $id): JsonResponse
+    {
+        $lead = Lead::find($id);
+
+        if(!$lead){
+            return $this->sendError("Lead not found", ['error'=>['lead not found']]);
+        }
+            
+        $lead->lead_status = $request->input("lead_status");
+        $lead->lead_closing_reason = $request->input("lead_closing_reason");
+        $lead->save();
+
+        return $this->sendResponse(["Lead"=>$lead], "Lead Status updated successfully");
     }
 }
