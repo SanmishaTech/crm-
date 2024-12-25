@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Lead;
 use App\Models\FollowUp;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -52,6 +53,15 @@ class FollowUpsController extends BaseController
     $followUp->follow_up_type = $request->input('follow_up_type');
     $followUp->remarks = $request->input('remarks');
     $followUp->save();
+    
+    $lead = Lead::find($followUp->lead_id);
+    if(!$lead){
+        return $this->sendError("Lead not found", ['error'=>['lead not found']]);
+    }
+    $lead->lead_follow_up_date = $request->input('next_follow_up_date');
+    $lead->follow_up_remark = $request->input('remarks');
+    $lead->save();
+
     return $this->sendResponse(['FollowUp'=> new FollowUpResource($followUp)], 'Follow-Up Created Successfully');
 
    }
