@@ -36,11 +36,11 @@ class Lead extends Model
         return $this->hasMany(LeadProduct::class);
     }
 
-    // public function updateLeadProducts()
-    // {
-    //     return $this->belongsToMany(Product::class, 'lead_products')
-    //     ->withPivot('id','lead_id',"product_id",'quantity');
-    // }
+    public function updateLeadProducts()
+    {
+        return $this->belongsToMany(Product::class, 'lead_products')
+        ->withPivot('id','lead_id',"product_id",'quantity');
+    }
 
    
 }
