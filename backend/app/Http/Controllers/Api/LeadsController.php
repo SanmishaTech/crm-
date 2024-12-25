@@ -184,4 +184,17 @@ class LeadsController extends BaseController
         $lead->delete();
         return $this->sendResponse([], "Lead deleted successfully");
     }
+
+
+     /**
+     * Follow Up Types.
+     */
+    public function follow_up_types(string $id): JsonResponse
+    {
+          $follow_up_types = config("data.follow_up_types");
+        if(!$follow_up_types){
+            return $this->sendError("Follow up Types not found", ['error'=>'Follow up Types not found']);
+        }
+        return $this->sendResponse(["FollowUpTypes"=>$follow_up_types], "Follow up Types retrived successfully");
+    }
 }

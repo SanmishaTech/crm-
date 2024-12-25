@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('lead_products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('lead_id'); 
-            $table->unsignedBigInteger('product_id'); 
+            $table->unsignedBigInteger('product_id');
             $table->integer("quantity")->nullable();
+            $table->decimal("rate",10,2)->nullable();
+            $table->integer("gst_rate")->nullable();
+            $table->decimal("amount",10,2)->nullable();
             $table->timestamps();
         });
     }

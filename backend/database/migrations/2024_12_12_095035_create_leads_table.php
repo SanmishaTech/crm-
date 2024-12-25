@@ -16,7 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_id'); 
             $table->unsignedBigInteger('contact_id');
             $table->unsignedBigInteger("lead_number")->nullable(); 
-            $table->string("lead_owner")->nullable(); 
+            $table->string("lead_owner",100)->nullable(); 
+            $table->string("lead_status",100)->nullable(); 
+            $table->date("follow_up_date")->nullable();
+            $table->string("follow_up_remark")->nullable(); 
             $table->string("lead_type",100)->nullable();
             $table->string("tender_number")->nullable();
             $table->string("portal")->nullable();
@@ -24,8 +27,11 @@ return new class extends Migration
             $table->boolean("emd")->nullable();
             $table->date("bid_end_date")->nullable();
             $table->string("tender_status")->nullable();
-            $table->string("lead_status")->nullable();
             $table->string("lead_source")->nullable();
+            $table->string("lead_invoice")->nullable(); 
+            $table->string("lead_quotation")->nullable(); 
+            $table->string("lead_attachment")->nullable(); 
+            $table->string("lead_closing_reason")->nullable(); 
             $table->timestamps();
         });
     }
@@ -38,3 +44,9 @@ return new class extends Migration
         Schema::dropIfExists('leads');
     }
 };
+
+// create api for follow_up_type config
+// lead_invoice_path
+// lead_quotation_path
+// quotation_attchment_path lead columns
+// lead close reason column
