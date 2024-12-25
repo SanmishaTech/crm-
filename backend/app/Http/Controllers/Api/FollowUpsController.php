@@ -16,6 +16,30 @@ use App\Http\Controllers\Api\BaseController;
     
 class FollowUpsController extends BaseController
 {
+
+  public function index(Request $request): JsonResponse
+    {
+        $query = FollowUp::query();
+
+        if ($request->query('search')) {
+            $searchTerm = $request->query('search');
+    
+            $query->where(function ($query) use ($searchTerm) {
+                $query->where('follow_up_type', 'like', '%' . $searchTerm . '%');
+            });
+        }
+        $followUp = $query->orderBy("id", "DESC")->paginate(5);
+
+        return $this->sendResponse(["FollowUp"=>FollowUpResource::collection($followUp),
+        'Pagination' => [
+            'current_page' => $followUp->currentPage(),
+            'last_page' => $followUp->lastPage(),
+            'per_page' => $followUp->perPage(),
+            'total' => $followUp->total(),
+        ]], "Department retrived successfully");
+        
+    }
+
     /**
      * Store Follow-Up .
      */
@@ -23,7 +47,7 @@ class FollowUpsController extends BaseController
    {
     $followUp = new FollowUp();
     $followUp->lead_id = $request->input('lead_id');
-    $followUp->follow_up_date = $request->input('follow_up_date'); // now()->format('Y-m-d');
+    $followUp->follow_up_date = $request->input('follow_up_date');  
     $followUp->next_follow_up_date = $request->input('next_follow_up_date');
     $followUp->follow_up_type = $request->input('follow_up_type');
     $followUp->remarks = $request->input('remarks');

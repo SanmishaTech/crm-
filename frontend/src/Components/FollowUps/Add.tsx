@@ -4,7 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -23,14 +29,16 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useGetData } from "@/lib/HTTP/GET";
 import { useParams } from "react-router-dom";
 import Summary from "./Summary";
+import History from "./History";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Get QueryClient from the context
 // Form Schema
 const FormSchema = z.object({
-  remark: z.string().optional(),
+  remarks: z.string().optional(),
   follow_up_date: z.string().optional(),
   next_follow_up_date: z.string().optional(),
+  follow_up_type: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -39,9 +47,10 @@ export default function InputForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      remark: "",
+      remarks: "",
       follow_up_date: "",
       next_follow_up_date: "",
+      follow_up_type: "",
     },
   });
   const queryClient = useQueryClient();
@@ -51,18 +60,20 @@ export default function InputForm() {
 
   type FormValues = z.infer<typeof FormSchema>;
   const formData = usePostData({
-    endpoint: "/api/leads",
+    endpoint: "/api/follow_ups",
     params: {
       onSuccess: (data) => {
         console.log("data", data);
-        queryClient.invalidateQueries({ queryKey: ["supplier"] });
+        queryClient.invalidateQueries({ queryKey: ["followUps"] });
         navigate("/leads");
       },
       onError: (error) => {
         console.log("error", error);
 
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        if (error.message && error.message.includes("duplicate Follow Up")) {
+          toast.error(
+            "Follow Up name is duplicated. Please use a unique name."
+          );
         } else {
           toast.error("Failed to submit the form. Please try again.");
         }
@@ -85,16 +96,24 @@ export default function InputForm() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    formData.mutate(data);
+    const formDataWithLeadId = { lead_id: id, ...data }; // Combine the lead ID with the form data
+    formData.mutate(formDataWithLeadId);
   };
 
   return (
     <div className="max-w-4xl mx-auto  ">
       <Tabs defaultValue="followUp">
-        <TabsList>
-          <TabsTrigger value="followUp">Add Follow up</TabsTrigger>
-          <TabsTrigger value="summary">Show Summary</TabsTrigger>
-        </TabsList>   
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="followUp">Add Follow up</TabsTrigger>
+          </TabsList>
+          <TabsList>
+            <TabsTrigger value="summary">Show Summary</TabsTrigger>
+          </TabsList>
+          <TabsList>
+            <TabsTrigger value="history">History</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="followUp">
           <h2 className="text-2xl font-semibold   text-center">
@@ -103,12 +122,11 @@ export default function InputForm() {
           <p className="text-center text-xs mb-9">
             Add a Follow Up to the database.
           </p>
-          <h2 className="text-xl font-semibold text-left">Follow Up</h2>
           {/* Form Fields */}
           <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {/* Feilds First Row */}
-              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="follow_up_date"
@@ -118,9 +136,7 @@ export default function InputForm() {
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Select the Follow Up Date.
-                      </FormDescription>
+
                       <FormMessage />
                     </FormItem>
                   )}
@@ -134,9 +150,35 @@ export default function InputForm() {
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Select the Next Follow Up Date.
-                      </FormDescription>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="follow_up_type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Follow Up Type</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a Follow Up Type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="email">Email</SelectItem>
+                          <SelectItem value="quotation">Quotation</SelectItem>
+                          <SelectItem value="inPersonMeet">
+                            In Person Meet
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+
                       <FormMessage />
                     </FormItem>
                   )}
@@ -146,7 +188,7 @@ export default function InputForm() {
                 {" "}
                 <FormField
                   control={form.control}
-                  name="remark"
+                  name="remarks"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Remark</FormLabel>
@@ -157,7 +199,6 @@ export default function InputForm() {
                           {...field}
                         />
                       </FormControl>
-                      <FormDescription>Enter the Remark.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -186,6 +227,9 @@ export default function InputForm() {
         </TabsContent>
         <TabsContent value="summary">
           <Summary leads={leads} />.
+        </TabsContent>
+        <TabsContent value="history">
+          <History leads={leads} />.
         </TabsContent>
       </Tabs>
     </div>

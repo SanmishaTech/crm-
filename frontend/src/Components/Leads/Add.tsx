@@ -99,6 +99,7 @@ export default function InputForm() {
       emd: "",
       tender_status: "",
       quantity: "",
+      rate: "",
       product_id: "",
     },
   });
@@ -211,7 +212,9 @@ export default function InputForm() {
   const onSubmit = async (data: FormValues) => {
     const payload = {
       ...data,
-      products: productRows.filter((row) => row.product_id && row.quantity), // Only send rows with both values
+      products: productRows.filter(
+        (row) => row.product_id && row.quantity && row.rate
+      ), // Only send rows with all values
     };
 
     formData.mutate(payload);
@@ -493,6 +496,7 @@ export default function InputForm() {
               <TableRow>
                 <TableHead>Products</TableHead>
                 <TableHead>Quantity</TableHead>
+                <TableHead>Rate</TableHead> 
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -569,6 +573,18 @@ export default function InputForm() {
                       onChange={(e) => {
                         const newRows = [...productRows];
                         newRows[index].quantity = e.target.value;
+                        setProductRows(newRows); // Update the state with the new quantity
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      placeholder="Rate"
+                      name="rate"
+                      value={row.rate}
+                      onChange={(e) => {
+                        const newRows = [...productRows];
+                        newRows[index].rate = e.target.value;
                         setProductRows(newRows); // Update the state with the new quantity
                       }}
                     />

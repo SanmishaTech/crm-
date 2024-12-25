@@ -27,6 +27,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::resource('employees', EmployeesController::class);  
    Route::post('/follow_ups', [FollowUpsController::class, 'store'])->name("follow_ups.store");
    Route::get('/follow_ups/{id}', [FollowUpsController::class, 'show'])->name("follow_ups.show");
+   Route::get('/follow_ups', [FollowUpsController::class, 'index'])->name("follow_ups.index");
+
    Route::post('/employees/resignation/{id}', [EmployeesController::class, 'resignation'])->name("employee.resignation");
    Route::resource('products', ProductsController::class);  
    Route::resource('product_categories', ProductCategoriesController::class);  
