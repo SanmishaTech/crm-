@@ -1,5 +1,11 @@
 //@ts-nocheck
 import { useEffect, useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import axios from "axios";
 import {
   Table,
@@ -178,77 +184,83 @@ export default function TableDemo() {
             </TableRow>
           </TableHeader>
           <TableFooter></TableFooter>
-          <TableBody>
-            {Sup?.data?.Lead &&
-              Array.isArray(Sup.data.Lead) &&
-              Sup.data.Lead.map((lead) => (
-                <TableRow key={lead.id}>
-                  <TableCell>{lead?.contact?.contact_person}</TableCell>
-                  <TableCell>{lead.lead_source}</TableCell>
-                  <TableCell>
-                    {lead.lead_status
-                      ? lead.lead_status.charAt(0).toUpperCase() +
-                        lead.lead_status.slice(1)
-                      : "N/A"}
-                  </TableCell>
-                  <TableCell>
-                    {lead.follow_ups?.[0]?.follow_up_type
-                      ? lead.follow_ups[0].follow_up_type
-                          .charAt(0)
-                          .toUpperCase() +
-                        lead.follow_ups[0].follow_up_type.slice(1)
-                      : "N/A"}
-                  </TableCell>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TableBody>
+                  {Sup?.data?.Lead &&
+                    Array.isArray(Sup.data.Lead) &&
+                    Sup.data.Lead.map((lead) => (
+                      <TableRow key={lead.id}>
+                        <TableCell>{lead?.contact?.contact_person}</TableCell>
+                        <TableCell>{lead.lead_source}</TableCell>
+                        <TableCell>
+                          {lead.lead_status
+                            ? lead.lead_status.charAt(0).toUpperCase() +
+                              lead.lead_status.slice(1)
+                            : "N/A"}
+                        </TableCell>
+                        <TableCell>
+                          {lead.follow_ups?.[0]?.follow_up_type
+                            ? lead.follow_ups[0].follow_up_type
+                                .charAt(0)
+                                .toUpperCase() +
+                              lead.follow_ups[0].follow_up_type.slice(1)
+                            : "N/A"}
+                        </TableCell>
 
-                  <TableCell className="text-right">
-                    {/* <button
-                      onClick={() => navigate(`/leads/edit/${lead.id}`)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      Edit
-                    </button>
-                    <AlertDialogbox url={lead.id} /> */}
-                    {/*  */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="w-full flex-col items-center flex justify-center"
-                      >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            navigate(`/leads/edit/${lead.id}`);
-                          }}
-                          className="w-full text-sm"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            navigate(`/leads/followUps/${lead.id}`);
-                          }}
-                          className="w-full text-sm"
-                        >
-                          Follow Up
-                        </Button>
-                        {/* <DropdownMenuSeparator /> */}
-                        <AlertDialogbox url={lead.id} />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="center"
+                              className="w-full flex-col items-center flex justify-center"
+                            >
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  navigate(`/leads/edit/${lead.id}`);
+                                }}
+                                className="w-full text-sm"
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  navigate(`/leads/followUps/${lead.id}`);
+                                }}
+                                className="w-full text-sm"
+                              >
+                                Follow Up
+                              </Button>
+                              <AlertDialogbox url={lead.id} />
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+
+                        <TooltipContent>
+                          <p>
+                            <strong>Remarks:</strong>{" "}
+                            {lead.follow_ups?.[0]?.remarks
+                              ? lead.follow_ups[0].remarks
+                              : "No remarks available"}
+                          </p>
+                        </TooltipContent>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </TooltipTrigger>
+            </Tooltip>
+          </TooltipProvider>
         </Table>
         {/* Table End */}
         {/* Pagination Start */}

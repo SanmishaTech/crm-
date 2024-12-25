@@ -111,7 +111,7 @@ export default function InputForm() {
   const addRow = () => {
     setProductRows([
       ...productRows,
-      { product_id: "", quantity: "", isOpen: false },
+      { product_id: "", quantity: "", rate: "", isOpen: false },
     ]);
   };
   const invoices = [
