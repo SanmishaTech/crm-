@@ -2,6 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use Log;
+use File;
+use Response;
+use Mpdf\Mpdf;
+use Barryvdh\DomPDF\PDF;
+use Illuminate\Support\Facades\Storage;
+// 
 use App\Models\Lead;
 use App\Models\LeadProduct;
 use Illuminate\Http\Request;
@@ -10,7 +17,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\LeadResource;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Resources\ContactResource;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Api\BaseController;
 
     /**
@@ -19,6 +25,13 @@ use App\Http\Controllers\Api\BaseController;
     
 class LeadsController extends BaseController
 {
+    protected $quotation;
+
+    public function __construct(PDF $quotation)
+    {
+        $this->quotation = $quotation;
+    }
+    
 
     public static function generateLeadNumber(): string
     {
@@ -44,11 +57,12 @@ class LeadsController extends BaseController
         $query = Lead::query();
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
-    
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('lead_owner', 'like', '%' . $searchTerm . '%');
+                $query->where('lead_owner', 'like', '%' . $searchTerm . '%'
+                 ->orWhere('lead_status', 'like', '%'.$searchTerm.'%'));
             });
         }
+
         $leads = $query->paginate(5);
 
         return $this->sendResponse(["Lead"=>LeadResource::collection($leads),
@@ -68,15 +82,6 @@ class LeadsController extends BaseController
      */
     public function store(StoreLeadRequest $request): JsonResponse
     {
-
-        if($request->hasFile('lead_attachment')){
-            $quotationFileNameWithExtention = $request->file('lead_attachment')->getClientOriginalName();
-            $quotationFilename = pathinfo($quotationFileNameWithExtention, PATHINFO_FILENAME);
-            $fileExtention = $request->file('lead_attachment')->getClientOriginalExtension();
-            $quotationFileNameToStore = $quotationFilename.'_'.time().'.'.$fileExtention;
-            $quotationFilePath = $request->file('lead_attachment')->storeAs('public/Lead/lead_attachment', $quotationFileNameToStore);
-         }
-
         $employee = auth()->user()->employee;
         $lead = new Lead();
         $lead->employee_id = $employee->id;
@@ -92,9 +97,6 @@ class LeadsController extends BaseController
         $lead->tender_status = $request->input("tender_status");
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
-        if($request->hasFile('lead_attachment')){
-            $lead->lead_attachment = $quotationFileNameToStore;
-         } 
         $lead->save();
 
         $products = $request->input('products');
@@ -257,4 +259,49 @@ class LeadsController extends BaseController
 
         return $this->sendResponse(["Lead"=>$lead], "Lead Status updated successfully");
     }
+
+
+    public function generateQuotation(string $id)
+    {
+        $lead = Lead::with('updateLeadProducts')->find($id);
+        // 
+        $user = auth()->user();
+        $employee = $user->employee->first();
+    
+        if (!$employee) {
+            return response()->json(['message' => 'Employee not found'], 404);
+        }
+        
+        
+        if (!$lead) {
+            return response()->json(['message' => 'Lead not found'], 404);
+        }
+        
+        $data = [
+            'user' => $user,
+            'employee' => $employee,
+            'lead' => $lead,
+        ];
+
+        // Render the Blade view to HTML
+        $html = view('quotation.quotation', $data)->render();
+
+        // Create a new mPDF instance
+        $mpdf = new Mpdf();
+
+        // Write HTML to the PDF
+        $mpdf->WriteHTML($html);
+
+        // Define the file path for saving the PDF
+        $filePath = 'public/Lead/generated_quotations/quotation_' . time(). $user->id . '.pdf'; // Store in 'storage/app/invoices'
+        $fileName = basename($filePath); // Extracts 'invoice_{timestamp}{user_id}.pdf'
+        $lead->lead_quotation = $fileName;
+        $lead->save();
+        // Save PDF to storage
+        Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
+
+        // Output the PDF for download
+        return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
+    }
+    
 }

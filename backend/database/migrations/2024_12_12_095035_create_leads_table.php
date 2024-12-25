@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('contact_id');
             $table->unsignedBigInteger("lead_number")->nullable(); 
             $table->string("lead_owner",100)->nullable(); 
-            $table->string("lead_status",100)->nullable(); 
-            $table->date("follow_up_date")->nullable();
+            $table->string("lead_status",100)->default("Open"); 
+            $table->date("lead_follow_up_date")->nullable();
             $table->string("follow_up_remark")->nullable(); 
             $table->string("lead_type",100)->nullable();
             $table->string("tender_number")->nullable();

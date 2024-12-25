@@ -14,6 +14,7 @@ class Lead extends Model
 
     protected $casts = [
         'bid_end_date' => 'date:Y-m-d',
+        'lead_follow_up_date' => 'date:Y-m-d',
     ];
     
    public function contact()

@@ -18,7 +18,7 @@ use App\Http\Controllers\Api\ProductCategoriesController;
 
 Route::post('/login', [UserController::class, 'login']);
 
-Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
+Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], function(){
    Route::resource('clients', ClientsController::class); 
    Route::resource('leads', LeadsController::class); 
    Route::resource('contacts', ContactsController::class);
@@ -41,6 +41,6 @@ Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::get('/follow_up_types', [LeadsController::class, 'follow_up_types'])->name("follow_up_types.index");
    Route::get('/lead_status', [LeadsController::class, 'leadStatus'])->name("lead_status.index");
    Route::get('/close_lead/{id}', [LeadsController::class, 'closeLead'])->name("close_lead.update");
-
+   Route::get('/generate_quotation/{id}', [LeadsController::class, 'generateQuotation'])->name("generate_quotation.generate");
    
 });
