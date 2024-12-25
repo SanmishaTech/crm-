@@ -76,11 +76,13 @@ interface Product {
   id: number;
   product: string;
   quantity?: string;
+  rate?: string;
 }
 
 interface ProductRow {
   product_id: string;
   quantity: string;
+  rate: string;
   isOpen: boolean;
 }
 
@@ -100,7 +102,7 @@ export default function EditLeadPage() {
   const addRow = () => {
     setProductRows([
       ...productRows,
-      { product_id: "", quantity: "", isOpen: false },
+      { product_id: "", quantity: "", rate: "", isOpen: false },
     ]);
   };
 
@@ -118,6 +120,7 @@ export default function EditLeadPage() {
       emd: null,
       tender_status: "",
       quantity: "",
+      rate: "",
       product_id: "",
     },
   });
@@ -197,6 +200,7 @@ export default function EditLeadPage() {
       const products = editData.data.Lead.products.map((product: any) => ({
         product_id: product.product_id.toString(),
         quantity: product.quantity || "",
+        rate: product.rate || "",
         isOpen: false,
       }));
       setProductRows(products);
@@ -218,6 +222,7 @@ export default function EditLeadPage() {
         emd: newData?.emd || "",
         tender_status: newData?.tender_status || "",
         quantity: newData?.quantity || "",
+        rate: newData?.rate || "",
         product_id: newData?.product_id || "",
       });
     }
@@ -250,6 +255,7 @@ export default function EditLeadPage() {
       products: productRows.map((row) => ({
         product_id: row.product_id,
         quantity: row.quantity,
+        rate: row.rate,
       })),
     };
 
@@ -536,6 +542,7 @@ export default function EditLeadPage() {
               <TableRow>
                 <TableHead>Products</TableHead>
                 <TableHead>Quantity</TableHead>
+                <TableHead>Rate</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -609,6 +616,18 @@ export default function EditLeadPage() {
                       onChange={(e) => {
                         const newRows = [...productRows];
                         newRows[index].quantity = e.target.value;
+                        setProductRows(newRows);
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      placeholder="Rate"
+                      name="rate"
+                      value={row.rate}
+                      onChange={(e) => {
+                        const newRows = [...productRows];
+                        newRows[index].rate = e.target.value;
                         setProductRows(newRows);
                       }}
                     />
