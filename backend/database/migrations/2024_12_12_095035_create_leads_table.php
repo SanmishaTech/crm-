@@ -32,6 +32,11 @@ return new class extends Migration
             $table->string("lead_quotation")->nullable(); 
             $table->string("lead_attachment")->nullable(); 
             $table->string("lead_closing_reason")->nullable(); 
+            // 
+            $table->decimal("total_taxable",10,2)->nullable(); 
+            $table->decimal("total_gst",10,2)->nullable(); 
+            $table->decimal("total_amount_with_gst",10,2)->nullable(); 
+
             $table->timestamps();
         });
     }

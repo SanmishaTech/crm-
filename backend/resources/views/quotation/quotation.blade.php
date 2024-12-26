@@ -91,14 +91,14 @@
             </tr> --}}
 
             <tr class="information">
-                <td colspan="3" class="mt">
-                  <strong>SP Infocom</strong><br>
+                <td colspan="3" style="padding-left:10px; ">
+                  <strong>CRM</strong><br>
                     {{-- HafyMish Technologies<br> --}}
                      <P>Maharashtra - 400605</P>
                     {{-- {{$profile->state}} - {{$profile->pincode}}<br> --}}
                     {{-- GST: {{$profile->gstin}} --}}
                 </td>
-                <td colspan="3" class="text-end">
+                <td colspan="3" class="text-end" style=" text-align: right; padding-right:10px; padding-top:10px;">
                     Invoice No: 001<br>
                     Date: {{\Carbon\Carbon::now()->format('d-m-Y')}}<br>
                     <strong>To</strong><br>
@@ -110,7 +110,7 @@
                       test user<br>
                       thane,
                       Maharashtra<br> 
-                      Mobile: 9999887766
+                      Mobile: 9999887766 <br>
                       Email: test@gmail.com
                     <br><br><br>
                 </td>
@@ -119,20 +119,20 @@
             <tr class="heading">
                 <th>Sl.</th>
                 <th>Product Name</th>
-                <th>Gst%</th>
                 <th>Rate</th>
                 <th>Qty</th>
+                <th>Gst%</th>
                 <th>Total</th>
             </tr>
 
-            @foreach($leads->updateLeadProducts as $product)
+            @foreach($leads->leadProducts as $product)
             <tr class="item">
                 <td>{{$i++}}</td>
-                <td>{{@$product->product}}</td>
-                <td>{{@$product->gst_rate}}</td>
+                <td>{{@$product->product->product}}</td>
                 <td>{{@$product->rate}}</td>
                 <td>{{@$product->quantity}}</td>
-                <td>{{@$product->amount}}</td>
+                <td>{{@$product->product->gst_rate}}%</td>
+                <td>{{@$product->amount_without_gst}}</td>
             </tr>
             @endforeach
           
@@ -141,7 +141,7 @@
         <table cellpadding="0" cellspacing="0">
             <tr>
                 <td colspan="6" style="border-top: 1px solid #000; border-bottom: none;">
-                    Items: 1
+                    Items: {{ --$i}}
                 </td>
             </tr>
             <tr>
@@ -152,12 +152,15 @@
             <tr class="totals">
                 <td colspan="4"></td>
                 <td>Total Taxable:</td>
-                <td>₹1000.00</td>    
+                {{-- <td>₹1000.00</td>     --}}
+                <td>₹{{$leads->total_taxable}}</td>    
+
             </tr>
             <tr class="totals">
                 <td colspan="4"></td>
                 <td>Total Tax:</td>
-                <td>₹180.00</td>
+                {{-- <td>₹180.00</td> --}}
+                <td>₹{{$leads->total_gst}}</td>    
             </tr>
             <tr class="round-off">
                 <td colspan="4"></td>
@@ -167,12 +170,13 @@
             <tr class="round-off">
                 <td colspan="4"></td>
                 <td><strong>Total:</strong></td>
-                <td><strong>₹1180.00</strong></td>
+                {{-- <td><strong>₹1180.00</strong></td> --}}
+                <td><strong>{{$leads->total_amount_with_gst}}</strong></td>
             </tr>
         </table>
 
         <div class="text-center" style="margin-top: 20px;">
-            <p>GST% 18% &nbsp;&nbsp; Taxable ₹1000.00 &nbsp;&nbsp; CGST ₹3.60&nbsp;&nbsp; SGST ₹3.60</p>
+            <p>GST% 18% &nbsp;&nbsp; Taxable ₹{{$leads->total_taxable}} &nbsp;&nbsp; CGST ₹3.60&nbsp;&nbsp; SGST ₹3.60</p>
             <p>Thank you. Have a great day!</p>
         </div>
 

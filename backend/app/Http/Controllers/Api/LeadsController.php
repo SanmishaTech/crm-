@@ -6,10 +6,10 @@ use Log;
 use File;
 use Response;
 use Mpdf\Mpdf;
-use Barryvdh\DomPDF\PDF;
-use Illuminate\Support\Facades\Storage;
-// 
 use App\Models\Lead;
+use App\Models\Product;
+// 
+use Barryvdh\DomPDF\PDF;
 use App\Models\LeadProduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -17,6 +17,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\LeadResource;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Resources\ContactResource;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Api\BaseController;
 
     /**
@@ -99,26 +100,40 @@ class LeadsController extends BaseController
         $lead->lead_status = $request->input("lead_status");
         $lead->save();
 
+        $totalAmountWithoutGst = 0;
+        $totalGstAmount = 0;
+        $totalAmountWithGst = 0;    
+
         $products = $request->input('products');
-          $gstRate = 18;
         if($products){
             // Prepare the product details for insertion
         $productDetails = [];
         foreach ($products as $product) {
-            $amount = $product['quantity'] * $product['rate'];
-            $amount = amount
+            $PRODUCT = Product::find($product['product_id']);
+            $gstRate = $PRODUCT->gst_rate; 
+            $amountWithoutGst = $product['quantity'] * $product['rate'];
+            $gstAmount = ($amountWithoutGst * $gstRate) / 100;
+            $totalAmount = $amountWithoutGst + $gstAmount;
+            // 
+            $totalAmountWithoutGst += $amountWithoutGst;
+            $totalGstAmount += $gstAmount;
+            $totalAmountWithGst += $totalAmount;
         $productDetails[] = new LeadProduct([
             'product_id' => $product['product_id'],
             'quantity' => $product['quantity'],
             'rate' => $product['rate'],
-            'gst_rate' => $gstRate,
-            'amount' => $product['quantity'],
+            'amount_without_gst' => $amountWithoutGst,
+            'gst_amount' => $gstAmount,
+            'total_amount' => $totalAmount,
              ]);
           }
             //one to many relatonship for stroing products and for fetching
          $lead->leadProducts()->saveMany($productDetails);
         }
-        
+        $lead->total_taxable = $totalAmountWithoutGst;
+        $lead->total_gst = $totalGstAmount;
+        $lead->total_amount_with_gst = $totalAmountWithGst;
+        $lead->save();
         return $this->sendResponse(['Lead'=> new LeadResource($lead)], 'Lead Created Successfully');
     }
     
@@ -268,7 +283,9 @@ class LeadsController extends BaseController
 
     public function generateQuotation(string $id)
     {
-        $leads = Lead::with('updateLeadProducts')->find($id);
+        $leadStatus = 'Quotation';
+        $leads = Lead::with('leadProducts.product')->find($id);
+        $leads->lead_status  = $leadStatus;
         // 
         $user = auth()->user();
         $employee = $user->employee->first();
@@ -276,7 +293,6 @@ class LeadsController extends BaseController
         if (!$employee) {
             return response()->json(['message' => 'Employee not found'], 404);
         }
-        
         
         if (!$leads) {
             return response()->json(['message' => 'Lead not found'], 404);
