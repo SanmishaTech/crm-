@@ -80,7 +80,7 @@
     @php
     $i = 1;
     @endphp
-    <h4 style="text-align: center">Invoice</h4>
+    <h4 style="text-align: center">INVOICE</h4>
     <div class="invoice-box">
         <table cellpadding="0" cellspacing="0">
             {{-- <tr class="header">
@@ -91,14 +91,14 @@
             </tr> --}}
 
             <tr class="information">
-                <td colspan="3" style="padding-left:10px; ">
+                <td colspan="4" style="padding-left:10px; ">
                   <strong>CRM</strong><br>
                     {{-- HafyMish Technologies<br> --}}
                      <P>Maharashtra - 400605</P>
                     {{-- {{$profile->state}} - {{$profile->pincode}}<br> --}}
                     {{-- GST: {{$profile->gstin}} --}}
                 </td>
-                <td colspan="3" class="text-end" style=" text-align: right; padding-right:10px; padding-top:10px;">
+                <td colspan="4" class="text-end" style=" text-align: right; padding-right:10px; padding-top:10px;">
                     Invoice No: 001<br>
                     Date: {{\Carbon\Carbon::now()->format('d-m-Y')}}<br>
                     <strong>To</strong><br>
@@ -122,6 +122,7 @@
                 <th>Rate</th>
                 <th>Qty</th>
                 <th>Gst%</th>
+                <th>Gst₹</th>
                 <th>Total</th>
             </tr>
 
@@ -132,6 +133,7 @@
                 <td>{{@$product->rate}}</td>
                 <td>{{@$product->quantity}}</td>
                 <td>{{@$product->product->gst_rate}}%</td>
+                <td>{{@$product->gst_amount}}</td>
                 <td>{{@$product->amount_without_gst}}</td>
             </tr>
             @endforeach
@@ -140,35 +142,35 @@
 
         <table cellpadding="0" cellspacing="0">
             <tr>
-                <td colspan="6" style="border-top: 1px solid #000; border-bottom: none;">
+                <td colspan="7" style="border-top: 1px solid #000; border-bottom: none;">
                     Items: {{ --$i}}
                 </td>
             </tr>
             <tr>
-                <td colspan="6" style="border-bottom: 1px solid #000; border-top: none;">
+                <td colspan="7" style="border-bottom: 1px solid #000; border-top: none;">
                     E&amp;OE. Goods once sold cannot be taken back or exchanged
                 </td>
             </tr>
             <tr class="totals">
-                <td colspan="4"></td>
+                <td colspan="5"></td>
                 <td>Total Taxable:</td>
                 {{-- <td>₹1000.00</td>     --}}
                 <td>₹{{$leads->total_taxable}}</td>    
 
             </tr>
             <tr class="totals">
-                <td colspan="4"></td>
+                <td colspan="5"></td>
                 <td>Total Tax:</td>
                 {{-- <td>₹180.00</td> --}}
                 <td>₹{{$leads->total_gst}}</td>    
             </tr>
             <tr class="round-off">
-                <td colspan="4"></td>
+                <td colspan="5"></td>
                 <td>Round-off:</td>
                 <td>₹0.00</td>
             </tr>
             <tr class="round-off">
-                <td colspan="4"></td>
+                <td colspan="5"></td>
                 <td><strong>Total:</strong></td>
                 {{-- <td><strong>₹1180.00</strong></td> --}}
                 <td><strong>{{$leads->total_amount_with_gst}}</strong></td>
