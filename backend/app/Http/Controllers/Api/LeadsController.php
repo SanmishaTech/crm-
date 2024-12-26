@@ -354,8 +354,8 @@ class LeadsController extends BaseController
         Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
 
         // Output the PDF for download
-        // return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
-        return $this->sendResponse([], "Quotation generated successfully");
+        return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
+        // return $this->sendResponse([], "Quotation generated successfully");
 
     }
 

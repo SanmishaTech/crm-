@@ -119,9 +119,9 @@ export default function TableDemo() {
 
   const { id } = useParams();
 
-  const handleGenerateQuotation = async () => {
+  const handleGenerateQuotation = async (leadId: string) => {
     try {
-      const response = await fetch(`/api/generate_quotation/${id}`, {
+      const response = await fetch(`/api/generate_quotation/${leadId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -130,9 +130,21 @@ export default function TableDemo() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log("Quotation generated:", data);
-        // Handle the response data as needed (e.g., display it, update state, etc.)
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = `quotation-${leadId}.pdf`;
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+
+        console.log("Quotation generated and downloaded successfully!");
       } else {
         console.error("Error generating quotation:", response.status);
       }
@@ -273,9 +285,7 @@ export default function TableDemo() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => {
-                                  navigate(
-                                    `/leads/generateQuotation/${lead.id}`
-                                  );
+                                  navigate(`/leads/followUps/${lead.id}`);
                                 }}
                                 className="w-full text-sm"
                               >
@@ -286,9 +296,7 @@ export default function TableDemo() {
                                 size="sm"
                                 className="w-full text-sm"
                                 onClick={() => {
-                                  navigate(
-                                    `/leads/generateQuotation/${lead.id}`
-                                  );
+                                  handleGenerateQuotation(lead.id);
                                 }}
                               >
                                 Quotation
