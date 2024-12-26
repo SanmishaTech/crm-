@@ -261,91 +261,104 @@ export default function TableDemo() {
                   {Sup?.data?.Lead &&
                     Array.isArray(Sup.data.Lead) &&
                     Sup.data.Lead.map((lead) => (
-                      <TableRow key={lead.id}>
-                        <TableCell>{lead?.contact?.contact_person}</TableCell>
-                        <TableCell>{lead.lead_source}</TableCell>
-                        <TableCell>
-                          {lead.lead_status
-                            ? lead.lead_status.charAt(0).toUpperCase() +
-                              lead.lead_status.slice(1)
-                            : "N/A"}
-                        </TableCell>
-                        <TableCell>
-                          {lead.lead_follow_up_date
-                            ? new Date(
-                                lead.lead_follow_up_date
-                              ).toLocaleDateString()
-                            : "N/A"}
-                        </TableCell>  
-                        <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                              align="center"
-                              className="w-full flex-col items-center flex justify-center"
-                            >
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  navigate(`/leads/edit/${lead.id}`);
-                                }}
-                                className="w-full text-sm"
-                              >
-                                Edit
-                              </Button>
-                              <AlertDialogbox url={lead.id} />
+                      <TooltipProvider key={lead.id}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <TableRow>
+                              <TableCell>
+                                {lead?.contact?.contact_person}
+                              </TableCell>
+                              <TableCell>{lead.lead_source}</TableCell>
+                              <TableCell>
+                                {lead.lead_status
+                                  ? lead.lead_status.charAt(0).toUpperCase() +
+                                    lead.lead_status.slice(1)
+                                  : "N/A"}
+                              </TableCell>
+                              <TableCell>
+                                {lead.lead_follow_up_date
+                                  ? new Date(
+                                      lead.lead_follow_up_date
+                                    ).toLocaleDateString()
+                                  : "N/A"}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      className="h-8 w-8 p-0"
+                                    >
+                                      <span className="sr-only">Open menu</span>
+                                      <MoreHorizontal className="h-4 w-4" />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent
+                                    align="center"
+                                    className="w-full flex-col items-center flex justify-center"
+                                  >
+                                    <DropdownMenuLabel>
+                                      Actions
+                                    </DropdownMenuLabel>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => {
+                                        navigate(`/leads/edit/${lead.id}`);
+                                      }}
+                                      className="w-full text-sm"
+                                    >
+                                      Edit
+                                    </Button>
+                                    <AlertDialogbox url={lead.id} />
 
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  handleGenerateInvoice(lead.id);
-                                }}
-                                className="w-full text-sm"
-                              >
-                                Invoices
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  navigate(`/leads/followUps/${lead.id}`);
-                                }}
-                                className="w-full text-sm"
-                              >
-                                Follow Up
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="w-full text-sm"
-                                onClick={() => {
-                                  handleGenerateQuotation(lead.id);
-                                }}
-                              >
-                                Quotation
-                              </Button>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => {
+                                        handleGenerateInvoice(lead.id);
+                                      }}
+                                      className="w-full text-sm"
+                                    >
+                                      Invoices
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => {
+                                        navigate(`/leads/followUps/${lead.id}`);
+                                      }}
+                                      className="w-full text-sm"
+                                    >
+                                      Follow Up
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="w-full text-sm"
+                                      onClick={() => {
+                                        handleGenerateQuotation(lead.id);
+                                      }}
+                                    >
+                                      Quotation
+                                    </Button>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
+                            </TableRow>
+                          </TooltipTrigger>
 
-                        <TooltipContent>
-                          <p>
-                            <strong>Remarks:</strong>{" "}
-                            {(lead.follow_up_remark || "N/A")
-                              .charAt(0)
-                              .toUpperCase() +
-                              (lead.follow_up_remark || "N/A").slice(1)}
-                          </p>
-                        </TooltipContent>
-                      </TableRow>
+                          <TooltipContent>
+                            <p>
+                              <strong>Remarks:</strong>{" "}
+                              {(lead.follow_up_remark || "N/A")
+                                .charAt(0)
+                                .toUpperCase() +
+                                (lead.follow_up_remark || "N/A").slice(1)}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     ))}
                 </TableBody>
               </TooltipTrigger>
