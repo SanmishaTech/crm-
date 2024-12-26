@@ -320,12 +320,12 @@ export default function TableDemo() {
                                       }}
                                       className="w-full text-sm"
                                     >
-                                      Invoices
+                                      Deal  
                                     </Button>
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      onClick={() => {
+                                      onClick={() => {  
                                         navigate(`/leads/followUps/${lead.id}`);
                                       }}
                                       className="w-full text-sm"

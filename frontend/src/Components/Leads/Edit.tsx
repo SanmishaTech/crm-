@@ -53,7 +53,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Form validation schema
 const formSchema = z.object({
   contact_id: z.any().optional(),
   lead_status: z.string().optional(),
@@ -69,10 +68,8 @@ const formSchema = z.object({
   tender_status: z.string().optional(),
 });
 
-// Move FormValues type definition outside the component
 type FormValues = z.infer<typeof formSchema>;
 
-// First, let's define proper types for the data
 interface Product {
   id: number;
   product: string;
@@ -84,7 +81,6 @@ interface ProductRow {
   product_id: string;
   quantity: string;
   rate: string;
-  isOpen: boolean;
 }
 
 export default function EditLeadPage() {
@@ -104,7 +100,7 @@ export default function EditLeadPage() {
   const addRow = () => {
     setProductRows([
       ...productRows,
-      { product_id: "", quantity: "", rate: "", isOpen: false },
+      { product_id: "", quantity: "", rate: "" },
     ]);
   };
 
@@ -206,10 +202,9 @@ export default function EditLeadPage() {
   useEffect(() => {
     if (editData?.data?.Lead?.products) {
       const products = editData.data.Lead.products.map((product: any) => ({
-        product_id: product.product_id.toString(),
+        product_id: product.product_id ? product.product_id.toString() : "", // Ensure product_id exists before calling toString
         quantity: product.quantity || "",
         rate: product.rate || "",
-        isOpen: false,
       }));
       setProductRows(products);
     }
@@ -627,7 +622,7 @@ export default function EditLeadPage() {
                       onOpenChange={(isOpen) => {
                         const newRows = [...productRows];
                         newRows[index].isOpen = isOpen;
-                        setProductRows(newRows);
+                        setProductRows(newRows);  
                       }}
                     >
                       <PopoverTrigger asChild>
@@ -739,7 +734,6 @@ export default function EditLeadPage() {
               type="button"
               onClick={() => {
                 navigate("/leads");
-                window.location.reload();
               }}
             >
               Cancel
