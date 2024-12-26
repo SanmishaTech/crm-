@@ -1,9 +1,7 @@
-// src/components/Sidebar.tsx
+// src/components/Sidebar.tsx (no change needed)
 import React from "react";
 import { cn } from "@/lib/utils";
 import { create } from "zustand";
-import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 // Sidebar Store with `searchTerm` state
@@ -41,7 +39,7 @@ export default function Sidebar({ className }: SidebarProps) {
       <div className="flex justify-center p-2 space-x-2 mt-6">
         <h3 className="text-lg  font-semibold">Supplier Filter </h3>
       </div>
-      <div className="flex-1 space-x-2">
+      <div className="flex-1 space-x-2 p-4 ">
         {/* Search bar in Sidebar */}
         <Input
           placeholder="Search suppliers..."

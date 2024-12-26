@@ -90,7 +90,9 @@ export default function TableDemo() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  // const [searchTerm, setSearchTerm] = useState<string>("");
+  const { searchTerm, toggle, isMinimized } = useSidebar(); // Get searchTerm and sidebar state from the store
+
   const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar state
 
   const navigate = useNavigate();
@@ -146,7 +148,7 @@ export default function TableDemo() {
   };
 
   // Get the toggle function from the Sidebar store
-  const { toggle } = useSidebar();
+  // const { toggle } = useSidebar();
 
   return (
     <div className="flex ">
@@ -159,11 +161,14 @@ export default function TableDemo() {
         </div>
         <div className="flex justify-between items-center space-x-2">
           <div className="flex-1 space-x-2">
-            <Input
-              placeholder="Search suppliers..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            {/* Conditionally render the search bar */}
+            {isMinimized ? (
+              <Input
+                placeholder="Search suppliers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm in the store
+              />
+            ) : null}
           </div>
           <div className="flex justify-between items-center space-x-2 ">
             <Button

@@ -52,6 +52,7 @@ import { useNavigate } from "react-router-dom";
 import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useGetData } from "@/lib/HTTP/GET";
 import AlertDialogbox from "./AlertBox";
+import { useParams } from "react-router-dom";
 
 // Supplier type
 type Supplier = {
@@ -115,6 +116,30 @@ export default function TableDemo() {
       },
     },
   });
+
+  const { id } = useParams();
+
+  const handleGenerateQuotation = async () => {
+    try {
+      const response = await fetch(`/api/generate_quotation/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Quotation generated:", data);
+        // Handle the response data as needed (e.g., display it, update state, etc.)
+      } else {
+        console.error("Error generating quotation:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   // Pagination functions
   const totalPages = pagination?.last_page || 1;
@@ -232,6 +257,8 @@ export default function TableDemo() {
                               >
                                 Edit
                               </Button>
+                              <AlertDialogbox url={lead.id} />
+
                               <Button
                                 variant="ghost"
                                 size="sm"
@@ -240,9 +267,32 @@ export default function TableDemo() {
                                 }}
                                 className="w-full text-sm"
                               >
+                                Invoices
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  navigate(
+                                    `/leads/generateQuotation/${lead.id}`
+                                  );
+                                }}
+                                className="w-full text-sm"
+                              >
                                 Follow Up
                               </Button>
-                              <AlertDialogbox url={lead.id} />
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="w-full text-sm"
+                                onClick={() => {
+                                  navigate(
+                                    `/leads/generateQuotation/${lead.id}`
+                                  );
+                                }}
+                              >
+                                Quotation
+                              </Button>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>

@@ -56,6 +56,7 @@ const Dashboard = () => {
         {location.pathname === "/leads/add" && <LeadsAdd />}
         {/\/leads\/edit\/\d+/.test(location.pathname) && <LeadsEdit />}
         {/\/followUps\/\d+/.test(location.pathname) && <FollowUps />}
+        {/\/generateQuotation\/\d+/.test(location.pathname) && <Leads />}
 
         {location.pathname === "/departments" && <Departments />}
         {location.pathname === "/departments/add" && (
