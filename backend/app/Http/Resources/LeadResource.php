@@ -37,7 +37,7 @@ class LeadResource extends JsonResource
             'bid_end_date' => $this->bid_end_date,
             'tender_status' => $this->tender_status,
             'lead_status' => $this->lead_status,
-            'lead_remark' => $this->lead_remark,
+            'follow_up_remark' => $this->follow_up_remark,
             'lead_follow_up_date' => $this->lead_follow_up_date,
             'lead_source' => $this->lead_source,
             'created_at' => $this->created_at,
