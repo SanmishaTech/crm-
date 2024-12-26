@@ -35,9 +35,9 @@ const Dashboard = () => {
   }, [navigate]);
 
   return (
-    <div className="flex bg-background w-[100vw] h-full relative min-h-screen">
+    <div className="flex bg-background w-[100vw] h-full relative min-h-screen p-9">
       <div className="min-h-screen relative top-0 bg-accent/40">
-        <Sidebar className="min-h-full" />
+        {/* <Sidebar className="min-h-full" />   */}
       </div>
       <main className="w-full flex-1 overflow-hidden ">
         {location.pathname === "/dashboard" && <Dashboardcomponent />}

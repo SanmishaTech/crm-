@@ -1,18 +1,11 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { X } from "lucide-react"; // Import the close icon
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import Sidebar from "./Sidebar";
 import {
   File,
   PlusCircle,
@@ -32,13 +25,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"; // Ensure this import is correct
+
+import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
-import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useDeleteData } from "@/lib/HTTP/DELETE";
@@ -87,6 +90,8 @@ export default function TableDemo() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar state
+
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -104,7 +109,6 @@ export default function TableDemo() {
       retry: 1,
 
       onSuccess: (data) => {
-        console.log("test-test", data);
         setSuppliers(data.Suppliers);
         setPagination(data.pagination);
         setLoading(false);
@@ -141,124 +145,122 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Suppliers List</h3>
-      </div>
-      <div className="flex justify-between items-center space-x-2 w-full">
-        {/* Search Bar Starts */}
-        <div className="flex-1 space-x-2">
-          <Input
-            placeholder="Search suppliers..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="flex justify-center">
+      <Sidebar className="bg-accent/60" />
+      <div className="p-6 max-w-4xl mx-auto bg-accent/50 rounded-lg shadow-lg ">
+        <div className="flex justify-between items-center p-2 space-x-2">
+          <h3 className="text-lg font-semibold">Suppliers List</h3>
         </div>
-        {/* Search Bar Ends */}
-        <div className="flex space-x-2">
-          {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/suppliers/add")}>
-            Add Supplier
-          </Button>
-          {/* Add(Page) Ends */}
-        </div>
-      </div>
+        <div className="flex justify-between items-center space-x-2 w-full">
+          {/* Search Bar Starts */}
+          <div className="flex-1 space-x-2">
+            <Input
+              placeholder="Search suppliers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          {/* Search Bar Ends */}
+          <div className="flex space-x-2">
+            {/* Filters Button */}
+            <Button
+              variant="outline"
+              onClick={() => setSidebarOpen(!isSidebarOpen)}
+            >
+              Filters
+            </Button>
 
-      <div className="panel p-4 rounded-md bg-gray-50">
-        {/* Table Start */}
-        <Table>
-          <TableCaption>A list of your recent suppliers.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead onClick={() => handleSort("supplier")}>
-                Suppliers
-              </TableHead>
-              <TableHead onClick={() => handleSort("street_address")}>
-                Street Address
-              </TableHead>
-              <TableHead onClick={() => handleSort("area")}>Area</TableHead>
-              <TableHead onClick={() => handleSort("city")}>City</TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableFooter></TableFooter>
-          <TableBody>
-            {console.log("sup", Sup)}
-            {Sup?.data?.Suppliers?.map((supplier) => (
-              <TableRow key={supplier.id}>
-                <TableCell>{supplier.supplier}</TableCell>
-                <TableCell>{supplier.street_address}</TableCell>
-                <TableCell>{supplier.area}</TableCell>
-                <TableCell>{supplier.city}</TableCell>
-                <TableCell className="text-right">
-                  {/* <button
-                    onClick={() => navigate(`/suppliers/edit/${supplier.id}`)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Edit
-                  </button>
-                  <AlertDialogbox url={supplier.id} /> */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="center"
-                      className="w-full flex-col items-center flex justify-center"
-                    >
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          navigate(`/suppliers/edit/${supplier.id}`);
-                        }}
-                        className="w-full text-sm"
-                      >
-                        Edit
-                      </Button>
-                      {/* <DropdownMenuSeparator /> */}
-                      <AlertDialogbox
-                        url={supplier.id}
-                      />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+            <Button
+              variant="outline"
+              onClick={() => navigate("/suppliers/add")}
+            >
+              Add Supplier
+            </Button>
+          </div>
+        </div>
+
+        <div className="panel p-4 rounded-md bg-gray-50">
+          {/* Table Start */}
+          <Table>
+            <TableCaption>A list of your recent suppliers.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead onClick={() => handleSort("supplier")}>
+                  Suppliers
+                </TableHead>
+                <TableHead onClick={() => handleSort("street_address")}>
+                  Street Address
+                </TableHead>
+                <TableHead onClick={() => handleSort("area")}>Area</TableHead>
+                <TableHead onClick={() => handleSort("city")}>City</TableHead>
+                <TableHead className="text-right">Action</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {/* Table End */}
-        {/* Pagination Start */}
-        <Pagination>
-          <PaginationContent className="flex items-center space-x-4">
-            {/* Previous Button */}
-            <PaginationPrevious
-              onClick={goToPreviousPage}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </PaginationPrevious>
+            </TableHeader>
+            <TableFooter></TableFooter>
+            <TableBody>
+              {Sup?.data?.Suppliers?.map((supplier) => (
+                <TableRow key={supplier.id}>
+                  <TableCell>{supplier.supplier}</TableCell>
+                  <TableCell>{supplier.street_address}</TableCell>
+                  <TableCell>{supplier.area}</TableCell>
+                  <TableCell>{supplier.city}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="center"
+                        className="w-full flex-col items-center flex justify-center"
+                      >
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            navigate(`/suppliers/edit/${supplier.id}`);
+                          }}
+                          className="w-full text-sm"
+                        >
+                          Edit
+                        </Button>
+                        <AlertDialogbox url={supplier.id} />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {/* Table End */}
+          {/* Pagination Start */}
+          <Pagination>
+            <PaginationContent className="flex items-center space-x-4">
+              <PaginationPrevious
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </PaginationPrevious>
 
-            {/* Page Number */}
-            <span className="text-sm">
-              Page {currentPage} of {totalPages}
-            </span>
+              <span className="text-sm">
+                Page {currentPage} of {totalPages}
+              </span>
 
-            {/* Next Button */}
-            <PaginationNext
-              className="hover:pointer"
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </PaginationNext>
-          </PaginationContent>
-        </Pagination>
-        {/* Pagination End */}
+              <PaginationNext
+                className="hover:pointer"
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </PaginationNext>
+            </PaginationContent>
+          </Pagination>
+          {/* Pagination End */}
+        </div>
       </div>
     </div>
   );

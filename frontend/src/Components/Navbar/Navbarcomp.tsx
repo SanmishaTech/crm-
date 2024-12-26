@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Label } from "@/components/ui/label";
+
 import {
   EllipsisVertical,
   CalendarDays,
@@ -7,6 +9,17 @@ import {
   Bell,
   Settings,
 } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@/components/ui/navigation-menu";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,6 +40,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandItem,
+  CommandGroup,
+} from "@/components/ui/command";
+import { Icons } from "@/Dashboard/Icon";
+import { navItems } from "@/Config/data";
 
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -35,6 +58,7 @@ import userAvatar from "@/images/Profile.jpg";
 const Navbar = () => {
   const navigate = useNavigate();
   const [isExploreOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   // Handle navigation to dashboard
   const handleDashboardNavigate = () => {
@@ -129,8 +153,34 @@ const Navbar = () => {
             >
               Leads
             </Button>
+            <NavigationMenu className="relative inline-block">
+              <NavigationMenuList className="list-none p-0 m-0">
+                <NavigationMenuItem className="group">
+                  <NavigationMenuTrigger className="px-4 py-2 cursor-pointer hover:bg-gray-200"></NavigationMenuTrigger>
+                  <NavigationMenuContent className="flex flex-col items-center justify-center">
+                    <h1 className="text-sm font-semibold cursor-default mt-2 ">
+                      Masters
+                    </h1>
+                    <Separator className="my-2 w-full justify-center" />
+                    <Button
+                      className="w-full text-sm"
+                      variant={"ghost"}
+                      onClick={() => navigate("/products")}
+                    >
+                      Products
+                    </Button>
+                    <Button
+                      variant={"ghost"}
+                      onClick={() => navigate("/productCategories")}
+                    >
+                      Product Categories
+                    </Button>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
 
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
@@ -158,60 +208,7 @@ const Navbar = () => {
                   Product Categories
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="p-2" // Adding padding instead of fixed width
-                >
-                  <Ellipsis className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
-                <Command>
-                  <CommandInput placeholder="Search Modules..." />
-                  <CommandList>
-                    <CommandEmpty>No framework found.</CommandEmpty>
-                    <CommandGroup>
-                      {frameworks.map((framework) => (
-                        <CommandItem
-                          key={framework.value}
-                          value={framework.value}
-                          onSelect={(currentValue) => {
-                            setValue(
-                              currentValue === value ? "" : currentValue
-                            );
-                            setOpen(false);
-
-                            if (currentValue === "meetings") {
-                              navigate("/dashboard"); // Navigate to /dashboard when Astro is selected
-                            } else if (currentValue === "products") {
-                              navigate("/users"); // Navigate to /users when Remix is selected
-                            } else {
-                              navigate("#"); // Navigate to # for all other frameworks
-                            }
-                          }}
-                        >
-                          {framework.label}
-                          <Check
-                            className={cn(
-                              "ml-auto",
-                              value === framework.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover> */}
+            </DropdownMenu> */}
           </div>
         </div>
 
@@ -250,15 +247,67 @@ const Navbar = () => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <Button variant="ghost" size="icon">
-            <Settings className="h-4" style={{ strokeWidth: 2 }} />
-          </Button>
+
           <Button variant="ghost" size="icon">
             <CalendarDays className="h-4" style={{ strokeWidth: 2 }} />
           </Button>
-          <Button variant="ghost" size="icon">
-            <Search className="h-4" style={{ strokeWidth: 2 }} />
-          </Button>
+          <div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setOpen(true)}
+                  >
+                    <Search className="h-4" style={{ strokeWidth: 2 }} />
+                  </Button>
+
+                  <CommandDialog open={open} onOpenChange={setOpen}>
+                    <CommandInput placeholder="Type a command or search..." />
+                    <CommandList>
+                      <CommandEmpty>No results found.</CommandEmpty>
+                      {navItems.map((item) => {
+                        if (item.children && item.children.length > 0) {
+                          return (
+                            <CommandGroup heading={item.title} key={item.title}>
+                              {item.children.map((child) => {
+                                const Icon =
+                                  Icons[child.icon || "arrowRight675"]; // Assuming Icons is a predefined object
+                                return (
+                                  <div
+                                    className="flex items-center gap-2 w-full"
+                                    key={child.title}
+                                  >
+                                    <CommandItem
+                                      className="w-full flex items-center gap-2 overflow-hidden rounded-md py-1 text-sm font-medium hover:bg-secondary hover:text-iconActive"
+                                      onSelect={() => {
+                                        // Navigate logic goes here
+                                        setOpen(false); // Close the dialog after selection
+                                      }}
+                                    >
+                                      {Icon && (
+                                        <Icon className="ml-3 size-5 flex-none" />
+                                      )}
+                                      {child.title}
+                                    </CommandItem>
+                                  </div>
+                                );
+                              })}
+                            </CommandGroup>
+                          );
+                        }
+                        return null;
+                      })}
+                    </CommandList>
+                  </CommandDialog>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Search </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
