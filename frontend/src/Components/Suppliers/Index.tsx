@@ -5,7 +5,7 @@ import { X } from "lucide-react"; // Import the close icon
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import Sidebar from "./Sidebar";
+import Sidebar, { useSidebar } from "./Sidebar"; // Import the useSidebar hook
 import {
   File,
   PlusCircle,
@@ -14,6 +14,7 @@ import {
   Trash,
   MoreHorizontal,
   ListFilter,
+  Filter,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -101,7 +102,7 @@ export default function TableDemo() {
     },
   });
 
-  //Fetch Suppliers
+  // Fetch Suppliers
   const { data: Sup } = useGetData({
     endpoint: `/api/suppliers?search=${searchTerm}&page=${currentPage}`,
     params: {
@@ -144,15 +145,19 @@ export default function TableDemo() {
     }
   };
 
+  // Get the toggle function from the Sidebar store
+  const { toggle } = useSidebar();
+
   return (
-    <div className="flex justify-center">
-      <Sidebar className="bg-accent/60" />
-      <div className="p-6 max-w-4xl mx-auto bg-accent/50 rounded-lg shadow-lg ">
-        <div className="flex justify-between items-center p-2 space-x-2">
+    <div className="flex ">
+      <Sidebar className="" />
+      <div className="p-6 w-full bg-accent/50 ml-4 rounded-lg shadow-lg">
+        {/* Sidebar Toggle Button */}
+
+        <div className="p-2">
           <h3 className="text-lg font-semibold">Suppliers List</h3>
         </div>
-        <div className="flex justify-between items-center space-x-2 w-full">
-          {/* Search Bar Starts */}
+        <div className="flex justify-between items-center space-x-2">
           <div className="flex-1 space-x-2">
             <Input
               placeholder="Search suppliers..."
@@ -160,16 +165,16 @@ export default function TableDemo() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          {/* Search Bar Ends */}
-          <div className="flex space-x-2">
-            {/* Filters Button */}
+          <div className="flex justify-between items-center space-x-2 ">
             <Button
               variant="outline"
-              onClick={() => setSidebarOpen(!isSidebarOpen)}
+              onClick={toggle} // Use the toggle function from the useSidebar hook
             >
-              Filters
+              <Filter className="h-5" />
             </Button>
+          </div>
 
+          <div className="flex space-x-2">
             <Button
               variant="outline"
               onClick={() => navigate("/suppliers/add")}
@@ -179,7 +184,7 @@ export default function TableDemo() {
           </div>
         </div>
 
-        <div className="panel p-4 rounded-md bg-gray-50">
+        <div className="p-4 rounded-md bg-gray-50">
           {/* Table Start */}
           <Table>
             <TableCaption>A list of your recent suppliers.</TableCaption>

@@ -65,9 +65,10 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       <Toaster position="top-right" />
       {/* Conditionally render Navbar based on isLoggedIn */}
+
       {isLoggedIn && <Navbar />}
 
       <CommandDialog open={open} onOpenChange={setOpen}>

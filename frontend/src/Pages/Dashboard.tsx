@@ -35,7 +35,7 @@ const Dashboard = () => {
   }, [navigate]);
 
   return (
-    <div className="flex bg-background w-[100vw] h-full relative min-h-screen p-9">
+    <div className="flex bg-background w-[100vw] h-full relative min-h-screen overflow-x-hidden">
       <div className="min-h-screen relative top-0 bg-accent/40">
         {/* <Sidebar className="min-h-full" />   */}
       </div>
