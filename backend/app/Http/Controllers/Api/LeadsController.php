@@ -268,12 +268,12 @@ class LeadsController extends BaseController
     public function closeLead(Request $request, string $id): JsonResponse
     {
         $lead = Lead::find($id);
-
+         $leadStatus = "Closed";
         if(!$lead){
             return $this->sendError("Lead not found", ['error'=>['lead not found']]);
         }
             
-        $lead->lead_status = $request->input("lead_status");
+        $lead->lead_status = $leadStatus;
         $lead->lead_closing_reason = $request->input("lead_closing_reason");
         $lead->save();
 
@@ -286,6 +286,9 @@ class LeadsController extends BaseController
         $leadStatus = 'Quotation';
         $leads = Lead::with('leadProducts.product')->find($id);
         $leads->lead_status  = $leadStatus;
+        if(!empty($leads->lead_quotation) && Storage::exists('public/Lead/generated_quotations/'.$leads->lead_quotation)) {
+            Storage::delete('public/Lead/generated_quotations/'.$leads->lead_quotation);
+        }
         // 
         $user = auth()->user();
         $employee = $user->employee->first();
@@ -323,6 +326,51 @@ class LeadsController extends BaseController
 
         // Output the PDF for download
         return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
+    }
+
+    public function generateInvoice(string $id)
+    {
+        $leads = Lead::with('leadProducts.product')->find($id);
+        if(!empty($leads->lead_invoice) && Storage::exists('public/Lead/generated_invoices/'.$leads->lead_invoice)) {
+            Storage::delete('public/Lead/generated_invoices/'.$leads->lead_invoice);
+        }
+        // 
+        $user = auth()->user();
+        $employee = $user->employee->first();
+    
+        if (!$employee) {
+            return response()->json(['message' => 'Employee not found'], 404);
+        }
+        
+        if (!$leads) {
+            return response()->json(['message' => 'Lead not found'], 404);
+        }
+        
+        $data = [
+            'user' => $user,
+            'employee' => $employee,
+            'leads' => $leads,
+        ];
+
+        // Render the Blade view to HTML
+        $html = view('invoice.invoice', $data)->render();
+
+        // Create a new mPDF instance
+        $mpdf = new Mpdf();
+
+        // Write HTML to the PDF
+        $mpdf->WriteHTML($html);
+
+        // Define the file path for saving the PDF
+        $filePath = 'public/Lead/generated_invoices/invoice_' . time(). $user->id . '.pdf'; // Store in 'storage/app/invoices'
+        $fileName = basename($filePath); // Extracts 'invoice_{timestamp}{user_id}.pdf'
+        $leads->lead_invoice = $fileName;
+        $leads->save();
+        // Save PDF to storage
+        Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
+
+        // Output the PDF for download
+        return $mpdf->Output('invoice.pdf', 'D'); // Download the PDF
     }
     
 }
