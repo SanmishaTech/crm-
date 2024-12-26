@@ -271,14 +271,12 @@ export default function TableDemo() {
                             : "N/A"}
                         </TableCell>
                         <TableCell>
-                          {lead.follow_ups?.[0]?.follow_up_type
-                            ? lead.follow_ups[0].follow_up_type
-                                .charAt(0)
-                                .toUpperCase() +
-                              lead.follow_ups[0].follow_up_type.slice(1)
+                          {lead.lead_follow_up_date
+                            ? new Date(
+                                lead.lead_follow_up_date
+                              ).toLocaleDateString()
                             : "N/A"}
-                        </TableCell>
-
+                        </TableCell>  
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -341,9 +339,10 @@ export default function TableDemo() {
                         <TooltipContent>
                           <p>
                             <strong>Remarks:</strong>{" "}
-                            {lead.follow_ups?.[0]?.remarks
-                              ? lead.follow_ups[0].remarks
-                              : "No remarks available"}
+                            {(lead.follow_up_remark || "N/A")
+                              .charAt(0)
+                              .toUpperCase() +
+                              (lead.follow_up_remark || "N/A").slice(1)}
                           </p>
                         </TooltipContent>
                       </TableRow>
