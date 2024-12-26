@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quotation</title>
+    <title>Invoice</title>
     <style>
         body {
             font-family: Arial, sans-serif; 
@@ -80,7 +80,7 @@
     @php
     $i = 1;
     @endphp
-    <h4 style="text-align: center">QUOTATION</h4>
+    <h4 style="text-align: center">INVOICE</h4>
     <div class="invoice-box">
         <table cellpadding="0" cellspacing="0">
             {{-- <tr class="header">

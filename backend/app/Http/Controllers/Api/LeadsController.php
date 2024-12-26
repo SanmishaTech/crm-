@@ -97,7 +97,9 @@ class LeadsController extends BaseController
         $lead->bid_end_date = $request->input("bid_end_date");
         $lead->tender_status = $request->input("tender_status");
         $lead->lead_source = $request->input("lead_source");
+        if(config("data.lead_status.Open") === $request->input("lead_status") || config("data.lead_status.In Progress") === $request->input("lead_status")){
         $lead->lead_status = $request->input("lead_status");
+        }
         $lead->save();
 
         $totalAmountWithoutGst = 0;
@@ -110,6 +112,7 @@ class LeadsController extends BaseController
         $productDetails = [];
         foreach ($products as $product) {
             $PRODUCT = Product::find($product['product_id']);
+            if($PRODUCT){
             $gstRate = $PRODUCT->gst_rate; 
             $amountWithoutGst = $product['quantity'] * $product['rate'];
             $gstAmount = ($amountWithoutGst * $gstRate) / 100;
@@ -126,6 +129,10 @@ class LeadsController extends BaseController
             'gst_amount' => $gstAmount,
             'total_amount' => $totalAmount,
              ]);
+            }
+            else{
+               return $this->sendError("Product not found", ['error'=>['Product not found']]);
+            }
           }
             //one to many relatonship for stroing products and for fetching
          $lead->leadProducts()->saveMany($productDetails);
@@ -164,7 +171,6 @@ class LeadsController extends BaseController
             $quotationFilePath = $request->file('lead_attachment')->storeAs('public/Lead/lead_attachment', $quotationFileNameToStore);
         }
     
-            
         $lead->contact_id = $request->input("contact_id");
         $lead->lead_type = $request->input("lead_type");
         $lead->tender_number = $request->input("tender_number");
@@ -181,6 +187,10 @@ class LeadsController extends BaseController
          } 
         $lead->save();
 
+        $totalAmountWithoutGst = 0;
+        $totalGstAmount = 0;
+        $totalAmountWithGst = 0;    
+
         $products = $request->input('products');
 
         // // Prepare the product data for syncing (associating product_id with quantity)
@@ -196,16 +206,35 @@ class LeadsController extends BaseController
         //end
         $previousProducts = LeadProduct::where("lead_id",$lead->id)->delete();
         $productDetails = [];
-        if($products){
         foreach ($products as $product) {
-        $productDetails[] = new LeadProduct([
+            $PRODUCT = Product::find($product['product_id']);
+            if($PRODUCT){
+            $gstRate = $PRODUCT->gst_rate; 
+            $amountWithoutGst = $product['quantity'] * $product['rate'];
+            $gstAmount = ($amountWithoutGst * $gstRate) / 100;
+            $totalAmount = $amountWithoutGst + $gstAmount;
+            // 
+            $totalAmountWithoutGst += $amountWithoutGst;
+            $totalGstAmount += $gstAmount;
+            $totalAmountWithGst += $totalAmount;
+         $productDetails[] = new LeadProduct([
             'product_id' => $product['product_id'],
             'quantity' => $product['quantity'],
+            'rate' => $product['rate'],
+            'amount_without_gst' => $amountWithoutGst,
+            'gst_amount' => $gstAmount,
+            'total_amount' => $totalAmount,
              ]);
-          }
-            //one to many relatonship for stroing products and for fetching
-         $lead->leadProducts()->saveMany($productDetails);
+            }
+            else{
+               return $this->sendError("Product not found", ['error'=>['Product not found']]);
+            }
+             $lead->leadProducts()->saveMany($productDetails);
         }
+        $lead->total_taxable = $totalAmountWithoutGst;
+        $lead->total_gst = $totalGstAmount;
+        $lead->total_amount_with_gst = $totalAmountWithGst;
+        $lead->save();
         return $this->sendResponse(['Lead'=> new LeadResource($lead)], 'Lead Updated Successfully');
     }
     
@@ -213,8 +242,8 @@ class LeadsController extends BaseController
     /**
      * Show Lead.
      */
-    public function show(string $id): JsonResponse
-    {
+     public function show(string $id): JsonResponse
+      {
         $lead = Lead::find($id);
     //   $lead = Lead::with(['leadProducts', 'employee', 'followUp', 'contact'])->find($id);
         if(!$lead){
@@ -222,7 +251,7 @@ class LeadsController extends BaseController
         }
         return $this->sendResponse(["Lead"=>new LeadResource($lead)], "lead retrieved successfully");
         // return $this->sendResponse(["lead"=> $lead, 'contact'=>new ContactResource($lead->contact)], "lead retrieved successfully");
-    }
+      }
 
     /**
      * Destroy lead.
@@ -268,12 +297,12 @@ class LeadsController extends BaseController
     public function closeLead(Request $request, string $id): JsonResponse
     {
         $lead = Lead::find($id);
-
+         $leadStatus = config('data.lead_status.Closed');
         if(!$lead){
             return $this->sendError("Lead not found", ['error'=>['lead not found']]);
         }
             
-        $lead->lead_status = $request->input("lead_status");
+        $lead->lead_status = $leadStatus;
         $lead->lead_closing_reason = $request->input("lead_closing_reason");
         $lead->save();
 
@@ -283,9 +312,12 @@ class LeadsController extends BaseController
 
     public function generateQuotation(string $id)
     {
-        $leadStatus = 'Quotation';
+        $leadStatus = config('data.lead_status.Quotation');
         $leads = Lead::with('leadProducts.product')->find($id);
         $leads->lead_status  = $leadStatus;
+        if(!empty($leads->lead_quotation) && Storage::exists('public/Lead/generated_quotations/'.$leads->lead_quotation)) {
+            Storage::delete('public/Lead/generated_quotations/'.$leads->lead_quotation);
+        }
         // 
         $user = auth()->user();
         $employee = $user->employee->first();
@@ -322,7 +354,55 @@ class LeadsController extends BaseController
         Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
 
         // Output the PDF for download
-        return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
+        // return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
+        return $this->sendResponse([], "Quotation generated successfully");
+
+    }
+
+    public function generateInvoice(string $id)
+    {
+        $leads = Lead::with('leadProducts.product')->find($id);
+        if(!empty($leads->lead_invoice) && Storage::exists('public/Lead/generated_invoices/'.$leads->lead_invoice)) {
+            Storage::delete('public/Lead/generated_invoices/'.$leads->lead_invoice);
+        }
+        // 
+        $user = auth()->user();
+        $employee = $user->employee->first();
+    
+        if (!$employee) {
+            return response()->json(['message' => 'Employee not found'], 404);
+        }
+        
+        if (!$leads) {
+            return response()->json(['message' => 'Lead not found'], 404);
+        }
+        
+        $data = [
+            'user' => $user,
+            'employee' => $employee,
+            'leads' => $leads,
+        ];
+
+        // Render the Blade view to HTML
+        $html = view('invoice.invoice', $data)->render();
+
+        // Create a new mPDF instance
+        $mpdf = new Mpdf();
+
+        // Write HTML to the PDF
+        $mpdf->WriteHTML($html);
+
+        // Define the file path for saving the PDF
+        $filePath = 'public/Lead/generated_invoices/invoice_' . time(). $user->id . '.pdf'; // Store in 'storage/app/invoices'
+        $fileName = basename($filePath); // Extracts 'invoice_{timestamp}{user_id}.pdf'
+        $leads->lead_invoice = $fileName;
+        $leads->save();
+        // Save PDF to storage
+        Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
+
+        // Output the PDF for download
+        // return $mpdf->Output('invoice.pdf', 'D'); // Download the PDF
+        return $this->sendResponse([], "Invoice generated successfully");
     }
     
 }
