@@ -136,7 +136,40 @@ export default function TableDemo() {
         const link = document.createElement("a");
 
         link.href = url;
-        link.download = `quotation-${leadId}.pdf`;
+        link.download = `Quotation-${leadId}.pdf`;
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+
+        console.log("Quotation generated and downloaded successfully!");
+      } else {
+        console.error("Error generating quotation:", response.status);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  const handleGenerateInvoice = async (leadId: string) => {
+    try {
+      const response = await fetch(`/api/generate_invoice/${leadId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = `Invoices-${leadId}.pdf`;
 
         document.body.appendChild(link);
 
@@ -275,7 +308,7 @@ export default function TableDemo() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => {
-                                  navigate(`/leads/followUps/${lead.id}`);
+                                  handleGenerateInvoice(lead.id);
                                 }}
                                 className="w-full text-sm"
                               >

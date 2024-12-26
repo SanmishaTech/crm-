@@ -401,8 +401,8 @@ class LeadsController extends BaseController
         Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
 
         // Output the PDF for download
-        // return $mpdf->Output('invoice.pdf', 'D'); // Download the PDF
-        return $this->sendResponse([], "Invoice generated successfully");
+        return $mpdf->Output('invoice.pdf', 'D'); // Download the PDF
+        // return $this->sendResponse([], "Invoice generated successfully");
     }
     
 }
