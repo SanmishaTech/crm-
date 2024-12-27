@@ -16,7 +16,7 @@ export const useSidebar = create<SidebarStore>((set) => ({
   isMinimized: false,
   toggle: () => set((state) => ({ isMinimized: !state.isMinimized })),
   searchTerm: "",
-  setSearchTerm: (term: string) => set({ searchTerm: term }), // Add method to update searchTerm
+  setSearchTerm: (term: string) => set({ searchTerm: term }),
 }));
 
 type SidebarProps = {
@@ -40,11 +40,10 @@ export default function Sidebar({ className }: SidebarProps) {
         <h3 className="text-lg  font-semibold">Supplier Filter </h3>
       </div>
       <div className="flex-1 space-x-2 p-4 ">
-        {/* Search bar in Sidebar */}
         <Input
           placeholder="Search suppliers..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm using the store's setSearchTerm method
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
     </aside>

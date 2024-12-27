@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,7 +6,13 @@ import { X } from "lucide-react"; // Import the close icon
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import Sidebar, { useSidebar } from "./Sidebar"; // Import the useSidebar hook
+import Sidebar, { useSidebar } from "./Sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   File,
   PlusCircle,
@@ -153,30 +160,31 @@ export default function TableDemo() {
   return (
     <div className="flex ">
       <Sidebar className="" />
-      <div className="p-6 w-full bg-accent/50 ml-4 rounded-lg shadow-lg">
-        {/* Sidebar Toggle Button */}
-
-        <div className="p-2">
-          <h3 className="text-lg font-semibold">Suppliers List</h3>
+      <div className="p-6 w-full bg-accent/50 ml-4 rounded-lg shadow-lg ">
+        <div className="p-2  ">
+          <div className="flex justify-between items-center ">
+            <h3 className="text-lg  font-semibold mx-auto">Suppliers List</h3>
+          </div>
         </div>
-        <div className="flex justify-between items-center space-x-2">
+        <div className="flex justify-between items-center space-x-3 mr-4  ">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Filter onClick={toggle} className="h-5" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Filter</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <div className="flex-1 space-x-2">
-            {/* Conditionally render the search bar */}
             {isMinimized ? (
               <Input
                 placeholder="Search suppliers..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm in the store
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             ) : null}
-          </div>
-          <div className="flex justify-between items-center space-x-2 ">
-            <Button
-              variant="outline"
-              onClick={toggle} // Use the toggle function from the useSidebar hook
-            >
-              <Filter className="h-5" />
-            </Button>
           </div>
 
           <div className="flex space-x-2">
