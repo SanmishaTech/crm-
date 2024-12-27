@@ -7,11 +7,13 @@ use File;
 use Response;
 use Mpdf\Mpdf;
 use App\Models\Lead;
-use App\Models\Product;
+use App\Models\Invoice;
 // 
+use App\Models\Product;
 use Barryvdh\DomPDF\PDF;
 use App\Models\LeadProduct;
 use Illuminate\Http\Request;
+use App\Models\InvoiceDetail;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LeadResource;
@@ -48,6 +50,38 @@ class LeadsController extends BaseController
             $lastNumber = intval(substr($latestNumber->lead_number, 4)) + 1;
         }
         return date('my') . str_pad($lastNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    public static function generateInvoiceNumber(): string
+    {
+        // Find the latest profile number for the current month and year
+        $latestNumber = Invoice::where('invoice_number', 'like', date('my') . '%')
+                        ->orderBy('invoice_number', 'DESC')
+                        ->first();
+
+        // Increment the numeric part of the profile number
+        $lastNumber = 1;
+
+        if ($latestNumber) {
+            $lastNumber = intval(substr($latestNumber->invoice_number, 4)) + 1;
+        }
+        return "I". date('my') . str_pad($lastNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    public static function generateQuotationNumber(): string
+    {
+        // Find the latest profile number for the current month and year
+        $latestNumber = Lead::where('quotation_number', 'like', date('my') . '%')
+                        ->orderBy('quotation_number', 'DESC')
+                        ->first();
+
+        // Increment the numeric part of the profile number
+        $lastNumber = 1;
+
+        if ($latestNumber) {
+            $lastNumber = intval(substr($latestNumber->quotation_number, 4)) + 1;
+        }
+        return  "Q".date('my') . str_pad($lastNumber, 3, '0', STR_PAD_LEFT);
     }
     
     /**
@@ -125,6 +159,7 @@ class LeadsController extends BaseController
             'product_id' => $product['product_id'],
             'quantity' => $product['quantity'],
             'rate' => $product['rate'],
+            'gst_rate' => $gstRate,
             'amount_without_gst' => $amountWithoutGst,
             'gst_amount' => $gstAmount,
             'total_amount' => $totalAmount,
@@ -204,6 +239,7 @@ class LeadsController extends BaseController
             $PRODUCT = Product::find($product['product_id']);
             if($PRODUCT){
             $gstRate = $PRODUCT->gst_rate; 
+            
             $amountWithoutGst = $product['quantity'] * $product['rate'];
             $gstAmount = ($amountWithoutGst * $gstRate) / 100;
             $totalAmount = $amountWithoutGst + $gstAmount;
@@ -215,6 +251,7 @@ class LeadsController extends BaseController
             'product_id' => $product['product_id'],
             'quantity' => $product['quantity'],
             'rate' => $product['rate'],
+            'gst_rate' => $gstRate,
             'amount_without_gst' => $amountWithoutGst,
             'gst_amount' => $gstAmount,
             'total_amount' => $totalAmount,
@@ -343,11 +380,14 @@ class LeadsController extends BaseController
         // Define the file path for saving the PDF
         $filePath = 'public/Lead/generated_quotations/quotation_' . time(). $user->id . '.pdf'; // Store in 'storage/app/invoices'
         $fileName = basename($filePath); // Extracts 'invoice_{timestamp}{user_id}.pdf'
-        $leads->lead_quotation = $fileName;
-        $leads->save();
+      
         // Save PDF to storage
         Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
-
+        $leads->lead_quotation = $fileName;
+        $leads->quotation_date = now()->format("Y-m-d");
+        $leads->quotation_number = $this->generateQuotationNumber();
+        $leads->quotation_version = $leads->quotation_version + 1;
+        $leads->save();
         // Output the PDF for download
         return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
         // return $this->sendResponse([], "Quotation generated successfully");
@@ -356,11 +396,51 @@ class LeadsController extends BaseController
 
     public function generateInvoice(string $id)
     {
-        $leads = Lead::with('leadProducts.product')->find($id);
+        $leads = Lead::with(['leadProducts.product','contact.client'])->find($id);
+
+        if(!$leads){
+            return response()->json(['message' => 'Lead not found'], 404);
+   
+           }
         if(!empty($leads->lead_invoice) && Storage::exists('public/Lead/generated_invoices/'.$leads->lead_invoice)) {
             Storage::delete('public/Lead/generated_invoices/'.$leads->lead_invoice);
         }
-        // 
+
+        // dd
+        $invoice = Invoice::find($leads->invoice_id);
+        if(!$invoice){
+             $invoice = new Invoice();
+             $invoice->invoice_number = $this->generateInvoiceNumber();
+             $invoice->invoice_date = now()->format("Y-m-d");
+             $invoice->client_id = $leads->contact->client->id;
+             $invoice->amount = $leads->total_amount_with_gst;
+             $invoice->save();
+
+             $leads->invoice_id = $invoice->id;
+             $leads->save();
+        }
+        $invoice->client_id = $leads->contact->client->id;
+        $invoice->amount = $leads->total_amount_with_gst;
+        $invoice->save();
+
+        // invoiceDetail
+        $previousProducts = InvoiceDetail::where("invoice_id",$invoice->id)->delete();
+        $leadProducts = $leads->leadProducts;
+        $invoiceDetails =[];
+        foreach ($leadProducts as $product) {
+            
+            $invoiceDetails[] = new InvoiceDetail([
+                'product_id' => $product['product_id'],
+                'quantity' => $product['quantity'],
+                'rate' => $product['rate'],
+                'gst_rate'=> $product['gst_rate'],
+                'gst_amount' => $product['gst_amount'],
+                'total_taxable_amount' => $product['amount_without_gst'],
+                 ]);
+        }
+        $invoice->invoiceDetails()->saveMany($invoiceDetails);
+            
+       
         $user = auth()->user();
         $employee = $user->employee->first();
     
