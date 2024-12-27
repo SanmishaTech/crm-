@@ -161,8 +161,8 @@ class LeadsController extends BaseController
         }
 
         if($request->hasFile('lead_attachment')){
-            if(!empty($lead->lead_attachment) && Storage::exists('public/Lead/lead_attachment'.$lead->lead_attachment)) {
-                Storage::delete('public/Lead/lead_attachment'.$lead->lead_attachment);
+            if(!empty($lead->lead_attachment) && Storage::exists('public/Lead/lead_attachment/'.$lead->lead_attachment)) {
+                Storage::delete('public/Lead/lead_attachment/'.$lead->lead_attachment);
             }
             $quotationFileNameWithExtention = $request->file('lead_attachment')->getClientOriginalName();
             $quotationFilename = pathinfo($quotationFileNameWithExtention, PATHINFO_FILENAME);
