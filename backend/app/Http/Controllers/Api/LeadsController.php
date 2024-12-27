@@ -192,7 +192,11 @@ class LeadsController extends BaseController
         $totalAmountWithGst = 0;    
         
         $previousProducts = LeadProduct::where("lead_id",$lead->id)->delete();
-        $products = $request->input('products');
+        // $products = $request->input('products');
+        // dd($products);
+        $productsString = $request->input('products');
+        $products = json_decode($productsString, true); 
+
           if($products)
          {
         $productDetails = [];
