@@ -134,10 +134,10 @@ export default function EditLeadPage() {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
       onSuccess: () => {
+        navigate("/leads");
         queryClient.invalidateQueries({ queryKey: ["editlead"] });
         queryClient.invalidateQueries({ queryKey: ["editlead", id] });
         toast.success("Lead updated successfully");
-        navigate("/leads");
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate lead")) {
@@ -266,8 +266,15 @@ export default function EditLeadPage() {
 
     const Formdata = new FormData();
 
+    // for (const [key, value] of Object.entries(submissionData)) {
+    //   Formdata.append(key, value);
+    // }
     for (const [key, value] of Object.entries(submissionData)) {
-      Formdata.append(key, value);
+      // Check if the value is an object, and if so, stringify it
+      Formdata.append(
+        key,
+        typeof value === "object" ? JSON.stringify(value) : value
+      );
     }
     Formdata.append("_method", "put");
 

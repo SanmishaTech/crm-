@@ -193,7 +193,7 @@ class LeadsController extends BaseController
         
         $previousProducts = LeadProduct::where("lead_id",$lead->id)->delete();
         $products = $request->input('products');
-         if($products)
+          if($products)
          {
         $productDetails = [];
         foreach ($products as $product) {
