@@ -1,15 +1,15 @@
-// src/components/Sidebar.tsx (no change needed)
 import React from "react";
 import { cn } from "@/lib/utils";
 import { create } from "zustand";
 import { Input } from "@/components/ui/input";
 
-// Sidebar Store with `searchTerm` state
 interface SidebarStore {
   isMinimized: boolean;
   toggle: () => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  filters: { [key: string]: boolean };
+  setFilter: (filter: string, value: boolean) => void;
 }
 
 export const useSidebar = create<SidebarStore>((set) => ({
@@ -17,6 +17,11 @@ export const useSidebar = create<SidebarStore>((set) => ({
   toggle: () => set((state) => ({ isMinimized: !state.isMinimized })),
   searchTerm: "",
   setSearchTerm: (term: string) => set({ searchTerm: term }),
+  filters: { streetAddress: false, area: false, city: false },
+  setFilter: (filter: string, value: boolean) =>
+    set((state) => ({
+      filters: { ...state.filters, [filter]: value },
+    })),
 }));
 
 type SidebarProps = {
@@ -24,7 +29,8 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ className }: SidebarProps) {
-  const { isMinimized, toggle, searchTerm, setSearchTerm } = useSidebar();
+  const { isMinimized, toggle, searchTerm, setSearchTerm, filters, setFilter } =
+    useSidebar();
 
   return (
     <aside
@@ -36,15 +42,18 @@ export default function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      <div className="flex justify-center p-2 space-x-2 mt-6">
-        <h3 className="text-lg  font-semibold">Supplier Filter </h3>
-      </div>
-      <div className="flex-1 space-x-2 p-4 ">
-        <Input
-          placeholder="Search suppliers..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <div className="p-2 space-x-2 mt-6 justify-items-center">
+        <div>
+          <h3 className="text-lg font-semibold">Supplier Filter</h3>
+        </div>
+        <div className="mt-2">
+          <Input
+            placeholder="Search suppliers..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="mt-4"></div>
       </div>
     </aside>
   );

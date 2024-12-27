@@ -52,7 +52,6 @@ import {
 } from "@/components/ui/pagination";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useGetData } from "@/lib/HTTP/GET";
 import AlertDialogbox from "./Delete";
 
@@ -154,9 +153,6 @@ export default function TableDemo() {
     }
   };
 
-  // Get the toggle function from the Sidebar store
-  // const { toggle } = useSidebar();
-
   return (
     <div className="flex ">
       <Sidebar className="" />
@@ -167,16 +163,18 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex justify-between items-center space-x-3 mr-4  ">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Filter onClick={toggle} className="h-5" />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Filter</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div className="ml-4 mt-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Filter onClick={toggle} className=" h-5  " />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Filter</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input

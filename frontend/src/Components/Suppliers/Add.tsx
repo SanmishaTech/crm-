@@ -182,42 +182,6 @@ export default function InputForm() {
                     </FormItem>
                   )}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="department"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Department</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="justify-left"
-                          placeholder="Enter Department"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="designation"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Designation</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="justify-left"
-                          placeholder="Enter Designation"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             </CardContent>
           </Card>
@@ -225,7 +189,7 @@ export default function InputForm() {
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className=" text-xl  font-semibold">
-                Contact Information
+                Contact Person
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -272,6 +236,44 @@ export default function InputForm() {
                   )}
                 />
               </div>
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                <FormField
+                  control={form.control}
+                  name="department"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter Department"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="designation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Designation</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter Designation"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name="email"
@@ -293,7 +295,7 @@ export default function InputForm() {
           </Card>
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
-              <CardTitle className=" text-xl  font-semibold">
+              <CardTitle className=" text-xl font-semibold">
                 Address Information
               </CardTitle>
             </CardHeader>

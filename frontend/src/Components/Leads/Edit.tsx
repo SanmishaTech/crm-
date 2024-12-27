@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -107,21 +108,21 @@ export default function EditLeadPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      contact_id: "",
-      lead_source: "",
-      lead_status: "",
-      lead_type: "basic",
-      tender_number: "",
-      bid_end_date: "",
-      portal: "",
-      tender_category: "",
-      emd: null,
-      tender_status: "",
-      quantity: "",
-      rate: "",
-      product_id: "",
-      lead_closing_reason: "",
-      lead_attachment: "",
+      // contact_id: "",
+      // lead_source: "",
+      // lead_status: "",
+      // lead_type: "basic",
+      // tender_number: "",
+      // bid_end_date: "",
+      // portal: "",
+      // tender_category: "",
+      // emd: null,
+      // tender_status: "",
+      // quantity: "",
+      // rate: "",
+      // product_id: "",
+      // lead_closing_reason: "",
+      // lead_attachment: "",
     },
   });
 
@@ -187,6 +188,22 @@ export default function EditLeadPage() {
         setData(data?.Lead);
         setContacts(data?.data?.Lead?.contact_id);
         setLoading(false);
+        console.log(data.data);
+        form.reset({
+          contact_id: data?.data?.Lead?.contact_id,
+          lead_status: data?.data?.Lead?.lead_status,
+          lead_source: data?.data?.Lead?.lead_source,
+          lead_type: data?.data?.Lead?.lead_type,
+          tender_number: data?.data?.Lead?.tender_number,
+          bid_end_date: data?.data?.Lead?.bid_end_date,
+          portal: data?.data?.Lead?.portal,
+          tender_category: data?.data?.Lead?.tender_category,
+          emd: data?.data?.Lead?.emd,
+          tender_status: data?.data?.Lead?.tender_status,
+          quantity: data?.data?.Lead?.quantity,
+          rate: data?.data?.Lead?.rate,
+          product_id: data?.data?.Lead?.product_id,
+        });
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate lead")) {
@@ -209,27 +226,6 @@ export default function EditLeadPage() {
       setProductRows(products);
     }
   }, [editData]);
-
-  useEffect(() => {
-    if (editData?.data?.Lead) {
-      const newData = editData?.data?.Lead;
-      form.reset({
-        contact_id: newData?.contact_id || "",
-        lead_status: newData?.lead_status || "",
-        lead_source: newData?.lead_source || "",
-        lead_type: newData?.lead_type || "",
-        tender_number: newData?.tender_number || "",
-        bid_end_date: newData?.bid_end_date || "",
-        portal: newData?.portal || "",
-        tender_category: newData?.tender_category || "",
-        emd: newData?.emd || "",
-        tender_status: newData?.tender_status || "",
-        quantity: newData?.quantity || "",
-        rate: newData?.rate || "",
-        product_id: newData?.product_id || "",
-      });
-    }
-  }, [editData, form]);
 
   const getData = useGetData({
     endpoint: `/api/contacts`,
