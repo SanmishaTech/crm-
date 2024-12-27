@@ -190,21 +190,11 @@ class LeadsController extends BaseController
         $totalAmountWithoutGst = 0;
         $totalGstAmount = 0;
         $totalAmountWithGst = 0;    
-
-        $products = $request->input('products');
-
-        // // Prepare the product data for syncing (associating product_id with quantity)
-        // $productData = [];
-        // foreach ($products as $product) {
-        //     $productData[
-        //     $product['product_id']] = ['quantity' => $product['quantity']];
-        // }
-    
-        // // Sync the products to the lead (this will add, update or remove products)
-        //  //many to many relatonship for updating products
-        // $lead->updateLeadProducts()->sync($productData);
-        //end
+        
         $previousProducts = LeadProduct::where("lead_id",$lead->id)->delete();
+        $products = $request->input('products');
+         if($products)
+         {
         $productDetails = [];
         foreach ($products as $product) {
             $PRODUCT = Product::find($product['product_id']);
@@ -229,8 +219,9 @@ class LeadsController extends BaseController
             else{
                return $this->sendError("Product not found", ['error'=>['Product not found']]);
             }
-             $lead->leadProducts()->saveMany($productDetails);
         }
+             $lead->leadProducts()->saveMany($productDetails);
+    }
         $lead->total_taxable = $totalAmountWithoutGst;
         $lead->total_gst = $totalGstAmount;
         $lead->total_amount_with_gst = $totalAmountWithGst;
