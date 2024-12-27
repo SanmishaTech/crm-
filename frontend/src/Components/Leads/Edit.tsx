@@ -63,7 +63,6 @@ const formSchema = z.object({
   bid_end_date: z.string().optional(),
   portal: z.string().optional(),
   tender_category: z.string().optional(),
-  // emd: z.string().optional(),
   emd: z.coerce.number().optional(),
   lead_closing_reason: z.string().optional(),
   tender_status: z.string().optional(),
@@ -108,21 +107,7 @@ export default function EditLeadPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // contact_id: "",
-      // lead_source: "",
-      // lead_status: "",
-      // lead_type: "basic",
-      // tender_number: "",
-      // bid_end_date: "",
-      // portal: "",
-      // tender_category: "",
-      // emd: null,
-      // tender_status: "",
-      // quantity: "",
-      // rate: "",
-      // product_id: "",
-      // lead_closing_reason: "",
-      // lead_attachment: "",
+      lead_type: "",
     },
   });
 
@@ -157,12 +142,12 @@ export default function EditLeadPage() {
       retry: 1,
       onSuccess: (data) => {
         if (data?.data?.Products) {
-          setFrameworks(
-            data.data.Products.map((product: Product) => ({
-              value: product.id.toString(),
-              label: product.product,
-            }))
-          );
+          // setFrameworks(
+          //   data.data.Products.map((product: Product) => ({
+          //     value: product.id,
+          //     label: product.product,
+          //   }))
+          // );
         } else {
           toast.error("No products available.");
         }
@@ -186,24 +171,10 @@ export default function EditLeadPage() {
       retry: 1,
       onSuccess: (data) => {
         setData(data?.Lead);
+
         setContacts(data?.data?.Lead?.contact_id);
         setLoading(false);
-        console.log(data.data);
-        form.reset({
-          contact_id: data?.data?.Lead?.contact_id,
-          lead_status: data?.data?.Lead?.lead_status,
-          lead_source: data?.data?.Lead?.lead_source,
-          lead_type: data?.data?.Lead?.lead_type,
-          tender_number: data?.data?.Lead?.tender_number,
-          bid_end_date: data?.data?.Lead?.bid_end_date,
-          portal: data?.data?.Lead?.portal,
-          tender_category: data?.data?.Lead?.tender_category,
-          emd: data?.data?.Lead?.emd,
-          tender_status: data?.data?.Lead?.tender_status,
-          quantity: data?.data?.Lead?.quantity,
-          rate: data?.data?.Lead?.rate,
-          product_id: data?.data?.Lead?.product_id,
-        });
+        console.log(data.data.Lead);
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate lead")) {
@@ -224,6 +195,29 @@ export default function EditLeadPage() {
         rate: product.rate || "",
       }));
       setProductRows(products);
+    }
+  }, [editData]);
+
+  useEffect(() => {
+    if (editData?.data?.Lead) {
+      const newData = editData.data.Lead;
+      console.log("newData", newData);
+      form.reset({
+        contact_id: newData?.contact_id || "",
+        lead_status: newData?.lead_status || "",
+        lead_closing_reason: newData?.lead_closing_reason || "",
+        lead_source: newData?.lead_source || "",
+        lead_type: newData?.lead_type || "",
+        tender_number: newData?.tender_number || "",
+        bid_end_date: newData?.bid_end_date || "",
+        portal: newData?.portal || "",
+        tender_category: newData?.tender_category || "",
+        emd: newData?.emd || "",
+        tender_status: newData?.tender_status || "",
+        quantity: newData?.quantity || "",
+        rate: newData?.rate || "",
+        product_id: newData?.product_id || "",
+      });
     }
   }, [editData]);
 
@@ -258,7 +252,7 @@ export default function EditLeadPage() {
         rate: row.rate,
       })),
     };
-    console.log(submissionData);
+    // console.log(submissionData);
 
     const Formdata = new FormData();
 
@@ -290,6 +284,12 @@ export default function EditLeadPage() {
     queryClient.invalidateQueries({ queryKey: ["supplier", id] });
   };
 
+  const languages = [
+    { label: "English", value: "en" },
+    { label: "French", value: "fr" },
+    { label: "German", value: "de" },
+  ] as const;
+
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
       <h3 className="text-2xl font-semibold text-center">Edit Lead</h3>
@@ -302,37 +302,65 @@ export default function EditLeadPage() {
               control={form.control}
               name="contact_id"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormLabel>Contacts</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={String(field.value)} // Ensure the value is a string and correctly selected
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger className="">
-                        <SelectValue placeholder="Select Contact" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {loading ? (
-                          <SelectItem disabled>Loading...</SelectItem>
-                        ) : Array.isArray(contacts) && contacts.length > 0 ? (
-                          contacts.map((contact) => (
-                            <SelectItem
-                              key={contact.id}
-                              value={String(contact.id)}
-                            >
-                              {contact.contact_person}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <SelectItem disabled>
-                            No contacts available
-                          </SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>Enter the Client.</FormDescription>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-[200px] justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? contacts?.find(
+                                (contact) => contact.id === field.value
+                              )?.contact_person
+                            : "Select contact"}
+
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search contact..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>No contact found.</CommandEmpty>
+                          <CommandGroup>
+                            {contacts.map((contact) => (
+                              <CommandItem
+                                value={contact.id}
+                                key={contact.id}
+                                onSelect={() => {
+                                  form.setValue("contact_id", contact.id);
+                                }}
+                              >
+                                {contact.contact_person}
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    contact.id === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>
+                    Select the contact you want to associate.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -345,36 +373,13 @@ export default function EditLeadPage() {
                 <FormItem>
                   <FormLabel>Lead Source</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Lead Source" {...field} />
+                    <Input
+                      placeholder="Enter Lead Source"
+                      {...field}
+                      value={field.value || ""}
+                    />
                   </FormControl>
                   <FormDescription>Enter the Lead Source.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="space-x-6 ">
-            <FormField
-              control={form.control}
-              name="lead_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lead Type</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={field.value}
-                      onValueChange={(value) => field.onChange(value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Lead Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="basic">Basic</SelectItem>
-                        <SelectItem value="tender">Tender</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>Select the lead type.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -388,7 +393,10 @@ export default function EditLeadPage() {
                 <FormItem>
                   <FormLabel>Lead Status</FormLabel>
                   <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value || ""}
+                      onValueChange={field.onChange}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select Lead Status" />
                       </SelectTrigger>
@@ -412,9 +420,9 @@ export default function EditLeadPage() {
                           <FormLabel>Reason for Closing</FormLabel>
                           <FormControl>
                             <Textarea
-                              className="w-full" // Full width applied here
+                              className="w-full"
                               placeholder="Enter reason for closing the lead"
-                              {...closeField} // Bind the close field to the Textarea
+                              {...closeField}
                             />
                           </FormControl>
                           <FormDescription>
@@ -440,7 +448,7 @@ export default function EditLeadPage() {
                                 setFile(e.target.files[0]);
                               }}
                               className="w-full border p-2"
-                              accept="application/pdf" // Accept only PDF files
+                              accept="application/pdf"
                             />
                           </FormControl>
                           <FormDescription>
@@ -481,6 +489,33 @@ export default function EditLeadPage() {
               )}
             />
           </div>
+          <div className="space-x-6 ">
+            <FormField
+              control={form.control}
+              name="lead_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Lead Type</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={field.value || ""}
+                      onValueChange={(value) => field.onChange(value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Lead Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="basic">Basic</SelectItem>
+                        <SelectItem value="tender">Tender</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>Select the lead type.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           {form.watch("lead_type") === "tender" && (
             <div className=" space-y-6">
               <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4 mt-4">
@@ -491,7 +526,11 @@ export default function EditLeadPage() {
                     <FormItem>
                       <FormLabel>Tender Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Tender Number" {...field} />
+                        <Input
+                          placeholder="Enter Tender Number"
+                          {...field}
+                          value={field.value || ""}
+                        />
                       </FormControl>
                       <FormDescription>
                         Enter the tender number.
@@ -532,7 +571,11 @@ export default function EditLeadPage() {
                     <FormItem>
                       <FormLabel>Portal</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Portal Name" {...field} />
+                        <Input
+                          placeholder="Enter Portal Name"
+                          {...field}
+                          value={field.value || ""}
+                        />
                       </FormControl>
                       <FormDescription>Enter the Portal name.</FormDescription>
                       <FormMessage />
@@ -550,7 +593,7 @@ export default function EditLeadPage() {
                       <FormLabel>Tender Category</FormLabel>
                       <FormControl>
                         <Select
-                          value={field.value}
+                          value={field.value || ""}
                           onValueChange={(value) => field.onChange(value)}
                         >
                           <SelectTrigger>
@@ -617,7 +660,7 @@ export default function EditLeadPage() {
                       <FormLabel>Tender Status</FormLabel>
                       <FormControl>
                         <Select
-                          value={field.value}
+                          value={field.value || ""}
                           onValueChange={(value) => field.onChange(value)}
                         >
                           <SelectTrigger>
@@ -638,6 +681,114 @@ export default function EditLeadPage() {
                       </FormControl>
                       <FormDescription>Select the tender type.</FormDescription>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="space-x-6 ">
+                <FormField
+                  control={form.control}
+                  name="lead_status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Lead Status</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value || ""}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Lead Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="open">Open</SelectItem>
+                            <SelectItem value="inProgress">
+                              In Progress
+                            </SelectItem>
+                            <SelectItem value="quotation">Quotation</SelectItem>
+                            <SelectItem value="close">Close</SelectItem>
+                            <SelectItem value="dealStatus">
+                              Deal Status
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormDescription>Enter the Lead Status.</FormDescription>
+                      <FormMessage />
+                      {field.value === "close" && (
+                        <FormField
+                          control={form.control}
+                          name="lead_closing_reason"
+                          render={({ field: closeField }) => (
+                            <FormItem>
+                              <FormLabel>Reason for Closing</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  className="w-full"
+                                  placeholder="Enter reason for closing the lead"
+                                  {...closeField}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Provide a reason for closing the lead.
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                      {field.value === "quotation" && (
+                        <FormField
+                          control={form.control}
+                          name="lead_attachment"
+                          render={({ field: pdfField }) => (
+                            <FormItem>
+                              <FormLabel>Upload PDF</FormLabel>
+                              <FormControl>
+                                <input
+                                  id="pdf-upload"
+                                  type="file"
+                                  onChange={(e) => {
+                                    setFile(e.target.files[0]);
+                                  }}
+                                  className="w-full border p-2"
+                                  accept="application/pdf" // Accept only PDF files
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Upload a PDF to accompany your closing reason.
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                      {field.value === "dealStatus" && (
+                        <FormField
+                          control={form.control}
+                          name="lead_attachment"
+                          render={({ field: pdfField }) => (
+                            <FormItem>
+                              <FormLabel>Upload PDF</FormLabel>
+                              <FormControl>
+                                <input
+                                  id="pdf-upload"
+                                  type="file"
+                                  onChange={(e) => {
+                                    setFile(e.target.files[0]);
+                                  }}
+                                  className="w-full border p-2"
+                                  accept="application/pdf" // Accept only PDF files
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Upload a PDF to accompany your closing reason.
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
                     </FormItem>
                   )}
                 />
@@ -780,7 +931,6 @@ export default function EditLeadPage() {
               type="button"
               onClick={() => {
                 navigate("/leads");
-                window.location.reload();
               }}
             >
               Cancel
