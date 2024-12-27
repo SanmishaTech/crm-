@@ -90,6 +90,7 @@ export default function EditLeadPage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  
   const [contacts, setContacts] = useState<any[]>([]);
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
   const [file, setFile] = useState<File | null>(null);
@@ -131,31 +132,6 @@ export default function EditLeadPage() {
         } else {
           toast.error("Failed to submit the form. Please try again.");
         }
-      },
-    },
-  });
-
-  const { data: productsData } = useGetData({
-    endpoint: `/api/products`,
-    params: {
-      queryKey: ["products"],
-      retry: 1,
-      onSuccess: (data) => {
-        if (data?.data?.Products) {
-          // setFrameworks(
-          //   data.data.Products.map((product: Product) => ({
-          //     value: product.id,
-          //     label: product.product,
-          //   }))
-          // );
-        } else {
-          toast.error("No products available.");
-        }
-        setLoading(false);
-      },
-      onError: (error) => {
-        toast.error("Failed to fetch products. Please try again.");
-        setLoading(false);
       },
     },
   });
@@ -238,6 +214,22 @@ export default function EditLeadPage() {
         }
       },
       enabled: !!id,
+    },
+  });
+
+  const productsData = useGetData({
+    endpoint: `/api/products`,
+    params: {
+      queryKey: ["products"],
+      retry: 1,
+      onSuccess: (data) => {
+        // setProducts(data?.data?.Product || []);
+        setLoading(false);
+      },
+      onError: (error) => {
+        toast.error("Failed to fetch products. Please try again.");
+        setLoading(false);
+      },
     },
   });
 

@@ -311,8 +311,6 @@ export default function TableDemo() {
                                     >
                                       Edit
                                     </Button>
-                                    <AlertDialogbox url={lead.id} />
-
                                     <Button
                                       variant="ghost"
                                       size="sm"
@@ -324,6 +322,8 @@ export default function TableDemo() {
                                     >
                                       Deal
                                     </Button>
+                                    <AlertDialogbox url={lead.id} />
+
                                     <Button
                                       variant="ghost"
                                       size="sm"
