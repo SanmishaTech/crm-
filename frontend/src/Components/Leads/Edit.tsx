@@ -28,7 +28,7 @@ import {
 import { z } from "zod";
 import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
-import { usePutData } from "@/lib/HTTP/PUT";
+import { usePostData } from "@/lib/HTTP/POST";
 import {
   Command,
   CommandEmpty,
@@ -125,7 +125,7 @@ export default function EditLeadPage() {
     },
   });
 
-  const fetchData = usePutData({
+  const fetchData = usePostData({
     endpoint: `/api/leads/${id}`,
     queryKey: ["editlead", id],
     params: {
@@ -185,7 +185,7 @@ export default function EditLeadPage() {
       retry: 1,
       onSuccess: (data) => {
         setData(data?.Lead);
-        setContacts(data?.data?.Lead?.contact_id); // Store contact_id for later use
+        setContacts(data?.data?.Lead?.contact_id);
         setLoading(false);
       },
       onError: (error) => {
@@ -202,7 +202,7 @@ export default function EditLeadPage() {
   useEffect(() => {
     if (editData?.data?.Lead?.products) {
       const products = editData.data.Lead.products.map((product: any) => ({
-        product_id: product.product_id ? product.product_id.toString() : "", // Ensure product_id exists before calling toString
+        product_id: product.product_id ? product.product_id.toString() : "",
         quantity: product.quantity || "",
         rate: product.rate || "",
       }));
@@ -214,7 +214,7 @@ export default function EditLeadPage() {
     if (editData?.data?.Lead) {
       const newData = editData?.data?.Lead;
       form.reset({
-        contact_id: newData?.contact_id || "", // Preselect the contact_id from the fetched data
+        contact_id: newData?.contact_id || "",
         lead_status: newData?.lead_status || "",
         lead_source: newData?.lead_source || "",
         lead_type: newData?.lead_type || "",
@@ -264,8 +264,15 @@ export default function EditLeadPage() {
     };
     console.log(submissionData);
 
+    const Formdata = new FormData();
+
+    for (const [key, value] of Object.entries(submissionData)) {
+      Formdata.append(key, value);
+    }
+    Formdata.append("_method", "put");
+
     // window.location.reload();
-    fetchData.mutate(submissionData);
+    fetchData.mutate(Formdata);
     queryClient.invalidateQueries({ queryKey: ["supplier"] });
     queryClient.invalidateQueries({ queryKey: ["supplier", id] });
   };
@@ -622,7 +629,7 @@ export default function EditLeadPage() {
                       onOpenChange={(isOpen) => {
                         const newRows = [...productRows];
                         newRows[index].isOpen = isOpen;
-                        setProductRows(newRows);  
+                        setProductRows(newRows);
                       }}
                     >
                       <PopoverTrigger asChild>
@@ -734,6 +741,7 @@ export default function EditLeadPage() {
               type="button"
               onClick={() => {
                 navigate("/leads");
+                window.location.reload();
               }}
             >
               Cancel

@@ -143,6 +143,7 @@ export default function TableDemo() {
         link.click();
 
         document.body.removeChild(link);
+        window.location.reload();
 
         console.log("Quotation generated and downloaded successfully!");
       } else {
@@ -317,15 +318,16 @@ export default function TableDemo() {
                                       size="sm"
                                       onClick={() => {
                                         handleGenerateInvoice(lead.id);
+                                        window.location.reload();
                                       }}
                                       className="w-full text-sm"
                                     >
-                                      Deal  
+                                      Deal
                                     </Button>
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      onClick={() => {  
+                                      onClick={() => {
                                         navigate(`/leads/followUps/${lead.id}`);
                                       }}
                                       className="w-full text-sm"
