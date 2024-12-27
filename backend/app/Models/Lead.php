@@ -40,7 +40,7 @@ class Lead extends Model
     public function updateLeadProducts()
     {
         return $this->belongsToMany(Product::class, 'lead_products')
-        ->withPivot('id','lead_id',"product_id",'quantity','rate','gst_amount','total_amount','amount_without_gst');
+        ->withPivot('id','lead_id',"product_id",'quantity','rate','gst_rate','gst_amount','total_amount','amount_without_gst');
     }
 
    

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class LeadProduct extends Model
 {
     protected $fillable = [
-        'lead_id', 'product_id', 'quantity','rate','gst_amount','amount_without_gst','total_amount'
+        'lead_id', 'product_id', 'quantity','rate', 'gst_rate', 'gst_amount','amount_without_gst','total_amount'
     ];
 
     public function lead()
