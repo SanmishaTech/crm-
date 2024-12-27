@@ -266,20 +266,30 @@ export default function EditLeadPage() {
 
     const Formdata = new FormData();
 
-    // for (const [key, value] of Object.entries(submissionData)) {
-    //   Formdata.append(key, value);
-    // }
-    for (const [key, value] of Object.entries(submissionData)) {
-      // Check if the value is an object, and if so, stringify it
-      Formdata.append(
-        key,
-        typeof value === "object" ? JSON.stringify(value) : value
-      );
+    function appendFormData(submissionData, file) {
+      const formData = new FormData();
+      formData.append("_method", "put");
+
+      for (const [key, value] of Object.entries(submissionData)) {
+        if (typeof value === "object" && !(value instanceof File)) {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value);
+        }
+      }
+
+      // Add the file as binary data
+      if (file) {
+        formData.append("file", file);
+      }
+
+      return formData;
     }
-    Formdata.append("_method", "put");
+
+    const formData = appendFormData(submissionData, file);
 
     // window.location.reload();
-    fetchData.mutate(Formdata);
+    fetchData.mutate(formData);
     queryClient.invalidateQueries({ queryKey: ["supplier"] });
     queryClient.invalidateQueries({ queryKey: ["supplier", id] });
   };
@@ -420,6 +430,32 @@ export default function EditLeadPage() {
                     />
                   )}
                   {field.value === "quotation" && (
+                    <FormField
+                      control={form.control}
+                      name="lead_attachment"
+                      render={({ field: pdfField }) => (
+                        <FormItem>
+                          <FormLabel>Upload PDF</FormLabel>
+                          <FormControl>
+                            <input
+                              id="pdf-upload"
+                              type="file"
+                              onChange={(e) => {
+                                setFile(e.target.files[0]);
+                              }}
+                              className="w-full border p-2"
+                              accept="application/pdf" // Accept only PDF files
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Upload a PDF to accompany your closing reason.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
+                  {field.value === "dealStatus" && (
                     <FormField
                       control={form.control}
                       name="lead_attachment"
