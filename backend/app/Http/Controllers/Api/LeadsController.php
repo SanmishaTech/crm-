@@ -55,7 +55,7 @@ class LeadsController extends BaseController
     public static function generateInvoiceNumber(): string
     {
         // Find the latest profile number for the current month and year
-        $latestNumber = Invoice::where('invoice_number', 'like', date('my') . '%')
+        $latestNumber = Invoice::where('invoice_number', 'like', "I". date('my') . '%')
                         ->orderBy('invoice_number', 'DESC')
                         ->first();
 
@@ -63,7 +63,7 @@ class LeadsController extends BaseController
         $lastNumber = 1;
 
         if ($latestNumber) {
-            $lastNumber = intval(substr($latestNumber->invoice_number, 4)) + 1;
+            $lastNumber = intval(substr($latestNumber->invoice_number, 5)) + 1;
         }
         return "I". date('my') . str_pad($lastNumber, 3, '0', STR_PAD_LEFT);
     }
@@ -71,7 +71,7 @@ class LeadsController extends BaseController
     public static function generateQuotationNumber(): string
     {
         // Find the latest profile number for the current month and year
-        $latestNumber = Lead::where('quotation_number', 'like', date('my') . '%')
+        $latestNumber = Lead::where('quotation_number', 'like', "Q". date('my') . '%')
                         ->orderBy('quotation_number', 'DESC')
                         ->first();
 
@@ -79,7 +79,7 @@ class LeadsController extends BaseController
         $lastNumber = 1;
 
         if ($latestNumber) {
-            $lastNumber = intval(substr($latestNumber->quotation_number, 4)) + 1;
+            $lastNumber = intval(substr($latestNumber->quotation_number, 5)) + 1;
         }
         return  "Q".date('my') . str_pad($lastNumber, 3, '0', STR_PAD_LEFT);
     }
@@ -98,7 +98,7 @@ class LeadsController extends BaseController
             });
         }
 
-        $leads = $query->paginate(5);
+        $leads = $query->paginate(50);
 
         return $this->sendResponse(["Lead"=>LeadResource::collection($leads),
         'pagination' => [
@@ -345,7 +345,21 @@ class LeadsController extends BaseController
     public function generateQuotation(string $id)
     {
         $leadStatus = config('data.lead_status.Quotation');
-        $leads = Lead::with('leadProducts.product')->find($id);
+        // $leads = Lead::with('leadProducts.product')->find($id);
+        $leads = Lead::with(['leadProducts.product','contact.client','leadInvoice.invoiceDetails.product'])->find($id);
+        if(!$leads){
+            return $this->sendError("Lead not found", ['error'=>['Lead not found']]);
+        }
+
+        if ($leads->leadProducts->isEmpty()) {
+            return $this->sendError("Products not found", ['error'=>['Products not found to generate an invoice']]);
+
+        }
+        
+        if (!$leads->contact || !$leads->contact->client ) {
+            return $this->sendError("Client not found", ['error'=>['Client not found to generate an invoice']]);
+
+        }
         $leads->lead_status  = $leadStatus;
         if(!empty($leads->lead_quotation) && Storage::exists('public/Lead/generated_quotations/'.$leads->lead_quotation)) {
             Storage::delete('public/Lead/generated_quotations/'.$leads->lead_quotation);
@@ -356,10 +370,6 @@ class LeadsController extends BaseController
     
         if (!$employee) {
             return response()->json(['message' => 'Employee not found'], 404);
-        }
-        
-        if (!$leads) {
-            return response()->json(['message' => 'Lead not found'], 404);
         }
         
         $data = [
@@ -384,8 +394,12 @@ class LeadsController extends BaseController
         // Save PDF to storage
         Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
         $leads->lead_quotation = $fileName;
-        $leads->quotation_date = now()->format("Y-m-d");
-        $leads->quotation_number = $this->generateQuotationNumber();
+        if(!$leads->quotation_date){
+            $leads->quotation_date = now()->format("Y-m-d");
+        }
+        if(!$leads->quotation_number){
+            $leads->quotation_number = $this->generateQuotationNumber();
+        }
         $leads->quotation_version = $leads->quotation_version + 1;
         $leads->save();
         // Output the PDF for download
@@ -394,14 +408,23 @@ class LeadsController extends BaseController
 
     }
 
-    public function generateInvoice(string $id)
+    public function generateInvoice(string $id): JsonResponse
     {
-        $leads = Lead::with(['leadProducts.product','contact.client'])->find($id);
-
+        $leads = Lead::with(['leadProducts.product','contact.client','leadInvoice.invoiceDetails.product'])->find($id);
         if(!$leads){
-            return response()->json(['message' => 'Lead not found'], 404);
-   
-           }
+            return $this->sendError("Lead not found", ['error'=>['Lead not found']]);
+        }
+
+        if ($leads->leadProducts->isEmpty()) {
+            return $this->sendError("Products not found", ['error'=>['Products not found to generate an invoice']]);
+
+        }
+        
+        if (!$leads->contact || !$leads->contact->client ) {
+            return $this->sendError("Client not found", ['error'=>['Client not found to generate an invoice']]);
+
+        }
+        
         if(!empty($leads->lead_invoice) && Storage::exists('public/Lead/generated_invoices/'.$leads->lead_invoice)) {
             Storage::delete('public/Lead/generated_invoices/'.$leads->lead_invoice);
         }
@@ -419,12 +442,17 @@ class LeadsController extends BaseController
              $leads->invoice_id = $invoice->id;
              $leads->save();
         }
-        $invoice->client_id = $leads->contact->client->id;
-        $invoice->amount = $leads->total_amount_with_gst;
-        $invoice->save();
+        else{
+            $invoice->client_id = $leads->contact->client->id;
+             $invoice->amount = $leads->total_amount_with_gst;
+             $invoice->save(); 
+        }
+          $leads->load('leadInvoice');  //soles the issue of invoice number displaying
+            
+      
 
         // invoiceDetail
-        $previousProducts = InvoiceDetail::where("invoice_id",$invoice->id)->delete();
+        $previousInvoiceDetails = InvoiceDetail::where("invoice_id",$invoice->id)->delete();
         $leadProducts = $leads->leadProducts;
         $invoiceDetails =[];
         foreach ($leadProducts as $product) {
@@ -439,18 +467,16 @@ class LeadsController extends BaseController
                  ]);
         }
         $invoice->invoiceDetails()->saveMany($invoiceDetails);
-            
+    
        
         $user = auth()->user();
         $employee = $user->employee->first();
     
         if (!$employee) {
-            return response()->json(['message' => 'Employee not found'], 404);
+            return $this->sendError("Employee not found", ['error'=>['Employee not found']]);
+
         }
         
-        if (!$leads) {
-            return response()->json(['message' => 'Lead not found'], 404);
-        }
         
         $data = [
             'user' => $user,
