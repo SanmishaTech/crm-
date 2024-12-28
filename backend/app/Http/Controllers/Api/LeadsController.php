@@ -411,7 +411,7 @@ class LeadsController extends BaseController
 
     }
 
-    public function generateInvoice(string $id): JsonResponse
+    public function generateInvoice(string $id)
     {
         $leads = Lead::with(['leadProducts.product','contact.client','leadInvoice.invoiceDetails.product'])->find($id);
         if(!$leads){
