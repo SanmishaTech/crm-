@@ -12,9 +12,29 @@ export const navItems: NavItem[] = [
     icon: "dashboardIcon",
     children: [
       {
-        title: "Product Categories",
-        href: "/productCategories",
-        icon: "department",
+        title: "Leads",
+        href: "/leads",
+        icon: "leads",
+      },
+      {
+        title: "Clients",
+        href: "/clients",
+        icon: "user",
+      },
+      {
+        title: "Contacts",
+        href: "/contacts",
+        icon: "users",
+      },
+      {
+        title: "Products",
+        href: "/products",
+        icon: "products",
+      },
+      {
+        title: "Suppliers",
+        href: "/suppliers",
+        icon: "package",
       },
       {
         title: "Departments",
@@ -22,30 +42,9 @@ export const navItems: NavItem[] = [
         icon: "department",
       },
       {
-        title: "Suppliers",
-        href: "/suppliers",
-        icon: "department",
-      },
-
-      {
-        title: "Products",
-        href: "/products",
-        icon: "department",
-      },
-      {
-        title: "Contacts",
-        href: "/contacts",
-        icon: "department",
-      },
-      {
-        title: "Clients",
-        href: "/clients",
-        icon: "department",
-      },
-      {
-        title: "Leads",
-        href: "/leads",
-        icon: "department",
+        title: "Product Categories",
+        href: "/productCategories",
+        icon: "products",
       },
     ],
   },

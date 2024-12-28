@@ -178,7 +178,7 @@ export default function TableDemo() {
           </div>
         </div>
 
-        <div className="p-4 rounded-md bg-gray-50">
+        <div className="p-4 rounded-md bg-gray-50 ">
           {/* Table Start */}
           <Table>
             <TableCaption>A list of your recent suppliers.</TableCaption>

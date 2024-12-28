@@ -120,9 +120,9 @@ export default function InputForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto   mt-4">
+    <div className="max-w-4xl mx-auto p-5 mt-4">
       <div className="flex items-center justify-between w-full">
-        {/* <div>
+        <div className="mb-7">
           <Button
             onClick={() => navigate("/suppliers")}
             variant="ghost"
@@ -132,10 +132,12 @@ export default function InputForm() {
             <ChevronLeft />
             Back
           </Button>
-        </div> */}
-        <div className="flex-1 text-center">
-          <h2 className="text-2xl font-semibold">Supplier Form</h2>
-          <p className="text-xs mb-9">Add a new supplier to the database.</p>
+        </div>
+        <div className="flex-1 mr-9 text-center">
+          <div className="-ml-4">
+            <h2 className="text-2xl font-semibold">Supplier Form</h2>
+            <p className="text-xs mb-9">Add a new supplier to the database.</p>
+          </div>
         </div>
       </div>
 

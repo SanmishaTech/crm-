@@ -8,6 +8,9 @@ import {
   Search,
   Bell,
   Settings,
+  Headset,
+  LogOut,
+  CircleUserRound,
 } from "lucide-react";
 import {
   NavigationMenu,
@@ -57,36 +60,11 @@ import userAvatar from "@/images/Profile.jpg";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [isExploreOpen] = useState(false);
   const [open, setOpen] = useState(false);
-
-  // Handle navigation to dashboard
-  const handleDashboardNavigate = () => {
-    navigate("/dashboard");
-  };
-
-  const handleSuppliersNavigate = () => {
-    navigate("/suppliers");
-  };
-
-  // Handle navigation to leads page
-  const handleContactsNavigate = () => {
-    navigate("/contacts");
-  };
-
-  const handleClientsNavigate = () => {
-    navigate("/clients");
-  };
-  const handleLeadsNavigate = () => {
-    navigate("/leads");
-  };
-  const handleDepartmentNavigate = () => {
-    navigate("/departments");
-  };
 
   return (
     // <nav className="  bg-white text-black py-4 px-6 shadow-md">
-    <nav className="bg-white text-black py-4 px-6   top-0 left-0 right-0 z-50">
+    <nav className="bg-white text-black py-4 px-6 fixed top-0 left-0 right-0 z-10 ">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo / Title */}
         <div className="flex items-center space-x-5">
@@ -112,21 +90,21 @@ const Navbar = () => {
           {/* Navigation Links */}
           <div className="space-x-3">
             <Button
-              onClick={handleDashboardNavigate}
+              onClick={() => navigate("/dashboard")}
               variant="ghost"
               className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
             >
               Dashboard
             </Button>
             <Button
-              onClick={handleDepartmentNavigate}
+              onClick={() => navigate("/departments")}
               variant="ghost"
               className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
             >
               Department
             </Button>
             <Button
-              onClick={handleSuppliersNavigate}
+              onClick={() => navigate("/suppliers")}
               variant="ghost"
               className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
             >
@@ -134,21 +112,21 @@ const Navbar = () => {
             </Button>
 
             <Button
-              onClick={handleContactsNavigate}
+              onClick={() => navigate("/contacts")}
               variant="ghost"
               className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
             >
               Contacts
             </Button>
             <Button
-              onClick={handleClientsNavigate}
+              onClick={() => navigate("/clients")}
               variant="ghost"
               className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
             >
               Clients
             </Button>
             <Button
-              onClick={handleLeadsNavigate}
+              onClick={() => navigate("/leads")}
               variant="ghost"
               className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
             >
@@ -180,40 +158,9 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hover:bg-gray-100 hover:underline transition duration-200 "
-                >
-                  <EllipsisVertical className="h-4 w-4 " />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Masters</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigate("/products");
-                  }}
-                >
-                  Products
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    navigate("/productCategories");
-                  }}
-                >
-                  Product Categories
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> */}
           </div>
         </div>
 
-        {/* User Profile / Avatar */}
         <div className="flex items-center space-x-2">
           <TooltipProvider>
             <Tooltip>
@@ -265,7 +212,7 @@ const Navbar = () => {
                   </Button>
 
                   <CommandDialog open={open} onOpenChange={setOpen}>
-                    <CommandInput placeholder="Type a command or search..." />
+                    <CommandInput placeholder="Search Modules..." />
                     <CommandList>
                       <CommandEmpty>No results found.</CommandEmpty>
                       {navItems.map((item) => {
@@ -283,8 +230,7 @@ const Navbar = () => {
                                     <CommandItem
                                       className="w-full flex items-center gap-2 overflow-hidden rounded-md py-1 text-sm font-medium hover:bg-secondary hover:text-iconActive"
                                       onSelect={() => {
-                                        // Navigate logic goes here
-                                        setOpen(false); // Close the dialog after selection
+                                        setOpen(false);
                                       }}
                                     >
                                       {Icon && (
@@ -309,7 +255,6 @@ const Navbar = () => {
               </Tooltip>
             </TooltipProvider>
           </div>
-
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -327,73 +272,35 @@ const Navbar = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel className="flex items-center space-x-2">
+                <CircleUserRound className="h-5" />
+                <span>My Account</span>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center space-x-3">
+                <Settings className="h-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center space-x-3">
+                <Headset className="h-4" />
+                <span>Support</span>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
+                className="flex items-center space-x-3"
                 onClick={() => {
-                  // Token is only cleared on logout
                   localStorage.removeItem("token");
                   localStorage.removeItem("user");
-                  navigate("/"); // Redirect to login page after logout
+                  navigate("/");
                 }}
               >
-                Logout
+                <LogOut className="h-4" />
+                <span>Logout</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
-
-      {isExploreOpen && (
-        <div className="absolute top-full left-0 right-0 z-10 bg-white shadow-lg">
-          <div className="w-[90%] mx-auto py-8">
-            <div className="grid grid-cols-4 gap-8">
-              <div>
-                <h3 className="font-semibold mb-4">Sales</h3>
-                <ul className="space-y-2">
-                  <li>Leads</li>
-                  <li>Accounts</li>
-                  <li>Contacts</li>
-                  <li>Deals</li>
-                </ul>
-              </div>
-
-              {/* Marketing Section */}
-              <div>
-                <h3 className="font-semibold mb-4">Marketing</h3>
-                <ul className="space-y-2">
-                  <li>Campaigns</li>
-                  <li>Forms</li>
-                  <li>Email Templates</li>
-                </ul>
-              </div>
-
-              {/* Support Section */}
-              <div>
-                <h3 className="font-semibold mb-4">Support</h3>
-                <ul className="space-y-2">
-                  <li>Tickets</li>
-                  <li>Call Center</li>
-                  <li>Knowledge Base</li>
-                </ul>
-              </div>
-
-              {/* Analytics Section */}
-              <div>
-                <h3 className="font-semibold mb-4">Analytics</h3>
-                <ul className="space-y-2">
-                  <li>Reports</li>
-                  <li>Dashboards</li>
-                  <li>Analytics</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </nav>
   );
 };

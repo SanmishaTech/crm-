@@ -66,14 +66,14 @@ function App() {
   }, []);
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-hidden pt-20 ">
       <Toaster position="top-right" />
       {/* Conditionally render Navbar based on isLoggedIn */}
 
       {isLoggedIn && <Navbar />}
 
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder="Search Modules..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           {navItems.map((item) => {

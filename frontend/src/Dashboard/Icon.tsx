@@ -46,7 +46,10 @@ import {
   Link2,
   Barcode,
   Pencil,
- } from "lucide-react";
+  Layers,
+  UserRound,
+  Package,
+} from "lucide-react";
 import specimen from "@/images/icons8-specimen-container.svg";
 
 export type Icon = LucideIcon;
@@ -73,6 +76,7 @@ export const Icons: Record<string, Icon> = {
   add: Plus,
   warning: AlertTriangle,
   user: User,
+  users: UserRound,
   arrowRight: ArrowRight,
   help: HelpCircle,
   pizza: Pizza,
@@ -82,18 +86,20 @@ export const Icons: Record<string, Icon> = {
   pipette: Pipette,
   container: Beaker,
   test: FlaskConical,
-  Associate: Handshake,
+  leads: Handshake,
   specimen: FlaskConicalOff,
   department: Building2,
   Tat: Clock,
   Formula: Parentheses,
-   Machine:Cog,
-   Highlighter:Highlighter,
-   Rejection:MessageSquareX,
-   link:Link,
-   link2:Link2,
-   barcode:Barcode,
-   Pencil:Pencil,
+  Machine: Cog,
+  Highlighter: Highlighter,
+  Rejection: MessageSquareX,
+  link: Link,
+  link2: Link2,
+  barcode: Barcode,
+  Pencil: Pencil,
+  products: Layers,
+  package: Package,
 
   gitHub: ({ ...props }: LucideProps) => (
     <svg
