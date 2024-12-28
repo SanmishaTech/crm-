@@ -439,6 +439,7 @@ class LeadsController extends BaseController
              $invoice->invoice_number = $this->generateInvoiceNumber();
              $invoice->invoice_date = now()->format("Y-m-d");
              $invoice->client_id = $leads->contact->client->id;
+             $invoice->employee_id = $leads->employee_id;
              $invoice->amount = $leads->total_amount_with_gst;
              $invoice->save();
 
@@ -447,6 +448,7 @@ class LeadsController extends BaseController
         }
         else{
             $invoice->client_id = $leads->contact->client->id;
+            $invoice->employee_id = $leads->employee_id;
              $invoice->amount = $leads->total_amount_with_gst;
              $invoice->save(); 
         }
