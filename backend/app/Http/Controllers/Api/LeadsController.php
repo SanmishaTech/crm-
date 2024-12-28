@@ -360,10 +360,19 @@ class LeadsController extends BaseController
             return $this->sendError("Client not found", ['error'=>['Client not found to generate an invoice']]);
 
         }
-        $leads->lead_status  = $leadStatus;
         if(!empty($leads->lead_quotation) && Storage::exists('public/Lead/generated_quotations/'.$leads->lead_quotation)) {
             Storage::delete('public/Lead/generated_quotations/'.$leads->lead_quotation);
         }
+
+        if(!$leads->quotation_date){
+            $leads->quotation_date = now()->format("Y-m-d");
+        }
+        if(!$leads->quotation_number){
+            $leads->quotation_number = $this->generateQuotationNumber();
+        }
+        $leads->lead_status  = $leadStatus;
+        $leads->quotation_version = $leads->quotation_version + 1;
+        $leads->save();
         // 
         $user = auth()->user();
         $employee = $user->employee->first();
@@ -394,14 +403,8 @@ class LeadsController extends BaseController
         // Save PDF to storage
         Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
         $leads->lead_quotation = $fileName;
-        if(!$leads->quotation_date){
-            $leads->quotation_date = now()->format("Y-m-d");
-        }
-        if(!$leads->quotation_number){
-            $leads->quotation_number = $this->generateQuotationNumber();
-        }
-        $leads->quotation_version = $leads->quotation_version + 1;
         $leads->save();
+        
         // Output the PDF for download
         return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
         // return $this->sendResponse([], "Quotation generated successfully");

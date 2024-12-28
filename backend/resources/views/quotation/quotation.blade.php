@@ -99,10 +99,10 @@
                     {{-- GST: {{$profile->gstin}} --}}
                 </td>
                 <td colspan="4" class="text-end" style=" text-align: right; padding-right:10px; padding-top:10px;">
-                    Quotation No: {{$leads->quotation_number}}<br>
+                    Quotation No: {{@$leads->quotation_number}}<br>
                     {{-- Date: {{\Carbon\Carbon::now()->format('d-m-Y')}}<br> --}}
-                  Date: {{$leads->quotation_date}}<br>
-                  version: {{$leads->quotation_version}}<br>
+                  Date: {{@$leads->quotation_date}}<br>
+                  version: {{@$leads->quotation_version}}<br>
                     <strong>To</strong><br>
                     {{-- {{$profile->name}}<br>
                     {{$profile->city}},thane
