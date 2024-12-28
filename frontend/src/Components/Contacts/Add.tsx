@@ -14,6 +14,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
@@ -27,7 +34,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import { ChevronLeft } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -122,167 +129,187 @@ export default function InputForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
-      <h2 className="text-2xl font-semibold   text-center">Contact Form</h2>
-      <p className="text-center text-xs mb-9">
-        Add a new contact to the database.
-      </p>
+    <div className="max-w-4xl mx-auto p-6  bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+      <div className="flex items-center justify-between w-full">
+        <div className="mb-7">
+          <Button
+            onClick={() => navigate("/contacts")}
+            variant="ghost"
+            className="mr-4"
+            type="button"
+          >
+            <ChevronLeft />
+            Back
+          </Button>
+        </div>
+        <div className="flex-1 mr-9 text-center">
+          <div className="-ml-4">
+            <h2 className="text-2xl font-semibold">Contact Form</h2>
+            <p className="text-xs mb-9">Add a new contact to the database.</p>
+          </div>
+        </div>
+      </div>
       {/* Form Fields */}
-      <h2 className="text-xl font-semibold text-left">Contact Information</h2>
 
-      <div></div>
-      <Form {...form}>
+       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="client_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Client</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={String(field.value)}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger className="">
-                        <SelectValue placeholder="Select Client" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {loading ? (
-                          <SelectItem disabled>Loading...</SelectItem>
-                        ) : (
-                          clients.map((client) => (
-                            <SelectItem
-                              key={client.id}
-                              value={String(client.id)}
-                            >
-                              {client.client}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>Enter the Client.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-              <FormField
-              control={form.control}
-              name="contact_person"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contact Person</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Contact Name" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Contact.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Feilds First Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-          
-            <FormField
-              control={form.control}
-              name="department"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Department</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Department" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Department.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="designation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Designation</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Designation" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Designation.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-            <FormField
-              control={form.control}
-              name="mobile_1"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile-1</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Mobile"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{10}"
-                      maxLength={10}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Mobile.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Client Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-center  space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="client_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Client</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={String(field.value)}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="">
+                            <SelectValue placeholder="Select Client" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {loading ? (
+                              <SelectItem disabled>Loading...</SelectItem>
+                            ) : (
+                              clients.map((client) => (
+                                <SelectItem
+                                  key={client.id}
+                                  value={String(client.id)}
+                                >
+                                  {client.client}
+                                </SelectItem>
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contact_person"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact Person</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Contact Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* Feilds First Row */}
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="department"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Department" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="designation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Designation</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Designation" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Contact Person
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="mobile_1"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile-1</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Mobile"
+                          {...field}
+                          type="text"
+                          inputMode="numeric"
+                          pattern="\d{10}"
+                          maxLength={10}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="mobile_2"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mobile-2</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Mobile"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      pattern="\d{10}"
-                      maxLength={10}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Mobile.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Email.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {/* Feilds Fifth Row Ends */}
+                <FormField
+                  control={form.control}
+                  name="mobile_2"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile-2</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Mobile"
+                          {...field}
+                          type="text"
+                          inputMode="numeric"
+                          pattern="\d{10}"
+                          maxLength={10}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter Email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
           {error && <div className="text-red-500">{error}</div>}{" "}
-          {/* Error Message */}
-          {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">
             <Button
               onClick={() => navigate("/contacts")}

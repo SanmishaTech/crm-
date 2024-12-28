@@ -139,7 +139,7 @@ export default function TableDemo() {
   return (
     <div className="flex ">
       <Sidebar className="" />
-      <div className="p-6 w-full bg-accent/50 ml-4 rounded-lg shadow-lg ">
+      <div className="p-6 w-full  bg-accent/50 ml-4 rounded-lg shadow-lg ">
         <div className="p-2  ">
           <div className="flex justify-between items-center ">
             <h3 className="text-lg  font-semibold mx-auto">Suppliers List</h3>
@@ -245,7 +245,6 @@ export default function TableDemo() {
                     : "cursor-pointer"
                 }`}
                 onClick={goToPreviousPage}
-                disabled={currentPage === 1}
               >
                 Previous
               </PaginationPrevious>
@@ -253,7 +252,6 @@ export default function TableDemo() {
               <span className="text-sm">
                 Page {currentPage} of {totalPages}
               </span>
-
               <PaginationNext
                 className={`hover:pointer ${
                   currentPage === totalPages
@@ -261,6 +259,7 @@ export default function TableDemo() {
                     : "cursor-pointer"
                 }`}
                 onClick={goToNextPage}
+                disabled={currentPage === totalPages}
               >
                 Next
               </PaginationNext>

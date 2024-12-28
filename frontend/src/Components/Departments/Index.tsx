@@ -154,10 +154,11 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold mb-3">Departments List</h3>
+    <div className="p-9 h-full overflow-y-hidden w-full bg-accent/50 ml-4 rounded-lg shadow-lg ">
+      <div className="text-lg font-semibold mb-3 flex justify-center items-center p-3">
+        <h3>Departments List</h3>
       </div>
+
       <div className="flex justify-between items-center space-x-2 w-full">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">

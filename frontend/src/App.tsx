@@ -66,7 +66,7 @@ function App() {
   }, []);
 
   return (
-    <div className="overflow-x-hidden pt-20 ">
+    <div className="overflow-x-hidden  ">
       <Toaster position="top-right" />
       {/* Conditionally render Navbar based on isLoggedIn */}
 

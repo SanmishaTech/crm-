@@ -14,6 +14,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import Sidebar, { useSidebar } from "./Sidebar";
+import { useGetData } from "@/lib/HTTP/GET";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   File,
   PlusCircle,
@@ -21,45 +30,24 @@ import {
   Pencil,
   Trash,
   MoreHorizontal,
-  ListFilter,
+  Filter,
 } from "lucide-react";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import {
   Pagination,
   PaginationContent,
-  PaginationItem,
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { usePostData } from "@/lib/HTTP/DELETE";
 import AlertDialogbox from "./AlertBox";
 
 // Contact type
@@ -92,227 +80,178 @@ export default function TableDemo() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationData | null>(null);
-  const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-
+  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
+  const queryClient = useQueryClient();
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
   const navigate = useNavigate();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      contact_person: "",
-    },
-  });
-
-  // Fetch Suppliers
-  useEffect(() => {
-    axios
-      .get("/api/contacts", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        params: {
-          page: currentPage,
-          limit: itemsPerPage,
-          search: searchTerm,
-        },
-      })
-      .then((response) => {
-        setContacts(response.data.data.Contact);
-        setPagination(response.data.data.pagination);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to load data");
-        setLoading(false);
-      });
-  }, [currentPage, itemsPerPage, searchTerm]);
-
-  // Sorting function
-  const handleSort = (key: keyof Contact) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const sortedContacts = [...contacts].sort((a, b) => {
-    if (!sortConfig.key) return 0;
-
-    const aValue = a[sortConfig.key as keyof Contact];
-    const bValue = b[sortConfig.key as keyof Contact];
-
-    if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-    if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
-    return 0;
-  });
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  // Delete Contact
-  const handleDelete = (contactId: string) => {
-    axios
-      .delete(`/api/contacts/${contactId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then(() => {
-        setContacts(contacts.filter((contact) => contact.id !== contactId));
-        // window.location.reload();
-      })
-      .catch(() => {
-        setError("Failed to delete contact");
-      });
-  };
-
-  // Pagination functions
+  const [pagination, setPagination] = useState<PaginationData | null>(null);
   const totalPages = pagination?.last_page || 1;
-
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage((prevPage) => prevPage + 1);
     }
   };
-
   const goToPreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      supplier: "",
+    },
+  });
 
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  // Fetch Contacts
+  const { data: Sup } = useGetData({
+    endpoint: `/api/contacts?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
+    params: {
+      queryKey: ["contacts", searchTerm, currentPage],
+      retry: 1,
+
+      onSuccess: (data) => {
+        console.log("test-test", data);
+        queryClient.invalidateQueries({ queryKey: ["contacts"] });
+
+        setContacts(data);
+        setPagination(data?.data?.pagination);
+        setLoading(false);
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate supplier")) {
+          toast.error("Supplier name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch supplier data. Please try again.");
+        }
+      },
+    },
+  });
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Contacts List</h3>
-      </div>
-      <div className="flex justify-between items-center space-x-2 w-full">
-        {/* Search Bar Starts */}
-        <div className="flex-1 space-x-2">
-          <Input
-            placeholder="Search contacts..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="flex">
+      <Sidebar />
+      <div className="p-6 w-full bg-accent/50 ml-4 rounded-lg shadow-lg">
+        <div className="p-2">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold mx-auto">Contacts List</h3>
+          </div>
         </div>
-        {/* Search Bar Ends */}
-        <div className="flex space-x-2">
-          {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/contacts/add")}>
-            Add Contact
-          </Button>
-          {/* Add(Page) Ends */}
-        </div>
-      </div>
+        <div className="flex justify-between items-center space-x-3 mr-4">
+          <div className="ml-4 mt-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Filter onClick={toggle} className="h-5" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Filter</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex-1 space-x-2">
+            {isMinimized ? (
+              <Input
+                placeholder="Search Contacts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            ) : null}
+          </div>
 
-      <div className="panel p-4 rounded-md bg-gray-50">
-        {/* Table Start */}
-        <Table>
-          <TableCaption>A list of your recent suppliers.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead onClick={() => handleSort("contact_person")}>
-                Contact person
-              </TableHead>
-              <TableHead onClick={() => handleSort("client")}>Client</TableHead>
-              <TableHead onClick={() => handleSort("department")}>
-                Department
-              </TableHead>
-              <TableHead onClick={() => handleSort("designation")}>
-                Designation
-              </TableHead>
-              <TableHead onClick={() => handleSort("email")}>Email</TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableFooter></TableFooter>
-          <TableBody>
-            {sortedContacts.map((contact) => (
-              <TableRow key={contact.id}>
-                <TableCell>{contact.contact_person}</TableCell>
-                <TableCell>{contact?.client?.client}</TableCell>
-                <TableCell>{contact.department}</TableCell>
-                <TableCell>{contact.designation}</TableCell>
-                <TableCell>{contact.email}</TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="center"
-                      className="w-full flex-col items-center flex justify-center"
-                    >
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          navigate(`/contacts/edit/${contact.id}`);
-                        }}
-                        className="w-full text-sm"
-                      >
-                        Edit
-                      </Button>
-                      {/* <DropdownMenuSeparator /> */}
-                      <AlertDialogbox url={contact.id} />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={() => navigate("/contacts/add")}>
+              Add Contact
+            </Button>
+          </div>
+        </div>
+
+        <div className="panel p-4 rounded-md bg-gray-50">
+          {/* Table Start */}
+          <Table>
+            <TableCaption>A list of your recent contacts.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Contact person</TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Department</TableHead>
+                <TableHead>Designation</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead className="text-right">Action</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {/* Table End */}
-        {/* Pagination Start */}
-        <Pagination>
-          <PaginationContent className="flex items-center space-x-4">
-            {/* Previous Button */}
-            <PaginationPrevious
-              onClick={goToPreviousPage}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </PaginationPrevious>
+            </TableHeader>
+            <TableBody>
+              {contacts?.data?.Contact?.map((contact) => (
+                <TableRow key={contact.id}>
+                  <TableCell>{contact.contact_person}</TableCell>
+                  <TableCell>{contact?.client?.client}</TableCell>
+                  <TableCell>{contact.department}</TableCell>
+                  <TableCell>{contact.designation}</TableCell>
+                  <TableCell>{contact.email}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="center">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            navigate(`/contacts/edit/${contact.id}`)
+                          }
+                          className="w-full text-sm"
+                        >
+                          Edit
+                        </Button>
+                        <AlertDialogbox url={contact.id} />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {/* Table End */}
+          {/* Pagination Start */}
+          <Pagination>
+            <PaginationContent className="flex items-center space-x-4">
+              <PaginationPrevious
+                className={`hover:pointer ${
+                  currentPage === 1
+                    ? "cursor-default opacity-50"
+                    : "cursor-pointer"
+                }`}
+                onClick={goToPreviousPage}
+              >
+                Previous
+              </PaginationPrevious>
 
-            {/* Page Number */}
-            <span className="text-sm">
-              Page {currentPage} of {totalPages}
-            </span>
-
-            {/* Next Button */}
-            <PaginationNext
-              className="hover:pointer"
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </PaginationNext>
-          </PaginationContent>
-        </Pagination>
-        {/* Pagination End */}
+              <span className="text-sm">
+                Page {currentPage} of {totalPages}
+              </span>
+              <PaginationNext
+                className={`hover:pointer ${
+                  currentPage === totalPages
+                    ? "cursor-default opacity-50"
+                    : "cursor-pointer"
+                }`}
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </PaginationNext>
+            </PaginationContent>
+          </Pagination>
+          {/* Pagination End */}
+        </div>
       </div>
     </div>
   );

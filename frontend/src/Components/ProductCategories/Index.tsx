@@ -195,7 +195,7 @@ export default function TableDemo() {
   if (error) {
     return <div>{error}</div>;
   }
-  
+
   // Open the edit dialog and populate form with Product Category data
   const handleEdit = (productCategory: ProductCategory) => {
     setEditProductCategory(productCategory);
@@ -208,10 +208,11 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center p-2 space-x-2">
+    <div className="p-5 h-full mx-auto bg-accent/70 rounded-lg shadow-lg">
+      <div className="flex justify-center items-center p-3 space-x-2">
         <h3 className="text-lg font-semibold">Product Categories List</h3>
       </div>
+
       <div className="flex justify-between items-center space-x-2 w-full">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">
@@ -287,7 +288,12 @@ export default function TableDemo() {
                         Edit
                       </Button>
                       {/* <DropdownMenuSeparator /> */}
-                      <AlertDialogbox url={productCategory.id} handleProductCategoryInvalidateQuery={handleProductCategoryInvalidateQuery} />
+                      <AlertDialogbox
+                        url={productCategory.id}
+                        handleProductCategoryInvalidateQuery={
+                          handleProductCategoryInvalidateQuery
+                        }
+                      />
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

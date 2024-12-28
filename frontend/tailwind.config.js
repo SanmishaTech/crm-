@@ -1,4 +1,4 @@
-import tailwindcssAnimate from 'tailwindcss-animate';
+import tailwindcssAnimate from "tailwindcss-animate";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -77,6 +77,16 @@ export default {
         },
       },
       keyframes: {
+        sideDrawer: {
+          "0%": { transform: "translateY(-2rem)", opacity: 0 },
+          "90%": { transform: "translateY(-1rem)", opacity: 0.5 },
+          "100%": { transform: "translateY(0)", opacity: 1 },
+        },
+        Input: {
+          "0%": { transform: "translateY(0.5rem)", opacity: 0, width: "0" },
+          "80%": { transform: "translateY(0.5rem)", opacity: 0.5, width: "50" },
+          "100%": { transform: "translateY(0)", opacity: 1, width: "100%" },
+        },
         "accordion-down": {
           from: {
             height: "0",
@@ -97,6 +107,7 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "side-drawer": "sideDrawer 0.4s ease-out",
       },
     },
   },

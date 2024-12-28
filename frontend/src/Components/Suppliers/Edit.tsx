@@ -188,7 +188,7 @@ export default function EditSupplierPage() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Supplier Form</h2>
-            <p className="text-xs mb-9">Add a new supplier to the database.</p>
+            <p className="text-xs mb-9">Edit/Update supplier to the database.</p>
           </div>
         </div>
       </div>
