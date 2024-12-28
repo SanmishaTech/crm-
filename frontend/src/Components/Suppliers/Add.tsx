@@ -120,7 +120,7 @@ export default function InputForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-5 mt-4">
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
