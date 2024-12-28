@@ -19,17 +19,25 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
 import { usePutData } from "@/lib/HTTP/PUT";
+import { ChevronsUpDown, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 // Form validation schema
 const formSchema = z.object({
-  client_id: z.string().optional(),
+  client_id: z.any().optional(),
   contact_person: z.string().optional(),
   department: z.string().optional(),
   designation: z.string().optional(),
@@ -140,7 +148,7 @@ export default function EditSupplierPage() {
       queryKey: ["clients"],
       retry: 1,
       onSuccess: (data) => {
-         setClients(data.data.Client);
+        setClients(data.data.Client);
         setLoading(false);
       },
       onError: (error) => {
@@ -175,33 +183,65 @@ export default function EditSupplierPage() {
               control={form.control}
               name="client_id"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormLabel>Client</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={String(field.value) || ""} // Ensure the value is a string, and it's properly assigned
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger className="">
-                        <SelectValue placeholder="Select Client" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {loading ? (
-                          <SelectItem disabled>Loading...</SelectItem>
-                        ) : (
-                          clients?.map((client) => (
-                            <SelectItem
-                              key={client.id}
-                              value={String(client.id)}
-                            >
-                              {client.client} {/* Display the client name */}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>Enter the Client.</FormDescription>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-[200px] justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? clients?.find(
+                                (client) => client.id === field.value
+                              )?.client
+                            : "Select client"}
+
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search contact..."
+                          className="h-9"
+                        />
+                        <CommandList>
+                          <CommandEmpty>No contact found.</CommandEmpty>
+                          <CommandGroup>
+                            {clients?.map((client) => (
+                              <CommandItem
+                                value={client.id}
+                                key={client.id}
+                                onSelect={() => {
+                                  form.setValue("client_id", client.id);
+                                }}
+                              >
+                                {client.client}
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    client.id === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>
+                    Select the contact you want to associate.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -228,11 +268,11 @@ export default function EditSupplierPage() {
               name="department"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Departmernt</FormLabel>
+                  <FormLabel>Department</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Departmernt" {...field} />
+                    <Input placeholder="Enter Department" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the Departmernt.</FormDescription>
+                  <FormDescription>Enter the Department.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

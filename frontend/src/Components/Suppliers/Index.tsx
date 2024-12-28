@@ -91,18 +91,22 @@ export default function TableDemo() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationData | null>(null);
-
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
-  // const [searchTerm, setSearchTerm] = useState<string>("");
-  const { searchTerm, toggle, isMinimized } = useSidebar(); // Get searchTerm and sidebar state from the store
-
-  const [isSidebarOpen, setSidebarOpen] = useState(false); // Sidebar state
-
+  const { searchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
-
+  // Pagination functions
+  const [pagination, setPagination] = useState<PaginationData | null>(null);
+  const totalPages = pagination?.last_page || 1;
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -112,14 +116,14 @@ export default function TableDemo() {
 
   // Fetch Suppliers
   const { data: Sup } = useGetData({
-    endpoint: `/api/suppliers?search=${searchTerm}&page=${currentPage}`,
+    endpoint: `/api/suppliers?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
     params: {
-      queryKey: ["supplier", searchTerm],
+      queryKey: ["supplier", searchTerm, currentPage],
       retry: 1,
 
       onSuccess: (data) => {
         setSuppliers(data.Suppliers);
-        setPagination(data.pagination);
+        setPagination(data?.data?.pagination);
         setLoading(false);
       },
       onError: (error) => {
@@ -131,27 +135,6 @@ export default function TableDemo() {
       },
     },
   });
-
-  // Pagination functions
-  const totalPages = pagination?.last_page || 1;
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
-
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
 
   return (
     <div className="flex ">
@@ -256,6 +239,11 @@ export default function TableDemo() {
           <Pagination>
             <PaginationContent className="flex items-center space-x-4">
               <PaginationPrevious
+                className={`hover:pointer ${
+                  currentPage === 1
+                    ? "cursor-default opacity-50"
+                    : "cursor-pointer"
+                }`}
                 onClick={goToPreviousPage}
                 disabled={currentPage === 1}
               >
@@ -267,9 +255,12 @@ export default function TableDemo() {
               </span>
 
               <PaginationNext
-                className="hover:pointer"
+                className={`hover:pointer ${
+                  currentPage === totalPages
+                    ? "cursor-default opacity-50"
+                    : "cursor-pointer"
+                }`}
                 onClick={goToNextPage}
-                disabled={currentPage === totalPages}
               >
                 Next
               </PaginationNext>
