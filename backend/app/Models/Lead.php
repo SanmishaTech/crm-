@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Contact;
+use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Employee;
 use App\Models\FollowUp;
@@ -35,6 +36,11 @@ class Lead extends Model
     public function leadProducts()
     {
         return $this->hasMany(LeadProduct::class);
+    }
+
+    public function leadInvoice()
+    {
+        return $this->belongsTo(Invoice::class, 'invoice_id');
     }
 
     public function updateLeadProducts()

@@ -10,5 +10,9 @@ class InvoiceDetail extends Model
         'invoice_id', 'product_id', 'quantity','rate', 'gst_rate', 'gst_amount','total_taxable_amount',
     ];
 
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
     
 }
