@@ -22,6 +22,7 @@ class InvoiceResource extends JsonResource
             'invoice_date' => $this->invoice_date, 
             'amount' => $this->amount,
             'dispatch_details' => $this->dispatch_details,
+            'invoice_file' => $this->invoice_file,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'invoice_details' => InvoiceDetailResource::collection($this->invoiceDetails),

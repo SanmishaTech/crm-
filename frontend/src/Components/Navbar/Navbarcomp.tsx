@@ -149,6 +149,13 @@ const Navbar = () => {
                       Products
                     </Button>
                     <Button
+                      className="w-full text-sm"
+                      variant={"ghost"}
+                      onClick={() => navigate("/invoices")}
+                    >
+                      Invoices
+                    </Button>
+                    <Button
                       variant={"ghost"}
                       onClick={() => navigate("/productCategories")}
                     >
