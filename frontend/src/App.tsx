@@ -139,6 +139,7 @@ function App() {
         <Route path="/products" element={<Dashboard />} />
         <Route path="/products/add" element={<Dashboard />} />
         <Route path="/products/edit/:id" element={<Dashboard />} />
+        <Route path="/invoices" element={<Dashboard />} />
       </Routes>
     </div>
   );

@@ -22,6 +22,7 @@ import Products from "@/Components/Products/Index";
 import ProductsAdd from "@/Components/Products/Add";
 import ProductsEdit from "@/Components/Products/Edit";
 import FollowUps from "@/Components/FollowUps/Add";
+import InvoiceComponent from "@/Components/Invoices/Index";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -91,6 +92,7 @@ const Dashboard = () => {
         {location.pathname === "/products" && <Products />}
         {location.pathname === "/products/add" && <ProductsAdd />}
         {/\/products\/edit\/\d+/.test(location.pathname) && <ProductsEdit />}
+        {location.pathname === "/invoices" && <InvoiceComponent />}
       </main>
     </div>
   );

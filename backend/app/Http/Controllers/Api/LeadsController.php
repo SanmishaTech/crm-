@@ -503,6 +503,8 @@ class LeadsController extends BaseController
         $fileName = basename($filePath); // Extracts 'invoice_{timestamp}{user_id}.pdf'
         $leads->lead_invoice = $fileName;
         $leads->save();
+        $invoice->invoice_file = $fileName;
+        $invoice->save();
         // Save PDF to storage
         Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
 
