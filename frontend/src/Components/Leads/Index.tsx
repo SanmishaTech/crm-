@@ -6,7 +6,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import axios from "axios";
 import {
   Table,
   TableBody,
@@ -53,6 +52,7 @@ import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useGetData } from "@/lib/HTTP/GET";
 import AlertDialogbox from "./AlertBox";
 import { useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Supplier type
 type Supplier = {
@@ -89,13 +89,14 @@ export default function TableDemo() {
   const [itemsPerPage] = useState(5);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
-
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       contact_id: "",
     },
   });
+  const { id } = useParams();
 
   const { data: Sup } = useGetData({
     endpoint: `/api/leads`,
@@ -116,8 +117,6 @@ export default function TableDemo() {
       },
     },
   });
-
-  const { id } = useParams();
 
   const handleGenerateQuotation = async (leadId: string) => {
     try {
@@ -143,7 +142,7 @@ export default function TableDemo() {
         link.click();
 
         document.body.removeChild(link);
-        window.location.reload();
+        queryClient.invalidateQueries({ queryKey: ["lead"] });
 
         console.log("Quotation generated and downloaded successfully!");
       } else {
@@ -177,6 +176,7 @@ export default function TableDemo() {
         link.click();
 
         document.body.removeChild(link);
+        queryClient.invalidateQueries({ queryKey: ["lead"] });
 
         console.log("Quotation generated and downloaded successfully!");
       } else {
@@ -316,13 +316,22 @@ export default function TableDemo() {
                                       size="sm"
                                       onClick={() => {
                                         handleGenerateInvoice(lead.id);
-                                        window.location.reload();
                                       }}
                                       className="w-full text-sm"
                                     >
                                       Deal
                                     </Button>
-                                    <AlertDialogbox url={lead.id} />
+                                    {/* <AlertDialogbox url={lead.id} /> */}
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => {
+                                        handleDelete(lead.id);
+                                      }}
+                                      className="w-full text-sm"
+                                    >
+                                      Delete
+                                    </Button>
 
                                     <Button
                                       variant="ghost"
