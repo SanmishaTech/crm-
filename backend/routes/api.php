@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\ContactsController;
+use App\Http\Controllers\Api\InvoicesController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\EmployeesController;
 use App\Http\Controllers\Api\FollowUpsController;
@@ -43,5 +44,6 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/close_lead/{id}', [LeadsController::class, 'closeLead'])->name("close_lead.update");
    Route::get('/generate_quotation/{id}', [LeadsController::class, 'generateQuotation'])->name("generate_quotation.generate");
    Route::get('/generate_invoice/{id}', [LeadsController::class, 'generateInvoice'])->name("generate_invoice.generate");
+   Route::get('/invoices', [InvoicesController::class, 'index'])->name("invoices.index");
 
 });
