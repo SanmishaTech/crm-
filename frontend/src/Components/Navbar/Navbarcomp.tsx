@@ -11,7 +11,7 @@ import {
   Headset,
   LogOut,
   CircleUserRound,
-  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import {
   NavigationMenu,
@@ -110,8 +110,8 @@ const Navbar = () => {
                 <NavigationMenuItem className="group">
                   <NavigationMenuTrigger className="px-4 py-2 cursor-pointer  hover:bg-gray-200">
                     Clients
-                    <ChevronUp
-                      className="relative top-[1px] ml-1 h-4  transition duration-200 group-data-[state=open]:rotate-180"
+                    <ChevronDown
+                      className="relative top-[1px] ml-1 h-4  "
                       aria-hidden="true"
                     />
                   </NavigationMenuTrigger>
@@ -146,35 +146,32 @@ const Navbar = () => {
                 <NavigationMenuItem className="group">
                   <NavigationMenuTrigger className="px-4 py-2 cursor-pointer   hover:bg-gray-200">
                     Products
-                    <ChevronUp
-                      className="relative top-[1px] ml-1 h-4  transition duration-200 group-data-[state=open]:rotate-180"
+                    <ChevronDown
+                      className="relative top-[1px] ml-1 h-4  "
                       aria-hidden="true"
                     />
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="flex flex-col items-center justify-center">
-                    {/* <h1 className="text-sm font-semibold cursor-default mt-2 ">
-                      Products
-                    </h1>
-                    <Separator className="my-2 w-full justify-center" /> */}
-
+                  <NavigationMenuContent className="flex flex-col items-start justify-center w-full">
                     <Button
-                      className="w-full text-sm"
+                      className="w-full text-sm text-left"
                       variant={"ghost"}
                       onClick={() => navigate("/suppliers")}
                     >
                       Suppliers
                     </Button>
-                    <Separator className=" w-full justify-center" />
+                    <Separator className="w-full justify-center" />
 
                     <Button
                       variant={"ghost"}
+                      className="w-full text-left"
                       onClick={() => navigate("/productCategories")}
                     >
                       Product Categories
                     </Button>
-                    <Separator className=" w-full justify-center" />
+                    <Separator className="w-full justify-center" />
+
                     <Button
-                      className="w-full text-sm"
+                      className="w-full text-sm text-left"
                       variant={"ghost"}
                       onClick={() => navigate("/products")}
                     >
