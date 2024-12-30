@@ -11,6 +11,7 @@ import {
   Headset,
   LogOut,
   CircleUserRound,
+  ChevronUp,
 } from "lucide-react";
 import {
   NavigationMenu,
@@ -64,7 +65,7 @@ const Navbar = () => {
 
   return (
     // <nav className="  bg-white text-black py-4 px-6 shadow-md">
-    <nav className="bg-white text-black py-4 px-6   top-0 left-0 right-0 z-10 ">
+    <nav className="bg-accent/80 text-black py-4 px-6   top-0 left-0 right-0 z-10 ">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo / Title */}
         <div className="flex items-center space-x-5">
@@ -89,41 +90,13 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="space-x-3">
+            {" "}
             <Button
               onClick={() => navigate("/dashboard")}
               variant="ghost"
               className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
             >
               Dashboard
-            </Button>
-            <Button
-              onClick={() => navigate("/departments")}
-              variant="ghost"
-              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
-            >
-              Department
-            </Button>
-            <Button
-              onClick={() => navigate("/suppliers")}
-              variant="ghost"
-              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
-            >
-              Suppliers
-            </Button>
-
-            <Button
-              onClick={() => navigate("/contacts")}
-              variant="ghost"
-              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
-            >
-              Contacts
-            </Button>
-            <Button
-              onClick={() => navigate("/clients")}
-              variant="ghost"
-              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
-            >
-              Clients
             </Button>
             <Button
               onClick={() => navigate("/leads")}
@@ -135,7 +108,92 @@ const Navbar = () => {
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
                 <NavigationMenuItem className="group">
-                  <NavigationMenuTrigger className="px-4 py-2 cursor-pointer hover:bg-gray-200"></NavigationMenuTrigger>
+                  <NavigationMenuTrigger className="px-4 py-2 cursor-pointer hover:bg-gray-200">
+                    Clients
+                    <ChevronUp
+                      className="relative top-[1px] ml-1 h-4  transition duration-200 group-data-[state=open]:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="flex  flex-col items-center justify-center">
+                    {/* <h1 className="text-sm font-semibold cursor-default mt-2 ">
+                      Products
+                    </h1>
+                    <Separator className="my-2 w-full justify-center" /> */}
+
+                    <Button
+                      className="w-full text-sm"
+                      variant={"ghost"}
+                      onClick={() => navigate("/clients")}
+                    >
+                      Clients
+                    </Button>
+                    <Separator className=" w-full justify-center" />
+
+                    <Button
+                      variant={"ghost"}
+                      onClick={() => navigate("/contacts")}
+                    >
+                      Contacts
+                    </Button>
+                    <Separator className=" w-full justify-center" />
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+            <NavigationMenu className="relative inline-block">
+              <NavigationMenuList className="list-none p-0 m-0">
+                <NavigationMenuItem className="group">
+                  <NavigationMenuTrigger className="px-4 py-2 cursor-pointer hover:bg-gray-200">
+                    Products
+                    <ChevronUp
+                      className="relative top-[1px] ml-1 h-4  transition duration-200 group-data-[state=open]:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="flex flex-col items-center justify-center">
+                    {/* <h1 className="text-sm font-semibold cursor-default mt-2 ">
+                      Products
+                    </h1>
+                    <Separator className="my-2 w-full justify-center" /> */}
+
+                    <Button
+                      className="w-full text-sm"
+                      variant={"ghost"}
+                      onClick={() => navigate("/suppliers")}
+                    >
+                      Suppliers
+                    </Button>
+                    <Separator className=" w-full justify-center" />
+
+                    <Button
+                      variant={"ghost"}
+                      onClick={() => navigate("/productCategories")}
+                    >
+                      Product Categories
+                    </Button>
+                    <Separator className=" w-full justify-center" />
+                    <Button
+                      className="w-full text-sm"
+                      variant={"ghost"}
+                      onClick={() => navigate("/products")}
+                    >
+                      Products
+                    </Button>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+            <NavigationMenu className="relative inline-block">
+              <NavigationMenuList className="list-none p-0 m-0">
+                <NavigationMenuItem className="group">
+                  <NavigationMenuTrigger className="px-4 py-2 cursor-pointer hover:bg-gray-200">
+                    {" "}
+                    <EllipsisVertical
+                      className="relative top-[1px] ml-1 h-4  transition duration-200 group-data-[state=open]:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </NavigationMenuTrigger>
                   <NavigationMenuContent className="flex flex-col items-center justify-center">
                     <h1 className="text-sm font-semibold cursor-default mt-2 ">
                       Masters
@@ -149,18 +207,13 @@ const Navbar = () => {
                     >
                       Invoices
                     </Button>
+
                     <Button
-                      className="w-full text-sm"
-                      variant={"ghost"}
-                      onClick={() => navigate("/products")}
+                      onClick={() => navigate("/departments")}
+                      variant="ghost"
+                      className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
                     >
-                      Products
-                    </Button>
-                    <Button
-                      variant={"ghost"}
-                      onClick={() => navigate("/productCategories")}
-                    >
-                      Product Categories
+                      Department
                     </Button>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
