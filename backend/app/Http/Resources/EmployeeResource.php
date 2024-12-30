@@ -3,8 +3,10 @@
 namespace App\Http\Resources;
 
 use App\Models\User;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\DepartmentResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class EmployeeResource extends JsonResource
@@ -17,6 +19,7 @@ class EmployeeResource extends JsonResource
     public function toArray(Request $request): array
     {
         $user = new UserResource(User::find($this->user_id));
+        // $department = new DepartmentResource(Department::find($this->department_id));
 
         return [
             'id' => $this->id,
@@ -30,6 +33,7 @@ class EmployeeResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'user'=> $user,
+            'department'=>$this->department,
         ];
     }
 }

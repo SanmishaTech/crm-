@@ -103,7 +103,17 @@ class DepartmentController extends BaseController
         return $this->sendResponse([], "department deleted successfully");
     }
 
-   
+    /**
+     * Fetch All Departments.
+     */
+    public function allDepartments(): JsonResponse
+    {
+        $departments = Department::all();
+
+        return $this->sendResponse(["Departments"=>DepartmentResource::collection($departments),
+        ], "Departments retrieved successfully");
+
+    }
 
    
 }

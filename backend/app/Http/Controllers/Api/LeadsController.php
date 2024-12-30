@@ -196,14 +196,14 @@ class LeadsController extends BaseController
         }
 
         if($request->hasFile('lead_attachment')){
-            if(!empty($lead->lead_attachment) && Storage::exists('public/Lead/lead_attachment/'.$lead->lead_attachment)) {
-                Storage::delete('public/Lead/lead_attachment/'.$lead->lead_attachment);
+            if(!empty($lead->lead_attachment) && Storage::exists('public/Lead/lead_attachments/'.$lead->lead_attachment)) {
+                Storage::delete('public/Lead/lead_attachments/'.$lead->lead_attachment);
             }
             $quotationFileNameWithExtention = $request->file('lead_attachment')->getClientOriginalName();
             $quotationFilename = pathinfo($quotationFileNameWithExtention, PATHINFO_FILENAME);
             $fileExtention = $request->file('lead_attachment')->getClientOriginalExtension();
             $quotationFileNameToStore = $quotationFilename.'_'.time().'.'.$fileExtention;
-            $quotationFilePath = $request->file('lead_attachment')->storeAs('public/Lead/lead_attachment', $quotationFileNameToStore);
+            $quotationFilePath = $request->file('lead_attachment')->storeAs('public/Lead/lead_attachments', $quotationFileNameToStore);
         }
     
         $lead->contact_id = $request->input("contact_id");
@@ -511,6 +511,33 @@ class LeadsController extends BaseController
         // Output the PDF for download
         return $mpdf->Output('invoice.pdf', 'D'); // Download the PDF
         // return $this->sendResponse([], "Invoice generated successfully");
+    }
+
+    
+     /**
+     * Show Lead Attachment File.
+     */
+    
+    public function showLeadAttachment(string $files)
+    {
+        // Generate the full path to the invoice in the public storage
+        $path = storage_path('app/public/Lead/lead_attachments/'.$files);
+    
+        // Check if the file exists
+        if (!file_exists($path)) {
+            return $this->sendError("Lead attachment file not found", ['error'=>['lead attachment file not found.']]);
+        }
+    
+        // Get the file content and MIME type
+        $fileContent = File::get($path);
+        $mimeType = \File::mimeType($path);
+    
+        // Create the response for the file download
+        $response = Response::make($fileContent, 200);
+        $response->header("Content-Type", $mimeType);
+        $response->header('Content-Disposition', 'inline; filename="' . $files . '"'); // Set attachment to force download
+     //to download the invoice change 'Content-Deposition to attachment from inline
+        return $response;
     }
     
 }

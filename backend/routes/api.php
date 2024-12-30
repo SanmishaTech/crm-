@@ -46,4 +46,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/generate_invoice/{id}', [LeadsController::class, 'generateInvoice'])->name("generate_invoice.generate");
    Route::get('/invoices', [InvoicesController::class, 'index'])->name("invoices.index");
    Route::get('/show_invoice/{files}', [InvoicesController::class, 'showInvoice'])->name("invoices.show");
+   Route::get('/all_departments', [DepartmentController::class, 'allDepartments'])->name("departments.all");
+   Route::get('/lead_attachments/{files}', [LeadsController::class, 'showLeadAttachment'])->name("leads.lead_attachment");
+
 });

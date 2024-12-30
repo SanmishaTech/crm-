@@ -22,8 +22,8 @@ class InvoicesController extends BaseController
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('invoice_number', 'like', '%' . $searchTerm . '%'
-                 ->orWhere('dispatch_details', 'like', '%'.$searchTerm.'%'));
+                $query->where('invoice_number', 'like', '%' . $searchTerm . '%')
+                 ->orWhere('dispatch_details', 'like', '%'.$searchTerm.'%');
             });
         }
 

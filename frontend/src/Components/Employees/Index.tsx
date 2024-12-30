@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Sidebar, { useSidebar } from "./Sidebar";
-import axios from "axios";
 import {
   Tooltip,
   TooltipContent,
@@ -43,7 +42,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Ensure this import is correct
-
 import {
   Pagination,
   PaginationContent,
@@ -54,16 +52,15 @@ import {
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useGetData } from "@/lib/HTTP/GET";
-// import AlertDialogbox from "./Delete";
+import AlertDialogbox from "./Delete";
 
-// Supplier type
-type Invoice = {
+// Employee type
+type Employee = {
   id: string;
-  invoice_number: string;
-  invoice_date: string;
-  amount: string;
-  dispatch_details: string;
-  invoice_file: string;
+  name: string;
+  email: string;
+  department: string;
+  mobile: string;
 };
 
 type PaginationData = {
@@ -73,24 +70,12 @@ type PaginationData = {
   total: number;
 };
 
-// // Form Validation Schema
-// const formSchema = z.object({
-//   supplier: z.string().min(2).max(50),
-//   street_address: z.string().min(2).max(50),
-//   area: z.string().min(2).max(50),
-//   city: z.string().min(2).max(50),
-//   state: z.string().min(2).max(50),
-//   pincode: z.string().min(2).max(50),
-//   country: z.string().min(2).max(50),
-//   gstin: z.string().min(2).max(50),
-// });
-
 export default function TableDemo() {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const { searchTerm, toggle, isMinimized, setSearchTerm } = useSidebar();
+  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
   // Pagination functions
   const [pagination, setPagination] = useState<PaginationData | null>(null);
@@ -105,66 +90,32 @@ export default function TableDemo() {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
-  // const form = useForm<z.infer<typeof formSchema>>({
-  //   resolver: zodResolver(formSchema),
-  //   defaultValues: {
-  //     supplier: "",
-  //   },
-  // });
 
-  // Fetch Suppliers
-  const { data: Invo } = useGetData({
-    endpoint: `/api/invoices?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
+  // Fetch Employees
+  const { data: Employees } = useGetData({
+    endpoint: `/api/employees?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
     params: {
-      queryKey: ["invoices", searchTerm, currentPage],
+      queryKey: ["employees", searchTerm, currentPage],
       retry: 1,
 
       onSuccess: (data) => {
-        setInvoices(data.Invoices);
-        setPagination(data?.data?.Pagination);
+        setEmployees(data.Employees);
+        setPagination(data?.data?.pagination);
         setLoading(false);
       },
       onError: (error) => {
-        toast.error("Failed to fetch invoices");
+        toast.error("Failed to fetch Employees data. Please try again.");
       },
     },
   });
 
-  const handleViewInvoice = async (fileName) => {
-    const token = localStorage.getItem("token"); // Assuming the token is stored in localStorage
-
-    try {
-      const response = await axios.get(`/api/show_invoice/${fileName}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-        },
-        responseType: "blob", // Make sure the response is a blob (for PDF files)
-      });
-      // Create a blob URL from the response
-      const blob = new Blob([response.data], { type: "application/pdf" });
-
-      // Create a link element to trigger the opening of the PDF in a new tab
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.target = "_blank"; // Open in a new tab
-      link.click(); // Programmatically click the link to open the PDF in the new tab
-
-      // Cleanup by revoking the object URL after use
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      // console.log("Error fetching the invoice:", error.response.data);
-      toast.error("Invoice Not Found. Generate invoice again");
-    }
-  };
-
   return (
     <div className="flex ">
       <Sidebar className="" />
-      <div className="p-6 w-full bg-accent/50 ml-4 rounded-lg shadow-lg ">
+      <div className="p-6 w-full  bg-accent/50 ml-4 rounded-lg shadow-lg ">
         <div className="p-2  ">
           <div className="flex justify-between items-center ">
-            <h3 className="text-lg  font-semibold mx-auto">Invoice List</h3>
+            <h3 className="text-lg  font-semibold mx-auto">Employees List</h3>
           </div>
         </div>
         <div className="flex justify-between items-center space-x-3 mr-4  ">
@@ -183,52 +134,52 @@ export default function TableDemo() {
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
-                placeholder="Search Invoices..."
+                placeholder="Search employees..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             ) : null}
           </div>
 
-          {/* <div className="flex space-x-2">
+          <div className="flex space-x-2">
             <Button
               variant="outline"
-              onClick={() => navigate("/suppliers/add")}
+              onClick={() => navigate("/employees/add")}
             >
-              Add Invoice
+              Add Employee
             </Button>
-          </div> */}
+          </div>
         </div>
 
         <div className="p-4 rounded-md bg-gray-50 ">
           {/* Table Start */}
           <Table>
-            <TableCaption>A list of your recent Invoices.</TableCaption>
+            <TableCaption>A list of your employees.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead onClick={() => handleSort("invoice_number")}>
-                  Invoice Number
+                <TableHead onClick={() => handleSort("name")}>
+                  Employee Name
                 </TableHead>
-                <TableHead onClick={() => handleSort("invoice_date")}>
-                  Invoice Date
-                </TableHead>
-                <TableHead onClick={() => handleSort("amount")}>
-                  Amount
-                </TableHead>
-                <TableHead onClick={() => handleSort("dispatch_details")}>
-                  Dispatch Details
+                <TableHead onClick={() => handleSort("")}>Department</TableHead>
+                <TableHead onClick={() => handleSort("email")}>Email</TableHead>
+                <TableHead onClick={() => handleSort("mobile")}>
+                  Contact Number
                 </TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>
             <TableBody>
-              {Invo?.data?.Invoices?.map((invoice) => (
-                <TableRow key={invoice.id}>
-                  <TableCell>{invoice.invoice_number}</TableCell>
-                  <TableCell>{invoice.invoice_date}</TableCell>
-                  <TableCell>₹{invoice.amount}</TableCell>
-                  <TableCell>{invoice.dispatch_details ?? "N/A"}</TableCell>
+              {Employees?.data?.Employees?.map((employee) => (
+                <TableRow key={employee.id}>
+                  <TableCell>{employee.employee_name}</TableCell>
+                  <TableCell>
+                    {employee.department
+                      ? employee.department.department_name
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell>{employee.email}</TableCell>
+                  <TableCell>{employee.mobile || "N/A"}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -246,17 +197,13 @@ export default function TableDemo() {
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            // window.open(
-                            //   `/api/show_invoice/${invoice.invoice_file}`,
-                            //   "_blank"
-                            // );
-                            handleViewInvoice(invoice.invoice_file);
+                            navigate(`/employees/edit/${employee.id}`);
                           }}
                           className="w-full text-sm"
                         >
-                          View Invoice
+                          Edit
                         </Button>
-                        {/* <AlertDialogbox url={invoice.id} /> */}
+                        <AlertDialogbox url={employee.id} />
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -275,7 +222,6 @@ export default function TableDemo() {
                     : "cursor-pointer"
                 }`}
                 onClick={goToPreviousPage}
-                disabled={currentPage === 1}
               >
                 Previous
               </PaginationPrevious>
@@ -283,7 +229,6 @@ export default function TableDemo() {
               <span className="text-sm">
                 Page {currentPage} of {totalPages}
               </span>
-
               <PaginationNext
                 className={`hover:pointer ${
                   currentPage === totalPages
@@ -291,6 +236,7 @@ export default function TableDemo() {
                     : "cursor-pointer"
                 }`}
                 onClick={goToNextPage}
+                disabled={currentPage === totalPages}
               >
                 Next
               </PaginationNext>

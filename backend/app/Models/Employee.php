@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Lead;
+use App\Models\Department;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
@@ -16,5 +17,11 @@ class Employee extends Model
     public function leads(){
         return $this->hasMany(Lead::class, 'employee_id');
     }
+
+    public function department(){
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    
     
 }

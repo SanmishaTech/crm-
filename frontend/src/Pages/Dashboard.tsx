@@ -5,6 +5,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Suppliers from "@/Components/Suppliers/Index";
 import SuppliersAdd from "@/Components/Suppliers/Add";
 import SuppliersEdit from "@/Components/Suppliers/Edit";
+import Employees from "@/Components/Employees/Index";
+import EmployeesAdd from "@/Components/Employees/Add";
+import EmployeesEdit from "@/Components/Employees/Edit";
 import Contacts from "@/Components/Contacts/Index";
 import ContactsAdd from "@/Components/Contacts/Add";
 import ContactsEdit from "@/Components/Contacts/Edit";
@@ -93,6 +96,9 @@ const Dashboard = () => {
         {location.pathname === "/products/add" && <ProductsAdd />}
         {/\/products\/edit\/\d+/.test(location.pathname) && <ProductsEdit />}
         {location.pathname === "/invoices" && <InvoiceComponent />}
+        {location.pathname === "/employees" && <Employees />}
+        {location.pathname === "/employees/add" && <EmployeesAdd />}
+        {/\/suppliers\/edit\/\d+/.test(location.pathname) && <EmployeesEdit />}
       </main>
     </div>
   );
