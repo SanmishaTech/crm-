@@ -37,8 +37,9 @@ export default function Sidebar({ className }: SidebarProps) {
       className={cn(
         `hidden min-h-screen flex-none bg-light transition-all duration-500 md:block sticky ease-in-out rounded`,
         !isMinimized
-          ? "w-72 block bg-accent/70 animate-side-drawer"
-          : " w-1 opacity-0 bg-white hidden animate-side-drawer",
+          ? "w-72 block bg-accent/70 "
+          : " w-1 opacity-0 bg-white hidden",
+        // "animate-side-drawer"
         className
       )}
     >

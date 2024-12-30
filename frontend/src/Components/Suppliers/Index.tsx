@@ -92,7 +92,7 @@ export default function TableDemo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const { searchTerm, toggle, isMinimized } = useSidebar();
+  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();  
   const navigate = useNavigate();
   // Pagination functions
   const [pagination, setPagination] = useState<PaginationData | null>(null);
