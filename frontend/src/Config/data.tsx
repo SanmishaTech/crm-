@@ -7,7 +7,7 @@ export const navItems: NavItem[] = [
     icon: "dashboardIcon",
   },
   {
-    title: "Masters",
+    title: "Modules",
     href: "/lab",
     icon: "dashboardIcon",
     children: [
@@ -16,6 +16,14 @@ export const navItems: NavItem[] = [
         href: "/leads",
         icon: "leads",
       },
+      { title: "Invoices", href: "/invoices", icon: "Paperclip" },
+    ],
+  },
+  {
+    title: "Clients",
+    href: "/lab",
+    icon: "dashboardIcon",
+    children: [
       {
         title: "Clients",
         href: "/clients",
@@ -26,25 +34,44 @@ export const navItems: NavItem[] = [
         href: "/contacts",
         icon: "users",
       },
-      {
-        title: "Products",
-        href: "/products",
-        icon: "products",
-      },
+    ],
+  },
+  {
+    title: "Products",
+    href: "/lab",
+    icon: "dashboardIcon",
+    children: [
       {
         title: "Suppliers",
         href: "/suppliers",
-        icon: "package",
-      },
-      {
-        title: "Departments",
-        href: "/departments",
-        icon: "department",
+        icon: "products",
       },
       {
         title: "Product Categories",
         href: "/productCategories",
         icon: "products",
+      },
+      {
+        title: "Products",
+        href: "/products",
+        icon: "products",
+      },
+    ],
+  },
+  {
+    title: "Users",
+    href: "/lab",
+    icon: "dashboardIcon",
+    children: [
+      {
+        title: "Employees",
+        href: "/employees",
+        icon: "users",
+      },
+      {
+        title: "Departments",
+        href: "/departments",
+        icon: "department",
       },
     ],
   },

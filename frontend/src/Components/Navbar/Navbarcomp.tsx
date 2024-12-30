@@ -52,6 +52,7 @@ import {
   CommandItem,
   CommandGroup,
 } from "@/components/ui/command";
+
 import { Icons } from "@/Dashboard/Icon";
 import { navItems } from "@/Config/data";
 
@@ -281,9 +282,12 @@ const Navbar = () => {
                         if (item.children && item.children.length > 0) {
                           return (
                             <CommandGroup heading={item.title} key={item.title}>
-                              {item.children.map((child) => {
+                              {item.children?.map((child) => {
                                 const Icon =
-                                  Icons[child.icon || "arrowRight675"]; // Assuming Icons is a predefined object
+                                  Icons[child.icon || "arrowRight675"];
+                                const isActive =
+                                  location.pathname === child.href;
+
                                 return (
                                   <div
                                     className="flex items-center gap-2 w-full"
@@ -292,11 +296,14 @@ const Navbar = () => {
                                     <CommandItem
                                       className="w-full flex items-center gap-2 overflow-hidden rounded-md py-1 text-sm font-medium hover:bg-secondary hover:text-iconActive"
                                       onSelect={() => {
+                                        navigate(child.href);
                                         setOpen(false);
                                       }}
                                     >
                                       {Icon && (
-                                        <Icon className="ml-3 size-5 flex-none" />
+                                        <Icon
+                                          className={`ml-3 size-5 flex-none`}
+                                        />
                                       )}
                                       {child.title}
                                     </CommandItem>

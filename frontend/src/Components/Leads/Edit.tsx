@@ -170,7 +170,7 @@ export default function EditLeadPage() {
       );
       setLoading(false);
     } else {
-      toast.error("No products available.");
+      // toast.error("No products available.");
       setLoading(false);
     }
   }, [productsData]);
@@ -348,11 +348,10 @@ export default function EditLeadPage() {
                                 !field.value && "text-muted-foreground"
                               )}
                             >
-                              {field.value
-                                ? contacts?.find(
-                                    (contact) => contact.id === field.value
-                                  )?.contact_person
-                                : "Select contact"}
+                              {Array.isArray(contacts) &&
+                                contacts?.find(
+                                  (contact) => contact.id === field.value
+                                )?.contact_person}
 
                               <ChevronsUpDown className="opacity-50" />
                             </Button>

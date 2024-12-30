@@ -49,6 +49,7 @@ import {
   Layers,
   UserRound,
   Package,
+  Paperclip,
 } from "lucide-react";
 import specimen from "@/images/icons8-specimen-container.svg";
 
@@ -100,6 +101,7 @@ export const Icons: Record<string, Icon> = {
   Pencil: Pencil,
   products: Layers,
   package: Package,
+  Paperclip: Paperclip,
 
   gitHub: ({ ...props }: LucideProps) => (
     <svg
