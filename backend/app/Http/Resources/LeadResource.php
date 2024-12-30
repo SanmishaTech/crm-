@@ -44,7 +44,7 @@ class LeadResource extends JsonResource
             'updated_at' => $this->updated_at,
             'employee' => new EmployeeResource($this->employee),
             'contact' => new ContactResource($this->contact),  
-            'products' => $this->updateLeadProducts,  
+            'products' => $this->leadProducts,  
             'follow_ups' => $this->followUps,
         ];
     }

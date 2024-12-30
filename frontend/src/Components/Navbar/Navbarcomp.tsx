@@ -65,7 +65,7 @@ const Navbar = () => {
 
   return (
     // <nav className="  bg-white text-black py-4 px-6 shadow-md">
-    <nav className="bg-accent/80 text-black py-4 px-6   top-0 left-0 right-0 z-10 ">
+    <nav className=" text-black py-4 px-6   top-0 left-0 right-0 z-10 ">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo / Title */}
         <div className="flex items-center space-x-5">
@@ -108,7 +108,7 @@ const Navbar = () => {
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
                 <NavigationMenuItem className="group">
-                  <NavigationMenuTrigger className="px-4 py-2 cursor-pointer hover:bg-gray-200">
+                  <NavigationMenuTrigger className="px-4 py-2 cursor-pointer  hover:bg-gray-200">
                     Clients
                     <ChevronUp
                       className="relative top-[1px] ml-1 h-4  transition duration-200 group-data-[state=open]:rotate-180"
@@ -122,7 +122,7 @@ const Navbar = () => {
                     <Separator className="my-2 w-full justify-center" /> */}
 
                     <Button
-                      className="w-full text-sm"
+                      className="w-full text-sm "
                       variant={"ghost"}
                       onClick={() => navigate("/clients")}
                     >
@@ -144,7 +144,7 @@ const Navbar = () => {
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
                 <NavigationMenuItem className="group">
-                  <NavigationMenuTrigger className="px-4 py-2 cursor-pointer hover:bg-gray-200">
+                  <NavigationMenuTrigger className="px-4 py-2 cursor-pointer   hover:bg-gray-200">
                     Products
                     <ChevronUp
                       className="relative top-[1px] ml-1 h-4  transition duration-200 group-data-[state=open]:rotate-180"
@@ -226,6 +226,20 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            <Button
+              className="text-sm"
+              variant={"ghost"}
+              onClick={() => navigate("/invoices")}
+            >
+              Invoices
+            </Button>
+            <Button
+              onClick={() => navigate("/departments")}
+              variant="ghost"
+              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
+            >
+              Department
+            </Button>
           </div>
         </div>
 

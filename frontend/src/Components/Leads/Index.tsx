@@ -57,7 +57,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useGetData } from "@/lib/HTTP/GET";
 import AlertDialogbox from "./AlertBox";
 import { useParams } from "react-router-dom";
@@ -345,17 +344,7 @@ export default function TableDemo() {
                                       >
                                         Deal
                                       </Button>
-                                      {/* <AlertDialogbox url={lead.id} /> */}
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => {
-                                          handleDelete(lead.id);
-                                        }}
-                                        className="w-full text-sm"
-                                      >
-                                        Delete
-                                      </Button>
+                                      <AlertDialogbox url={lead.id} />
 
                                       <Button
                                         variant="ghost"
