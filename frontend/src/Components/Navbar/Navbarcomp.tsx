@@ -181,29 +181,33 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            <Button
+              className="text-sm"
+              variant={"ghost"}
+              onClick={() => navigate("/invoices")}
+            >
+              Invoices
+            </Button>
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
                 <NavigationMenuItem className="group">
                   <NavigationMenuTrigger className="px-4 py-2 cursor-pointer hover:bg-gray-200">
                     {" "}
-                    <EllipsisVertical
-                      className="relative top-[1px] ml-1 h-4  transition duration-200 group-data-[state=open]:rotate-180"
+                    Users
+                    <ChevronDown
+                      className="relative top-[1px] ml-1 h-4  "
                       aria-hidden="true"
                     />
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="flex flex-col items-center justify-center">
-                    <h1 className="text-sm font-semibold cursor-default mt-2 ">
-                      Masters
-                    </h1>
-                    <Separator className="my-2 w-full justify-center" />
-
                     <Button
-                      className="w-full text-sm"
-                      variant={"ghost"}
-                      onClick={() => navigate("/invoices")}
+                      onClick={() => navigate("/employees")}
+                      variant="ghost"
+                      className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
                     >
-                      Invoices
+                      Employees
                     </Button>
+                    <Separator className="w-full justify-center" />
 
                     <Button
                       onClick={() => navigate("/departments")}
@@ -212,31 +216,10 @@ const Navbar = () => {
                     >
                       Department
                     </Button>
-                    <Button
-                      onClick={() => navigate("/employees")}
-                      variant="ghost"
-                      className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
-                    >
-                      Employees
-                    </Button>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-            <Button
-              className="text-sm"
-              variant={"ghost"}
-              onClick={() => navigate("/invoices")}
-            >
-              Invoices
-            </Button>
-            <Button
-              onClick={() => navigate("/departments")}
-              variant="ghost"
-              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
-            >
-              Department
-            </Button>
           </div>
         </div>
 
