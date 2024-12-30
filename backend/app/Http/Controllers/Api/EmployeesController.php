@@ -26,7 +26,7 @@ class EmployeesController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Employee::query();
+        $query = Employee::with("department");
 
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
@@ -59,10 +59,11 @@ class EmployeesController extends BaseController
      */
     public function store(StoreEmployeeRequest $request): JsonResponse
     {
+        $active = 1;
         $user = new User();
         $user->name = $request->input('employee_name');
         $user->email = $request->input('email');
-        $user->active = $request->input('active');
+        $user->active = $active;
         $user->password = Hash::make($request->input('password'));
         $user->save();
         
@@ -82,7 +83,7 @@ class EmployeesController extends BaseController
         // $employee->resignation_date = $request->input('resignation_date');
         $employee->save();
        
-        return $this->sendResponse(['User'=> new UserResource($user), 'employee'=>new EmployeeResource($employee)], "Employees stored successfully");
+        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "Employees stored successfully");
     }
 
     /**
@@ -96,7 +97,7 @@ class EmployeesController extends BaseController
             return $this->sendError("Employee not found", ['error'=>'Employee not found']);
         }
         $user = User::find($employee->user_id);
-        return $this->sendResponse(['User'=> new UserResource($user), 'employee'=>new EmployeeResource($employee)], "Employee retrived successfully");
+        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "Employee retrived successfully");
     }
 
     /**

@@ -168,6 +168,9 @@ function App() {
         <Route path="/products/add" element={<Dashboard />} />
         <Route path="/products/edit/:id" element={<Dashboard />} />
         <Route path="/invoices" element={<Dashboard />} />
+        <Route path="/employees" element={<Dashboard />} />
+        <Route path="/employees/add" element={<Dashboard />} />
+        <Route path="/employees/edit/:id" element={<Dashboard />} />
       </Routes>
       {isVisible && (
         <Button
