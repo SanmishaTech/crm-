@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import AddContacts from "@/Components/Leads/AddContacts";
 import { ChevronLeft } from "lucide-react";
 import {
   Card,
@@ -98,7 +97,7 @@ export default function InputForm() {
     defaultValues: {
       contact_id: "",
       lead_source: "",
-      lead_status: "Open",
+      lead_status: "open",
       lead_type: "basic",
       tender_number: "",
       bid_end_date: "",
@@ -296,11 +295,6 @@ export default function InputForm() {
                                 No Contact available
                               </SelectItem>
                             )}
-                            <div className="px-5 py-1">
-                              <AddContacts
-                                fetchedContacts={fetchProductCategories}
-                              />
-                            </div>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -335,6 +329,7 @@ export default function InputForm() {
                         <Input
                           placeholder="Enter Lead Status"
                           {...field}
+                          defaultValue="open"
                           disabled
                         />
                       </FormControl>

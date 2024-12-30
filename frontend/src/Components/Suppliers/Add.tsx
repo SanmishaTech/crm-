@@ -405,10 +405,10 @@ export default function InputForm() {
                   name="contact_no"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Contact</FormLabel>
+                      <FormLabel>Contact Number</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter Contact"
+                          placeholder="Enter Contact Number"
                           {...field}
                           type="text"
                           inputMode="numeric"

@@ -136,6 +136,7 @@ export default function EditLeadPage() {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
       onSuccess: () => {
+        console.log("success");
         navigate("/leads");
         queryClient.invalidateQueries({ queryKey: ["editlead"] });
         queryClient.invalidateQueries({ queryKey: ["editlead", id] });
@@ -151,21 +152,39 @@ export default function EditLeadPage() {
     },
   });
 
-  const {
-    data: editData,
-    isLoading,
-    isError,
-  } = useGetData({
+  const { data: productsData } = useGetData({
+    endpoint: "/api/products",
+    params: {
+      queryKey: ["products"],
+      retry: 1,
+    },
+  });
+
+  useEffect(() => {
+    if (productsData?.data?.Products) {
+      setFrameworks(
+        productsData?.data?.Products?.map((product) => ({
+          value: product.id.toString(),
+          label: product.product,
+        }))
+      );
+      setLoading(false);
+    } else {
+      toast.error("No products available.");
+      setLoading(false);
+    }
+  }, [productsData]);
+  const { data: editData } = useGetData({
     endpoint: `/api/leads/${id}`,
     params: {
       queryKey: ["editlead", id],
       retry: 1,
       onSuccess: (data) => {
         setData(data?.Lead);
+        console.log(data.data.Lead);
 
         setContacts(data?.data?.Lead?.contact_id);
         setLoading(false);
-        console.log(data.data.Lead);
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate lead")) {
@@ -181,9 +200,10 @@ export default function EditLeadPage() {
   useEffect(() => {
     if (editData?.data?.Lead?.products) {
       const products = editData.data.Lead.products.map((product: any) => ({
-        product_id: product.product_id ? product.product_id.toString() : "",
+        product_id: product.product_id.toString(),
         quantity: product.quantity || "",
-        rate: product.rate || "",
+        rate: product.rate,
+        isOpen: false,
       }));
       setProductRows(products);
     }
@@ -192,7 +212,6 @@ export default function EditLeadPage() {
   useEffect(() => {
     if (editData?.data?.Lead) {
       const newData = editData.data.Lead;
-      console.log("newData", newData);
       form.reset({
         contact_id: newData?.contact_id || "",
         lead_status: newData?.lead_status || "",
@@ -229,22 +248,6 @@ export default function EditLeadPage() {
         }
       },
       enabled: !!id,
-    },
-  });
-
-  const productsData = useGetData({
-    endpoint: `/api/products`,
-    params: {
-      queryKey: ["products"],
-      retry: 1,
-      onSuccess: (data) => {
-        // setProducts(data?.data?.Product || []);
-        setLoading(false);
-      },
-      onError: (error) => {
-        toast.error("Failed to fetch products. Please try again.");
-        setLoading(false);
-      },
     },
   });
 
@@ -313,8 +316,7 @@ export default function EditLeadPage() {
         </div>
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
-            <h2 className="text-2xl font-semibold">Lead Form</h2>
-            <p className="text-xs mb-9">Edit/Update lead to the database.</p>
+            <h2 className="text-2xl font-semibold">Lead Edit Form</h2>
           </div>
         </div>
       </div>
@@ -438,13 +440,13 @@ export default function EditLeadPage() {
                             <SelectValue placeholder="Select Lead Status" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="open">Open</SelectItem>
-                            <SelectItem value="inProgress">
+                            <SelectItem value="Open">Open</SelectItem>
+                            <SelectItem value="In Progress">
                               In Progress
                             </SelectItem>
-                            <SelectItem value="quotation">Quotation</SelectItem>
-                            <SelectItem value="close">Close</SelectItem>
-                            <SelectItem value="dealStatus">
+                            <SelectItem value="Quotation">Quotation</SelectItem>
+                            <SelectItem value="Close">Close</SelectItem>
+                            <SelectItem value="DealStatus">
                               Deal Status
                             </SelectItem>
                           </SelectContent>
@@ -856,8 +858,7 @@ export default function EditLeadPage() {
                   <TableRow></TableRow>
                 </TableFooter>
               </Table>
-              {/* Table End */}
-              {/* Error Message */}
+
               <Button
                 type="button"
                 onClick={addRow}
