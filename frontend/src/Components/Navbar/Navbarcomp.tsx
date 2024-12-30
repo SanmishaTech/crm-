@@ -184,7 +184,20 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-           
+            <Button
+              className="text-sm"
+              variant={"ghost"}
+              onClick={() => navigate("/invoices")}
+            >
+              Invoices
+            </Button>
+            <Button
+              onClick={() => navigate("/departments")}
+              variant="ghost"
+              className="text-black px-4 py-2 rounded-md hover:bg-gray-100 hover:text-black transition duration-200"
+            >
+              Department
+            </Button>
           </div>
         </div>
 

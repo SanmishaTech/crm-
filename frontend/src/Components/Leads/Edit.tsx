@@ -446,14 +446,12 @@ export default function EditLeadPage() {
                             </SelectItem>
                             <SelectItem value="Quotation">Quotation</SelectItem>
                             <SelectItem value="Close">Close</SelectItem>
-                            <SelectItem value="DealStatus">
-                              Deal Status
-                            </SelectItem>
+                            <SelectItem value="Deal">Deal</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
                       <FormMessage />
-                      {field.value === "close" && (
+                      {field.value === "Close" && (
                         <FormField
                           control={form.control}
                           name="lead_closing_reason"
@@ -473,7 +471,7 @@ export default function EditLeadPage() {
                           )}
                         />
                       )}
-                      {field.value === "quotation" && (
+                      {field.value === "Quotation" && (
                         <FormField
                           control={form.control}
                           name="lead_attachment"
@@ -497,7 +495,7 @@ export default function EditLeadPage() {
                           )}
                         />
                       )}
-                      {field.value === "dealStatus" && (
+                      {field.value === "Deal" && (
                         <FormField
                           control={form.control}
                           name="lead_attachment"
