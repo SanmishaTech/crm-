@@ -141,19 +141,20 @@ const Navbar = () => {
                       Masters
                     </h1>
                     <Separator className="my-2 w-full justify-center" />
-                    <Button
-                      className="w-full text-sm"
-                      variant={"ghost"}
-                      onClick={() => navigate("/products")}
-                    >
-                      Products
-                    </Button>
+
                     <Button
                       className="w-full text-sm"
                       variant={"ghost"}
                       onClick={() => navigate("/invoices")}
                     >
                       Invoices
+                    </Button>
+                    <Button
+                      className="w-full text-sm"
+                      variant={"ghost"}
+                      onClick={() => navigate("/products")}
+                    >
+                      Products
                     </Button>
                     <Button
                       variant={"ghost"}

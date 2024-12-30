@@ -11,9 +11,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import Sidebar, { useSidebar } from "./Sidebar";
 import {
   File,
   PlusCircle,
@@ -22,6 +29,7 @@ import {
   Trash,
   MoreHorizontal,
   ListFilter,
+  Filter,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -87,7 +95,7 @@ export default function TableDemo() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
+  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -190,56 +198,70 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Clients List</h3>
-      </div>
-      <div className="flex justify-between items-center space-x-2 w-full">
-        {/* Search Bar Starts */}
-        <div className="flex-1 space-x-2">
-          <Input
-            placeholder="Search clients..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="flex ">
+      <Sidebar className="" />
+      <div className="p-6 w-full  bg-accent/50 ml-4 rounded-lg shadow-lg ">
+        <div className="p-2  ">
+          <div className="flex justify-between items-center ">
+            <h3 className="text-lg  font-semibold mx-auto">Clients List</h3>
+          </div>
         </div>
-        {/* Search Bar Ends */}
-        <div className="flex space-x-2">
-          {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/clients/add")}>
-            Add Client
-          </Button>
-          {/* Add(Page) Ends */}
+        <div className="flex justify-between items-center space-x-3 mr-4  ">
+          <div className="ml-4 mt-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Filter onClick={toggle} className=" h-5  " />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Filter</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex-1 space-x-2">
+            {isMinimized ? (
+              <Input
+                placeholder="Search suppliers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            ) : null}
+          </div>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={() => navigate("/clients/add")}>
+              Add Client
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <div className="panel p-4 rounded-md bg-gray-50">
-        {/* Table Start */}
-        <Table>
-          <TableCaption>A list of your recent clients.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead onClick={() => handleSort("client")}>
-                Clients
-              </TableHead>
-              <TableHead onClick={() => handleSort("street_address")}>
-                Street Address
-              </TableHead>
-              <TableHead onClick={() => handleSort("area")}>Area</TableHead>
-              <TableHead onClick={() => handleSort("city")}>City</TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableFooter></TableFooter>
-          <TableBody>
-            {sortedClients.map((client) => (
-              <TableRow key={client.id}>
-                <TableCell>{client.client}</TableCell>
-                <TableCell>{client.street_address}</TableCell>
-                <TableCell>{client.area}</TableCell>
-                <TableCell>{client.city}</TableCell>
-                <TableCell className="text-right">
-                  {/* <button
+        <div className="panel p-4 rounded-md bg-gray-50">
+          {/* Table Start */}
+          <Table>
+            <TableCaption>A list of your recent clients.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead onClick={() => handleSort("client")}>
+                  Clients
+                </TableHead>
+                <TableHead onClick={() => handleSort("street_address")}>
+                  Street Address
+                </TableHead>
+                <TableHead onClick={() => handleSort("area")}>Area</TableHead>
+                <TableHead onClick={() => handleSort("city")}>City</TableHead>
+                <TableHead className="text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableFooter></TableFooter>
+            <TableBody>
+              {sortedClients.map((client) => (
+                <TableRow key={client.id}>
+                  <TableCell>{client.client}</TableCell>
+                  <TableCell>{client.street_address}</TableCell>
+                  <TableCell>{client.area}</TableCell>
+                  <TableCell>{client.city}</TableCell>
+                  <TableCell className="text-right">
+                    {/* <button
                     onClick={() => navigate(`/clients/edit/${client.id}`)}
                     className="text-blue-500 hover:text-blue-700"
                   >
@@ -247,74 +269,73 @@ export default function TableDemo() {
                   </button>
                   <AlertDialogbox url={client.id} /> */}
 
-                  {/* <button
+                    {/* <button
                     onClick={() => handleDelete(client.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     Delete
                   </button> */}
-                  {/*  */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="center"
-                      className="w-full flex-col items-center flex justify-center"
-                    >
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          navigate(`/clients/edit/${client.id}`);
-                        }}
-                        className="w-full text-sm"
+                    {/*  */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="center"
+                        className="w-full flex-col items-center flex justify-center"
                       >
-                        Edit
-                      </Button>
-                      {/* <DropdownMenuSeparator /> */}
-                      <AlertDialogbox
-                        url={client.id}
-                      />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {/* Table End */}
-        {/* Pagination Start */}
-        <Pagination>
-          <PaginationContent className="flex items-center space-x-4">
-            {/* Previous Button */}
-            <PaginationPrevious
-              onClick={goToPreviousPage}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </PaginationPrevious>
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            navigate(`/clients/edit/${client.id}`);
+                          }}
+                          className="w-full text-sm"
+                        >
+                          Edit
+                        </Button>
+                        {/* <DropdownMenuSeparator /> */}
+                        <AlertDialogbox url={client.id} />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {/* Table End */}
+          {/* Pagination Start */}
+          <Pagination>
+            <PaginationContent className="flex items-center space-x-4">
+              {/* Previous Button */}
+              <PaginationPrevious
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </PaginationPrevious>
 
-            {/* Page Number */}
-            <span className="text-sm">
-              Page {currentPage} of {totalPages}
-            </span>
+              {/* Page Number */}
+              <span className="text-sm">
+                Page {currentPage} of {totalPages}
+              </span>
 
-            {/* Next Button */}
-            <PaginationNext
-              className="hover:pointer"
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </PaginationNext>
-          </PaginationContent>
-        </Pagination>
-        {/* Pagination End */}
+              {/* Next Button */}
+              <PaginationNext
+                className="hover:pointer"
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </PaginationNext>
+            </PaginationContent>
+          </Pagination>
+          {/* Pagination End */}
+        </div>
       </div>
     </div>
   );

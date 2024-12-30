@@ -10,6 +10,14 @@ import EditContacts from "./Components/Contacts/Edit";
 import EditClients from "./Components/Clients/Edit";
 // import EditProducts from "./Components/Products/Edit";
 import EditLeads from "./Components/Leads/Edit";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ChevronUp } from "lucide-react";
 
 import {
   Calculator,
@@ -41,6 +49,8 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const [isVisible, setIsVisible] = useState(false);
+
   const location = useLocation();
 
   useEffect(() => {
@@ -64,6 +74,24 @@ function App() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
+  useEffect(() => {
+    const handleScroll = () => {
+      // Show the button if scrolled past half of the page
+      const halfPage = window.innerHeight / 2;
+      setIsVisible(window.scrollY > halfPage);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <div className="overflow-x-hidden  ">
@@ -141,6 +169,28 @@ function App() {
         <Route path="/products/edit/:id" element={<Dashboard />} />
         <Route path="/invoices" element={<Dashboard />} />
       </Routes>
+      {isVisible && (
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={(event) => {
+            event.preventDefault(); // Prevent unintended form submission
+            scrollToTop();
+          }}
+          className="fixed bottom-4 bg-accent/80 right-12 transition"
+        >
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <ChevronUp />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Scroll to top</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </Button>
+      )}
     </div>
   );
 }

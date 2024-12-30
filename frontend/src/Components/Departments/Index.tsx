@@ -154,12 +154,14 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="p-9 h-full overflow-y-hidden w-full bg-accent/50 ml-4 rounded-lg shadow-lg ">
-      <div className="text-lg font-semibold mb-3 flex justify-center items-center p-3">
-        <h3>Departments List</h3>
+    <div className="p-6 h-full overflow-y-hidden w-full bg-accent/50 ml-4 rounded-lg shadow-lg ">
+      <div className="p-2  ">
+        <div className="flex justify-between items-center ">
+          <h3 className="text-lg  font-semibold mx-auto">Department List</h3>
+        </div>
       </div>
 
-      <div className="flex justify-between items-center space-x-2 w-full">
+      <div className="flex justify-between items-center space-x-3 mr-4">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">
           <Input

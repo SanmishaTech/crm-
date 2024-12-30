@@ -7,9 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
-import { X, Check, ChevronsUpDown } from "lucide-react";
+import { X, Check, ChevronsUpDown, ChevronUp } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 import {
   Select,
   SelectContent,
@@ -17,6 +24,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ChevronLeft } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -283,250 +298,98 @@ export default function EditLeadPage() {
   ] as const;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg mt-12">
-      <h3 className="text-2xl font-semibold text-center">Edit Lead</h3>
-      <p className="text-center text-xs mb-9">Edit & Update Lead.</p>
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+      <div className="flex items-center justify-between w-full">
+        <div className="mb-7">
+          <Button
+            onClick={() => navigate("/leads")}
+            variant="ghost"
+            className="mr-4"
+            type="button"
+          >
+            <ChevronLeft />
+            Back
+          </Button>
+        </div>
+        <div className="flex-1 mr-9 text-center">
+          <div className="-ml-4">
+            <h2 className="text-2xl font-semibold">Lead Form</h2>
+            <p className="text-xs mb-9">Edit/Update lead to the database.</p>
+          </div>
+        </div>
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Fields First Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="contact_id"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Contacts</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            "w-[200px] justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? contacts?.find(
-                                (contact) => contact.id === field.value
-                              )?.contact_person
-                            : "Select contact"}
-
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Search contact..."
-                          className="h-9"
-                        />
-                        <CommandList>
-                          <CommandEmpty>No contact found.</CommandEmpty>
-                          <CommandGroup>
-                            {contacts.map((contact) => (
-                              <CommandItem
-                                value={contact.id}
-                                key={contact.id}
-                                onSelect={() => {
-                                  form.setValue("contact_id", contact.id);
-                                }}
-                              >
-                                {contact.contact_person}
-                                <Check
-                                  className={cn(
-                                    "ml-auto",
-                                    contact.id === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription>
-                    Select the contact you want to associate.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="lead_source"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lead Source</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Lead Source"
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Lead Source.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="space-x-6 ">
-            <FormField
-              control={form.control}
-              name="lead_status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lead Status</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={field.value || ""}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Lead Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="open">Open</SelectItem>
-                        <SelectItem value="inProgress">In Progress</SelectItem>
-                        <SelectItem value="quotation">Quotation</SelectItem>
-                        <SelectItem value="close">Close</SelectItem>
-                        <SelectItem value="dealStatus">Deal Status</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>Enter the Lead Status.</FormDescription>
-                  <FormMessage />
-                  {field.value === "close" && (
-                    <FormField
-                      control={form.control}
-                      name="lead_closing_reason"
-                      render={({ field: closeField }) => (
-                        <FormItem>
-                          <FormLabel>Reason for Closing</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              className="w-full"
-                              placeholder="Enter reason for closing the lead"
-                              {...closeField}
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            Provide a reason for closing the lead.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-                  {field.value === "quotation" && (
-                    <FormField
-                      control={form.control}
-                      name="lead_attachment"
-                      render={({ field: pdfField }) => (
-                        <FormItem>
-                          <FormLabel>Upload PDF</FormLabel>
-                          <FormControl>
-                            <input
-                              id="pdf-upload"
-                              type="file"
-                              onChange={(e) => {
-                                setFile(e.target.files[0]);
-                              }}
-                              className="w-full border p-2"
-                              accept="application/pdf"
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            Upload a PDF to accompany your closing reason.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-                  {field.value === "dealStatus" && (
-                    <FormField
-                      control={form.control}
-                      name="lead_attachment"
-                      render={({ field: pdfField }) => (
-                        <FormItem>
-                          <FormLabel>Upload PDF</FormLabel>
-                          <FormControl>
-                            <input
-                              id="pdf-upload"
-                              type="file"
-                              onChange={(e) => {
-                                setFile(e.target.files[0]);
-                              }}
-                              className="w-full border p-2"
-                              accept="application/pdf" // Accept only PDF files
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            Upload a PDF to accompany your closing reason.
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="space-x-6 ">
-            <FormField
-              control={form.control}
-              name="lead_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lead Type</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={field.value || ""}
-                      onValueChange={(value) => field.onChange(value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Lead Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="basic">Basic</SelectItem>
-                        <SelectItem value="tender">Tender</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>Select the lead type.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          {form.watch("lead_type") === "tender" && (
-            <div className=" space-y-6">
-              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4 mt-4">
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Lead Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="tender_number"
+                  name="contact_id"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tender Number</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Tender Number"
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Enter the tender number.
-                      </FormDescription>
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Contacts</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-[200px] justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? contacts?.find(
+                                    (contact) => contact.id === field.value
+                                  )?.contact_person
+                                : "Select contact"}
+
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] p-0">
+                          <Command>
+                            <CommandInput
+                              placeholder="Search contact..."
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>No contact found.</CommandEmpty>
+                              <CommandGroup>
+                                {contacts.map((contact) => (
+                                  <CommandItem
+                                    value={contact.id}
+                                    key={contact.id}
+                                    onSelect={() => {
+                                      form.setValue("contact_id", contact.id);
+                                    }}
+                                  >
+                                    {contact.contact_person}
+                                    <Check
+                                      className={cn(
+                                        "ml-auto",
+                                        contact.id === field.value
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+
                       <FormMessage />
                     </FormItem>
                   )}
@@ -534,149 +397,31 @@ export default function EditLeadPage() {
 
                 <FormField
                   control={form.control}
-                  name="bid_end_date"
-                  render={({ field }) => {
-                    const formattedDate = field.value
-                      ? field.value.split("T")[0]
-                      : "";
-
-                    return (
-                      <FormItem>
-                        <FormLabel>Bid End Date</FormLabel>
-                        <FormControl>
-                          {/* Set the formatted date */}
-                          <Input type="date" {...field} value={formattedDate} />
-                        </FormControl>
-                        <FormDescription>
-                          Select the tender date.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="portal"
+                  name="lead_source"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Portal</FormLabel>
+                      <FormLabel>Lead Source</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter Portal Name"
+                          placeholder="Enter Lead Source"
                           {...field}
                           value={field.value || ""}
                         />
                       </FormControl>
-                      <FormDescription>Enter the Portal name.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-
-              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-                <FormField
-                  control={form.control}
-                  name="tender_category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tender Category</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value || ""}
-                          onValueChange={(value) => field.onChange(value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Tender Type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="open">Open</SelectItem>
-                            <SelectItem value="limited">Limited</SelectItem>
-                            <SelectItem value="boq">BOQ</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormDescription>Select the tender type.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="emd"
-                  render={({ field }) => (
-                    <FormItem className="space-y-3">
-                      <FormLabel>EMD Status</FormLabel>
-                      <FormControl>
-                        <div className="flex space-x-4">
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              id="emd-paid"
-                              {...field}
-                              value={0}
-                              checked={Number(field.value) === 0}
-                              // value={0}
-                              // checked={field.value === 0}
-                              className="h-4 w-4"
-                            />
-                            <label htmlFor="emd-paid">Paid</label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <input
-                              type="radio"
-                              id="emd-pending"
-                              {...field}
-                              value={1}
-                              checked={Number(field.value) === 1}
-                              // value="1"
-                              // checked={field.value === "1"}
-                              className="h-4 w-4"
-                            />
-                            <label htmlFor="emd-pending">Pending</label>
-                          </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="tender_status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tender Status</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value || ""}
-                          onValueChange={(value) => field.onChange(value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select Tender Status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="quoted">Quoted</SelectItem>
-                            <SelectItem value="toBeQuoted">
-                              To be Quoted
-                            </SelectItem>
-                            <SelectItem value="evaluationStage">
-                              Evaluation Stage
-                            </SelectItem>
-                            <SelectItem value="close">Close</SelectItem>
-                            <SelectItem value="Awaiting">Awaiting</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormDescription>Select the tender type.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Lead Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
               <div className="space-x-6 ">
                 <FormField
                   control={form.control}
@@ -705,7 +450,6 @@ export default function EditLeadPage() {
                           </SelectContent>
                         </Select>
                       </FormControl>
-                      <FormDescription>Enter the Lead Status.</FormDescription>
                       <FormMessage />
                       {field.value === "close" && (
                         <FormField
@@ -721,9 +465,7 @@ export default function EditLeadPage() {
                                   {...closeField}
                                 />
                               </FormControl>
-                              <FormDescription>
-                                Provide a reason for closing the lead.
-                              </FormDescription>
+
                               <FormMessage />
                             </FormItem>
                           )}
@@ -744,12 +486,10 @@ export default function EditLeadPage() {
                                     setFile(e.target.files[0]);
                                   }}
                                   className="w-full border p-2"
-                                  accept="application/pdf" // Accept only PDF files
+                                  accept="application/pdf"
                                 />
                               </FormControl>
-                              <FormDescription>
-                                Upload a PDF to accompany your closing reason.
-                              </FormDescription>
+
                               <FormMessage />
                             </FormItem>
                           )}
@@ -773,9 +513,7 @@ export default function EditLeadPage() {
                                   accept="application/pdf" // Accept only PDF files
                                 />
                               </FormControl>
-                              <FormDescription>
-                                Upload a PDF to accompany your closing reason.
-                              </FormDescription>
+
                               <FormMessage />
                             </FormItem>
                           )}
@@ -785,139 +523,351 @@ export default function EditLeadPage() {
                   )}
                 />
               </div>
-            </div>
-          )}
-          {error && <div className="text-red-500">{error}</div>}{" "}
-          <div className="flex justify-center">
-            <Label>Add your Product & Quantity</Label>
-          </div>
-          {/* Table Start */}
-          <Table>
-            <TableCaption>A list of your products.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Products</TableHead>
-                <TableHead>Quantity</TableHead>
-                <TableHead>Rate</TableHead>
-                <TableHead className="text-right">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {productRows.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Popover
-                      open={row.isOpen}
-                      onOpenChange={(isOpen) => {
-                        const newRows = [...productRows];
-                        newRows[index].isOpen = isOpen;
-                        setProductRows(newRows);
-                      }}
-                    >
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={row.isOpen}
-                          className="w-[200px] justify-between"
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">Lead Type</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-x-6 ">
+                <FormField
+                  control={form.control}
+                  name="lead_type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Lead Type</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value || ""}
+                          onValueChange={(value) => field.onChange(value)}
                         >
-                          {row.product_id
-                            ? frameworks.find(
-                                (framework) =>
-                                  framework.value === row.product_id
-                              )?.label || "Select products..."
-                            : "Select products..."}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[200px] p-0">
-                        <Command>
-                          <CommandInput placeholder="Search products..." />
-                          <CommandList>
-                            <CommandEmpty>No products found.</CommandEmpty>
-                            <CommandGroup>
-                              {frameworks.map((framework) => (
-                                <CommandItem
-                                  key={framework.value}
-                                  value={framework.value}
-                                  onSelect={() => {
-                                    const newRows = [...productRows];
-                                    newRows[index].product_id = framework.value;
-                                    newRows[index].isOpen = false;
-                                    setProductRows(newRows);
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      row.product_id === framework.value
-                                        ? "opacity-100"
-                                        : "opacity-0"
-                                    )}
-                                  />
-                                  {framework.label}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      placeholder="Enter Quantity"
-                      name="quantity"
-                      value={row.quantity}
-                      onChange={(e) => {
-                        const newRows = [...productRows];
-                        newRows[index].quantity = e.target.value;
-                        setProductRows(newRows);
-                      }}
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Lead Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="basic">Basic</SelectItem>
+                            <SelectItem value="tender">Tender</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {form.watch("lead_type") === "tender" && (
+                <div className=" space-y-6">
+                  <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4 mt-4">
+                    <FormField
+                      control={form.control}
+                      name="tender_number"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tender Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter Tender Number"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      placeholder="Rate"
-                      name="rate"
-                      value={row.rate}
-                      onChange={(e) => {
-                        const newRows = [...productRows];
-                        newRows[index].rate = e.target.value;
-                        setProductRows(newRows);
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell className="flex justify-end">
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        const newRows = productRows.filter(
-                          (_, i) => i !== index
+
+                    <FormField
+                      control={form.control}
+                      name="bid_end_date"
+                      render={({ field }) => {
+                        const formattedDate = field.value
+                          ? field.value.split("T")[0]
+                          : "";
+
+                        return (
+                          <FormItem>
+                            <FormLabel>Bid End Date</FormLabel>
+                            <FormControl>
+                              {/* Set the formatted date */}
+                              <Input
+                                type="date"
+                                {...field}
+                                value={formattedDate}
+                              />
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
                         );
-                        setProductRows(newRows);
                       }}
-                    >
-                      <X />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
-              <TableRow></TableRow>
-            </TableFooter>
-          </Table>
-          {/* Table End */}
-          {/* Error Message */}
-          <Button
-            type="button"
-            onClick={addRow}
-            variant="outline"
-            className="mb-4"
-          >
-            Add Row
-          </Button>
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="portal"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Portal</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter Portal Name"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="tender_category"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tender Category</FormLabel>
+                          <FormControl>
+                            <Select
+                              value={field.value || ""}
+                              onValueChange={(value) => field.onChange(value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Tender Type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="open">Open</SelectItem>
+                                <SelectItem value="limited">Limited</SelectItem>
+                                <SelectItem value="boq">BOQ</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="emd"
+                      render={({ field }) => (
+                        <FormItem className="space-y-3">
+                          <FormLabel>EMD Status</FormLabel>
+                          <FormControl>
+                            <div className="flex space-x-4">
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="radio"
+                                  id="emd-paid"
+                                  {...field}
+                                  value={0}
+                                  checked={Number(field.value) === 0}
+                                  // value={0}
+                                  // checked={field.value === 0}
+                                  className="h-4 w-4"
+                                />
+                                <label htmlFor="emd-paid">Paid</label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="radio"
+                                  id="emd-pending"
+                                  {...field}
+                                  value={1}
+                                  checked={Number(field.value) === 1}
+                                  // value="1"
+                                  // checked={field.value === "1"}
+                                  className="h-4 w-4"
+                                />
+                                <label htmlFor="emd-pending">Pending</label>
+                              </div>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="tender_status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tender Status</FormLabel>
+                          <FormControl>
+                            <Select
+                              value={field.value || ""}
+                              onValueChange={(value) => field.onChange(value)}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Tender Status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="quoted">Quoted</SelectItem>
+                                <SelectItem value="toBeQuoted">
+                                  To be Quoted
+                                </SelectItem>
+                                <SelectItem value="evaluationStage">
+                                  Evaluation Stage
+                                </SelectItem>
+                                <SelectItem value="close">Close</SelectItem>
+                                <SelectItem value="Awaiting">
+                                  Awaiting
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
+              {error && <div className="text-red-500">{error}</div>}{" "}
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">Products</CardTitle>
+              <CardDescription>Add your Products & Quantity</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              {/* Table Start */}
+              <Table>
+                <TableCaption>A list of your products.</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Products</TableHead>
+                    <TableHead>Quantity</TableHead>
+                    <TableHead>Rate</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {productRows.map((row, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Popover
+                          open={row.isOpen}
+                          onOpenChange={(isOpen) => {
+                            const newRows = [...productRows];
+                            newRows[index].isOpen = isOpen;
+                            setProductRows(newRows);
+                          }}
+                        >
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={row.isOpen}
+                              className="w-[200px] justify-between"
+                            >
+                              {row.product_id
+                                ? frameworks.find(
+                                    (framework) =>
+                                      framework.value === row.product_id
+                                  )?.label || "Select products..."
+                                : "Select products..."}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-[200px] p-0">
+                            <Command>
+                              <CommandInput placeholder="Search products..." />
+                              <CommandList>
+                                <CommandEmpty>No products found.</CommandEmpty>
+                                <CommandGroup>
+                                  {frameworks.map((framework) => (
+                                    <CommandItem
+                                      key={framework.value}
+                                      value={framework.value}
+                                      onSelect={() => {
+                                        const newRows = [...productRows];
+                                        newRows[index].product_id =
+                                          framework.value;
+                                        newRows[index].isOpen = false;
+                                        setProductRows(newRows);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          row.product_id === framework.value
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      {framework.label}
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          placeholder="Enter Quantity"
+                          name="quantity"
+                          value={row.quantity}
+                          onChange={(e) => {
+                            const newRows = [...productRows];
+                            newRows[index].quantity = e.target.value;
+                            setProductRows(newRows);
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          placeholder="Rate"
+                          name="rate"
+                          value={row.rate}
+                          onChange={(e) => {
+                            const newRows = [...productRows];
+                            newRows[index].rate = e.target.value;
+                            setProductRows(newRows);
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell className="flex justify-end">
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            const newRows = productRows.filter(
+                              (_, i) => i !== index
+                            );
+                            setProductRows(newRows);
+                          }}
+                        >
+                          <X />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+                <TableFooter>
+                  <TableRow></TableRow>
+                </TableFooter>
+              </Table>
+              {/* Table End */}
+              {/* Error Message */}
+              <Button
+                type="button"
+                onClick={addRow}
+                variant="outline"
+                className="mb-4"
+              >
+                Add Row
+              </Button>
+            </CardContent>
+          </Card>
           <div className="flex justify-end space-x-2">
             <Button
               type="button"
@@ -927,6 +877,7 @@ export default function EditLeadPage() {
             >
               Cancel
             </Button>
+
             <Button type="submit">Save Changes</Button>
           </div>
         </form>

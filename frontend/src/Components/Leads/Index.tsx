@@ -6,6 +6,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Filter } from "lucide-react";
+import Sidebar, { useSidebar } from "./Sidebar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -87,7 +96,7 @@ export default function TableDemo() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -209,201 +218,219 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-      <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Leads List</h3>
-      </div>
-      <div className="flex justify-between items-center space-x-2 w-full">
-        {/* Search Bar Starts */}
-        <div className="flex-1 space-x-2">
-          <Input
-            placeholder="Search leads..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="flex ">
+      <Sidebar className="" />
+      <div className="p-6 w-full  bg-accent/50 ml-4 rounded-lg shadow-lg ">
+        <div className="p-2  ">
+          <div className="flex justify-between items-center ">
+            <h3 className="text-lg  font-semibold mx-auto">Leads List</h3>
+          </div>
         </div>
-        {/* Search Bar Ends */}
-        <div className="flex space-x-2">
-          {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/leads/add")}>
-            Add Leads
-          </Button>
-
-          {/* Add(Page) Ends */}
+        <div className="flex justify-between items-center space-x-2 w-full">
+          <div className="ml-4 mt-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Filter onClick={toggle} className=" h-5  " />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Filter</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          <div className="flex-1 space-x-2">
+            {isMinimized ? (
+              <Input
+                placeholder="Search suppliers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            ) : null}
+          </div>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={() => navigate("/leads/add")}>
+              Add Leads
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <div className="panel p-4 rounded-md bg-gray-50">
-        {/* Table Start */}
-        <Table>
-          <TableCaption>A list of your recent suppliers.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead onClick={() => handleSort("contact_id")}>
-                Contact
-              </TableHead>
-              <TableHead onClick={() => handleSort("lead_source")}>
-                Lead Source
-              </TableHead>
-              <TableHead onClick={() => handleSort("lead_status")}>
-                Lead Status
-              </TableHead>
-              <TableHead onClick={() => handleSort("follow_up_type")}>
-                Follow Up Type
-              </TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableFooter></TableFooter>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <TableBody>
-                  {Sup?.data?.Lead &&
-                    Array.isArray(Sup.data.Lead) &&
-                    Sup.data.Lead.map((lead) => (
-                      <TooltipProvider key={lead.id}>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <TableRow>
-                              <TableCell>
-                                {lead?.contact?.contact_person}
-                              </TableCell>
-                              <TableCell>{lead.lead_source}</TableCell>
-                              <TableCell>
-                                {lead.lead_status
-                                  ? lead.lead_status.charAt(0).toUpperCase() +
-                                    lead.lead_status.slice(1)
-                                  : "N/A"}
-                              </TableCell>
-                              <TableCell>
-                                {lead.lead_follow_up_date
-                                  ? new Date(
-                                      lead.lead_follow_up_date
-                                    ).toLocaleDateString()
-                                  : "N/A"}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      className="h-8 w-8 p-0"
+        <div className="panel p-4 rounded-md bg-gray-50">
+          {/* Table Start */}
+          <Table>
+            <TableCaption>A list of your recent suppliers.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead onClick={() => handleSort("contact_id")}>
+                  Contact
+                </TableHead>
+                <TableHead onClick={() => handleSort("lead_source")}>
+                  Lead Source
+                </TableHead>
+                <TableHead onClick={() => handleSort("lead_status")}>
+                  Lead Status
+                </TableHead>
+                <TableHead onClick={() => handleSort("follow_up_type")}>
+                  Follow Up Type
+                </TableHead>
+                <TableHead className="text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableFooter></TableFooter>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <TableBody>
+                    {Sup?.data?.Lead &&
+                      Array.isArray(Sup.data.Lead) &&
+                      Sup.data.Lead.map((lead) => (
+                        <TooltipProvider key={lead.id}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <TableRow>
+                                <TableCell>
+                                  {lead?.contact?.contact_person}
+                                </TableCell>
+                                <TableCell>{lead.lead_source}</TableCell>
+                                <TableCell>
+                                  {lead.lead_status
+                                    ? lead.lead_status.charAt(0).toUpperCase() +
+                                      lead.lead_status.slice(1)
+                                    : "N/A"}
+                                </TableCell>
+                                <TableCell>
+                                  {lead.lead_follow_up_date
+                                    ? new Date(
+                                        lead.lead_follow_up_date
+                                      ).toLocaleDateString()
+                                    : "N/A"}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        className="h-8 w-8 p-0"
+                                      >
+                                        <span className="sr-only">
+                                          Open menu
+                                        </span>
+                                        <MoreHorizontal className="h-4 w-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent
+                                      align="center"
+                                      className="w-full flex-col items-center flex justify-center"
                                     >
-                                      <span className="sr-only">Open menu</span>
-                                      <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent
-                                    align="center"
-                                    className="w-full flex-col items-center flex justify-center"
-                                  >
-                                    <DropdownMenuLabel>
-                                      Actions
-                                    </DropdownMenuLabel>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => {
-                                        navigate(`/leads/edit/${lead.id}`);
-                                      }}
-                                      className="w-full text-sm"
-                                    >
-                                      Edit
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => {
-                                        handleGenerateInvoice(lead.id);
-                                      }}
-                                      className="w-full text-sm"
-                                    >
-                                      Deal
-                                    </Button>
-                                    {/* <AlertDialogbox url={lead.id} /> */}
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => {
-                                        handleDelete(lead.id);
-                                      }}
-                                      className="w-full text-sm"
-                                    >
-                                      Delete
-                                    </Button>
+                                      <DropdownMenuLabel>
+                                        Actions
+                                      </DropdownMenuLabel>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                          navigate(`/leads/edit/${lead.id}`);
+                                        }}
+                                        className="w-full text-sm"
+                                      >
+                                        Edit
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                          handleGenerateInvoice(lead.id);
+                                        }}
+                                        className="w-full text-sm"
+                                      >
+                                        Deal
+                                      </Button>
+                                      {/* <AlertDialogbox url={lead.id} /> */}
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                          handleDelete(lead.id);
+                                        }}
+                                        className="w-full text-sm"
+                                      >
+                                        Delete
+                                      </Button>
 
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => {
-                                        navigate(`/leads/followUps/${lead.id}`);
-                                      }}
-                                      className="w-full text-sm"
-                                    >
-                                      Follow Up
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="w-full text-sm"
-                                      onClick={() => {
-                                        handleGenerateQuotation(lead.id);
-                                      }}
-                                    >
-                                      Quotation
-                                    </Button>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </TableCell>
-                            </TableRow>
-                          </TooltipTrigger>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => {
+                                          navigate(
+                                            `/leads/followUps/${lead.id}`
+                                          );
+                                        }}
+                                        className="w-full text-sm"
+                                      >
+                                        Follow Up
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="w-full text-sm"
+                                        onClick={() => {
+                                          handleGenerateQuotation(lead.id);
+                                        }}
+                                      >
+                                        Quotation
+                                      </Button>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </TableCell>
+                              </TableRow>
+                            </TooltipTrigger>
 
-                          <TooltipContent>
-                            <p>
-                              <strong>Remarks:</strong>{" "}
-                              {(lead.follow_up_remark || "N/A")
-                                .charAt(0)
-                                .toUpperCase() +
-                                (lead.follow_up_remark || "N/A").slice(1)}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ))}
-                </TableBody>
-              </TooltipTrigger>
-            </Tooltip>
-          </TooltipProvider>
-        </Table>
-        {/* Table End */}
-        {/* Pagination Start */}
-        <Pagination>
-          <PaginationContent className="flex items-center space-x-4">
-            {/* Previous Button */}
-            <PaginationPrevious
-              onClick={goToPreviousPage}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </PaginationPrevious>
+                            <TooltipContent>
+                              <p>
+                                <strong>Remarks:</strong>{" "}
+                                {(lead.follow_up_remark || "N/A")
+                                  .charAt(0)
+                                  .toUpperCase() +
+                                  (lead.follow_up_remark || "N/A").slice(1)}
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ))}
+                  </TableBody>
+                </TooltipTrigger>
+              </Tooltip>
+            </TooltipProvider>
+          </Table>
+          {/* Table End */}
+          {/* Pagination Start */}
+          <Pagination>
+            <PaginationContent className="flex items-center space-x-4">
+              {/* Previous Button */}
+              <PaginationPrevious
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </PaginationPrevious>
 
-            {/* Page Number */}
-            <span className="text-sm">
-              Page {currentPage} of {totalPages}
-            </span>
+              {/* Page Number */}
+              <span className="text-sm">
+                Page {currentPage} of {totalPages}
+              </span>
 
-            {/* Next Button */}
-            <PaginationNext
-              className="hover:pointer"
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </PaginationNext>
-          </PaginationContent>
-        </Pagination>
-        {/* Pagination End */}
+              {/* Next Button */}
+              <PaginationNext
+                className="hover:pointer"
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </PaginationNext>
+            </PaginationContent>
+          </Pagination>
+          {/* Pagination End */}
+        </div>
       </div>
     </div>
   );

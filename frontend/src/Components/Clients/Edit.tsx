@@ -19,6 +19,14 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
 import { usePutData } from "@/lib/HTTP/PUT";
+import { ChevronLeft } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 // Form validation schema
 const formSchema = z.object({
@@ -162,213 +170,223 @@ export default function EditClientPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
-      <h2 className="text-2xl font-semibold   text-center">Client Form</h2>
-      <p className="text-center text-xs mb-9">
-        edit and update the client information.
-      </p>
-      <h2 className="text-xl font-semibold text-left">Client Information</h2>
+      <div className="flex items-center justify-between w-full">
+        <div className="mb-7">
+          <Button
+            onClick={() => navigate("/clients")}
+            variant="ghost"
+            className="mr-4"
+            type="button"
+          >
+            <ChevronLeft />
+            Back
+          </Button>
+        </div>
+        <div className="flex-1 mr-9 text-center">
+          <div className="-ml-4">
+            <h2 className="text-2xl font-semibold">Client Form</h2>
+            <p className="text-xs mb-9">Edit/Update clients to the database.</p>
+          </div>
+        </div>
+      </div>
 
-      {/* Form Fields */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Feilds First Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="client"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Client</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Client Name" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Client name.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="gstin"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>GST IN</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="text"
-                      maxLength={15}
-                      {...field}
-                      style={{ textTransform: "uppercase" }}
-                      placeholder="Enter Gst Number"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The GST Number must be 15 characters long and should follow
-                    this format:<strong>22ABCDE0123A1Z5</strong>
-                  </FormDescription>{" "}
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="contact_no"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Contact</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Contact"
-                      {...field}
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={10}
-                      value={field.value}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Enter the Contact (e.g:- 12-3456-7890).
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <Card className="bg-accent/40 ">
+            <CardHeader className="   space-y-0 pb-2">
+              <CardTitle className="text-xl  font-semibold">
+                Client Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="client"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Client</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Client Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="gstin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>GST IN</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          maxLength={15}
+                          {...field}
+                          style={{ textTransform: "uppercase" }}
+                          placeholder="Enter Gst Number"
+                        />
+                      </FormControl>
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="justify-left"
-                      placeholder="Enter Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>Enter the Email.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <h2 className="text-xl font-semibold  text-left">
-              Address Information
-            </h2>
-            <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="street_address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Street Address</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter Street Address" {...field} />
-                    </FormControl>
-                    <FormDescription>Enter the Street Address.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="area"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Area</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter Area" {...field} />
-                    </FormControl>
-                    <FormDescription>Enter the Area.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>City</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="justify-left"
-                        placeholder="Enter City"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>Enter the City.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            {/* Feilds Second Row Ends */}
-            {/* Feilds Third Row Starts */}
-            <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-              <FormField
-                control={form.control}
-                name="state"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>State</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter State" {...field} />
-                    </FormControl>
-                    <FormDescription>Enter the State.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="pincode"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Pincode</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter Pincode"
-                        {...field}
-                        type="text"
-                        inputMode="numeric"
-                        pattern="\d{6}"
-                        maxLength={6}
-                      />
-                    </FormControl>
-                    <FormDescription>Enter the Pincode.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="justify-left"
-                        placeholder="Enter Country"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>Enter the Country.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-          {/* Feilds Fourth Row Ends */}
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="contact_no"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Contact"
+                          {...field}
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={10}
+                          value={field.value}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter Email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Address Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="street_address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Street Address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Street Address" {...field} />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="area"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Area</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Area" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>City</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter City"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* Feilds Second Row Ends */}
+              {/* Feilds Third Row Starts */}
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>State</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter State" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="pincode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Pincode</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Pincode"
+                          {...field}
+                          type="text"
+                          inputMode="numeric"
+                          pattern="\d{6}"
+                          maxLength={6}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="country"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Country</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter Country"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
           {error && <div className="text-red-500">{error}</div>}{" "}
-          {/* Error Message */}
-          {/* Buttons For Submit and Cancel */}
           <div className="flex justify-end space-x-2">
             <Button
               onClick={() => navigate("/clients")}
