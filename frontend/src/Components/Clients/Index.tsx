@@ -238,7 +238,7 @@ export default function TableDemo() {
         <div className="panel p-4 rounded-md bg-gray-50">
           {/* Table Start */}
           <Table>
-            <TableCaption>A list of your recent clients.</TableCaption>
+            <TableCaption>A list of your clients.</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead onClick={() => handleSort("client")}>
