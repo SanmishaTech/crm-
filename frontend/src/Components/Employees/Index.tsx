@@ -160,7 +160,9 @@ export default function TableDemo() {
                 <TableHead onClick={() => handleSort("name")}>
                   Employee Name
                 </TableHead>
-                <TableHead onClick={() => handleSort("")}>Department</TableHead>
+                <TableHead onClick={() => handleSort("department_id")}>
+                  Department
+                </TableHead>
                 <TableHead onClick={() => handleSort("email")}>Email</TableHead>
                 <TableHead onClick={() => handleSort("mobile")}>
                   Contact Number
