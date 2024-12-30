@@ -98,7 +98,7 @@ const Dashboard = () => {
         {location.pathname === "/invoices" && <InvoiceComponent />}
         {location.pathname === "/employees" && <Employees />}
         {location.pathname === "/employees/add" && <EmployeesAdd />}
-        {/\/suppliers\/edit\/\d+/.test(location.pathname) && <EmployeesEdit />}
+        {/\/employees\/edit\/\d+/.test(location.pathname) && <EmployeesEdit />}
       </main>
     </div>
   );

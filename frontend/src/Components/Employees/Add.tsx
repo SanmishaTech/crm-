@@ -48,17 +48,20 @@ const FormSchema = z.object({
       message: "Supplier field must have no more than 100 characters.",
     })
     .nonempty({ message: "Name field is required." }),
-  department_id: z.string().optional(),
+  department_id: z.string().min(1, "Department field is required"),
+
   email: z
     .string()
     .email("Please enter a valid email address.")
     .nonempty("Email is required."),
   password: z
     .string()
-    .min(6, { message: "Password field must have at least 6 characters." })
-    .nonempty("Email is required."),
+    .min(6, { message: "Password field must have at least 6 characters." }),
   mobile: z.coerce.number().min(10, { message: "mobile field is required." }),
   joining_date: z.string().optional(),
+  designation: z
+    .string()
+    .min(2, "Designation field must have at least 2 characters"),
 });
 
 export default function InputForm() {
@@ -74,6 +77,8 @@ export default function InputForm() {
       mobile: null,
       department_id: "",
       joining_date: "",
+      designation: "",
+      password: "",
     },
   });
   const queryClient = useQueryClient();
@@ -115,10 +120,24 @@ export default function InputForm() {
       onError: (error) => {
         console.log("error", error);
 
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        if (error.response && error.response.data.errors) {
+          const serverStatus = error.response.data.status;
+          const serverErrors = error.response.data.errors;
+          // Assuming the error is for the department_name field
+          if (serverStatus === false) {
+            form.setError("mobile", {
+              type: "manual",
+              message: serverErrors.mobile[0], // The error message from the server
+            });
+            form.setError("email", {
+              type: "manual",
+              message: serverErrors.email[0], // The error message from the server
+            });
+          } else {
+            setError("Failed to add employee"); // For any other errors
+          }
         } else {
-          toast.error("Failed to submit the form. Please try again.");
+          setError("Failed to add employee");
         }
       },
     },
@@ -252,6 +271,19 @@ export default function InputForm() {
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="designation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Designation</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter designation" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </CardContent>
           </Card>
@@ -272,7 +304,7 @@ export default function InputForm() {
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          type="text"
+                          type="email"
                           {...field}
                           placeholder="Enter email"
                         />

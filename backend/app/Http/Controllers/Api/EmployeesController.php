@@ -76,6 +76,7 @@ class EmployeesController extends BaseController
         $employee = new Employee();
         $employee->user_id = $user->id;
         $employee->employee_name = $request->input('employee_name');
+        $employee->designation = $request->input('designation');
         $employee->department_id = $request->input('department_id');
         $employee->email = $request->input('email');
         $employee->mobile = $request->input('mobile');
@@ -130,6 +131,7 @@ class EmployeesController extends BaseController
         $user->assignRole($memberRole);
                        
         $employee->employee_name = $request->input('employee_name');
+        $employee->designation = $request->input('designation');
         $employee->department_id = $request->input('department_id');
         $employee->email = $request->input('email');
         $employee->mobile = $request->input('mobile');
@@ -137,7 +139,7 @@ class EmployeesController extends BaseController
         // $employee->resignation_date = $request->input('resignation_date');
         $employee->save();
        
-        return $this->sendResponse(['User'=> new UserResource($user), 'employee'=>new EmployeeResource($employee)], "Employees updated successfully");
+        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "Employees updated successfully");
 
     }
 
@@ -171,7 +173,7 @@ class EmployeesController extends BaseController
         $employee->save();
         $user->active = $val;
         $user->save();
-        return $this->sendResponse(['User'=> new UserResource($user), 'employee'=>new EmployeeResource($employee)], "employee data updated successfully");
+        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "employee data updated successfully");
     }
 
     
