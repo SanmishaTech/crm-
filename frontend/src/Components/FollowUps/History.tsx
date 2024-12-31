@@ -7,8 +7,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/components/ui/table";
+import { useQueryClient } from '@tanstack/react-query';
 
 const History = ({ leads }) => {
+  const queryClient = useQueryClient();
+
+  React.useEffect(() => {
+    // Refetch the leads data when the component mounts
+    queryClient.invalidateQueries('leads');
+  }, [queryClient]);
+
   if (!leads) {
     return <div>Loading lead data...</div>;
   }
@@ -22,11 +31,14 @@ const History = ({ leads }) => {
     return <div>No follow-up details available.</div>;
   }
 
+  // Sort follow-ups to show the latest first
+  const sortedFollowUps = [...followUps].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
   return (
-    <div className="overflow-hidden py-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="overflow-hidden py-4">
       {/* Follow-Up Count Card at the top */}
-      <div className="col-span-2">
-        <Card className="bg-accent/70 w-full mt-6">
+      <div className="mb-6">
+        <Card className="bg-accent/70 w-full">
           <CardHeader>
             <CardTitle>Follow-Up Count: {followUps.length}</CardTitle>
             <CardDescription>
@@ -40,53 +52,47 @@ const History = ({ leads }) => {
         </Card>
       </div>
 
-      {/* Loop through each follow-up */}
-      {followUps.map((followUp, index) => {
-        const {
-          follow_up_date,
-          next_follow_up_date,
-          follow_up_type,
-          remarks,
-          created_at,
-        } = followUp;
+      {/* Follow-Up Details Table */}
+      <Table className="min-w-full bg-white">
+        <TableHeader>
+          <TableRow>
+            <TableCell className="py-2">Number</TableCell>
+            <TableCell className="py-2">Follow-Up Date</TableCell>
+            <TableCell className="py-2">Next Follow-Up Date</TableCell>
+            <TableCell className="py-2">Follow-Up Type</TableCell>
+            <TableCell className="py-2">Remarks</TableCell>
+            <TableCell className="py-2">Created At</TableCell>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sortedFollowUps.map((followUp, index) => {
+            const {
+              follow_up_date,
+              next_follow_up_date,
+              follow_up_type,
+              remarks,
+              created_at,
+            } = followUp;
 
-        return (
-          <Card key={index} className="bg-accent/40 w-full">
-            <CardHeader>
-              <CardTitle>Follow-Up Details {index + 1}</CardTitle>
-              <CardDescription>
-                <p>
-                  <strong>Created At:</strong>{" "}
-                  {created_at
-                    ? new Date(created_at).toLocaleDateString()
-                    : "N/A"}
-                </p>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <p>
-                <strong>Follow-Up Date:</strong>{" "}
-                {follow_up_date
-                  ? new Date(follow_up_date).toLocaleDateString()
-                  : "N/A"}
-              </p>
-              <p>
-                <strong>Next Follow-Up Date:</strong>{" "}
-                {next_follow_up_date
-                  ? new Date(next_follow_up_date).toLocaleDateString()
-                  : "N/A"}
-              </p>
-              <p>
-                <strong>Follow-Up Type:</strong> {follow_up_type || "N/A"}
-              </p>
-              <p>
-                <strong>Remarks:</strong> {remarks || "N/A"}
-              </p>
-            </CardContent>
-            <CardFooter></CardFooter>
-          </Card>
-        );
-      })}
+            return (
+              <TableRow key={index} className="bg-gray-100">
+                <TableCell className="border px-4 py-2">{index + 1}</TableCell>
+                <TableCell className="border px-4 py-2">
+                  {follow_up_date ? new Date(follow_up_date).toLocaleDateString() : "N/A"}
+                </TableCell>
+                <TableCell className="border px-4 py-2">
+                  {next_follow_up_date ? new Date(next_follow_up_date).toLocaleDateString() : "N/A"}
+                </TableCell>
+                <TableCell className="border px-4 py-2">{follow_up_type || "N/A"}</TableCell>
+                <TableCell className="border px-4 py-2">{remarks || "N/A"}</TableCell>
+                <TableCell className="border px-4 py-2">
+                  {created_at ? new Date(created_at).toLocaleDateString() : "N/A"}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
   );
 };

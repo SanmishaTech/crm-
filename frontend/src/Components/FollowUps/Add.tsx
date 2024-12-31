@@ -44,11 +44,12 @@ const FormSchema = z.object({
 export default function InputForm() {
   const [error, setError] = useState<string | null>(null);
   const [leads, setLeads] = useState<any[]>([]);
+  const today = new Date().toISOString().split('T')[0];
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       remarks: "",
-      follow_up_date: "",
+      follow_up_date: today,
       next_follow_up_date: "",
       follow_up_type: "",
     },

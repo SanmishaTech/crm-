@@ -300,6 +300,8 @@ export default function EditLeadPage() {
     { label: "German", value: "de" },
   ] as const;
 
+  const contactsArray = Array.isArray(contacts) ? contacts : [];
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
       <div className="flex items-center justify-between w-full">
@@ -349,7 +351,7 @@ export default function EditLeadPage() {
                               )}
                             >
                               {Array.isArray(contacts) &&
-                                contacts?.find(
+                                contactsArray.find(
                                   (contact) => contact.id === field.value
                                 )?.contact_person}
 
@@ -366,7 +368,7 @@ export default function EditLeadPage() {
                             <CommandList>
                               <CommandEmpty>No contact found.</CommandEmpty>
                               <CommandGroup>
-                                {contacts.map((contact) => (
+                                {contactsArray.map((contact) => (
                                   <CommandItem
                                     value={contact.id}
                                     key={contact.id}

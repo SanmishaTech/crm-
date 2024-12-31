@@ -125,6 +125,24 @@ export default function TableDemo() {
       },
     },
   });
+  const { data: Products } = useGetData({
+    endpoint: `/api/products`,
+    params: {
+      queryKey: ["products"],
+      retry: 1,
+      onSuccess: (data) => {
+        
+        setLoading(false);
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate supplier")) {
+          toast.error("Supplier name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch supplier data. Please try again.");
+        }
+      },
+    },
+  });
 
   const handleGenerateQuotation = async (leadId: string) => {
     try {
@@ -270,9 +288,15 @@ export default function TableDemo() {
                   Lead Status
                 </TableHead>
                 <TableHead onClick={() => handleSort("follow_up_type")}>
-                  Follow Up Type
+                 Next Follow Up Date
                 </TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                {/* <TableHead onClick={() => handleSort("follow_up_type")}>
+                 Follow Up Type
+                </TableHead> */}
+                <TableHead onClick={() => handleSort("follow_up_type")}>
+                 Products
+                </TableHead>
+                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>
@@ -304,6 +328,8 @@ export default function TableDemo() {
                                       ).toLocaleDateString()
                                     : "N/A"}
                                 </TableCell>
+                                <TableCell>{lead.products ? lead.products.map(product => product.product_id).join(', ') : "N/A"}</TableCell>
+
                                 <TableCell className="text-right">
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>

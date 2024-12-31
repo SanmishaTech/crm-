@@ -17,8 +17,10 @@ const Summary = ({ leads }) => {
   const { id, employee_id, contact } = leads;
   const contactName = contact?.contact_person || "Unknown";
 
+  
   return (
-    <div className="overflow-hidden py-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div>
+    <div className="overflow-hidden py-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
       <h3 className="text-2xl font-bold col-span-3 mb-6 text-center">
         Lead Summary
       </h3>
@@ -96,6 +98,7 @@ const Summary = ({ leads }) => {
         </CardContent>
         <CardFooter></CardFooter>
       </Card>
+      </div>
 
       {/* Products Card */}
       <Card className="bg-accent/40">
@@ -107,27 +110,38 @@ const Summary = ({ leads }) => {
         </CardHeader>
         <CardContent>
           <div>
-            <div className="flex space-x-4 mb-3">
-              <div className="flex-1 text-center font-bold">Product</div>
-              <div className="flex-1 text-center font-bold">Quantity</div>
-            </div>
-            {leads.products && leads.products.length > 0 ? (
-              leads.products.map((product, index) => (
-                <div key={index} className="">
-                  <div className="flex justify-between">
-                    <div className="flex-1">{product.name}</div>
-                    <div className="flex-1 text-center">{product.quantity}</div>
-                  </div>
-                  <Separator className="my-2 mb-4 border-t border-gray-300" />
-                </div>
-              ))
-            ) : (
-              <p>No products available</p>
-            )}
+            <table className="w-full">
+              <thead>
+                <tr>
+                  <th className="text-left font-bold">Product</th>
+                  <th className="text-center font-bold">Quantity</th>
+                  <th className="text-center font-bold">Rate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leads.products && leads.products.length > 0 ? (
+                  leads.products.map((product, index) => {
+                    console.log('Product:', product);
+                    return (
+                      <tr key={index}>
+                        <td className="text-left">{product.id}</td>
+                        <td className="text-center">{product.quantity}</td>
+                        <td className="text-center">{product.rate}</td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="text-center">No products available</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </CardContent>
         <CardFooter className="flex justify-between"></CardFooter>
       </Card>
+   
     </div>
   );
 };
