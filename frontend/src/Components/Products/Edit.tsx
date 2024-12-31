@@ -485,6 +485,7 @@ export default function EditProductPage() {
                         type="number"
                         placeholder="Enter Closing Quantity"
                         {...field}
+                        disabled
                       />
                     </FormControl>
                     <FormDescription>

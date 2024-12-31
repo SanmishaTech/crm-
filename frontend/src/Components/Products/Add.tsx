@@ -69,9 +69,7 @@ const FormSchema = z.object({
       message: "Supplier field is required",
     }),
 
-  closing_qty: z.coerce
-    .number()
-    .min(1, { message: "Closing quantity field is required." }),
+  closing_qty: z.any().optional(),
 
   last_traded_price: z.coerce
     .number()
@@ -101,7 +99,7 @@ export default function InputForm() {
       gst_rate: "",
       hsn_code: null,
       opening_qty: null,
-      closing_qty: null,
+      // closing_qty: null,
       last_traded_price: null,
       product_category_id: "",
       supplier_id: "",
@@ -390,6 +388,7 @@ export default function InputForm() {
                         type="number"
                         placeholder="Enter Closing Quantity"
                         {...field}
+                        disabled
                       />
                     </FormControl>
                     <FormDescription>

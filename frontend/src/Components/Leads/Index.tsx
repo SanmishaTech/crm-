@@ -115,6 +115,7 @@ export default function TableDemo() {
         setSuppliers(data?.Lead);
         setPagination(data.data.pagination);
         setLoading(false);
+        queryClient.invalidateQueries({ queryKey: ["lead"] });
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate supplier")) {
@@ -131,7 +132,8 @@ export default function TableDemo() {
       queryKey: ["products"],
       retry: 1,
       onSuccess: (data) => {
-        
+        queryClient.invalidateQueries({ queryKey: ["products"] });
+
         setLoading(false);
       },
       onError: (error) => {
@@ -281,22 +283,27 @@ export default function TableDemo() {
                 <TableHead onClick={() => handleSort("contact_id")}>
                   Contact
                 </TableHead>
-                <TableHead onClick={() => handleSort("lead_source")}>
+                {/* <TableHead onClick={() => handleSort("lead_source")}>
                   Lead Source
+                </TableHead> */}
+                <TableHead onClick={() => handleSort("follow_up_type")}>
+                  Products
                 </TableHead>
-                <TableHead onClick={() => handleSort("lead_status")}>
-                  Lead Status
+
+                <TableHead onClick={() => handleSort("follow_up_type")}>
+                  Next Follow Up Date
                 </TableHead>
                 <TableHead onClick={() => handleSort("follow_up_type")}>
-                 Next Follow Up Date
+                  Follow Up Type
                 </TableHead>
                 {/* <TableHead onClick={() => handleSort("follow_up_type")}>
                  Follow Up Type
                 </TableHead> */}
-                <TableHead onClick={() => handleSort("follow_up_type")}>
-                 Products
+
+                <TableHead onClick={() => handleSort("lead_status")}>
+                  Lead Status
                 </TableHead>
-                 <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>
@@ -314,13 +321,19 @@ export default function TableDemo() {
                                 <TableCell>
                                   {lead?.contact?.contact_person}
                                 </TableCell>
-                                <TableCell>{lead.lead_source}</TableCell>
+                                {/* <TableCell>{lead.lead_source}</TableCell> */}
                                 <TableCell>
-                                  {lead.lead_status
-                                    ? lead.lead_status.charAt(0).toUpperCase() +
-                                      lead.lead_status.slice(1)
+                                  {typeof lead.product_names === "string" ||
+                                  Array.isArray(lead.product_names)
+                                    ? Array.isArray(lead.product_names)
+                                      ? lead.product_names.join(", ")
+                                      : lead.product_names
+                                          .charAt(0)
+                                          .toUpperCase() +
+                                        lead.product_names.slice(1)
                                     : "N/A"}
                                 </TableCell>
+
                                 <TableCell>
                                   {lead.lead_follow_up_date
                                     ? new Date(
@@ -328,7 +341,35 @@ export default function TableDemo() {
                                       ).toLocaleDateString()
                                     : "N/A"}
                                 </TableCell>
-                                <TableCell>{lead.products ? lead.products.map(product => product.product_id).join(', ') : "N/A"}</TableCell>
+
+                                <TableCell
+                                  style={{
+                                    whiteSpace: "normal",
+                                    wordWrap: "break-word",
+                                  }}
+                                >
+                                  {lead.follow_up_type
+                                    ? lead.follow_up_type
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      lead.follow_up_type.slice(1)
+                                    : "N/A"}
+                                </TableCell>
+
+                                <TableCell>
+                                  {lead.lead_status
+                                    ? lead.lead_status.charAt(0).toUpperCase() +
+                                      lead.lead_status.slice(1)
+                                    : "N/A"}
+                                </TableCell>
+
+                                {/* <TableCell>
+                                  {lead.products
+                                    ? lead.products
+                                        .map((product) => product.product_id)
+                                        .join(", ")
+                                    : "N/A"}
+                                </TableCell> */}
 
                                 <TableCell className="text-right">
                                   <DropdownMenu>

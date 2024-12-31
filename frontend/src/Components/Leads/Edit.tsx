@@ -490,6 +490,21 @@ export default function EditLeadPage() {
                                   accept="application/pdf"
                                 />
                               </FormControl>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  // window.open(
+                                  //   `/api/show_invoice/${invoice.invoice_file}`,
+                                  //   "_blank"
+                                  // );
+                                  handleViewInvoice(invoice.invoice_file);
+                                }}
+                                className="w-full text-sm"
+                              >
+                                View quotation
+                              </Button>
 
                               <FormMessage />
                             </FormItem>

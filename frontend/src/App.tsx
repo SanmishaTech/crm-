@@ -180,7 +180,7 @@ function App() {
             event.preventDefault(); // Prevent unintended form submission
             scrollToTop();
           }}
-          className="fixed bottom-4 bg-accent/80 right-12 transition"
+          className="fixed bottom-[24px] bg-accent/80 right-[12rem] transition"
         >
           <TooltipProvider>
             <Tooltip>

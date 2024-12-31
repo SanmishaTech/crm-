@@ -151,7 +151,7 @@ export default function InputForm() {
       </div>
       {/* Form Fields */}
 
-       <Form {...form}>
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
@@ -253,7 +253,7 @@ export default function InputForm() {
                   name="mobile_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mobile-1</FormLabel>
+                      <FormLabel>Primary Mobile</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -274,7 +274,7 @@ export default function InputForm() {
                   name="mobile_2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mobile-2</FormLabel>
+                      <FormLabel>Secondary Mobile</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"

@@ -264,7 +264,7 @@ export default function EditSupplierPage() {
                   name="mobile_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mobile-1</FormLabel>
+                      <FormLabel>Primary Mobile Number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -285,7 +285,7 @@ export default function EditSupplierPage() {
                   name="mobile_2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mobile-2</FormLabel>
+                      <FormLabel>Secondary Mobile Number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"

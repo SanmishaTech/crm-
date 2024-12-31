@@ -47,18 +47,12 @@ const FormSchema = z.object({
   gstin: z
     .string()
     .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-      message: "Invalid GST Number. Please enter a valid GSTIN.",
+      message: "Invalid GST Number. Please enter a valid GSTIN. ",
     })
     .max(15, "GST Number must be exactly 15 characters")
     .min(15, "GST Number must be exactly 15 characters"),
-  contact_no: z
-    .string()
-    .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
-      message: "Invalid contact number. Please enter a valid phone number.",
-    })
-    .max(10, "Contact number must be exactly 10 characters")
-    .min(10, "Contact number must be exactly 10 characters")
-    .nonempty("Contact number is required."),
+  contact_no: z.any().optional(),
+
   department: z.string().optional(),
   designation: z.string().optional(),
   mobile_1: z.string().optional(),
@@ -120,7 +114,7 @@ export default function InputForm() {
   };
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg  mt-12">
+    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg  ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -136,7 +130,6 @@ export default function InputForm() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Supplier Form</h2>
-            <p className="text-xs mb-9">Add a new supplier to the database.</p>
           </div>
         </div>
       </div>
@@ -184,7 +177,7 @@ export default function InputForm() {
                         maxLength={15}
                         {...field}
                         style={{ textTransform: "uppercase" }}
-                        placeholder="Enter Gst Number"
+                        placeholder="e.g., 22ABCDE0123A1Z5"
                       />
                     </FormControl>
                     <FormMessage />
@@ -197,7 +190,7 @@ export default function InputForm() {
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className=" text-xl  font-semibold">
-                Contact Person
+                Contact Supplier
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -207,7 +200,7 @@ export default function InputForm() {
                   name="mobile_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mobile-1</FormLabel>
+                      <FormLabel>Primary Mobile Number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -228,7 +221,7 @@ export default function InputForm() {
                   name="mobile_2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Mobile-2</FormLabel>
+                      <FormLabel>Secondary Mobile Number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -304,7 +297,7 @@ export default function InputForm() {
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className=" text-xl font-semibold">
-                Address Information
+                Supplier Address Information
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -406,7 +399,7 @@ export default function InputForm() {
                   )}
                 />
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="contact_no"
                   render={({ field }) => (
@@ -425,7 +418,7 @@ export default function InputForm() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
               </div>
             </CardContent>
           </Card>

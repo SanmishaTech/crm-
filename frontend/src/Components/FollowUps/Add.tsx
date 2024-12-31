@@ -44,7 +44,7 @@ const FormSchema = z.object({
 export default function InputForm() {
   const [error, setError] = useState<string | null>(null);
   const [leads, setLeads] = useState<any[]>([]);
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -56,7 +56,6 @@ export default function InputForm() {
   });
   const queryClient = useQueryClient();
   const { id } = useParams();
-
   const navigate = useNavigate(); // Use For Navigation
 
   type FormValues = z.infer<typeof FormSchema>;
@@ -172,9 +171,9 @@ export default function InputForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="email">Email</SelectItem>
-                          <SelectItem value="call">Call</SelectItem>
-                          <SelectItem value="inPersonMeet">
+                          <SelectItem value="Email">Email</SelectItem>
+                          <SelectItem value="Call">Call</SelectItem>
+                          <SelectItem value="In Person Meet">
                             In Person Meet
                           </SelectItem>
                         </SelectContent>
