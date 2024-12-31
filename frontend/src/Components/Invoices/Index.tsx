@@ -272,6 +272,16 @@ export default function TableDemo() {
                         >
                           View Invoice
                         </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            navigate(`/invoices/edit/${invoice.id}`);
+                          }}
+                          className="w-full text-sm"
+                        >
+                          Edit
+                        </Button>
                         {/* <AlertDialogbox url={invoice.id} /> */}
                       </DropdownMenuContent>
                     </DropdownMenu>
