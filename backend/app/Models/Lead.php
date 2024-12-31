@@ -48,6 +48,5 @@ class Lead extends Model
         return $this->belongsToMany(Product::class, 'lead_products')
         ->withPivot('id','lead_id',"product_id",'quantity','rate','gst_rate','gst_amount','total_amount','amount_without_gst');
     }
-
    
 }

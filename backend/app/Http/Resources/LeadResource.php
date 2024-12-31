@@ -19,11 +19,17 @@ class LeadResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $productNames = $this->updateLeadProducts->map(function($updateLeadProduct) {
+            return $updateLeadProduct->product;
+        });
+      
+
         
         return [
             'id' => $this->id,
             'employee_id' => $this->employee_id,
             'contact_id' => $this->contact_id,
+            'product_names'=>$productNames,
             'lead_owner' => $this->lead_owner,
             'lead_type' => $this->lead_type,
             'tender_number' => $this->tender_number,
