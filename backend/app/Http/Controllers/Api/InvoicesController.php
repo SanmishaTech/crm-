@@ -39,6 +39,40 @@ class InvoicesController extends BaseController
         
     }
 
+    /**
+     * Update Invoice.
+     */
+    public function update(Request $request, string $id): JsonResponse
+    {
+        // Find the existing supplier
+        $invoice = Invoice::find($id);
+    
+        if (!$invoice) {
+            return $this->sendError("Invoice not found", ['error' => 'Invoice not found']);
+        }
+    
+        // Update the supplier properties
+        $invoice->dispatch_details = $request->input("dispatch_details");
+        
+        $invoice->save();
+    
+        return $this->sendResponse(["Invoice" => new InvoiceResource($invoice)], 'Invoice Updated Successfully');
+    }
+    
+
+     /**
+     * Show Invoice.
+     */
+    public function show(string $id): JsonResponse
+    {
+        $invoice = Invoice::find($id);
+        if(!$invoice){
+            return $this->sendError("Invoice not found", ['error'=>['Invoice not found']]);
+        }
+        
+        return $this->sendResponse(["Invoice"=> new InvoiceResource($invoice)], 'Invoice retrieved Successfully');
+    }
+
     public function showInvoice(string $files)
     {
         // Generate the full path to the invoice in the public storage
