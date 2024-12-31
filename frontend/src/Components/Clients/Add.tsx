@@ -34,14 +34,22 @@ const FormSchema = z.object({
     .string()
     .min(1, "Street address cannot be empty")
     .optional(),
-  area: z.string().min(3, "Area cannot be empty").optional(),
+  area: z.any().optional(),
   city: z.string().min(3, "City cannot be empty").optional(),
   state: z.string().min(3, "State cannot be empty").optional(),
   pincode: z.string().min(3, "Pincode cannot be empty").optional(),
   country: z.string().min(3, "Country cannot be empty").optional(),
-  gstin: z.string().min(3, "GSTIN cannot be empty").optional(),
-  contact_no: z.string().min(3, "Contact number cannot be empty").optional(),
-  email: z.string().min(3, "Email cannot be empty").optional(),
+  gstin: z.any().optional(),
+  contact_no: z
+    .string()
+    .regex(/^(\+?\d{1,3}[-.\s]?)?(\(?\d{1,4}\)?[-.\s]?)?[\d\s.-]{5,20}$/, {
+      message: "Invalid mobile number format",
+    })
+    .nonempty({ message: "Mobile number field is required." }),
+  email: z
+    .string()
+    .email("Please enter a valid email address.")
+    .nonempty("Email is required."),
 });
 
 export default function InputForm() {
@@ -95,7 +103,7 @@ export default function InputForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+    <div className=" mx-auto p-6 bg-white shadow-lg ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -124,48 +132,31 @@ export default function InputForm() {
               </CardTitle>
             </CardHeader>
             <CardContent className=" space-y-4 p-6">
-              <div className="flex justify-center space-x-6  grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="client"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Client</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Client Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="gstin"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>GST IN</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          maxLength={15}
-                          {...field}
-                          style={{ textTransform: "uppercase" }}
-                          placeholder="Enter Gst Number"
-                        />
-                      </FormControl>
+              <FormField
+                control={form.control}
+                name="client"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Client <span style={{ color: "red" }}>*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Client Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="contact_no"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Contact</FormLabel>
+                      <FormLabel>
+                        Contact Number <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Contact"
@@ -187,7 +178,9 @@ export default function InputForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>
+                        Email <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"
@@ -205,6 +198,34 @@ export default function InputForm() {
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold">
+                GST Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <FormField
+                control={form.control}
+                name="gstin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GST IN</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        maxLength={15}
+                        {...field}
+                        style={{ textTransform: "uppercase" }}
+                        placeholder="e.g., 22ABCDE0123A1Z5"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
                 Address Information
               </CardTitle>
             </CardHeader>
@@ -215,7 +236,9 @@ export default function InputForm() {
                   name="street_address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Street Address</FormLabel>
+                      <FormLabel>
+                        Street Address <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Street Address" {...field} />
                       </FormControl>
@@ -241,7 +264,9 @@ export default function InputForm() {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>City</FormLabel>
+                      <FormLabel>
+                        City <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"
@@ -262,7 +287,9 @@ export default function InputForm() {
                   name="state"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>State</FormLabel>
+                      <FormLabel>
+                        State <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter State" {...field} />
                       </FormControl>
@@ -275,7 +302,9 @@ export default function InputForm() {
                   name="pincode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Pincode</FormLabel>
+                      <FormLabel>
+                        Pincode <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Pincode"
@@ -295,7 +324,9 @@ export default function InputForm() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country</FormLabel>
+                      <FormLabel>
+                        Country <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"

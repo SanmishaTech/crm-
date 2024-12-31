@@ -159,4 +159,16 @@ class ContactsController extends BaseController
          $contact->delete();
          return $this->sendResponse([], "Contact Deleted successfuly");
     }
+
+      /**
+     * Fetch All Contacts.
+     */
+    public function allContacts(): JsonResponse
+    {
+        $contact = Contact::all();
+
+        return $this->sendResponse(["Contacts"=>ContactResource::collection($contact),
+        ], "Contacts retrieved successfully");
+
+    }
 }

@@ -5,6 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
+import { ChevronLeft } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import axios from "axios";
 import {
   Form,
@@ -33,57 +41,17 @@ import useFetchData from "@/lib/HTTP/useFetchData";
 
 // Form validation schema
 const formSchema = z.object({
-  product: z
-    .string()
-    .min(1, { message: "Product field is required." })
-    .max(50, {
-      message: "Product field must have no more than 50 characters.",
-    }),
-  model: z.string().min(1, { message: "Model field is required." }).max(50, {
-    message: "Model field must have no more than 50 characters.",
-  }),
-  manufacturer: z
-    .string()
-    .min(1, { message: "Manufacturer field is required." })
-    .max(50, {
-      message: "Manufacturer field must have no more than 50 characters.",
-    }),
+  product: z.string().nonempty("Product cannot be empty"),
+  product_category_id: z.any().optional(),
+  manufacturer: z.any().optional(),
+  model: z.any().optional(),
+  hsn_code: z.any().optional(),
 
-  opening_qty: z.coerce
-    .number()
-    .min(1, { message: "Opening quantity field is required." }),
-  // product_category_id: z.union([z.string(), z.number()]),
-  // supplier_id: z.union([z.string(), z.number()]),
-  product_category_id: z
-    .union([z.string(), z.number()])
-    .refine((val) => val !== "" && val !== undefined, {
-      message: "Product category field is required",
-    }),
-
-  supplier_id: z
-    .union([z.string(), z.number()])
-    .refine((val) => val !== "" && val !== undefined, {
-      message: "Supplier field is required",
-    }),
-
-  closing_qty: z.coerce
-    .number()
-    .min(1, { message: "Closing quantity field is required." }),
-
-  last_traded_price: z.coerce
-    .number()
-    .min(1, { message: "Last Traded Price field is required." }),
-  hsn_code: z.coerce
-    .number()
-    .min(100000, { message: "HSN Code must be at least 6 digits." })
-    .max(9999999999, { message: "HSN Code should not exceed 10 digits." }),
-  gst_rate: z
-    .string()
-    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-      message: "Invalid GST Number. Please enter a valid GSTIN.",
-    })
-    .max(15, "GST Number must be exactly 15 characters")
-    .min(15, "GST Number must be exactly 15 characters"),
+  gst_rate: z.any().optional(),
+  opening_qty: z.any().optional(),
+  supplier_id: z.any().optional(),
+  closing_qty: z.any().optional(),
+  last_traded_price: z.any().optional(),
 });
 
 export default function EditProductPage() {
@@ -276,238 +244,269 @@ export default function EditProductPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
-      <h2 className="text-2xl font-semibold   text-center">Products Form</h2>
-      <p className="text-center text-xs mb-9">
-        Edit and update the product information.
-      </p>
-      <h2 className="text-xl font-semibold text-left">Product Information</h2>
-
+    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg  ">
+      <div className="flex items-center justify-between w-full">
+        <div className="mb-7">
+          <Button
+            onClick={() => navigate("/products")}
+            variant="ghost"
+            className="mr-4"
+            type="button"
+          >
+            <ChevronLeft />
+            Back
+          </Button>
+        </div>
+        <div className="flex-1 mr-9 text-center">
+          <div className="-ml-4">
+            <h2 className="text-2xl font-semibold">Products Form</h2>
+            <p className="text-xs mb-9">Add a new product </p>
+          </div>
+        </div>
+      </div>
       {/* Form Fields */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Feilds First Row */}
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="product"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Product</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter Product Name" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the Product name.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="product_category_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Product Category</FormLabel>
-                  <FormControl>
-                    <Select
-                      value={String(field.value)}
-                      onValueChange={field.onChange}
-                    >
-                      <SelectTrigger className="">
-                        <SelectValue placeholder="Select Product Category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {loading ? (
-                          <SelectItem disabled>Loading...</SelectItem>
-                        ) : (
-                          productCategories.map((ProductCategory) => (
-                            <SelectItem
-                              key={ProductCategory.id}
-                              value={String(ProductCategory.id)}
-                            >
-                              {ProductCategory.product_category}
-                            </SelectItem>
-                          ))
-                        )}
-                        <div className="px-5 py-1">
-                          <AddProductCategory
-                            fetchProductCategories={fetchProductCategories}
-                          />
-                        </div>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>Enter the Product Category.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="manufacturer"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Manufacturer</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter manufacturer" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the manufacturer.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="model"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Model</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter model" {...field} />
-                  </FormControl>
-                  <FormDescription>Enter the model.</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <Card className="bg-accent/40 ">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Product Information{" "}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3">
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="product"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Product Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="product_category_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Category</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={String(field.value)}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="">
+                            <SelectValue placeholder="Select Product Category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {loading ? (
+                              <SelectItem disabled>Loading...</SelectItem>
+                            ) : (
+                              productCategories.map((ProductCategory) => (
+                                <SelectItem
+                                  key={ProductCategory.id}
+                                  value={String(ProductCategory.id)}
+                                >
+                                  {ProductCategory.product_category}
+                                </SelectItem>
+                              ))
+                            )}
+                            <div className="px-5 py-1">
+                              <AddProductCategory
+                                fetchProductCategories={fetchProductCategories}
+                              />
+                            </div>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="manufacturer"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Manufacturer</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter manufacturer" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="model"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Model</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter model" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
           {/* Feilds First Row Ends */}
           {/* Feilds Second Row */}
-          <div className="flex flex-col gap-1">
-            <h2 className="text-xl font-semibold  text-left">
-              Pricing & Tax Info
-            </h2>
-            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="hsn_code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>HSN Code:</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        className="justify-left"
-                        placeholder="Enter hsn code"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>Enter the HSN Code.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="gst_rate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>GST IN</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        maxLength={15}
-                        {...field}
-                        style={{ textTransform: "uppercase" }}
-                        placeholder="Enter Gst Number"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      The GST Number must be 15 characters long and should
-                      follow this format:<strong>22ABCDE0123A1Z5</strong>
-                    </FormDescription>{" "}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="last_traded_price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Last Traded Price (Rs)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter Last Traded Price"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Enter the Last Traded Price.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Pricing & Tax Info
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="hsn_code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        HSN Code: <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          className="justify-left"
+                          placeholder="Enter HSN Code (6 digits)"
+                          {...field}
+                          maxLength={8}
+                          minLength={6}
+                          onInput={(e) => {
+                            const value = e.target.value.slice(0, 8);
+                            e.target.value = value;
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="gst_rate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        GST Rate (%) <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          maxLength={15}
+                          {...field}
+                          style={{ textTransform: "uppercase" }}
+                          placeholder="Enter Gst Number"
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="last_traded_price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Traded Price (Rs)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Enter Last Traded Price"
+                          {...field}
+                          disabled
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
           {/* Feilds Second Row Ends */}
-          <div className="flex flex-col gap-1">
-            <h2 className="text-xl font-semibold  text-left">
-              Inventory Details
-            </h2>
-            {/* Feilds Third Row Starts */}
-            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="opening_qty"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Opening Quantity(units)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        className="justify-left"
-                        placeholder="Enter Opening Quantity"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Enter the Opening Quantity.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="closing_qty"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Closing Quantity (units)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter Closing Quantity"
-                        {...field}
-                        disabled
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Enter the Closing Quantity.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <h2 className="text-xl font-semibold  text-left">
-              Supplier Information
-            </h2>
-            <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Inventory Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="opening_qty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Opening Quantity(units)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          className="justify-left"
+                          placeholder="Enter Opening Quantity"
+                          {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="closing_qty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Closing Quantity (units)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Enter Closing Quantity"
+                          {...field}
+                          disabled
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Supplier Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
               <FormField
                 control={form.control}
                 name="supplier_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Supplier</FormLabel>
+                    <FormLabel>
+                      Supplier <span style={{ color: "red" }}>*</span>
+                    </FormLabel>
                     <FormControl>
                       <Select
                         value={String(field.value)}
@@ -532,13 +531,12 @@ export default function EditProductPage() {
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormDescription>Enter the Supplier.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
           {/* Feilds Fifth Row Ends */}
           {error && <div className="text-red-500">{error}</div>}{" "}
           {/* Error Message */}

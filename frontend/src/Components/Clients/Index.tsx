@@ -20,7 +20,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useGetData } from "@/lib/HTTP/GET";
 import Sidebar, { useSidebar } from "./Sidebar";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   File,
   PlusCircle,
@@ -64,6 +66,8 @@ type Client = {
   pincode: string;
   country: string;
   gstin: string;
+  contact_no: string;
+  email: string;
 };
 
 type PaginationData = {
@@ -89,66 +93,82 @@ export default function TableDemo() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
   const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  // Pagination functions
+  const [pagination, setPagination] = useState<PaginationData | null>(null);
+  const totalPages = pagination?.last_page || 1;
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      client: "",
+      supplier: "",
     },
   });
 
-  // Fetch Client
-  useEffect(() => {
-    axios
-      .get("/api/clients", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        params: {
-          page: currentPage,
-          limit: itemsPerPage,
-          search: searchTerm,
-        },
-      })
-      .then((response) => {
-        setClients(response.data.data.Client);
-        setPagination(response.data.data.pagination);
+  const { data: ClientsData } = useGetData({
+    endpoint: `/api/clients?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
+    params: {
+      queryKey: ["clients", searchTerm, currentPage],
+      retry: 1,
+
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["clients"] });
+
+        setClients(data?.data?.Client);
+        setPagination(data?.data?.pagination);
         setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to load data");
-        setLoading(false);
-      });
-  }, [currentPage, itemsPerPage, searchTerm]);
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate client")) {
+          toast.error("Client name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch client data. Please try again.");
+        }
+      },
+    },
+  });
+
+  // // Fetch Client
+  // useEffect(() => {
+  //   axios
+  //     .get("/api/clients", {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: "Bearer " + localStorage.getItem("token"),
+  //       },
+  //       params: {
+  //         page: currentPage,
+  //         limit: itemsPerPage,
+  //         search: searchTerm,
+  //       },
+  //     })
+  //     .then((response) => {
+  //       setClients(response.data.data.Client);
+  //       setPagination(response.data.data.pagination);
+  //       setLoading(false);
+  //     })
+  //     .catch(() => {
+  //       setError("Failed to load data");
+  //       setLoading(false);
+  //     });
+  // }, [currentPage, itemsPerPage, searchTerm]);
 
   // Sorting function
-  const handleSort = (key: keyof Client) => {
-    let direction = "asc";
-    if (sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
-
-  const sortedClients = [...clients].sort((a, b) => {
-    if (!sortConfig.key) return 0;
-
-    const aValue = a[sortConfig.key as keyof Client];
-    const bValue = b[sortConfig.key as keyof Client];
-
-    if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-    if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
-    return 0;
-  });
 
   if (loading) {
     return <div>Loading...</div>;
@@ -157,45 +177,6 @@ export default function TableDemo() {
   if (error) {
     return <div>{error}</div>;
   }
-
-  // Delete Client
-  const handleDelete = (clientId: string) => {
-    axios
-      .delete(`/api/clients/${clientId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then(() => {
-        setClients(clients.filter((client) => client.id !== clientId));
-        // window.location.reload();
-      })
-      .catch(() => {
-        setError("Failed to delete client");
-      });
-  };
-
-  // Pagination functions
-  const totalPages = pagination?.last_page || 1;
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
-
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
 
   return (
     <div className="flex ">
@@ -244,22 +225,22 @@ export default function TableDemo() {
                 <TableHead onClick={() => handleSort("client")}>
                   Clients
                 </TableHead>
-                <TableHead onClick={() => handleSort("street_address")}>
-                  Street Address
+                <TableHead onClick={() => handleSort("contact_no")}>
+                  Contact Number
                 </TableHead>
-                <TableHead onClick={() => handleSort("area")}>Area</TableHead>
+                <TableHead onClick={() => handleSort("area")}>Email</TableHead>
                 <TableHead onClick={() => handleSort("city")}>City</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>
             <TableBody>
-              {sortedClients.map((client) => (
+              {ClientsData?.data?.Client?.map((client) => (
                 <TableRow key={client.id}>
-                  <TableCell>{client.client}</TableCell>
-                  <TableCell>{client.street_address}</TableCell>
-                  <TableCell>{client.area}</TableCell>
-                  <TableCell>{client.city}</TableCell>
+                  <TableCell>{client.client || "N/A"}</TableCell>
+                  <TableCell>{client.contact_no || "N/A"}</TableCell>
+                  <TableCell>{client.email || "N/A"}</TableCell>
+                  <TableCell>{client.city || "N/A"}</TableCell>
                   <TableCell className="text-right">
                     {/* <button
                     onClick={() => navigate(`/clients/edit/${client.id}`)}

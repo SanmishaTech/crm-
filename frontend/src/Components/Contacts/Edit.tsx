@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
+import AddClients from "./AddClients";
+
 import {
   Card,
   CardContent,
@@ -44,13 +46,37 @@ import {
 // Form validation schema
 const formSchema = z.object({
   client_id: z.any().optional(),
-  contact_person: z.string().optional(),
-  department: z.string().optional(),
-  designation: z.string().optional(),
 
-  mobile_1: z.string().optional(),
-  mobile_2: z.string().optional(),
-  email: z.string().optional(),
+  contact_person: z
+    .string()
+    .min(2, {
+      message: "Contact Person field must have at least 2 characters.",
+    })
+    .max(50, {
+      message: "Contact Person field must have no more than 50 characters.",
+    })
+    .nonempty({ message: "Contact Person field is required." }),
+
+  department: z
+    .string()
+
+    .min(2, { message: "Department field must have at least 2 characters." })
+    .max(50, {
+      message: "Department field must have no more than 50 characters.",
+    })
+    .nonempty({ message: "Department field is required." }),
+  designation: z.string().optional(),
+  mobile_1: z
+    .string()
+    .regex(/^(\+?\d{1,3}[-.\s]?)?(\(?\d{1,4}\)?[-.\s]?)?[\d\s.-]{5,20}$/, {
+      message: "Invalid mobile number format",
+    })
+    .nonempty({ message: "Mobile number field is required." }),
+  mobile_2: z.any().optional(),
+  email: z
+    .string()
+    .email("Please enter a valid email address.")
+    .nonempty("Email is required."),
 });
 
 // Move FormValues type definition outside the component
@@ -167,6 +193,25 @@ export default function EditSupplierPage() {
       enabled: !!id,
     },
   });
+  const { data: fetchClients } = useGetData({
+    endpoint: `/api/clients`,
+    params: {
+      queryKey: ["clients"],
+      retry: 1,
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["clients"] });
+        setClients(data.data.Client);
+        setLoading(false);
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate client")) {
+          toast.error("Client name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch client data. Please try again.");
+        }
+      },
+    },
+  });
 
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
@@ -176,7 +221,7 @@ export default function EditSupplierPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6  bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+    <div className=" mx-auto p-6 ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -212,7 +257,9 @@ export default function EditSupplierPage() {
                   name="client_id"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Client</FormLabel>
+                      <FormLabel>
+                        Client <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -220,7 +267,7 @@ export default function EditSupplierPage() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[200px] justify-between",
+                                "w-[603px] justify-between",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -234,7 +281,7 @@ export default function EditSupplierPage() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0">
+                        <PopoverContent className="w-[603px] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."
@@ -265,6 +312,9 @@ export default function EditSupplierPage() {
                               </CommandGroup>
                             </CommandList>
                           </Command>
+                          <div className="px-5 py-1 ">
+                            <AddClients fetchClients={fetchClients} />
+                          </div>
                         </PopoverContent>
                       </Popover>
 
@@ -278,7 +328,9 @@ export default function EditSupplierPage() {
                   name="contact_person"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Contact Person</FormLabel>
+                      <FormLabel>
+                        Contact Person <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Contact Person" {...field} />
                       </FormControl>
@@ -294,7 +346,9 @@ export default function EditSupplierPage() {
                   name="department"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Department</FormLabel>
+                      <FormLabel>
+                        Department <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Department" {...field} />
                       </FormControl>
@@ -331,7 +385,9 @@ export default function EditSupplierPage() {
                   name="mobile_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Primary Mobile</FormLabel>
+                      <FormLabel>
+                        Primary Mobile <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -372,7 +428,9 @@ export default function EditSupplierPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>
+                        Email <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"

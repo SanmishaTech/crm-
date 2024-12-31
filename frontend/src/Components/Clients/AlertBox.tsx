@@ -18,7 +18,7 @@ export default function AlertDialogbox({ url }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-      <Button variant="ghost" size="sm" className="w-full text-sm ">
+        <Button variant="ghost" size="sm" className="w-full text-sm ">
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -40,9 +40,8 @@ export default function AlertDialogbox({ url }) {
                   Authorization: "Bearer " + localStorage.getItem("token"),
                 },
               });
-              queryClient.invalidateQueries({ queryKey: ["client"] });
-              queryClient.invalidateQueries({ queryKey: ["client", url] });
-              window.location.reload();
+              queryClient.invalidateQueries({ queryKey: ["clients"] });
+              queryClient.invalidateQueries({ queryKey: ["clients", url] });
             }}
           >
             Continue

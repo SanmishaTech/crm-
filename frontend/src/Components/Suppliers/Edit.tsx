@@ -215,7 +215,7 @@ export default function EditSupplierPage() {
   }
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg  mt-12">
+    <div className=" mx-auto p-6 bg-white shadow-lg  ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -230,10 +230,7 @@ export default function EditSupplierPage() {
         </div>
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
-            <h2 className="text-2xl font-semibold">Supplier Form</h2>
-            <p className="text-xs mb-9">
-              Edit/Update supplier to the database.
-            </p>
+            <h2 className="text-2xl font-semibold">Supplier Edit Form</h2>
           </div>
         </div>
       </div>
@@ -254,7 +251,9 @@ export default function EditSupplierPage() {
                   name="supplier"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Supplier</FormLabel>
+                      <FormLabel>
+                        Supplier <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Supplier Name" {...field} />
                       </FormControl>
@@ -262,7 +261,17 @@ export default function EditSupplierPage() {
                     </FormItem>
                   )}
                 />
-
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                GST Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="gstin"
@@ -288,7 +297,7 @@ export default function EditSupplierPage() {
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className=" text-xl  font-semibold">
-                Contact Person
+                Contact Supplier
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -298,7 +307,9 @@ export default function EditSupplierPage() {
                   name="contact_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Contact</FormLabel>
+                      <FormLabel>
+                        Contact Name  <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Contact"
@@ -316,7 +327,9 @@ export default function EditSupplierPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>
+                        Email <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"
@@ -335,7 +348,10 @@ export default function EditSupplierPage() {
                   name="mobile_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Primary Mobile Number</FormLabel>
+                      <FormLabel>
+                        Primary Mobile Number{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -414,7 +430,7 @@ export default function EditSupplierPage() {
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className=" text-xl font-semibold">
-                Address Information
+                Supplier Address Information
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -424,7 +440,9 @@ export default function EditSupplierPage() {
                   name="street_address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Street Address</FormLabel>
+                      <FormLabel>
+                        Street Address <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Street Address" {...field} />
                       </FormControl>
@@ -451,7 +469,9 @@ export default function EditSupplierPage() {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>City</FormLabel>
+                      <FormLabel>
+                        City <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"
@@ -468,7 +488,9 @@ export default function EditSupplierPage() {
                   name="state"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>State</FormLabel>
+                      <FormLabel>
+                        State <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter State" {...field} />
                       </FormControl>
@@ -482,7 +504,9 @@ export default function EditSupplierPage() {
                   name="pincode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Pincode</FormLabel>
+                      <FormLabel>
+                        Pincode <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Pincode"
@@ -503,7 +527,9 @@ export default function EditSupplierPage() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country</FormLabel>
+                      <FormLabel>
+                        Country <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"

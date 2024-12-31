@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
 import { X, Check, ChevronsUpDown, ChevronUp } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import AddContacts from "./AddContacts";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -231,13 +232,13 @@ export default function EditLeadPage() {
     }
   }, [editData]);
 
-  const getData = useGetData({
-    endpoint: `/api/contacts`,
+  const FetchContacts = useGetData({
+    endpoint: `/api/all_contacts`,
     params: {
       queryKey: ["contacts"],
       retry: 1,
       onSuccess: (data) => {
-        setContacts(data?.data?.Contact || []);
+        setContacts(data?.data?.Contacts || []);
         setLoading(false);
       },
       onError: (error) => {
@@ -303,7 +304,7 @@ export default function EditLeadPage() {
   const contactsArray = Array.isArray(contacts) ? contacts : [];
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -346,7 +347,7 @@ export default function EditLeadPage() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[200px] justify-between",
+                                "w-[350px] justify-between",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -359,7 +360,7 @@ export default function EditLeadPage() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0">
+                        <PopoverContent className="w-[350px] h-[260px] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."
@@ -389,6 +390,7 @@ export default function EditLeadPage() {
                                 ))}
                               </CommandGroup>
                             </CommandList>
+                            <AddContacts FetchContacts={FetchContacts} />
                           </Command>
                         </PopoverContent>
                       </Popover>

@@ -186,11 +186,14 @@ export default function TableDemo() {
             <TableBody>
               {contacts?.data?.Contact?.map((contact) => (
                 <TableRow key={contact.id}>
-                  <TableCell>{contact.contact_person}</TableCell>
-                  <TableCell>{contact?.client?.client}</TableCell>
-                  <TableCell>{contact.department}</TableCell>
-                  <TableCell>{contact.designation}</TableCell>
-                  <TableCell>{contact.email}</TableCell>
+                  <TableCell>{contact.contact_person || "N/A"}</TableCell>
+                  <TableCell>
+                    {contact?.client?.client?.charAt(0).toUpperCase() +
+                      contact?.client?.client?.slice(1) || "N/A"}
+                  </TableCell>
+                  <TableCell>{contact.department || "N/A"}</TableCell>
+                  <TableCell>{contact.designation || "N/A"}</TableCell>
+                  <TableCell>{contact.email || "N/A"}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

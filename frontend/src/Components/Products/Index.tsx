@@ -175,7 +175,7 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
+    <div className="p-6  mx-auto  rounded-lg shadow-lg">
       <div className="flex justify-between items-center p-2 space-x-2">
         <h3 className="text-lg font-semibold">Products List</h3>
       </div>

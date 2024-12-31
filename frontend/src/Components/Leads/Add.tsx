@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
+import AddContacts from "./AddContacts";
+
 import {
   Card,
   CardContent,
@@ -25,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 import { toast } from "sonner";
+import { useGetData } from "@/lib/HTTP/GET";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Select,
@@ -152,34 +155,57 @@ export default function InputForm() {
     },
   });
 
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get("/api/contacts", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        // Ensure the response is an array of clients
-        const fetchedContacts = response.data.data.Contact || []; // Fallback to empty array if no clients
-        setContacts(fetchedContacts);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch contacts:", error);
-        // Optionally show a toast notification for error
-      })
-      .finally(() => {
+  // useEffect(() => {
+  //   setLoading(true);
+  //   axios
+  //     .get("/api/contacts", {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: "Bearer " + localStorage.getItem("token"),
+  //       },
+  //       queryKey: ["contacts"],
+  //     })
+  //     .then((response) => {
+  //       queryClient.invalidateQueries({ queryKey: ["contacts"] });
+  //       // Ensure the response is an array of clients
+  //       const fetchedContacts = response.data.data.Contact || []; // Fallback to empty array if no clients
+  //       setContacts(fetchedContacts);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Failed to fetch contacts:", error);
+  //       // Optionally show a toast notification for error
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // }, []);
+  // const fetchProductCategories = () => {
+  //   axios
+  //     .get("/api/contacts")
+  //     .then((response) => setContacts(response.data))
+  //     .catch((err) => console.error("Failed to fetch contacts", err));
+  // };
+
+  const { data: FetchContacts } = useGetData({
+    endpoint: `/api/all_contacts`,
+    params: {
+      queryKey: ["contacts"],
+      retry: 1,
+      onSuccess: (data) => {
+        console.log("data", data);
+        queryClient.invalidateQueries({ queryKey: ["contacts"] });
+        setContacts(data.data.Contacts);
         setLoading(false);
-      });
-  }, []);
-  const fetchProductCategories = () => {
-    axios
-      .get("/api/contacts")
-      .then((response) => setContacts(response.data))
-      .catch((err) => console.error("Failed to fetch contacts", err));
-  };
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate contacts")) {
+          toast.error("Contact name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch contacts.");
+        }
+      },
+    },
+  });
 
   const fetchProduct = () => {
     setLoading(true);
@@ -228,7 +254,7 @@ export default function InputForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+    <div className=" mx-auto p-6 ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -263,41 +289,82 @@ export default function InputForm() {
                   control={form.control}
                   name="contact_id"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col">
                       <FormLabel>Contact</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={field.value}
-                          onValueChange={(value) => field.onChange(value)}
-                        >
-                          <SelectTrigger className="">
-                            <SelectValue placeholder="Select Contact" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {loading ? (
-                              <SelectItem disabled>Loading...</SelectItem>
-                            ) : (contacts || []).length > 0 ? (
-                              contacts.map((contact) => {
-                                const contactPerson =
-                                  contact.contact_person || "No Contact Person";
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-[350px] justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? contacts.find(
+                                    (contact) => contact.id === field.value
+                                  )?.contact_person || "No Contact Person"
+                                : "Select Contact"}
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[350px] h-[260px] p-0">
+                          <Command>
+                            <CommandInput
+                              placeholder="Search contact..."
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>No contact found.</CommandEmpty>
+                              <CommandGroup>
+                                {loading ? (
+                                  <CommandItem disabled>Loading...</CommandItem>
+                                ) : (contacts || []).length > 0 ? (
+                                  contacts.map((contact) => {
+                                    const contactPerson =
+                                      contact.contact_person ||
+                                      "No Contact Person";
 
-                                return (
-                                  <SelectItem
-                                    key={contact.id}
-                                    value={String(contact.id)}
-                                  >
-                                    {` ${contactPerson}`}
-                                  </SelectItem>
-                                );
-                              })
-                            ) : (
-                              <SelectItem disabled>
-                                No Contact available
-                              </SelectItem>
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                                    return (
+                                      <CommandItem
+                                        key={contact.id}
+                                        value={contact.id}
+                                        onSelect={() => {
+                                          form.setValue(
+                                            "contact_id",
+                                            contact.id
+                                          );
+                                        }}
+                                      >
+                                        {contactPerson}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            contact.id === field.value
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    );
+                                  })
+                                ) : (
+                                  <CommandItem disabled>
+                                    No Contact available
+                                  </CommandItem>
+                                )}
+                              </CommandGroup>
+                            </CommandList>
+                            <AddContacts FetchContacts={FetchContacts} />
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormDescription>
+                        Select the contact to associate with this item.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

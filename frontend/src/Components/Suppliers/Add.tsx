@@ -58,8 +58,7 @@ const FormSchema = z.object({
     .string()
     .min(2, { message: "Country field must have at least 2 characters." })
     .nonempty({ message: "Country field is required." }),
-  gstin: z
-  .string().optional(),
+  gstin: z.string().optional(),
   // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
   //     message: "Invalid GST Number. Please enter a valid GSTIN. ",
   //   })
@@ -155,6 +154,7 @@ export default function InputForm() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Supplier Form</h2>
+            <p className="text-xs mb-9">Add a new supplier.</p>
           </div>
         </div>
       </div>
@@ -197,9 +197,7 @@ export default function InputForm() {
                 name="gstin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      GST IN <span style={{ color: "red" }}>*</span>
-                    </FormLabel>
+                    <FormLabel>GST IN</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
