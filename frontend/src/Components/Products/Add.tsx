@@ -200,7 +200,6 @@ export default function InputForm() {
                   <FormControl>
                     <Input placeholder="Enter Product Name" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the Product name.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -240,7 +239,6 @@ export default function InputForm() {
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormDescription>Enter the Product Category.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -256,7 +254,6 @@ export default function InputForm() {
                   <FormControl>
                     <Input placeholder="Enter manufacturer" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the manufacturer.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -270,7 +267,6 @@ export default function InputForm() {
                   <FormControl>
                     <Input placeholder="Enter model" {...field} />
                   </FormControl>
-                  <FormDescription>Enter the model.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -297,7 +293,6 @@ export default function InputForm() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>Enter the HSN Code.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -317,10 +312,7 @@ export default function InputForm() {
                         placeholder="Enter Gst Number"
                       />
                     </FormControl>
-                    <FormDescription>
-                      The GST Number must be 15 characters long and should
-                      follow this format:<strong>22ABCDE0123A1Z5</strong>
-                    </FormDescription>{" "}
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -340,9 +332,7 @@ export default function InputForm() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Enter the Last Traded Price.
-                    </FormDescription>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -370,9 +360,7 @@ export default function InputForm() {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Enter the Opening Quantity.
-                    </FormDescription>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -391,9 +379,7 @@ export default function InputForm() {
                         disabled
                       />
                     </FormControl>
-                    <FormDescription>
-                      Enter the Closing Quantity.
-                    </FormDescription>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -435,7 +421,6 @@ export default function InputForm() {
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormDescription>Enter the Supplier.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

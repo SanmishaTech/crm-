@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('pincode', 10)->nullable();
             $table->string('country', 50)->nullable();
             $table->string('gstin', 15)->nullable();
-            $table->string('contact_no')->nullable();
+            $table->string('contact_name')->nullable();
             $table->string('department', 100)->nullable();
             $table->string('designation', 100)->nullable();
             $table->string('mobile_1', 20)->nullable();

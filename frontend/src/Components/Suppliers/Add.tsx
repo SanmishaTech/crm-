@@ -38,25 +38,50 @@ const FormSchema = z.object({
     })
     .nonempty({ message: "Supplier field is required." }),
 
-  street_address: z.string().optional(),
-  area: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  pincode: z.string().optional(),
-  country: z.string().optional(),
-  gstin: z
+  street_address: z
     .string()
-    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-      message: "Invalid GST Number. Please enter a valid GSTIN. ",
+    .min(2, {
+      message: "Street Address field must have at least 2 characters.",
     })
-    .max(15, "GST Number must be exactly 15 characters")
-    .min(15, "GST Number must be exactly 15 characters"),
-  contact_no: z.any().optional(),
+    .nonempty({ message: "Street Address field is required." }),
+  area: z.string().optional(),
+  city: z
+    .string()
+    .min(2, { message: "City field must have at least 2 characters." })
+    .nonempty({ message: "City field is required." }),
+  state: z
+    .string()
+    .min(2, { message: "State field must have at least 2 characters." })
+    .nonempty({ message: "State field is required." }),
+  pincode: z.string().optional(),
+  country: z
+    .string()
+    .min(2, { message: "Country field must have at least 2 characters." })
+    .nonempty({ message: "Country field is required." }),
+  gstin: z
+  .string().optional(),
+  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+  //     message: "Invalid GST Number. Please enter a valid GSTIN. ",
+  //   })
+  //   .max(15, "GST Number must be exactly 15 characters")
+  //   .min(15, "GST Number must be exactly 15 characters"),
+  contact_name: z
+    .string()
+    .min(2, { message: "Contact Name field must have at least 2 characters." })
+    .max(50, {
+      message: "Contact Name field must have no more than 50 characters.",
+    })
+    .nonempty({ message: "Contact Name field is required." }),
 
   department: z.string().optional(),
   designation: z.string().optional(),
-  mobile_1: z.string().optional(),
-  mobile_2: z.string().optional(),
+  mobile_1: z
+    .string()
+    .regex(/^(\+?\d{1,3}[-.\s]?)?(\(?\d{1,4}\)?[-.\s]?)?[\d\s.-]{5,20}$/, {
+      message: "Invalid mobile number format",
+    })
+    .nonempty({ message: "Mobile number field is required." }),
+  mobile_2: z.any().optional(),
   email: z
     .string()
     .email("Please enter a valid email address.")
@@ -76,7 +101,7 @@ export default function InputForm() {
       pincode: "",
       country: "India",
       gstin: "",
-      contact_no: "",
+      contact_name: "",
       department: "",
       designation: "",
       mobile_1: "",
@@ -148,7 +173,9 @@ export default function InputForm() {
                 name="supplier"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Supplier</FormLabel>
+                    <FormLabel>
+                      Supplier <span style={{ color: "red" }}>*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Enter Supplier Name" {...field} />
                     </FormControl>
@@ -170,7 +197,9 @@ export default function InputForm() {
                 name="gstin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>GST IN</FormLabel>
+                    <FormLabel>
+                      GST IN <span style={{ color: "red" }}>*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -197,10 +226,54 @@ export default function InputForm() {
               <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
                 <FormField
                   control={form.control}
+                  name="contact_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Contact Name <span style={{ color: "red" }}>*</span>
+                      </FormLabel>{" "}
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Contact Name"
+                          {...field}
+                          type="text"
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Email <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter Email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                <FormField
+                  control={form.control}
                   name="mobile_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Primary Mobile Number</FormLabel>
+                      <FormLabel>
+                        Primary Mobile Number{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -274,24 +347,6 @@ export default function InputForm() {
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="justify-left"
-                        placeholder="Enter Email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </CardContent>
           </Card>
           <Card className="bg-accent/40">
@@ -307,7 +362,9 @@ export default function InputForm() {
                   name="street_address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Street Address</FormLabel>
+                      <FormLabel>
+                        Street Address <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Street Address" {...field} />
                       </FormControl>
@@ -334,7 +391,9 @@ export default function InputForm() {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>City</FormLabel>
+                      <FormLabel>
+                        City <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"
@@ -351,7 +410,9 @@ export default function InputForm() {
                   name="state"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>State</FormLabel>
+                      <FormLabel>
+                        State <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter State" {...field} />
                       </FormControl>
@@ -365,7 +426,9 @@ export default function InputForm() {
                   name="pincode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Pincode</FormLabel>
+                      <FormLabel>
+                        Pincode <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Pincode"
@@ -386,7 +449,9 @@ export default function InputForm() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country</FormLabel>
+                      <FormLabel>
+                        Country <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"
@@ -398,27 +463,6 @@ export default function InputForm() {
                     </FormItem>
                   )}
                 />
-
-                {/* <FormField
-                  control={form.control}
-                  name="contact_no"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Number</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Contact Number"
-                          {...field}
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={10}
-                          value={field.value}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
               </div>
             </CardContent>
           </Card>

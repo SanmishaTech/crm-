@@ -29,36 +29,19 @@ import { toast } from "sonner";
 
 // Form Schema
 const FormSchema = z.object({
-  client: z.string().optional(),
-  // .min(2, { message: "Supplier field must have at least 2 characters." })
-  // .max(50, {
-  //   message: "Supplier field must have no more than 50 characters.",
-  // })
-  // .nonempty({ message: "Supplier field is required." }),
-
-  street_address: z.string().optional(),
-  area: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  pincode: z.string().optional(),
-  country: z.string().optional(),
-  gstin: z.string().optional(),
-  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-  //   message: "Invalid GST Number. Please enter a valid GSTIN.",
-  // })
-  // .max(15, "GST Number must be exactly 15 characters")
-  // .min(15, "GST Number must be exactly 15 characters"),
-  contact_no: z.string().optional(),
-  // .regex(/^\+?\d{1,4}?\s?\(?\d+\)?[\s.-]?\d+[\s.-]?\d+$/, {
-  //   message: "Invalid contact number. Please enter a valid phone number.",
-  // })
-  // .max(10, "Contact number must be exactly 10 characters")
-  // .min(10, "Contact number must be exactly 10 characters")
-  // .nonempty("Contact number is required."),
-
-  email: z.string().optional(),
-  // .email("Please enter a valid email address.")
-  // .nonempty("Email is required."),
+  client: z.string().min(3, "Client cannot be empty").optional(),
+  street_address: z
+    .string()
+    .min(1, "Street address cannot be empty")
+    .optional(),
+  area: z.string().min(3, "Area cannot be empty").optional(),
+  city: z.string().min(3, "City cannot be empty").optional(),
+  state: z.string().min(3, "State cannot be empty").optional(),
+  pincode: z.string().min(3, "Pincode cannot be empty").optional(),
+  country: z.string().min(3, "Country cannot be empty").optional(),
+  gstin: z.string().min(3, "GSTIN cannot be empty").optional(),
+  contact_no: z.string().min(3, "Contact number cannot be empty").optional(),
+  email: z.string().min(3, "Email cannot be empty").optional(),
 });
 
 export default function InputForm() {
@@ -92,8 +75,14 @@ export default function InputForm() {
       onError: (error) => {
         console.log("error", error);
 
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        // Check for the 'client' duplicate error
+        if (
+          error.errors &&
+          error.errors.client &&
+          console.log("erro", error.errors) &&
+          error.errors.client.includes("The client has already been taken.")
+        ) {
+          toast.error("Client name is duplicated. Please use a unique name.");
         } else {
           toast.error("Failed to submit the form. Please try again.");
         }
@@ -122,7 +111,6 @@ export default function InputForm() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Clients Form</h2>
-            <p className="text-xs mb-9">Add a new clients to the database.</p>
           </div>
         </div>
       </div>

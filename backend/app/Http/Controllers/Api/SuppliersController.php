@@ -57,7 +57,7 @@ class SuppliersController extends BaseController
      * @bodyParam pincode string The pincode of the Supplier.
      * @bodyParam country string The country of the Supplier.
      * @bodyParam gstin string The gstin of the Supplier.
-     * @bodyParam contact_no string The contact number of the Supplier.
+     * @bodyParam contact_name string The contact number of the Supplier.
      * @bodyParam department string The department of the Supplier.
      * @bodyParam designation string The designation of the Supplier.
      * @bodyParam mobile_1 string The mobile 1 of the Supplier.
@@ -75,7 +75,7 @@ class SuppliersController extends BaseController
         $suppliers->pincode = $request->input("pincode");
         $suppliers->country = $request->input("country");
         $suppliers->gstin = $request->input("gstin");
-        $suppliers->contact_no = $request->input("contact_no");
+        $suppliers->contact_name = $request->input("contact_name");
         $suppliers->department = $request->input("department");
         $suppliers->designation = $request->input("designation");
         $suppliers->mobile_1 = $request->input("mobile_1");
@@ -110,7 +110,7 @@ class SuppliersController extends BaseController
      * @bodyParam pincode string The pincode of the Supplier.
      * @bodyParam country string The country of the Supplier.
      * @bodyParam gstin string The gstin of the Supplier.
-     * @bodyParam contact_no string The contact number of the Supplier.
+     * @bodyParam contact_name string The contact number of the Supplier.
      * @bodyParam department string The department of the Supplier.
      * @bodyParam designation string The designation of the Supplier.
      * @bodyParam mobile_1 string The mobile 1 of the Supplier.
@@ -135,7 +135,7 @@ class SuppliersController extends BaseController
         $suppliers->pincode = $request->input("pincode");
         $suppliers->country = $request->input("country");
         $suppliers->gstin = $request->input("gstin");
-        $suppliers->contact_no = $request->input("contact_no");
+        $suppliers->contact_name = $request->input("contact_name");
         $suppliers->department = $request->input("department");
         $suppliers->designation = $request->input("designation");
         $suppliers->mobile_1 = $request->input("mobile_1");

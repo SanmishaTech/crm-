@@ -38,27 +38,61 @@ import {
 
 // Form validation schema
 const formSchema = z.object({
-  supplier: z.string().optional(),
-  street_address: z.string().optional(),
-  area: z.string().optional(),
-  city: z.string().optional(),
-  state: z.string().optional(),
-  pincode: z.string().optional(),
-  country: z.string().optional(),
-  gstin: z
-    // 22AAAAA0000A1Z5
+  supplier: z
     .string()
-    .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-      message: "Invalid GST Number. Please enter a valid GSTIN.",
+    .min(2, { message: "Supplier field must have at least 2 characters." })
+    .max(50, {
+      message: "Supplier field must have no more than 50 characters.",
     })
-    .max(15, "GST Number must be exactly 15 characters")
-    .min(15, "GST Number must be exactly 15 characters"),
-  contact_no: z.string().optional(),
+    .nonempty({ message: "Supplier field is required." }),
+
+  street_address: z
+    .string()
+    .min(2, {
+      message: "Street Address field must have at least 2 characters.",
+    })
+    .nonempty({ message: "Street Address field is required." }),
+  area: z.string().optional(),
+  city: z
+    .string()
+    .min(2, { message: "City field must have at least 2 characters." })
+    .nonempty({ message: "City field is required." }),
+  state: z
+    .string()
+    .min(2, { message: "State field must have at least 2 characters." })
+    .nonempty({ message: "State field is required." }),
+  pincode: z.string().optional(),
+  country: z
+    .string()
+    .min(2, { message: "Country field must have at least 2 characters." })
+    .nonempty({ message: "Country field is required." }),
+  gstin: z.string().optional(),
+  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
+  //   message: "Invalid GST Number. Please enter a valid GSTIN. ",
+  // })
+  // .max(15, "GST Number must be exactly 15 characters")
+  // .min(15, "GST Number must be exactly 15 characters"),
+  contact_name: z
+    .string()
+    .min(2, { message: "Contact Name field must have at least 2 characters." })
+    .max(50, {
+      message: "Contact Name field must have no more than 50 characters.",
+    })
+    .nonempty({ message: "Contact Name field is required." }),
+
   department: z.string().optional(),
   designation: z.string().optional(),
-  mobile_1: z.string().optional(),
-  mobile_2: z.string().optional(),
-  email: z.string().optional(),
+  mobile_1: z
+    .string()
+    .regex(/^(\+?\d{1,3}[-.\s]?)?(\(?\d{1,4}\)?[-.\s]?)?[\d\s.-]{5,20}$/, {
+      message: "Invalid mobile number format",
+    })
+    .nonempty({ message: "Mobile number field is required." }),
+  mobile_2: z.any().optional(),
+  email: z
+    .string()
+    .email("Please enter a valid email address.")
+    .nonempty("Email is required."),
 });
 
 // Move FormValues type definition outside the component
@@ -83,7 +117,7 @@ export default function EditSupplierPage() {
       pincode: "",
       country: "",
       gstin: "",
-      contact_no: "",
+      contact_name: "",
       department: "",
       designation: "",
       mobile_1: "",
@@ -157,7 +191,7 @@ export default function EditSupplierPage() {
         pincode: newData.pincode || "",
         country: newData.country || "India",
         gstin: newData.gstin || "",
-        contact_no: newData.contact_no || "",
+        contact_name: newData.contact_name || "",
         department: newData.department || "",
         designation: newData.designation || "",
         mobile_1: newData.mobile_1 || "",
@@ -181,7 +215,7 @@ export default function EditSupplierPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+    <div className=" mx-auto p-6 bg-white shadow-lg  mt-12">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -258,6 +292,43 @@ export default function EditSupplierPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                <FormField
+                  control={form.control}
+                  name="contact_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contact</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Contact"
+                          {...field}
+                          type="text"
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter Email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
                 <FormField
                   control={form.control}
@@ -338,24 +409,6 @@ export default function EditSupplierPage() {
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        className="justify-left"
-                        placeholder="Enter Email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </CardContent>
           </Card>
           <Card className="bg-accent/40">
@@ -456,27 +509,6 @@ export default function EditSupplierPage() {
                           className="justify-left"
                           placeholder="Enter Country"
                           {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="contact_no"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Contact"
-                          {...field}
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={10}
-                          value={field.value}
                         />
                       </FormControl>
                       <FormMessage />

@@ -30,7 +30,7 @@ import {
 
 // Form validation schema
 const formSchema = z.object({
-  client: z.string().optional(),
+  client: z.string().min(2).max(50).nonempty("Client field is required."),
   street_address: z.string().optional(),
   area: z.string().optional(),
   city: z.string().optional(),
