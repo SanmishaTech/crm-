@@ -6,12 +6,14 @@ use Log;
 use File;
 use Response;
 use Mpdf\Mpdf;
+use Carbon\Carbon;
 use App\Models\Lead;
-use App\Models\Invoice;
 // 
+use App\Models\Invoice;
 use App\Models\Product;
 use Barryvdh\DomPDF\PDF;
 use App\Models\LeadProduct;
+use App\Models\StockLedger;
 use Illuminate\Http\Request;
 use App\Models\InvoiceDetail;
 use Illuminate\Http\JsonResponse;
@@ -457,9 +459,18 @@ class LeadsController extends BaseController
       
 
         // invoiceDetail
+        //     $previousInvoiceDetails = InvoiceDetail::where('invoice_id', $invoice->id)
+        // ->whereHas('invoice', function ($query) {
+        //     $query->where('employee_id', auth()->id());
+        // })
+        // ->delete();
+        $now = Carbon::now()->toDateTimeString();  // This will give you '2024-12-31 09:50:36'        $previousInvoiceDetails = InvoiceDetail::where("invoice_id",$invoice->id)->delete();
+        $previousStockLedgerDetails = StockLedger::where("foreign_key",$invoice->id)->delete();
         $previousInvoiceDetails = InvoiceDetail::where("invoice_id",$invoice->id)->delete();
         $leadProducts = $leads->leadProducts;
         $invoiceDetails =[];
+        $StockLedgerDetails = [];
+        $module = "Invoice";
         foreach ($leadProducts as $product) {
             
             $invoiceDetails[] = new InvoiceDetail([
@@ -470,10 +481,30 @@ class LeadsController extends BaseController
                 'gst_amount' => $product['gst_amount'],
                 'total_taxable_amount' => $product['amount_without_gst'],
                  ]);
+
+            $StockLedgerDetails[] = new StockLedger([
+                'product_id' => $product['product_id'],
+                't_date' =>  $invoice->invoice_date,
+                // 'received' => $product['rate'],
+                'issued'=> $product['quantity'],
+                'module' => $module,
+                'foreign_key' => $invoice->id,
+                'created_at' => $now,
+                'updated_at' => $now,
+                ]);
+            // last traded price
+            $ltpProduct = Product::find($product['product_id']);
+            $ltpProduct->last_traded_price = $product['rate'];
+            $ltpProduct->save();
         }
         $invoice->invoiceDetails()->saveMany($invoiceDetails);
-    
-       
+        // foreach ($stockLedgerDetails as $stockLedger) {
+        //     $stockLedger->save();
+        // }
+        $stockLedger = StockLedger::insert(collect($StockLedgerDetails)->toArray());
+        foreach ($leadProducts as $product) {
+            StockLedger::calculateClosingQuantity($product['product_id']);
+        }
         $user = auth()->user();
         $employee = $user->employee->first();
     
@@ -539,5 +570,7 @@ class LeadsController extends BaseController
      //to download the invoice change 'Content-Deposition to attachment from inline
         return $response;
     }
+
+   
     
 }

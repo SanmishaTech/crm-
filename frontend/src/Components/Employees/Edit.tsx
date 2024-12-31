@@ -126,10 +126,28 @@ export default function EditEmployeePage() {
         navigate("/employees");
       },
       onError: (error) => {
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        if (error.response && error.response.data.errors) {
+          const serverStatus = error.response.data.status;
+          const serverErrors = error.response.data.errors;
+          // Assuming the error is for the department_name field
+          if (serverStatus === false) {
+            if (serverErrors.email) {
+              form.setError("email", {
+                type: "manual",
+                message: serverErrors.email[0], // The error message from the server
+              });
+            }
+            if (serverErrors.mobile) {
+              form.setError("mobile", {
+                type: "manual",
+                message: serverErrors.mobile[0], // The error message from the server
+              });
+            }
+          } else {
+            setError("Failed to add employee"); // For any other errors
+          }
         } else {
-          toast.error("Failed to submit the form. Please try again.");
+          setError("Failed to add employee");
         }
       },
     },

@@ -44,11 +44,11 @@ export default function Sidebar({ className }: SidebarProps) {
     >
       <div className="p-2 space-x-2 mt-6 justify-items-center">
         <div>
-          <h3 className="text-lg font-semibold">Supplier Filter</h3>
+          <h3 className="text-lg font-semibold">Employee Filter</h3>
         </div>
         <div className="mt-2">
           <Input
-            placeholder="Search suppliers..."
+            placeholder="Search employees..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

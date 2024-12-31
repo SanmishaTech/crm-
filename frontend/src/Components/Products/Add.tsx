@@ -71,9 +71,8 @@ const FormSchema = z.object({
 
   closing_qty: z.any().optional(),
 
-  last_traded_price: z.coerce
-    .number()
-    .min(1, { message: "Last Traded Price field is required." }),
+  last_traded_price: z.coerce.number().optional(),
+  // .min(1, { message: "Last Traded Price field is required." }),
   hsn_code: z.coerce
     .number()
     .min(100000, { message: "HSN Code must be at least 6 digits." })
