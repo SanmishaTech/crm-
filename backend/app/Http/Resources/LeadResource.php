@@ -45,6 +45,7 @@ class LeadResource extends JsonResource
             'lead_status' => $this->lead_status,
             'follow_up_remark' => $this->follow_up_remark,
             'lead_follow_up_date' => $this->lead_follow_up_date,
+            'follow_up_type' => $this->follow_up_type,
             'lead_source' => $this->lead_source,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
