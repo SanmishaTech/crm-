@@ -160,6 +160,9 @@ export default function TableDemo() {
                 <TableHead onClick={() => handleSort("name")}>
                   Employee Name
                 </TableHead>
+                <TableHead onClick={() => handleSort("designation")}>
+                  Designation
+                </TableHead>
                 <TableHead onClick={() => handleSort("department_id")}>
                   Department
                 </TableHead>
@@ -175,6 +178,7 @@ export default function TableDemo() {
               {Employees?.data?.Employees?.map((employee) => (
                 <TableRow key={employee.id}>
                   <TableCell>{employee.employee_name}</TableCell>
+                  <TableCell>{employee.designation || "N/A"}</TableCell>
                   <TableCell>
                     {employee.department
                       ? employee.department.department_name
@@ -205,7 +209,7 @@ export default function TableDemo() {
                         >
                           Edit
                         </Button>
-                        <AlertDialogbox url={employee.id} />
+                        {/* <AlertDialogbox url={employee.id} /> */}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

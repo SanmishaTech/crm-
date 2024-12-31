@@ -125,14 +125,18 @@ export default function InputForm() {
           const serverErrors = error.response.data.errors;
           // Assuming the error is for the department_name field
           if (serverStatus === false) {
-            form.setError("mobile", {
-              type: "manual",
-              message: serverErrors.mobile[0], // The error message from the server
-            });
-            form.setError("email", {
-              type: "manual",
-              message: serverErrors.email[0], // The error message from the server
-            });
+            if (serverErrors.email) {
+              form.setError("email", {
+                type: "manual",
+                message: serverErrors.email[0], // The error message from the server
+              });
+            }
+            if (serverErrors.mobile) {
+              form.setError("mobile", {
+                type: "manual",
+                message: serverErrors.mobile[0], // The error message from the server
+              });
+            }
           } else {
             setError("Failed to add employee"); // For any other errors
           }

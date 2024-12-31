@@ -203,11 +203,14 @@ export default function TableDemo() {
         <div className="p-4 rounded-md bg-gray-50 ">
           {/* Table Start */}
           <Table>
-            <TableCaption>A list of your recent Invoices.</TableCaption>
+            <TableCaption>A list of your Invoices.</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead onClick={() => handleSort("invoice_number")}>
                   Invoice Number
+                </TableHead>
+                <TableHead onClick={() => handleSort("products")}>
+                  Products
                 </TableHead>
                 <TableHead onClick={() => handleSort("invoice_date")}>
                   Invoice Date
@@ -226,7 +229,20 @@ export default function TableDemo() {
               {Invo?.data?.Invoices?.map((invoice) => (
                 <TableRow key={invoice.id}>
                   <TableCell>{invoice.invoice_number}</TableCell>
-                  <TableCell>{invoice.invoice_date}</TableCell>
+                  <TableCell>
+                    {typeof invoice.product_names === "string" ||
+                    Array.isArray(invoice.product_names)
+                      ? Array.isArray(invoice.product_names)
+                        ? invoice.product_names.join(", ")
+                        : invoice.product_names.charAt(0).toUpperCase() +
+                          invoice.product_names.slice(1)
+                      : "N/A"}
+                  </TableCell>
+
+                  <TableCell>
+                    {" "}
+                    {new Date(invoice.invoice_date).toLocaleDateString("en-GB")}
+                  </TableCell>
                   <TableCell>₹{invoice.amount}</TableCell>
                   <TableCell>{invoice.dispatch_details ?? "N/A"}</TableCell>
                   <TableCell className="text-right">

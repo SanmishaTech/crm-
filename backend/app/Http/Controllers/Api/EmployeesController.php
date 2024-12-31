@@ -68,8 +68,7 @@ class EmployeesController extends BaseController
         $user->save();
         
         // $memberRole = $request->input("role");
-        $memberRole = $request->input("member");
-        $memberRole = Role::where("name",$memberRole)->first();
+        $memberRole = Role::where("name","member")->first();
        
         $user->assignRole($memberRole);
         
@@ -122,12 +121,12 @@ class EmployeesController extends BaseController
         $user = User::find($employee->user_id);
         $user->name = $request->input('employee_name');
         $user->email = $request->input('email');
-        $user->active = $request->input('active');
+        // $user->active = $request->input('active');
         $user->password = Hash::make($request->input('password'));
         $user->save();
 
-        $memberRole = $request->input("role");
-        $memberRole = Role::where("name",$memberRole)->first();
+        // $memberRole = $request->input("role");
+        $memberRole = Role::where("name","member")->first();
         $user->assignRole($memberRole);
                        
         $employee->employee_name = $request->input('employee_name');
@@ -176,5 +175,6 @@ class EmployeesController extends BaseController
         return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "employee data updated successfully");
     }
 
+     
     
 }

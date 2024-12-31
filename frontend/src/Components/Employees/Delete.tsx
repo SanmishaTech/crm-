@@ -18,7 +18,7 @@ export default function AlertDialogbox({ url }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-      <Button variant="ghost" size="sm" className="w-full text-sm ">
+        <Button variant="ghost" size="sm" className="w-full text-sm ">
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -34,14 +34,14 @@ export default function AlertDialogbox({ url }) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={async () => {
-              await axios.delete(`/api/suppliers/${url}`, {
+              await axios.delete(`/api/employees/${url}`, {
                 headers: {
                   "Content-Type": "application/json",
                   Authorization: "Bearer " + localStorage.getItem("token"),
                 },
               });
-              queryClient.invalidateQueries({ queryKey: ["supplier"] });
-              queryClient.invalidateQueries({ queryKey: ["supplier", url] });
+              queryClient.invalidateQueries({ queryKey: ["employees"] });
+              queryClient.invalidateQueries({ queryKey: ["employees", url] });
             }}
           >
             Continue
