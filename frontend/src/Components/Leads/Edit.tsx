@@ -254,28 +254,6 @@ export default function EditLeadPage() {
     },
   });
 
-  const { control, watch } = useForm();
-  const leadStatusValue = watch("lead_status", "");
-
-  const [options, setOptions] = useState([]);
-
-  useEffect(() => {
-    switch (leadStatusValue) {
-      case "Open":
-        setOptions(["In Progress", "Close"]);
-        break;
-      case "In Progress":
-        setOptions(["Quotation", "Close"]);
-        break;
-      case "Quotation":
-        setOptions(["Deal", "Close"]);
-        break;
-      default:
-        setOptions(["Open", "In Progress", "Quotation", "Close", "Deal"]);
-        break;
-    }
-  }, [leadStatusValue]);
-
   const onSubmit = (data: FormValues) => {
     const submissionData = {
       ...data,
@@ -474,7 +452,7 @@ export default function EditLeadPage() {
             <CardContent className="p-6">
               <div className="space-x-6 ">
                 <FormField
-                  control={control}
+                  control={form.control}
                   name="lead_status"
                   render={({ field }) => (
                     <FormItem>
@@ -529,17 +507,12 @@ export default function EditLeadPage() {
                             ) : (
                               <></> // Ensure there's no empty return when no condition is met
                             )}
-
-                           
                           </SelectContent>
                         </Select>
                       </FormControl>
 
                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {leadStatusValue === "Close" && (
+                      {field.value === "Close" && (
                   <FormField
                     control={form.control}
                     name="lead_closing_reason"
@@ -559,6 +532,10 @@ export default function EditLeadPage() {
                     )}
                   />
                 )}
+                    </FormItem>
+                  )}
+                />
+               
               </div>
             </CardContent>
           </Card>
