@@ -184,13 +184,7 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-            <Button
-              className="text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-              variant="ghost"
-              onClick={() => navigate("/invoices")}
-            >
-              Invoices
-            </Button>
+
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
                 <NavigationMenuItem className="group">
@@ -221,6 +215,13 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            <Button
+              className="text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+              variant="ghost"
+              onClick={() => navigate("/invoices")}
+            >
+              Invoices
+            </Button>
           </div>
         </div>
 
@@ -228,7 +229,11 @@ const Navbar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-foreground hover:text-foreground/80 hover:bg-accent">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-foreground hover:text-foreground/80 hover:bg-accent"
+                >
                   <Bell className="h-4" style={{ strokeWidth: 1.5 }} />
                 </Button>
               </TooltipTrigger>
@@ -238,7 +243,11 @@ const Navbar = () => {
             </Tooltip>
           </TooltipProvider>
 
-          <Button variant="ghost" size="icon" className="text-foreground hover:text-foreground/80 hover:bg-accent">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-foreground hover:text-foreground/80 hover:bg-accent"
+          >
             <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />
           </Button>
 
@@ -255,7 +264,10 @@ const Navbar = () => {
                     <Search className="h-4" style={{ strokeWidth: 1.5 }} />
                   </Button>
                   <CommandDialog open={open} onOpenChange={setOpen}>
-                    <CommandInput placeholder="Search Modules..." className="bg-background text-foreground" />
+                    <CommandInput
+                      placeholder="Search Modules..."
+                      className="bg-background text-foreground"
+                    />
                     <CommandList className="bg-background text-foreground">
                       <CommandEmpty>No results found.</CommandEmpty>
                       {navItems.map((item) => {
@@ -263,8 +275,10 @@ const Navbar = () => {
                           return (
                             <CommandGroup heading={item.title} key={item.title}>
                               {item.children?.map((child) => {
-                                const Icon = Icons[child.icon || "arrowRight675"];
-                                const isActive = location.pathname === child.href;
+                                const Icon =
+                                  Icons[child.icon || "arrowRight675"];
+                                const isActive =
+                                  location.pathname === child.href;
                                 return (
                                   <div
                                     className="flex items-center gap-2 w-full"
@@ -347,7 +361,10 @@ const Navbar = () => {
                 />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-popover border-border">
+            <DropdownMenuContent
+              align="end"
+              className="bg-popover border-border"
+            >
               <DropdownMenuLabel className="flex items-center space-x-2 text-foreground">
                 <CircleUserRound className="h-5" />
                 <span>My Account</span>

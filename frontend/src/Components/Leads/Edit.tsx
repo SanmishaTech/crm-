@@ -334,7 +334,9 @@ export default function EditLeadPage() {
                   name="contact_id"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Contacts</FormLabel>
+                      <FormLabel className=" relative top-[7px]">
+                        Contact
+                      </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -342,7 +344,7 @@ export default function EditLeadPage() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[350px] justify-between",
+                                "w-[550px] justify-between relative top-[10px]",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -389,7 +391,7 @@ export default function EditLeadPage() {
                           </Command>
                         </PopoverContent>
                       </Popover>
-                      <div class="max-w-xs bg-white rounded-lg shadow-lg p-3 transform transition duration-300 hover:scale-105  hover:shadow-2xl hover:translate-z-10">
+                      <div class=" relative top-[10px] max-w-xs bg-white rounded-lg shadow-lg p-3 transform transition duration-300 hover:scale-105  hover:shadow-2xl hover:translate-z-10">
                         <p class="text-gray-700">
                           <strong class="text-black-500">Client Name:</strong>{" "}
                           {leads}
@@ -419,15 +421,15 @@ export default function EditLeadPage() {
                             <SelectItem value="advertisement">
                               Advertisement
                             </SelectItem>
+                            <SelectItem value="coldCall">Cold Call</SelectItem>
                             <SelectItem value="email">Email</SelectItem>
                             <SelectItem value="facebook">Facebook</SelectItem>
                             <SelectItem value="google">Google</SelectItem>
                             <SelectItem value="linkedin">LinkedIn</SelectItem>
-                            <SelectItem value="coldCall">Cold Call</SelectItem>
                             <SelectItem value="referral">Referral</SelectItem>
                             <SelectItem value="search">Search</SelectItem>
-                            <SelectItem value="social">Social</SelectItem>
                             <SelectItem value="seminar">Seminar</SelectItem>
+                            <SelectItem value="social">Social</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
