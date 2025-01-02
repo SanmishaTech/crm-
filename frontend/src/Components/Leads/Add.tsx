@@ -311,7 +311,7 @@ export default function InputForm() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[350px] h-[260px] p-0">
+                        <PopoverContent className="w-[350px] max-h-[260px] overflow-y-auto p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."

@@ -40,11 +40,6 @@ export default {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
-        primaryAccent: {
-          DEFAULT:
-            "linear-gradient(oklch(86.29% 0.077 185.59), oklch(88.89% 0.159 179.83))",
-          foreground: "hsl(var(--primaryAccent-foreground))",
-        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -62,7 +57,7 @@ export default {
           foreground: "hsl(var(--accent-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
+          DEFAULT: "#dc2626", 
           foreground: "hsl(var(--destructive-foreground))",
         },
         border: "hsl(var(--border))",

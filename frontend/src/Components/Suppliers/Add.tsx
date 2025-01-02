@@ -138,32 +138,32 @@ export default function InputForm() {
   };
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg  ">
+    <div className="mx-auto p-6 bg-background border border-border shadow-lg rounded-lg">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
             onClick={() => navigate("/suppliers")}
             variant="ghost"
-            className="mr-4"
+            className="mr-4 text-foreground hover:text-foreground/80 hover:bg-accent"
             type="button"
           >
-            <ChevronLeft />
+            <ChevronLeft className="text-foreground" />
             Back
           </Button>
         </div>
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
-            <h2 className="text-2xl font-semibold">Supplier Form</h2>
-            <p className="text-xs mb-9">Add a new supplier.</p>
+            <h2 className="text-2xl font-semibold text-foreground">Supplier Form</h2>
+            <p className="text-sm text-muted-foreground mb-9">Add a new supplier.</p>
           </div>
         </div>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card className="bg-accent/40">
-            <CardHeader className="text- justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold">
+          <Card className="bg-accent/40 border border-border">
+            <CardHeader className="justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold text-foreground">
                 Supplier Information
               </CardTitle>
             </CardHeader>
@@ -173,21 +173,26 @@ export default function InputForm() {
                 name="supplier"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Supplier <span style={{ color: "red" }}>*</span>
+                    <FormLabel className="text-foreground">
+                      Supplier <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Supplier Name" {...field} />
+                      <Input 
+                        placeholder="Enter Supplier Name" 
+                        {...field}
+                        className="bg-background text-foreground border-input" 
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-destructive" />
                   </FormItem>
                 )}
               />
             </CardContent>
           </Card>
-          <Card className="bg-accent/40">
-            <CardHeader className="text- justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold">
+
+          <Card className="bg-accent/40 border border-border">
+            <CardHeader className="justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold text-foreground">
                 GST Information
               </CardTitle>
             </CardHeader>
@@ -197,7 +202,7 @@ export default function InputForm() {
                 name="gstin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>GST IN</FormLabel>
+                    <FormLabel className="text-foreground">GST IN</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
@@ -205,40 +210,41 @@ export default function InputForm() {
                         {...field}
                         style={{ textTransform: "uppercase" }}
                         placeholder="e.g., 22ABCDE0123A1Z5"
+                        className="bg-background text-foreground border-input"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-destructive" />
                   </FormItem>
                 )}
               />
             </CardContent>
           </Card>
 
-          <Card className="bg-accent/40">
-            <CardHeader className="text- justify-between space-y-0 pb-2">
-              <CardTitle className=" text-xl  font-semibold">
+          <Card className="bg-accent/40 border border-border">
+            <CardHeader className="justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold text-foreground">
                 Contact Supplier
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+              <div className="grid grid-cols-2 gap-4 mb-5">
                 <FormField
                   control={form.control}
                   name="contact_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Contact Name <span style={{ color: "red" }}>*</span>
-                      </FormLabel>{" "}
+                      <FormLabel className="text-foreground">
+                        Contact Name <span className="text-destructive">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Contact Name"
                           {...field}
                           type="text"
-                          value={field.value}
+                          className="bg-background text-foreground border-input"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -247,17 +253,17 @@ export default function InputForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Email <span style={{ color: "red" }}>*</span>
+                      <FormLabel className="text-foreground">
+                        Email <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
-                          className="justify-left"
+                          className="bg-background text-foreground border-input"
                           placeholder="Enter Email"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -268,9 +274,9 @@ export default function InputForm() {
                   name="mobile_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
+                      <FormLabel className="text-foreground">
                         Primary Mobile Number{" "}
-                        <span style={{ color: "red" }}>*</span>
+                        <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -280,9 +286,10 @@ export default function InputForm() {
                           inputMode="numeric"
                           pattern="\d{10}"
                           maxLength={10}
+                          className="bg-background text-foreground border-input"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -292,7 +299,7 @@ export default function InputForm() {
                   name="mobile_2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Secondary Mobile Number</FormLabel>
+                      <FormLabel className="text-foreground">Secondary Mobile Number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -301,9 +308,10 @@ export default function InputForm() {
                           inputMode="numeric"
                           pattern="\d{10}"
                           maxLength={10}
+                          className="bg-background text-foreground border-input"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -314,15 +322,15 @@ export default function InputForm() {
                   name="department"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Department</FormLabel>
+                      <FormLabel className="text-foreground">Department</FormLabel>
                       <FormControl>
                         <Input
-                          className="justify-left"
+                          className="bg-background text-foreground border-input"
                           placeholder="Enter Department"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -332,24 +340,25 @@ export default function InputForm() {
                   name="designation"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Designation</FormLabel>
+                      <FormLabel className="text-foreground">Designation</FormLabel>
                       <FormControl>
                         <Input
-                          className="justify-left"
+                          className="bg-background text-foreground border-input"
                           placeholder="Enter Designation"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-accent/40">
-            <CardHeader className="text- justify-between space-y-0 pb-2">
-              <CardTitle className=" text-xl font-semibold">
+
+          <Card className="bg-accent/40 border border-border">
+            <CardHeader className="justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold text-foreground">
                 Supplier Address Information
               </CardTitle>
             </CardHeader>
@@ -360,13 +369,17 @@ export default function InputForm() {
                   name="street_address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Street Address <span style={{ color: "red" }}>*</span>
+                      <FormLabel className="text-foreground">
+                        Street Address <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Street Address" {...field} />
+                        <Input
+                          placeholder="Enter Street Address"
+                          {...field}
+                          className="bg-background text-foreground border-input"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -375,11 +388,15 @@ export default function InputForm() {
                   name="area"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Area</FormLabel>
+                      <FormLabel className="text-foreground">Area</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Area" {...field} />
+                        <Input
+                          placeholder="Enter Area"
+                          {...field}
+                          className="bg-background text-foreground border-input"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -389,17 +406,17 @@ export default function InputForm() {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        City <span style={{ color: "red" }}>*</span>
+                      <FormLabel className="text-foreground">
+                        City <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
-                          className="justify-left"
+                          className="bg-background text-foreground border-input"
                           placeholder="Enter City"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -408,13 +425,17 @@ export default function InputForm() {
                   name="state"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        State <span style={{ color: "red" }}>*</span>
+                      <FormLabel className="text-foreground">
+                        State <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter State" {...field} />
+                        <Input
+                          placeholder="Enter State"
+                          {...field}
+                          className="bg-background text-foreground border-input"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -424,8 +445,8 @@ export default function InputForm() {
                   name="pincode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Pincode <span style={{ color: "red" }}>*</span>
+                      <FormLabel className="text-foreground">
+                        Pincode <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -435,9 +456,10 @@ export default function InputForm() {
                           inputMode="numeric"
                           pattern="\d{6}"
                           maxLength={6}
+                          className="bg-background text-foreground border-input"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -447,33 +469,39 @@ export default function InputForm() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Country <span style={{ color: "red" }}>*</span>
+                      <FormLabel className="text-foreground">
+                        Country <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
-                          className="justify-left"
+                          className="bg-background text-foreground border-input"
                           placeholder="Enter Country"
                           {...field}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-destructive" />
                     </FormItem>
                   )}
                 />
               </div>
             </CardContent>
           </Card>
-          {error && <div className="text-red-500">{error}</div>}
+
+          {error && <div className="text-destructive">{error}</div>}
+          
           <div className="flex justify-end space-x-2">
             <Button
               onClick={() => navigate("/suppliers")}
-              className="align-self-center"
+              variant="outline"
+              className="text-foreground hover:text-foreground/80 hover:bg-accent"
               type="button"
             >
               Cancel
             </Button>
-            <Button type="submit" className="align-self-center hover:pointer">
+            <Button 
+              type="submit" 
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
               Submit
             </Button>
           </div>

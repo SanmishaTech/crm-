@@ -137,22 +137,22 @@ export default function TableDemo() {
   });
 
   return (
-    <div className="flex ">
+    <div className="flex">
       <Sidebar className="" />
-      <div className="p-6 w-full  bg-accent/50 ml-4 rounded-lg shadow-lg ">
-        <div className="p-2  ">
-          <div className="flex justify-between items-center ">
-            <h3 className="text-lg  font-semibold mx-auto">Suppliers List</h3>
+      <div className="p-6 w-full bg-background/50 ml-4 rounded-lg shadow-lg">
+        <div className="p-2">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold mx-auto text-foreground">Suppliers List</h3>
           </div>
         </div>
-        <div className="flex justify-between items-center space-x-3 mr-4  ">
+        <div className="flex justify-between items-center space-x-3 mr-4">
           <div className="ml-4 mt-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Filter onClick={toggle} className=" h-5  " />
+                  <Filter onClick={toggle} className="h-5 text-foreground hover:text-foreground/80" />
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="bg-popover text-popover-foreground">
                   <p>Filter</p>
                 </TooltipContent>
               </Tooltip>
@@ -161,6 +161,7 @@ export default function TableDemo() {
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
+                className="bg-background text-foreground border-border"
                 placeholder="Search suppliers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -172,57 +173,62 @@ export default function TableDemo() {
             <Button
               variant="outline"
               onClick={() => navigate("/suppliers/add")}
+              className="text-foreground hover:text-foreground/80 hover:bg-accent"
             >
               Add Supplier
             </Button>
           </div>
         </div>
 
-        <div className="p-4 rounded-md bg-gray-50 ">
-          {/* Table Start */}
+        <div className="p-4 rounded-md bg-card">
           <Table>
-            <TableCaption>A list of your suppliers.</TableCaption>
+            <TableCaption className="text-muted-foreground">A list of your suppliers.</TableCaption>
             <TableHeader>
-              <TableRow>
-                <TableHead onClick={() => handleSort("supplier")}>
+              <TableRow className="hover:bg-accent/50">
+                <TableHead className="text-foreground" onClick={() => handleSort("supplier")}>
                   Suppliers
                 </TableHead>
-                <TableHead onClick={() => handleSort("street_address")}>
+                <TableHead className="text-foreground" onClick={() => handleSort("street_address")}>
                   Street Address
                 </TableHead>
-                <TableHead onClick={() => handleSort("area")}>Area</TableHead>
-                <TableHead onClick={() => handleSort("city")}>City</TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-foreground" onClick={() => handleSort("area")}>
+                  Area
+                </TableHead>
+                <TableHead className="text-foreground" onClick={() => handleSort("city")}>
+                  City
+                </TableHead>
+                <TableHead className="text-right text-foreground">Action</TableHead>
               </TableRow>
             </TableHeader>
-            <TableFooter></TableFooter>
+            <TableFooter className="bg-muted/50">
+            </TableFooter>
             <TableBody>
               {Sup?.data?.Suppliers?.map((supplier) => (
-                <TableRow key={supplier.id}>
-                  <TableCell>{supplier.supplier}</TableCell>
-                  <TableCell>{supplier.street_address}</TableCell>
-                  <TableCell>{supplier.area}</TableCell>
-                  <TableCell>{supplier.city}</TableCell>
+                <TableRow key={supplier.id} className="hover:bg-accent/50">
+                  <TableCell className="text-foreground">{supplier.supplier}</TableCell>
+                  <TableCell className="text-foreground">{supplier.street_address}</TableCell>
+                  <TableCell className="text-foreground">{supplier.area}</TableCell>
+                  <TableCell className="text-foreground">{supplier.city}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0 text-foreground hover:text-foreground/80 hover:bg-accent">
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="center"
-                        className="w-full flex-col items-center flex justify-center"
+                        className="w-full flex-col items-center flex justify-center bg-popover border-border"
                       >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-foreground">Actions</DropdownMenuLabel>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => {
                             navigate(`/suppliers/edit/${supplier.id}`);
                           }}
-                          className="w-full text-sm"
+                          className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
                         >
                           Edit
                         </Button>
@@ -234,12 +240,11 @@ export default function TableDemo() {
               ))}
             </TableBody>
           </Table>
-          {/* Table End */}
-          {/* Pagination Start */}
+
           <Pagination>
             <PaginationContent className="flex items-center space-x-4">
               <PaginationPrevious
-                className={`hover:pointer ${
+                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
                   currentPage === 1
                     ? "cursor-default opacity-50"
                     : "cursor-pointer"
@@ -249,11 +254,11 @@ export default function TableDemo() {
                 Previous
               </PaginationPrevious>
 
-              <span className="text-sm">
+              <span className="text-sm text-foreground">
                 Page {currentPage} of {totalPages}
               </span>
               <PaginationNext
-                className={`hover:pointer ${
+                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
                   currentPage === totalPages
                     ? "cursor-default opacity-50"
                     : "cursor-pointer"
@@ -265,7 +270,6 @@ export default function TableDemo() {
               </PaginationNext>
             </PaginationContent>
           </Pagination>
-          {/* Pagination End */}
         </div>
       </div>
     </div>
