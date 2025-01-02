@@ -149,7 +149,7 @@ const AddContacts = ({ fetchContacts }) => {
         <DialogTrigger asChild>
           <Button
             variant="ghost"
-            className="h-12 bg-accent/80 text-black"
+            className="h-12 bg-gray-300 text-black" 
             onClick={handleDialogOpen}
           >
             Add Contacts
@@ -157,7 +157,7 @@ const AddContacts = ({ fetchContacts }) => {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] ">
           <DialogHeader>
-            <DialogTitle className="text-center  mb-4">
+            <DialogTitle className="text-center   mb-4">
               Add Contacts
             </DialogTitle>
           </DialogHeader>

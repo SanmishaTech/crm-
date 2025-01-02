@@ -169,7 +169,7 @@ export default function EditClientPage() {
   };
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+    <div className=" mx-auto p-6 ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -185,7 +185,7 @@ export default function EditClientPage() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Client Form</h2>
-            <p className="text-xs mb-9">Edit/Update clients to the database.</p>
+            <p className="text-xs mb-9">Edit/Update clients.</p>
           </div>
         </div>
       </div>

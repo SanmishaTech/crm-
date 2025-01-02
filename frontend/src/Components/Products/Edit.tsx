@@ -244,7 +244,7 @@ export default function EditProductPage() {
   };
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg  ">
+    <div className=" mx-auto p-6  ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -260,7 +260,7 @@ export default function EditProductPage() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Products Form</h2>
-            <p className="text-xs mb-9">Add a new product </p>
+            <p className="text-xs mb-9">Edit/Update the product </p>
           </div>
         </div>
       </div>

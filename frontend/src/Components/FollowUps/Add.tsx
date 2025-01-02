@@ -115,13 +115,14 @@ export default function InputForm() {
           </TabsList>
         </div>
 
-        <TabsContent value="followUp">
+        <TabsContent
+          className="bg-accent/60 p-4 rounded-lg shadow-lg"
+          value="followUp"
+        >
           <h2 className="text-2xl font-semibold   text-center">
             Follow Up Form
           </h2>
-          <p className="text-center text-xs mb-9">
-            Add a Follow Up to the database.
-          </p>
+          <p className="text-center text-xs mb-9">Add a Follow Up.</p>
           {/* Form Fields */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

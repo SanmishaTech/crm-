@@ -270,7 +270,9 @@ export default function InputForm() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Lead Form</h2>
-            <p className="text-xs mb-9">Add a new lead.</p>
+            <p className="text-xs mb-9 text-muted-foreground">
+              Add a new lead.
+            </p>
           </div>
         </div>
       </div>

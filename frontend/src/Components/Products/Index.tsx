@@ -175,96 +175,97 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="p-6  mx-auto  rounded-lg shadow-lg">
-      <div className="flex justify-between items-center p-2 space-x-2">
-        <h3 className="text-lg font-semibold">Products List</h3>
-      </div>
-      <div className="flex justify-between items-center space-x-2 w-full">
-        {/* Search Bar Starts */}
-        <div className="flex-1 space-x-2">
-          <Input
-            placeholder="Search products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="flex h-full">
+      <div className="p-6 w-full  bg-accent/60 ml-4 rounded-lg shadow-lg ">
+        <div className="p-2  ">
+          <div className="flex justify-between items-center ">
+            <h3 className="text-lg  font-semibold mx-auto">Products List</h3>
+          </div>
         </div>
-        {/* Search Bar Ends */}
-        <div className="flex space-x-2">
-          {/* Add(Page) Starts */}
-          <Button variant="outline" onClick={() => navigate("/products/add")}>
-            Add Products
-          </Button>
-          {/* Add(Page) Ends */}
-        </div>
-      </div>
+        <div className="flex justify-between items-center space-x-2 py-1 w-full">
+          <div className="flex-1  space-x-2">
+            <Input
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
-      <div className="panel p-4 rounded-md bg-gray-50">
-        {/* Table Start */}
-        <Table>
-          <TableCaption>A list of your products.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead onClick={() => handleSort("product")}>
-                Product
-              </TableHead>
-              <TableHead onClick={() => handleSort("model")}>Model</TableHead>
-              <TableHead onClick={() => handleSort("Manufacturer")}>
-                Manufacturer
-              </TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableFooter></TableFooter>
-          <TableBody>
-            {sortedProducts.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.product}</TableCell>
-                <TableCell>{product.model}</TableCell>
-                <TableCell>{product.manufacturer}</TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="center"
-                      className="w-full flex-col items-center flex justify-center"
-                    >
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          navigate(`/products/edit/${product.id}`);
-                        }}
-                        className="w-full text-sm"
-                      >
-                        Edit
-                      </Button>
-                      {/* <DropdownMenuSeparator /> */}
-                      <AlertDialogbox
-                        fetchProducts={fetchProducts}
-                        url={product.id}
-                      />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={() => navigate("/products/add")}>
+              Add Products
+            </Button>
+          </div>
+        </div>
+
+        <div className="panel p-4 rounded-md bg-card">
+          {/* Table Start */}
+          <Table>
+            <TableCaption>A list of your products.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead onClick={() => handleSort("product")}>
+                  Product
+                </TableHead>
+                <TableHead onClick={() => handleSort("model")}>Model</TableHead>
+                <TableHead onClick={() => handleSort("Manufacturer")}>
+                  Manufacturer
+                </TableHead>
+                <TableHead className="text-right">Action</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {/* Table End */}
-        {/* Pagination Start */}
-        {/* Pagination Start */}
-        <PaginationComponent
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          pagination={pagination}
-        />
-        {/* Pagination End */}
+            </TableHeader>
+            <TableFooter></TableFooter>
+            <TableBody>
+              {sortedProducts.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell>{product.product}</TableCell>
+                  <TableCell>{product.model}</TableCell>
+                  <TableCell>{product.manufacturer}</TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="center"
+                        className="w-full flex-col items-center flex justify-center"
+                      >
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            navigate(`/products/edit/${product.id}`);
+                          }}
+                          className="w-full text-sm"
+                        >
+                          Edit
+                        </Button>
+                        {/* <DropdownMenuSeparator /> */}
+                        <AlertDialogbox
+                          fetchProducts={fetchProducts}
+                          url={product.id}
+                        />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          {/* Table End */}
+          {/* Pagination Start */}
+          {/* Pagination Start */}
+          <PaginationComponent
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            pagination={pagination}
+          />
+          {/* Pagination End */}
+        </div>
       </div>
     </div>
   );

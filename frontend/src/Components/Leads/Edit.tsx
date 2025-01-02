@@ -320,7 +320,7 @@ export default function EditLeadPage() {
   const contactsArray = Array.isArray(contacts) ? contacts : [];
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg  ">
+    <div className=" mx-auto p-6 ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -336,6 +336,9 @@ export default function EditLeadPage() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Lead Edit Form</h2>
+            <p className="text-xs mb-9 text-muted-foreground">
+              Edit lead details.
+            </p>
           </div>
         </div>
       </div>
@@ -413,7 +416,7 @@ export default function EditLeadPage() {
                           </Command>
                         </PopoverContent>
                       </Popover>
-                      <div class=" relative top-[10px] max-w-xs bg-white rounded-lg shadow-lg p-3 transform transition duration-300 hover:scale-105  hover:shadow-2xl hover:translate-z-10">
+                      <div class=" relative top-[10px] max-w-xs bg-gray-300 rounded-lg shadow-lg p-3 transform transition duration-300 hover:scale-105  hover:shadow-2xl hover:translate-z-10">
                         <p class="text-gray-700">
                           <strong class="text-black-500">Client Name:</strong>{" "}
                           {leads}

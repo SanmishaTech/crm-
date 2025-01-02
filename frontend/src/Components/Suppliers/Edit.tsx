@@ -233,7 +233,7 @@ export default function EditSupplierPage() {
             <h2 className="text-2xl font-semibold text-foreground">
               Supplier Edit Form
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs mb-9 text-muted-foreground">
               Edit supplier details.
             </p>
           </div>

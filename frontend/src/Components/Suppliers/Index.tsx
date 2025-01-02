@@ -92,7 +92,7 @@ export default function TableDemo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();  
+  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
   // Pagination functions
   const [pagination, setPagination] = useState<PaginationData | null>(null);
@@ -139,18 +139,23 @@ export default function TableDemo() {
   return (
     <div className="flex">
       <Sidebar className="" />
-      <div className="p-6 w-full bg-background/50 ml-4 rounded-lg shadow-lg">
+      <div className="p-6 w-full bg-accent/60 ml-4 rounded-lg shadow-lg">
         <div className="p-2">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold mx-auto text-foreground">Suppliers List</h3>
+            <h3 className="text-lg font-semibold mx-auto text-foreground">
+              Suppliers List
+            </h3>
           </div>
         </div>
-        <div className="flex justify-between items-center space-x-3 mr-4">
+        <div className="flex justify-between items-center py-1 space-x-3 mr-4">
           <div className="ml-4 mt-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Filter onClick={toggle} className="h-5 text-foreground hover:text-foreground/80" />
+                  <Filter
+                    onClick={toggle}
+                    className="h-5 text-foreground hover:text-foreground/80"
+                  />
                 </TooltipTrigger>
                 <TooltipContent className="bg-popover text-popover-foreground">
                   <p>Filter</p>
@@ -182,37 +187,63 @@ export default function TableDemo() {
 
         <div className="p-4 rounded-md bg-card">
           <Table>
-            <TableCaption className="text-muted-foreground">A list of your suppliers.</TableCaption>
+            <TableCaption className="text-muted-foreground">
+              A list of your suppliers.
+            </TableCaption>
             <TableHeader>
               <TableRow className="hover:bg-accent/50">
-                <TableHead className="text-foreground" onClick={() => handleSort("supplier")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("supplier")}
+                >
                   Suppliers
                 </TableHead>
-                <TableHead className="text-foreground" onClick={() => handleSort("street_address")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("street_address")}
+                >
                   Street Address
                 </TableHead>
-                <TableHead className="text-foreground" onClick={() => handleSort("area")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("area")}
+                >
                   Area
                 </TableHead>
-                <TableHead className="text-foreground" onClick={() => handleSort("city")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("city")}
+                >
                   City
                 </TableHead>
-                <TableHead className="text-right text-foreground">Action</TableHead>
+                <TableHead className="text-right text-foreground">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
-            <TableFooter className="bg-muted/50">
-            </TableFooter>
+            <TableFooter className="bg-muted/50"></TableFooter>
             <TableBody>
               {Sup?.data?.Suppliers?.map((supplier) => (
                 <TableRow key={supplier.id} className="hover:bg-accent/50">
-                  <TableCell className="text-foreground">{supplier.supplier}</TableCell>
-                  <TableCell className="text-foreground">{supplier.street_address}</TableCell>
-                  <TableCell className="text-foreground">{supplier.area}</TableCell>
-                  <TableCell className="text-foreground">{supplier.city}</TableCell>
+                  <TableCell className="text-foreground">
+                    {supplier.supplier}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {supplier.street_address}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {supplier.area}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {supplier.city}
+                  </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0 text-foreground hover:text-foreground/80 hover:bg-accent">
+                        <Button
+                          variant="ghost"
+                          className="h-8 w-8 p-0 text-foreground hover:text-foreground/80 hover:bg-accent"
+                        >
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
@@ -221,7 +252,9 @@ export default function TableDemo() {
                         align="center"
                         className="w-full flex-col items-center flex justify-center bg-popover border-border"
                       >
-                        <DropdownMenuLabel className="text-foreground">Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel className="hover:cursor-default text-foreground">
+                          Actions
+                        </DropdownMenuLabel>
                         <Button
                           variant="ghost"
                           size="sm"

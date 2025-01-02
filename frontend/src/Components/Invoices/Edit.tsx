@@ -132,7 +132,7 @@ export default function EditSupplierPage() {
   }
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg  mt-12">
+    <div className=" mx-auto p-6  shadow-lg  mt-12">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -170,7 +170,10 @@ export default function EditSupplierPage() {
                     <FormItem>
                       <FormLabel>Dispatch Details</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter dispatch details" {...field} />
+                        <Input
+                          placeholder="Enter dispatch details"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -179,8 +182,6 @@ export default function EditSupplierPage() {
               </div>
             </CardContent>
           </Card>
-         
-         
           {error && <div className="text-red-500">{error}</div>}{" "}
           <div className="flex justify-end space-x-2">
             <Button
