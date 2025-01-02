@@ -261,7 +261,7 @@ export default function TableDemo() {
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
-                placeholder="Search suppliers..."
+                placeholder="Search Leads..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -418,6 +418,9 @@ export default function TableDemo() {
                                         size="sm"
                                         onClick={() => {
                                           handleGenerateInvoice(lead.id);
+                                          queryClient.invalidateQueries(
+                                            "invoices"
+                                          );
                                         }}
                                         className="w-full text-sm"
                                       >
