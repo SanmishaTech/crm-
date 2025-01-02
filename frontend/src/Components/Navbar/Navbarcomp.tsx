@@ -14,6 +14,7 @@ import {
   LogOut,
   CircleUserRound,
   ChevronDown,
+  UserRound,
   Sun,
   Moon,
 } from "lucide-react";
@@ -126,12 +127,13 @@ const Navbar = () => {
                       aria-hidden="true"
                     />
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="flex flex-col items-center justify-center bg-popover border rounded-md shadow-md">
+                  <NavigationMenuContent className="w-[] flex flex-col items-center justify-center bg-popover border rounded-md shadow-md">
                     <Button
-                      className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+                      className=" flex justify-between w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent py-3"
                       variant="ghost"
                       onClick={() => navigate("/clients")}
                     >
+                      <UserRound className="h-4 w-4" />
                       Clients
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
@@ -140,6 +142,7 @@ const Navbar = () => {
                       className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
                       onClick={() => navigate("/contacts")}
                     >
+                      <UserRound className="h-4 w-4" />
                       Contacts
                     </Button>
                   </NavigationMenuContent>
@@ -314,7 +317,7 @@ const Navbar = () => {
             </TooltipProvider>
           </div>
 
-          {/* <div className="relative flex items-center">
+          <div className="relative flex items-center">
             <button
               onClick={handleThemeToggle}
               className={cn(
@@ -322,17 +325,19 @@ const Navbar = () => {
                 theme === "light" ? "bg-slate-200" : "bg-slate-700"
               )}
             >
-              <span className={cn(
-                "absolute text-[10px] top-1.5 font-medium",
-                theme === "light" ? "right-1.5" : "left-1.5"
-              )}>
+              <span
+                className={cn(
+                  "absolute text-[10px] top-1.5 font-medium",
+                  theme === "light" ? "right-1.5" : "left-1.5"
+                )}
+              >
                 {theme === "light" ? "Light" : "Dark"}
               </span>
               <div
                 className={cn(
                   "flex items-center justify-center w-6 h-6 rounded-full transition-transform duration-200 transform",
-                  theme === "light" 
-                    ? "translate-x-0 bg-white" 
+                  theme === "light"
+                    ? "translate-x-0 bg-white"
                     : "translate-x-7 bg-slate-900"
                 )}
               >
@@ -343,7 +348,7 @@ const Navbar = () => {
                 )}
               </div>
             </button>
-          </div> */}
+          </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
