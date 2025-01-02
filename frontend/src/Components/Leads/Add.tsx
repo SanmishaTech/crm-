@@ -143,15 +143,6 @@ export default function InputForm() {
         queryClient.invalidateQueries({ queryKey: ["leads"] });
         navigate("/leads");
       },
-      onError: (error) => {
-        console.log("error", error);
-
-        if (error.message && error.message.includes("duplicate lead")) {
-          toast.error("Lead name is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to submit the form. Please try again.");
-        }
-      },
     },
   });
 

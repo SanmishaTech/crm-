@@ -114,15 +114,7 @@ export default function InputForm() {
         console.log("data", data);
         navigate("/contacts");
       },
-      onError: (error) => {
-        console.log("error", error);
-
-        if (error.message && error.message.includes("duplicate contacts")) {
-          toast.error("Contact name is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to submit the form. Please try again.");
-        }
-      },
+     
     },
   });
 
@@ -131,7 +123,7 @@ export default function InputForm() {
     params: {
       queryKey: ["clients"],
       retry: 1,
-      onSuccess: (data) => {
+      onSuccess: (data) => {  
         queryClient.invalidateQueries({ queryKey: ["clients"] });
         setClients(data.data.Client);
         setLoading(false);
