@@ -106,6 +106,7 @@ export default function EditLeadPage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [leads, setLeads] = useState<any>([]);
 
   const [contacts, setContacts] = useState<any[]>([]);
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
@@ -182,10 +183,11 @@ export default function EditLeadPage() {
       retry: 1,
       onSuccess: (data) => {
         setData(data?.Lead);
-        console.log(data.data.Lead);
-
+        setLeads(data.data.Lead?.contact?.client?.client);
         setContacts(data?.data?.Lead?.contact_id);
         setLoading(false);
+        queryClient.invalidateQueries({ queryKey: ["editlead"] });
+        queryClient.invalidateQueries({ queryKey: ["editlead", id] });
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate lead")) {
@@ -263,7 +265,7 @@ export default function EditLeadPage() {
         rate: row.rate,
       })),
     };
- 
+
     const Formdata = new FormData();
 
     function appendFormData(submissionData, file) {
@@ -315,6 +317,7 @@ export default function EditLeadPage() {
           </div>
         </div>
       </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Fields First Row */}
@@ -386,6 +389,12 @@ export default function EditLeadPage() {
                           </Command>
                         </PopoverContent>
                       </Popover>
+                      <div class="max-w-xs bg-white rounded-lg shadow-lg p-3 transform transition duration-300 hover:scale-105  hover:shadow-2xl hover:translate-z-10">
+                        <p class="text-gray-700">
+                          <strong class="text-black-500">Client Name:</strong>{" "}
+                          {leads}
+                        </p>
+                      </div>
 
                       <FormMessage />
                     </FormItem>
@@ -399,11 +408,28 @@ export default function EditLeadPage() {
                     <FormItem>
                       <FormLabel>Lead Source</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter Lead Source"
-                          {...field}
-                          value={field.value || ""}
-                        />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Lead Source" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
+                            <SelectItem value="advertisement">
+                              Advertisement
+                            </SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="facebook">Facebook</SelectItem>
+                            <SelectItem value="google">Google</SelectItem>
+                            <SelectItem value="linkedin">LinkedIn</SelectItem>
+                            <SelectItem value="coldCall">Cold Call</SelectItem>
+                            <SelectItem value="referral">Referral</SelectItem>
+                            <SelectItem value="search">Search</SelectItem>
+                            <SelectItem value="social">Social</SelectItem>
+                            <SelectItem value="seminar">Seminar</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -848,6 +874,7 @@ export default function EditLeadPage() {
                       </TableCell>
                       <TableCell className="flex justify-end">
                         <Button
+                          type="button"
                           variant="ghost"
                           onClick={() => {
                             const newRows = productRows.filter(
