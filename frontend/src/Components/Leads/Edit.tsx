@@ -117,7 +117,7 @@ export default function EditLeadPage() {
   const addRow = () => {
     setProductRows([
       ...productRows,
-      { product_id: "", quantity: "", rate: "" },
+      { product_id: "", quantity: "", rate: null },
     ]);
   };
 
@@ -203,7 +203,7 @@ export default function EditLeadPage() {
       const products = editData.data.Lead.products.map((product: any) => ({
         product_id: product.product_id.toString(),
         quantity: product.quantity || "",
-        rate: product.rate,
+        rate: product.rate || null,
         isOpen: false,
       }));
       setProductRows(products);
@@ -226,7 +226,7 @@ export default function EditLeadPage() {
         emd: newData?.emd || "",
         tender_status: newData?.tender_status || "",
         quantity: newData?.quantity || "",
-        rate: newData?.rate || "",
+        rate: newData?.rate || null,
         product_id: newData?.product_id || "",
       });
     }
@@ -263,7 +263,7 @@ export default function EditLeadPage() {
         rate: row.rate,
       })),
     };
- 
+
     const Formdata = new FormData();
 
     function appendFormData(submissionData, file) {
@@ -435,13 +435,47 @@ export default function EditLeadPage() {
                             <SelectValue placeholder="Select Lead Status" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Open">Open</SelectItem>
-                            <SelectItem value="In Progress">
-                              In Progress
-                            </SelectItem>
-                            <SelectItem value="Quotation">Quotation</SelectItem>
-                            <SelectItem value="Close">Close</SelectItem>
-                            <SelectItem value="Deal">Deal</SelectItem>
+                            {editData?.data?.Lead?.lead_status === "Open" ? (
+                              <>
+                                <SelectItem value="Open">Open</SelectItem>
+                                <SelectItem value="In Progress">
+                                  In Progress
+                                </SelectItem>
+                              </>
+                            ) : editData?.data?.Lead?.lead_status ===
+                              "In Progress" ? (
+                              <>
+                                <SelectItem value="In Progress">
+                                  In Progress
+                                </SelectItem>
+                                <SelectItem value="Quotation">
+                                  Quotation
+                                </SelectItem>
+                                <SelectItem value="Close">Close</SelectItem>
+                              </>
+                            ) : editData?.data?.Lead?.lead_status ===
+                              "Quotation" ? (
+                              <>
+                                <SelectItem value="Quotation">
+                                  Quotation
+                                </SelectItem>
+                                <SelectItem value="Close">Close</SelectItem>
+                                <SelectItem value="Deal">Deal</SelectItem>
+                              </>
+                            ) : editData?.data?.Lead?.lead_status === "Deal" ? (
+                              <>
+                                <SelectItem value="Close">Close</SelectItem>
+                                <SelectItem value="Deal">Deal</SelectItem>
+                              </>
+                            ) : editData?.data?.Lead?.lead_status ===
+                              "Close" ? (
+                              <>
+                                <SelectItem value="Close">Close</SelectItem>
+                                <SelectItem value="Open">Open</SelectItem>
+                              </>
+                            ) : (
+                              <></> // Ensure there's no empty return when no condition is met
+                            )}
                           </SelectContent>
                         </Select>
                       </FormControl>

@@ -413,19 +413,22 @@ export default function TableDemo() {
                                       >
                                         Edit
                                       </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => {
-                                          handleGenerateInvoice(lead.id);
-                                          queryClient.invalidateQueries(
-                                            "invoices"
-                                          );
-                                        }}
-                                        className="w-full text-sm"
-                                      >
-                                        Deal
-                                      </Button>
+                                      {lead.lead_status === "Deal" && (
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => {
+                                            handleGenerateInvoice(lead.id);
+                                            queryClient.invalidateQueries(
+                                              "invoices"
+                                            );
+                                          }}
+                                          className="w-full text-sm"
+                                        >
+                                          Deal
+                                        </Button>
+                                      )}
+
                                       <AlertDialogbox url={lead.id} />
 
                                       <Button
@@ -440,16 +443,19 @@ export default function TableDemo() {
                                       >
                                         Follow Up
                                       </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="w-full text-sm"
-                                        onClick={() => {
-                                          handleGenerateQuotation(lead.id);
-                                        }}
-                                      >
-                                        Quotation
-                                      </Button>
+                                      {(lead.lead_status === "Quotation" ||
+                                        lead.lead_status === "Deal") && (
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="w-full text-sm"
+                                          onClick={() => {
+                                            handleGenerateQuotation(lead.id);
+                                          }}
+                                        >
+                                          Quotation
+                                        </Button>
+                                      )}
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 </TableCell>

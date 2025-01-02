@@ -20,8 +20,8 @@ return new class extends Migration
             $table->integer("hsn_code")->nullable();
             $table->string("model")->nullable();
             $table->string("manufacturer")->nullable();
-            $table->integer("opening_qty")->nullable();
-            $table->integer("closing_qty")->nullable();
+            $table->decimal("opening_qty",10,2)->nullable();
+            $table->decimal("closing_qty",10,2)->nullable();
             $table->decimal("last_traded_price", 10,2)->nullable();
             $table->timestamps();
         });

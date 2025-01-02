@@ -245,9 +245,7 @@ export default function InputForm() {
   const onSubmit = async (data: FormValues) => {
     const payload = {
       ...data,
-      products: productRows.filter(
-        (row) => row.product_id && row.quantity && row.rate
-      ), // Only send rows with all values
+      products: productRows.filter((row) => row.product_id && row.quantity), // Only send rows with all values
     };
 
     formData.mutate(payload);

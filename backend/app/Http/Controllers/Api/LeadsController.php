@@ -359,19 +359,29 @@ class LeadsController extends BaseController
     public function generateQuotation(string $id)
     {
         $leadStatus = config('data.lead_status.Quotation');
+        
         // $leads = Lead::with('leadProducts.product')->find($id);
         $leads = Lead::with(['leadProducts.product','contact.client','leadInvoice.invoiceDetails.product'])->find($id);
+        
         if(!$leads){
             return $this->sendError("Lead not found", ['error'=>['Lead not found']]);
         }
 
+        if($leadStatus !== $leads->lead_status)
+        {
+            return $this->sendError("Lead Status is not set to Quotation", ['error'=>['Lead Status is not set to Quotation']]);
+        }
         if ($leads->leadProducts->isEmpty()) {
-            return $this->sendError("Products not found", ['error'=>['Products not found to generate an invoice']]);
+            return $this->sendError("Products not found", ['error'=>['Products not found to generate Quotation']]);
 
         }
         
+        if($leads->total_amount_with_gst==0){
+            return $this->sendError("Add the rates of Products", ['error'=>['Add the rates of Products']]);
+        }
+        
         if (!$leads->contact || !$leads->contact->client ) {
-            return $this->sendError("Client not found", ['error'=>['Client not found to generate an invoice']]);
+            return $this->sendError("Client not found", ['error'=>['Client not found to generate an Quotation']]);
 
         }
         if(!empty($leads->lead_quotation) && Storage::exists('public/Lead/generated_quotations/'.$leads->lead_quotation)) {
@@ -427,10 +437,21 @@ class LeadsController extends BaseController
 
     public function generateInvoice(string $id)
     {
+        $leadStatus = config('data.lead_status.Deal');
+
         $leads = Lead::with(['leadProducts.product','contact.client','leadInvoice.invoiceDetails.product'])->find($id);
         if(!$leads){
             return $this->sendError("Lead not found", ['error'=>['Lead not found']]);
         }
+        
+         if($leadStatus !== $leads->lead_status)
+        {
+            return $this->sendError("Lead Status is not set to Deal", ['error'=>['Lead Status is not set to Deal']]);
+        }
+        if($leads->total_amount_with_gst==0){
+            return $this->sendError("Add the rates of Products", ['error'=>['Add the rates of Products']]);
+        }
+
 
         if ($leads->leadProducts->isEmpty()) {
             return $this->sendError("Products not found", ['error'=>['Products not found to generate an invoice']]);
@@ -466,7 +487,7 @@ class LeadsController extends BaseController
              $invoice->amount = $leads->total_amount_with_gst;
              $invoice->save(); 
         }
-          $leads->load('leadInvoice');  //soles the issue of invoice number displaying
+          $leads->load('leadInvoice');  //solves the issue of invoice number displaying
             
       
 

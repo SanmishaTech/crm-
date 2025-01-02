@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_id'); 
             $table->unsignedBigInteger('contact_id');
             $table->unsignedBigInteger('invoice_id')->nullable();
-            $table->unsignedBigInteger("lead_number")->nullable(); 
+            $table->string("lead_number",20)->nullable(); 
             $table->string("lead_owner",100)->nullable(); 
             $table->string("lead_status",100)->default("Open"); 
             $table->date("lead_follow_up_date")->nullable();
@@ -40,7 +40,7 @@ return new class extends Migration
             $table->decimal("total_amount_with_gst",10,2)->nullable(); 
             //
             $table->date("quotation_date")->nullable();
-            $table->string("quotation_number")->nullable(); 
+            $table->string("quotation_number",20)->nullable(); 
             $table->unsignedBigInteger("quotation_version")->default(0); 
 
 

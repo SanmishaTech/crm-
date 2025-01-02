@@ -203,7 +203,7 @@ export default function TableDemo() {
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
-                placeholder="Search suppliers..."
+                placeholder="Search clients..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
