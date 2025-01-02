@@ -59,9 +59,11 @@ const formSchema = z.object({
     .min(6, { message: "Password field must have at least 6 characters." }),
   mobile: z.coerce.number().min(10, { message: "mobile field is required." }),
   joining_date: z.string().optional(),
+  // resignation_date: z.string().optional(),
   designation: z
     .string()
     .min(2, "Designation field must have at least 2 characters"),
+  active: z.coerce.number().optional(),
 });
 
 // Move FormValues type definition outside the component
@@ -109,8 +111,10 @@ export default function EditEmployeePage() {
       mobile: null,
       department_id: "",
       joining_date: "",
+      // resignation_date: "",
       designation: "",
       password: "",
+      active: null,
     },
   });
 
@@ -187,6 +191,7 @@ export default function EditEmployeePage() {
     if (editData?.data.Employee) {
       const newData = editData.data.Employee;
       const password = editData.data.User.password;
+      const activee = editData.data.User.active;
       console.log("newData", newData);
       form.reset({
         employee_name: newData.employee_name || "",
@@ -194,8 +199,10 @@ export default function EditEmployeePage() {
         mobile: newData.mobile || "",
         designation: newData.designation || "",
         joining_date: newData.joining_date || "",
+        // resignation_date: newData.resignation_date || "",
         department_id: newData.department_id || "",
         password: password || "",
+        active: activee,
       });
     }
   }, [editData, form]);
@@ -360,6 +367,53 @@ export default function EditEmployeePage() {
                     </FormItem>
                   )}
                 />
+              </div>
+
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                <FormField
+                  control={form.control}
+                  name="active"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="">
+                            <SelectValue placeholder="Select Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value={String(1)}>Active</SelectItem>
+                            <SelectItem value={String(0)}>Inactive</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* <FormField
+                  control={form.control}
+                  name="resignation_date"
+                  render={({ field }) => {
+                    const formattedDate = field.value
+                      ? field.value.split("T")[0]
+                      : "";
+
+                    return (
+                      <FormItem>
+                        <FormLabel>Resignation Date</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} value={formattedDate} />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                /> */}
               </div>
             </CardContent>
           </Card>

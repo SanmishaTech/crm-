@@ -132,7 +132,7 @@ export default function EditSupplierPage() {
   }
 
   return (
-    <div className=" mx-auto p-6  shadow-lg  mt-12">
+    <div className=" mx-auto p-6  mt-12">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button

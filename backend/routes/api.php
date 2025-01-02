@@ -30,7 +30,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/follow_ups/{id}', [FollowUpsController::class, 'show'])->name("follow_ups.show");
    Route::get('/follow_ups', [FollowUpsController::class, 'index'])->name("follow_ups.index");
 
-   Route::post('/employees/resignation/{id}', [EmployeesController::class, 'resignation'])->name("employee.resignation");
+   Route::put('/employee_resignation/{id}', [EmployeesController::class, 'resignation'])->name("employee.resignation");
    Route::resource('products', ProductsController::class);  
    Route::resource('product_categories', ProductCategoriesController::class);  
    Route::get('/logout', [UserController::class, 'logout'])->name('user.logout');

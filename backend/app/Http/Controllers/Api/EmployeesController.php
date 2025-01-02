@@ -121,7 +121,7 @@ class EmployeesController extends BaseController
         $user = User::find($employee->user_id);
         $user->name = $request->input('employee_name');
         $user->email = $request->input('email');
-        // $user->active = $request->input('active');
+        $user->active = $request->input('active');
         $user->password = Hash::make($request->input('password'));
         $user->save();
 

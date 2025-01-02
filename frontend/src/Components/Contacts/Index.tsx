@@ -155,7 +155,7 @@ export default function TableDemo() {
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
-                placeholder="Search Contacts..."
+                placeholder="Search contacts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -172,7 +172,7 @@ export default function TableDemo() {
         <div className="panel p-4 rounded-md bg-card">
           {/* Table Start */}
           <Table>
-            <TableCaption>A list of your recent contacts.</TableCaption>
+            <TableCaption>A list of your contacts.</TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Contact person</TableHead>

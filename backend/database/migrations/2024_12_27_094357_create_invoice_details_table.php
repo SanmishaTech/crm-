@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('invoice_id');
             $table->unsignedBigInteger('product_id')->nullable();
-            $table->integer('quantity')->nullable();
+            $table->decimal('quantity',10,2)->nullable();
             $table->decimal('rate',10,2)->nullable();
             $table->integer('gst_rate')->nullable();
             $table->decimal('gst_amount',10,2)->nullable();
-            $table->integer('total_taxable_amount')->nullable();
+            $table->decimal('total_taxable_amount',10,2)->nullable();
             $table->timestamps();
         });
     }

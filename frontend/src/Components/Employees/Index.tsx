@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { X } from "lucide-react"; // Import the close icon
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Badge } from "@/components/ui/badge";
+
 import { toast } from "sonner";
 import Sidebar, { useSidebar } from "./Sidebar";
 import {
@@ -53,6 +55,7 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useGetData } from "@/lib/HTTP/GET";
 import AlertDialogbox from "./Delete";
+import Resign from "./Resign";
 
 // Employee type
 type Employee = {
@@ -170,6 +173,9 @@ export default function TableDemo() {
                 <TableHead onClick={() => handleSort("mobile")}>
                   Contact Number
                 </TableHead>
+                <TableHead onClick={() => handleSort("mobile")}>
+                  Status
+                </TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -186,6 +192,17 @@ export default function TableDemo() {
                   </TableCell>
                   <TableCell>{employee.email}</TableCell>
                   <TableCell>{employee.mobile || "N/A"}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="outline"
+                      className={` p-1 rounded text-white
+                        ${employee.user.active ? "bg-green-500" : "bg-red-500"}
+                      `}
+                    >
+                      {employee.user.active ? "active" : "inactive"}
+                    </Badge>
+                  </TableCell>
+
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -209,6 +226,7 @@ export default function TableDemo() {
                         >
                           Edit
                         </Button>
+                        <Resign id={employee.id} />
                         {/* <AlertDialogbox url={employee.id} /> */}
                       </DropdownMenuContent>
                     </DropdownMenu>
