@@ -75,7 +75,7 @@ import {
 
 // Form Schema
 const FormSchema = z.object({
-  contact_id: z.string().optional(),
+  contact_id: z.any().optional(),
   lead_source: z.string().optional(),
   lead_status: z.string().optional(),
   lead_type: z.string().optional(),
@@ -298,7 +298,7 @@ export default function InputForm() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[350px] justify-between",
+                                "w-[350px] justify-between mt-3",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -362,9 +362,7 @@ export default function InputForm() {
                           </Command>
                         </PopoverContent>
                       </Popover>
-                      <FormDescription>
-                        Select the contact to associate with this item.
-                      </FormDescription>
+
                       <FormMessage />
                     </FormItem>
                   )}

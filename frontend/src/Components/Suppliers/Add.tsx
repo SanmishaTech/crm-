@@ -153,8 +153,12 @@ export default function InputForm() {
         </div>
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
-            <h2 className="text-2xl font-semibold text-foreground">Supplier Form</h2>
-            <p className="text-sm text-muted-foreground mb-9">Add a new supplier.</p>
+            <h2 className="text-2xl font-semibold text-foreground">
+              Supplier Form
+            </h2>
+            <p className="text-sm text-muted-foreground mb-9">
+              Add a new supplier.
+            </p>
           </div>
         </div>
       </div>
@@ -177,10 +181,10 @@ export default function InputForm() {
                       Supplier <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Enter Supplier Name" 
+                      <Input
+                        placeholder="Enter Supplier Name"
                         {...field}
-                        className="bg-background text-foreground border-input" 
+                        className="bg-background text-foreground border-input"
                       />
                     </FormControl>
                     <FormMessage className="text-destructive" />
@@ -299,7 +303,9 @@ export default function InputForm() {
                   name="mobile_2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Secondary Mobile Number</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Secondary Mobile Number
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -322,7 +328,9 @@ export default function InputForm() {
                   name="department"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Department</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Department
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="bg-background text-foreground border-input"
@@ -340,7 +348,9 @@ export default function InputForm() {
                   name="designation"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Designation</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Designation
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="bg-background text-foreground border-input"
@@ -370,7 +380,8 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Street Address <span className="text-destructive">*</span>
+                        Street Address{" "}
+                        <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -488,7 +499,7 @@ export default function InputForm() {
           </Card>
 
           {error && <div className="text-destructive">{error}</div>}
-          
+
           <div className="flex justify-end space-x-2">
             <Button
               onClick={() => navigate("/suppliers")}
@@ -498,8 +509,9 @@ export default function InputForm() {
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
+              varient="outline"
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               Submit

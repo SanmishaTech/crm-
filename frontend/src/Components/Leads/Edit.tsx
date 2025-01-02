@@ -263,8 +263,7 @@ export default function EditLeadPage() {
         rate: row.rate,
       })),
     };
-    // console.log(submissionData);
-
+ 
     const Formdata = new FormData();
 
     function appendFormData(submissionData, file) {
@@ -289,22 +288,15 @@ export default function EditLeadPage() {
 
     const formData = appendFormData(submissionData, file);
 
-    // window.location.reload();
     fetchData.mutate(formData);
     queryClient.invalidateQueries({ queryKey: ["supplier"] });
     queryClient.invalidateQueries({ queryKey: ["supplier", id] });
   };
 
-  const languages = [
-    { label: "English", value: "en" },
-    { label: "French", value: "fr" },
-    { label: "German", value: "de" },
-  ] as const;
-
   const contactsArray = Array.isArray(contacts) ? contacts : [];
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-12">
+    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg  ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -360,7 +352,7 @@ export default function EditLeadPage() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[350px] h-[260px] p-0">
+                        <PopoverContent className="w-[350px] max-h-[260px] overflow-y-auto p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."
