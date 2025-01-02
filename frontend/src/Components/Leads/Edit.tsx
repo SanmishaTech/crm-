@@ -106,6 +106,7 @@ export default function EditLeadPage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [leads, setLeads] = useState<any>([]);
 
   const [contacts, setContacts] = useState<any[]>([]);
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
@@ -182,10 +183,11 @@ export default function EditLeadPage() {
       retry: 1,
       onSuccess: (data) => {
         setData(data?.Lead);
-        console.log(data.data.Lead);
-
+        setLeads(data.data.Lead?.contact?.client?.client);
         setContacts(data?.data?.Lead?.contact_id);
         setLoading(false);
+        queryClient.invalidateQueries({ queryKey: ["editlead"] });
+        queryClient.invalidateQueries({ queryKey: ["editlead", id] });
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate lead")) {
@@ -252,6 +254,28 @@ export default function EditLeadPage() {
     },
   });
 
+  const { control, watch } = useForm();
+  const leadStatusValue = watch("lead_status", "");
+
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    switch (leadStatusValue) {
+      case "Open":
+        setOptions(["In Progress", "Close"]);
+        break;
+      case "In Progress":
+        setOptions(["Quotation", "Close"]);
+        break;
+      case "Quotation":
+        setOptions(["Deal", "Close"]);
+        break;
+      default:
+        setOptions(["Open", "In Progress", "Quotation", "Close", "Deal"]);
+        break;
+    }
+  }, [leadStatusValue]);
+
   const onSubmit = (data: FormValues) => {
     const submissionData = {
       ...data,
@@ -296,7 +320,7 @@ export default function EditLeadPage() {
   const contactsArray = Array.isArray(contacts) ? contacts : [];
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg  ">
+    <div className=" mx-auto p-6 ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -312,9 +336,13 @@ export default function EditLeadPage() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Lead Edit Form</h2>
+            <p className="text-xs mb-9 text-muted-foreground">
+              Edit lead details.
+            </p>
           </div>
         </div>
       </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Fields First Row */}
@@ -331,7 +359,9 @@ export default function EditLeadPage() {
                   name="contact_id"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Contacts</FormLabel>
+                      <FormLabel className=" relative top-[7px]">
+                        Contact
+                      </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -339,7 +369,7 @@ export default function EditLeadPage() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[350px] justify-between",
+                                "w-[550px] justify-between relative top-[10px]",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -386,6 +416,12 @@ export default function EditLeadPage() {
                           </Command>
                         </PopoverContent>
                       </Popover>
+                      <div class=" relative top-[10px] max-w-xs bg-gray-300 rounded-lg shadow-lg p-3 transform transition duration-300 hover:scale-105  hover:shadow-2xl hover:translate-z-10">
+                        <p class="text-gray-700">
+                          <strong class="text-black-500">Client Name:</strong>{" "}
+                          {leads}
+                        </p>
+                      </div>
 
                       <FormMessage />
                     </FormItem>
@@ -399,11 +435,28 @@ export default function EditLeadPage() {
                     <FormItem>
                       <FormLabel>Lead Source</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter Lead Source"
-                          {...field}
-                          value={field.value || ""}
-                        />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Lead Source" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
+                            <SelectItem value="advertisement">
+                              Advertisement
+                            </SelectItem>
+                            <SelectItem value="coldCall">Cold Call</SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="facebook">Facebook</SelectItem>
+                            <SelectItem value="google">Google</SelectItem>
+                            <SelectItem value="linkedin">LinkedIn</SelectItem>
+                            <SelectItem value="referral">Referral</SelectItem>
+                            <SelectItem value="search">Search</SelectItem>
+                            <SelectItem value="seminar">Seminar</SelectItem>
+                            <SelectItem value="social">Social</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -421,7 +474,7 @@ export default function EditLeadPage() {
             <CardContent className="p-6">
               <div className="space-x-6 ">
                 <FormField
-                  control={form.control}
+                  control={control}
                   name="lead_status"
                   render={({ field }) => (
                     <FormItem>
@@ -476,96 +529,36 @@ export default function EditLeadPage() {
                             ) : (
                               <></> // Ensure there's no empty return when no condition is met
                             )}
+
+                           
                           </SelectContent>
                         </Select>
                       </FormControl>
+
                       <FormMessage />
-                      {field.value === "Close" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_closing_reason"
-                          render={({ field: closeField }) => (
-                            <FormItem>
-                              <FormLabel>Reason for Closing</FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  className="w-full"
-                                  placeholder="Enter reason for closing the lead"
-                                  {...closeField}
-                                />
-                              </FormControl>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                      {field.value === "Quotation" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_attachment"
-                          render={({ field: pdfField }) => (
-                            <FormItem>
-                              <FormLabel>Upload PDF</FormLabel>
-                              <FormControl>
-                                <input
-                                  id="pdf-upload"
-                                  type="file"
-                                  onChange={(e) => {
-                                    setFile(e.target.files[0]);
-                                  }}
-                                  className="w-full border p-2"
-                                  accept="application/pdf"
-                                />
-                              </FormControl>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  // window.open(
-                                  //   `/api/show_invoice/${invoice.invoice_file}`,
-                                  //   "_blank"
-                                  // );
-                                  handleViewInvoice(invoice.invoice_file);
-                                }}
-                                className="w-full text-sm"
-                              >
-                                View quotation
-                              </Button>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                      {field.value === "Deal" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_attachment"
-                          render={({ field: pdfField }) => (
-                            <FormItem>
-                              <FormLabel>Upload PDF</FormLabel>
-                              <FormControl>
-                                <input
-                                  id="pdf-upload"
-                                  type="file"
-                                  onChange={(e) => {
-                                    setFile(e.target.files[0]);
-                                  }}
-                                  className="w-full border p-2"
-                                  accept="application/pdf" // Accept only PDF files
-                                />
-                              </FormControl>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
                     </FormItem>
                   )}
                 />
+                {leadStatusValue === "Close" && (
+                  <FormField
+                    control={form.control}
+                    name="lead_closing_reason"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Closing Reason</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter closing reason"
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
             </CardContent>
           </Card>
@@ -882,6 +875,7 @@ export default function EditLeadPage() {
                       </TableCell>
                       <TableCell className="flex justify-end">
                         <Button
+                          type="button"
                           variant="ghost"
                           onClick={() => {
                             const newRows = productRows.filter(

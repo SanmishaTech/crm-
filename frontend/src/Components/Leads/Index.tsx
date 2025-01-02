@@ -239,13 +239,13 @@ export default function TableDemo() {
   return (
     <div className="flex ">
       <Sidebar className="" />
-      <div className="p-6 w-full  bg-accent/50 ml-4 rounded-lg shadow-lg ">
+      <div className="p-6 w-full  bg-accent/60 ml-4 rounded-lg shadow-lg ">
         <div className="p-2  ">
           <div className="flex justify-between items-center ">
             <h3 className="text-lg  font-semibold mx-auto">Leads List</h3>
           </div>
         </div>
-        <div className="flex justify-between items-center space-x-2 w-full">
+        <div className="flex justify-between items-center space-x-2 py-1 w-full">
           <div className="ml-4 mt-2">
             <TooltipProvider>
               <Tooltip>
@@ -274,7 +274,7 @@ export default function TableDemo() {
           </div>
         </div>
 
-        <div className="panel p-4 rounded-md bg-gray-50">
+        <div className="panel p-4 rounded-md bg-card">
           {/* Table Start */}
           <Table>
             <TableCaption>A list of your leads.</TableCaption>

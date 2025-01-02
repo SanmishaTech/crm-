@@ -100,7 +100,7 @@ export default function InputForm() {
     defaultValues: {
       contact_id: "",
       lead_source: "",
-      lead_status: "open",
+      lead_status: "Open",
       lead_type: "basic",
       tender_number: "",
       bid_end_date: "",
@@ -268,7 +268,9 @@ export default function InputForm() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Lead Form</h2>
-            <p className="text-xs mb-9">Add a new lead to the database.</p>
+            <p className="text-xs mb-9 text-muted-foreground">
+              Add a new lead.
+            </p>
           </div>
         </div>
       </div>
@@ -288,7 +290,9 @@ export default function InputForm() {
                   name="contact_id"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Contact</FormLabel>
+                      <FormLabel className=" relative top-[7px]">
+                        Contact
+                      </FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -296,7 +300,7 @@ export default function InputForm() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[350px] justify-between mt-3",
+                                "w-[390px] justify-between relative top-[10px]",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -309,7 +313,7 @@ export default function InputForm() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[350px] max-h-[260px] overflow-y-auto p-0">
+                        <PopoverContent className="w-[390px] max-h-[260px] overflow-y-auto p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."
@@ -373,10 +377,28 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Lead Source</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter Lead Source Name"
-                          {...field}
-                        />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Lead Source" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
+                            <SelectItem value="advertisement">
+                              Advertisement
+                            </SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="facebook">Facebook</SelectItem>
+                            <SelectItem value="google">Google</SelectItem>
+                            <SelectItem value="linkedin">LinkedIn</SelectItem>
+                            <SelectItem value="coldCall">Cold Call</SelectItem>
+                            <SelectItem value="referral">Referral</SelectItem>
+                            <SelectItem value="search">Search</SelectItem>
+                            <SelectItem value="social">Social</SelectItem>
+                            <SelectItem value="seminar">Seminar</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -694,6 +716,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell className="flex justify-end">
                         <Button
+                          type="button"
                           variant="ghost"
                           onClick={() => {
                             // Filter out the row at the given index and update the state

@@ -139,7 +139,7 @@ export default function TableDemo() {
             <h3 className="text-lg font-semibold mx-auto">Contacts List</h3>
           </div>
         </div>
-        <div className="flex justify-between items-center space-x-3 mr-4">
+        <div className="flex justify-between items-center py-1 space-x-3 mr-4">
           <div className="ml-4 mt-2">
             <TooltipProvider>
               <Tooltip>
@@ -169,7 +169,7 @@ export default function TableDemo() {
           </div>
         </div>
 
-        <div className="panel p-4 rounded-md bg-gray-50">
+        <div className="panel p-4 rounded-md bg-card">
           {/* Table Start */}
           <Table>
             <TableCaption>A list of your contacts.</TableCaption>
@@ -203,7 +203,9 @@ export default function TableDemo() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="center">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-center hover:cursor-default text-foreground">
+                          Actions
+                        </DropdownMenuLabel>
                         <Button
                           variant="ghost"
                           size="sm"

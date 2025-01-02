@@ -158,7 +158,7 @@ export default function InputForm() {
   };
 
   return (
-    <div className=" mx-auto p-6 bg-white shadow-lg rounded-lg  ">
+    <div className=" mx-auto p-6   ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button

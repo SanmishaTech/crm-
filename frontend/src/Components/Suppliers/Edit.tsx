@@ -230,76 +230,78 @@ export default function EditSupplierPage() {
         </div>
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
-            <h2 className="text-2xl font-semibold text-foreground">Supplier Edit Form</h2>
-            <p className="text-sm text-muted-foreground">Edit supplier details.</p>
+            <h2 className="text-2xl font-semibold text-foreground">
+              Supplier Edit Form
+            </h2>
+            <p className="text-xs mb-9 text-muted-foreground">
+              Edit supplier details.
+            </p>
           </div>
         </div>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <Card className="bg-card border border-border">
+          <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold text-foreground">
                 Supplier Information
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-                 <FormField
-                  control={form.control}
-                  name="supplier"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-foreground">
-                        Supplier <span className="text-destructive">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="Enter Supplier Name" 
-                          {...field}
-                          className="bg-background text-foreground border-input" 
-                        />
-                      </FormControl>
-                      <FormMessage className="text-destructive" />
-                    </FormItem>
-                  )}
-                />
-              
+              <FormField
+                control={form.control}
+                name="supplier"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">
+                      Supplier <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Supplier Name"
+                        {...field}
+                        className="bg-background text-foreground border-input"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
-          <Card className="bg-card border border-border">
+          <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold text-foreground">
                 GST Information
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-                 <FormField
-                  control={form.control}
-                  name="gstin"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-foreground">GST IN</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          maxLength={15}
-                          {...field}
-                          style={{ textTransform: "uppercase" }}
-                          placeholder="Enter GST Number"
-                          className="bg-background text-foreground border-input"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-destructive" />
-                    </FormItem>
-                  )}
-                />
-            
+              <FormField
+                control={form.control}
+                name="gstin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">GST IN</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        maxLength={15}
+                        {...field}
+                        style={{ textTransform: "uppercase" }}
+                        placeholder="Enter GST Number"
+                        className="bg-background text-foreground border-input"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
-          <Card className="bg-card border border-border">
+          <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold text-foreground">
                 Contact Supplier
@@ -355,7 +357,8 @@ export default function EditSupplierPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Primary Mobile Number <span className="text-destructive">*</span>
+                        Primary Mobile Number{" "}
+                        <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -378,7 +381,9 @@ export default function EditSupplierPage() {
                   name="mobile_2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Secondary Mobile Number</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Secondary Mobile Number
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Mobile"
@@ -402,7 +407,9 @@ export default function EditSupplierPage() {
                   name="department"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Department</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Department
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="bg-background text-foreground border-input"
@@ -420,7 +427,9 @@ export default function EditSupplierPage() {
                   name="designation"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Designation</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Designation
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className="bg-background text-foreground border-input"
@@ -436,7 +445,7 @@ export default function EditSupplierPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card border border-border">
+          <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold text-foreground">
                 Supplier Address Information
@@ -450,11 +459,12 @@ export default function EditSupplierPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Street Address <span className="text-destructive">*</span>
+                        Street Address{" "}
+                        <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Enter Street Address" 
+                        <Input
+                          placeholder="Enter Street Address"
                           {...field}
                           className="bg-background text-foreground border-input"
                         />
@@ -471,8 +481,8 @@ export default function EditSupplierPage() {
                     <FormItem>
                       <FormLabel className="text-foreground">Area</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Enter Area" 
+                        <Input
+                          placeholder="Enter Area"
                           {...field}
                           className="bg-background text-foreground border-input"
                         />
@@ -511,8 +521,8 @@ export default function EditSupplierPage() {
                         State <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Enter State" 
+                        <Input
+                          placeholder="Enter State"
                           {...field}
                           className="bg-background text-foreground border-input"
                         />
@@ -570,7 +580,7 @@ export default function EditSupplierPage() {
           </Card>
 
           {error && <div className="text-destructive">{error}</div>}
-          
+
           <div className="flex justify-end space-x-2">
             <Button
               onClick={() => navigate("/suppliers")}
@@ -580,8 +590,8 @@ export default function EditSupplierPage() {
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               Submit

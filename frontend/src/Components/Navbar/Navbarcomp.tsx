@@ -14,6 +14,7 @@ import {
   LogOut,
   CircleUserRound,
   ChevronDown,
+  UserRound,
   Sun,
   Moon,
 } from "lucide-react";
@@ -77,7 +78,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="border-b bg-background py-4 px-6 top-0 left-0 right-0 z-10">
+    <nav className=" bg-background py-4 px-6 top-0 left-0 right-0 z-10">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo / Title */}
         <div className="flex items-center space-x-5">
@@ -126,12 +127,13 @@ const Navbar = () => {
                       aria-hidden="true"
                     />
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="flex flex-col items-center justify-center bg-popover border rounded-md shadow-md">
+                  <NavigationMenuContent className="w-[] flex flex-col items-center justify-center bg-popover border rounded-md shadow-md">
                     <Button
-                      className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+                      className=" flex justify-between w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent py-3"
                       variant="ghost"
                       onClick={() => navigate("/clients")}
                     >
+                      <UserRound className="h-4 w-4" />
                       Clients
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
@@ -140,6 +142,7 @@ const Navbar = () => {
                       className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
                       onClick={() => navigate("/contacts")}
                     >
+                      <UserRound className="h-4 w-4" />
                       Contacts
                     </Button>
                   </NavigationMenuContent>
@@ -184,13 +187,7 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-            <Button
-              className="text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-              variant="ghost"
-              onClick={() => navigate("/invoices")}
-            >
-              Invoices
-            </Button>
+
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
                 <NavigationMenuItem className="group">
@@ -221,6 +218,13 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
+            <Button
+              className="text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+              variant="ghost"
+              onClick={() => navigate("/invoices")}
+            >
+              Invoices
+            </Button>
           </div>
         </div>
 
@@ -228,7 +232,11 @@ const Navbar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-foreground hover:text-foreground/80 hover:bg-accent">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-foreground hover:text-foreground/80 hover:bg-accent"
+                >
                   <Bell className="h-4" style={{ strokeWidth: 1.5 }} />
                 </Button>
               </TooltipTrigger>
@@ -238,7 +246,11 @@ const Navbar = () => {
             </Tooltip>
           </TooltipProvider>
 
-          <Button variant="ghost" size="icon" className="text-foreground hover:text-foreground/80 hover:bg-accent">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-foreground hover:text-foreground/80 hover:bg-accent"
+          >
             <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />
           </Button>
 
@@ -255,7 +267,10 @@ const Navbar = () => {
                     <Search className="h-4" style={{ strokeWidth: 1.5 }} />
                   </Button>
                   <CommandDialog open={open} onOpenChange={setOpen}>
-                    <CommandInput placeholder="Search Modules..." className="bg-background text-foreground" />
+                    <CommandInput
+                      placeholder="Search Modules..."
+                      className="bg-background text-foreground"
+                    />
                     <CommandList className="bg-background text-foreground">
                       <CommandEmpty>No results found.</CommandEmpty>
                       {navItems.map((item) => {
@@ -263,8 +278,10 @@ const Navbar = () => {
                           return (
                             <CommandGroup heading={item.title} key={item.title}>
                               {item.children?.map((child) => {
-                                const Icon = Icons[child.icon || "arrowRight675"];
-                                const isActive = location.pathname === child.href;
+                                const Icon =
+                                  Icons[child.icon || "arrowRight675"];
+                                const isActive =
+                                  location.pathname === child.href;
                                 return (
                                   <div
                                     className="flex items-center gap-2 w-full"
@@ -300,7 +317,7 @@ const Navbar = () => {
             </TooltipProvider>
           </div>
 
-          {/* <div className="relative flex items-center">
+          <div className="relative flex items-center">
             <button
               onClick={handleThemeToggle}
               className={cn(
@@ -308,17 +325,19 @@ const Navbar = () => {
                 theme === "light" ? "bg-slate-200" : "bg-slate-700"
               )}
             >
-              <span className={cn(
-                "absolute text-[10px] top-1.5 font-medium",
-                theme === "light" ? "right-1.5" : "left-1.5"
-              )}>
+              <span
+                className={cn(
+                  "absolute text-[10px] top-1.5 font-medium",
+                  theme === "light" ? "right-1.5" : "left-1.5"
+                )}
+              >
                 {theme === "light" ? "Light" : "Dark"}
               </span>
               <div
                 className={cn(
                   "flex items-center justify-center w-6 h-6 rounded-full transition-transform duration-200 transform",
-                  theme === "light" 
-                    ? "translate-x-0 bg-white" 
+                  theme === "light"
+                    ? "translate-x-0 bg-white"
                     : "translate-x-7 bg-slate-900"
                 )}
               >
@@ -329,7 +348,7 @@ const Navbar = () => {
                 )}
               </div>
             </button>
-          </div> */}
+          </div>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -347,7 +366,10 @@ const Navbar = () => {
                 />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-popover border-border">
+            <DropdownMenuContent
+              align="end"
+              className="bg-popover border-border"
+            >
               <DropdownMenuLabel className="flex items-center space-x-2 text-foreground">
                 <CircleUserRound className="h-5" />
                 <span>My Account</span>

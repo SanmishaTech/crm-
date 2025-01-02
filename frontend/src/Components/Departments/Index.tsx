@@ -154,14 +154,12 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="p-6 h-full overflow-y-hidden w-full bg-accent/50 ml-4 rounded-lg shadow-lg ">
-      <div className="p-2  ">
-        <div className="flex justify-between items-center ">
-          <h3 className="text-lg  font-semibold mx-auto">Department List</h3>
-        </div>
+    <div className="p-5 h-full mx-auto bg-accent/60 rounded-lg shadow-lg">
+      <div className="flex justify-center items-center p-3 space-x-2">
+        <h3 className="text-lg font-semibold">Departments List</h3>
       </div>
 
-      <div className="flex justify-between items-center space-x-3 mr-4">
+      <div className="flex justify-between items-center py-1 space-x-2 w-full">
         {/* Search Bar Starts */}
         <div className="flex-1 space-x-2">
           <Input
@@ -189,7 +187,7 @@ export default function TableDemo() {
         </div>
       </div>
 
-      <div className="panel p-4 rounded-md bg-gray-50">
+      <div className="panel p-4 rounded-md bg-card">
         {/* Table Start */}
         <Table>
           <TableCaption>A list of your departments.</TableCaption>
@@ -230,7 +228,9 @@ export default function TableDemo() {
                         align="center"
                         className="w-full flex-col items-center flex justify-center"
                       >
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuLabel className="hover:cursor-default text-foreground">
+                          Actions
+                        </DropdownMenuLabel>
                         <Button
                           variant="ghost"
                           size="sm"
