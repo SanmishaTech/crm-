@@ -254,6 +254,28 @@ export default function EditLeadPage() {
     },
   });
 
+  const { control, watch } = useForm();
+  const leadStatusValue = watch("lead_status", "");
+
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    switch (leadStatusValue) {
+      case "Open":
+        setOptions(["In Progress", "Close"]);
+        break;
+      case "In Progress":
+        setOptions(["Quotation", "Close"]);
+        break;
+      case "Quotation":
+        setOptions(["Deal", "Close"]);
+        break;
+      default:
+        setOptions(["Open", "In Progress", "Quotation", "Close", "Deal"]);
+        break;
+    }
+  }, [leadStatusValue]);
+
   const onSubmit = (data: FormValues) => {
     const submissionData = {
       ...data,
@@ -449,7 +471,7 @@ export default function EditLeadPage() {
             <CardContent className="p-6">
               <div className="space-x-6 ">
                 <FormField
-                  control={form.control}
+                  control={control}
                   name="lead_status"
                   render={({ field }) => (
                     <FormItem>
@@ -463,103 +485,39 @@ export default function EditLeadPage() {
                             <SelectValue placeholder="Select Lead Status" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Open">Open</SelectItem>
-                            <SelectItem value="In Progress">
-                              In Progress
-                            </SelectItem>
-                            <SelectItem value="Quotation">Quotation</SelectItem>
-                            <SelectItem value="Close">Close</SelectItem>
-                            <SelectItem value="Deal">Deal</SelectItem>
+                            {options.map((option) => (
+                              <SelectItem key={option} value={option}>
+                                {option}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </FormControl>
+
                       <FormMessage />
-                      {field.value === "Close" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_closing_reason"
-                          render={({ field: closeField }) => (
-                            <FormItem>
-                              <FormLabel>Reason for Closing</FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  className="w-full"
-                                  placeholder="Enter reason for closing the lead"
-                                  {...closeField}
-                                />
-                              </FormControl>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                      {field.value === "Quotation" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_attachment"
-                          render={({ field: pdfField }) => (
-                            <FormItem>
-                              <FormLabel>Upload PDF</FormLabel>
-                              <FormControl>
-                                <input
-                                  id="pdf-upload"
-                                  type="file"
-                                  onChange={(e) => {
-                                    setFile(e.target.files[0]);
-                                  }}
-                                  className="w-full border p-2"
-                                  accept="application/pdf"
-                                />
-                              </FormControl>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  // window.open(
-                                  //   `/api/show_invoice/${invoice.invoice_file}`,
-                                  //   "_blank"
-                                  // );
-                                  handleViewInvoice(invoice.invoice_file);
-                                }}
-                                className="w-full text-sm"
-                              >
-                                View quotation
-                              </Button>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                      {field.value === "Deal" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_attachment"
-                          render={({ field: pdfField }) => (
-                            <FormItem>
-                              <FormLabel>Upload PDF</FormLabel>
-                              <FormControl>
-                                <input
-                                  id="pdf-upload"
-                                  type="file"
-                                  onChange={(e) => {
-                                    setFile(e.target.files[0]);
-                                  }}
-                                  className="w-full border p-2"
-                                  accept="application/pdf" // Accept only PDF files
-                                />
-                              </FormControl>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
                     </FormItem>
                   )}
                 />
+                {leadStatusValue === "Close" && (
+                  <FormField
+                    control={form.control}
+                    name="lead_closing_reason"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Closing Reason</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter closing reason"
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
             </CardContent>
           </Card>
