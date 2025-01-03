@@ -22,6 +22,7 @@ use App\Http\Resources\LeadResource;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Resources\ContactResource;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UpdateLeadRequest;
 use App\Http\Controllers\Api\BaseController;
 
     /**
@@ -193,7 +194,7 @@ class LeadsController extends BaseController
      * @bodyParam lead_status string The Status of the Lead.
      * @bodyParam contact_id string The id of the contact.
      */
-    public function update(Request $request, String $id): JsonResponse
+    public function update(UpdateLeadRequest $request, String $id): JsonResponse
     {
 
         $productsString = $request->input('products');

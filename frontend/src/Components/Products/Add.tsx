@@ -136,18 +136,33 @@ export default function InputForm() {
       },
       onError: (error) => {
         if (error.response && error.response.data.errors) {
+          const serverStatus = error.response.data.status;
           const serverErrors = error.response.data.errors;
           // Assuming the error is for the department_name field
-          if (serverErrors.product) {
-            form.setError("product", {
-              type: "manual",
-              message: serverErrors.product[0], // The error message from the server
-            });
+          if (serverStatus === false) {
+            if (serverErrors.product) {
+              form.setError("product", {
+                type: "manual",
+                message: serverErrors.product[0], // The error message from the server
+              });
+            }
+            if (serverErrors.product_category_id) {
+              form.setError("product_category_id", {
+                type: "manual",
+                message: serverErrors.product_category_id[0], // The error message from the server
+              });
+            }
+            if (serverErrors.supplier_id) {
+              form.setError("supplier_id", {
+                type: "manual",
+                message: serverErrors.supplier_id[0], // The error message from the server
+              });
+            }
           } else {
-            setError("Failed to add product"); // For any other errors
+            setError("Failed to add Product"); // For any other errors
           }
         } else {
-          setError("Failed to add product");
+          setError("Failed to add Product");
         }
       },
     },

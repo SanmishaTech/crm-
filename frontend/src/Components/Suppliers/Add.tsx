@@ -124,10 +124,22 @@ export default function InputForm() {
       onError: (error) => {
         console.log("error", error);
 
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        if (error.response && error.response.data.errors) {
+          const serverStatus = error.response.data.status;
+          const serverErrors = error.response.data.errors;
+          // Assuming the error is for the department_name field
+          if (serverStatus === false) {
+            if (serverErrors.supplier) {
+              form.setError("supplier", {
+                type: "manual",
+                message: serverErrors.supplier[0], // The error message from the server
+              });
+            }
+          } else {
+            setError("Failed to add Supplier"); // For any other errors
+          }
         } else {
-          toast.error("Failed to submit the form. Please try again.");
+          setError("Failed to add Supplier");
         }
       },
     },
