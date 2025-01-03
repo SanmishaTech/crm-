@@ -7,9 +7,12 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@/darktheme/CustomTheme";
+import darkBackground  from "@/images/darkbackground.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   React.useEffect(() => {
     const handleTabClose = () => {
@@ -116,7 +119,9 @@ const Login = () => {
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex  ">
         <div
           style={{
-            backgroundImage: `url(${background})`,
+            backgroundImage: `url(${
+              theme === "dark" ? darkBackground : background
+            })`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "bottom",

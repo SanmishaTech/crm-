@@ -62,7 +62,6 @@ import { Icons } from "@/Dashboard/Icon";
 import { navItems } from "@/Config/data";
 
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import userAvatar from "@/images/Profile.jpg";
 
 const Navbar = () => {
@@ -127,22 +126,22 @@ const Navbar = () => {
                       aria-hidden="true"
                     />
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="w-[] flex flex-col items-center justify-center bg-popover border rounded-md shadow-md">
+                  <NavigationMenuContent className=" flex flex-col  justify-end bg-popover  rounded-md shadow-md">
                     <Button
-                      className=" flex justify-between w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent py-3"
+                      className=" flex justify-between w-full text-sm  hover:text-foreground/80 hover:bg-accent py-3"
                       variant="ghost"
                       onClick={() => navigate("/clients")}
                     >
-                      <UserRound className="h-4 w-4" />
+                      {/* <UserRound className="h-4 w-4" /> */}
                       Clients
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
                     <Button
                       variant="ghost"
-                      className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                      className=" text-sm hover:text-foreground/80 hover:bg-accent"
                       onClick={() => navigate("/contacts")}
                     >
-                      <UserRound className="h-4 w-4" />
+                      {/* <UserRound className="h-4 w-4" /> */}
                       Contacts
                     </Button>
                   </NavigationMenuContent>

@@ -11,6 +11,7 @@ import EditClients from "./Components/Clients/Edit";
 // import EditProducts from "./Components/Products/Edit";
 import EditLeads from "./Components/Leads/Edit";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/darktheme/CustomTheme";
 import {
   Tooltip,
   TooltipContent,
@@ -49,6 +50,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [isVisible, setIsVisible] = useState(false);
 
   const location = useLocation();
@@ -95,11 +97,14 @@ function App() {
 
   return (
     <div className="overflow-x-hidden  ">
-      <Toaster position="top-right" />
-      {/* Conditionally render Navbar based on isLoggedIn */}
+      <Toaster
+        position="top-right"
+        theme={theme === "dark" ? "dark" : "light"}
+        closeButton
+        className={theme === "dark" ? "toaster-red" : "toaster-light"}
+      />
 
       {isLoggedIn && <Navbar />}
-
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Search Modules..." />
         <CommandList>
