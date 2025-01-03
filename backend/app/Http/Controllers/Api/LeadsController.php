@@ -360,7 +360,8 @@ class LeadsController extends BaseController
     public function generateQuotation(string $id)
     {
         $leadStatus = config('data.lead_status.Quotation');
-        
+        $DealLeadStatus = config('data.lead_status.Deal');
+
         // $leads = Lead::with('leadProducts.product')->find($id);
         $leads = Lead::with(['leadProducts.product','contact.client','leadInvoice.invoiceDetails.product'])->find($id);
         
@@ -368,7 +369,7 @@ class LeadsController extends BaseController
             return $this->sendError("Lead not found", ['error'=>['Lead not found']]);
         }
 
-        if($leadStatus !== $leads->lead_status)
+        if($leadStatus !== $leads->lead_status && $DealLeadStatus !== $leads->lead_status)
         {
             return $this->sendError("Lead Status is not set to Quotation", ['error'=>['Lead Status is not set to Quotation']]);
         }
@@ -378,7 +379,7 @@ class LeadsController extends BaseController
         }
         
         if($leads->total_amount_with_gst==0){
-            return $this->sendError("Add the rates of Products", ['error'=>['Add the rates of Products']]);
+            return $this->sendError("Add the rates of Products", ['error'=>['Add the rates of Products to generate quotation']]);
         }
         
         if (!$leads->contact || !$leads->contact->client ) {
@@ -450,7 +451,7 @@ class LeadsController extends BaseController
             return $this->sendError("Lead Status is not set to Deal", ['error'=>['Lead Status is not set to Deal']]);
         }
         if($leads->total_amount_with_gst==0){
-            return $this->sendError("Add the rates of Products", ['error'=>['Add the rates of Products']]);
+            return $this->sendError("Add the rates of Products", ['error'=>['Add the rates of Products to generate invoice']]);
         }
 
 
