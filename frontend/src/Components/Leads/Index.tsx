@@ -174,10 +174,11 @@ export default function TableDemo() {
 
         console.log("Quotation generated and downloaded successfully!");
       } else {
-        console.error("Error generating quotation:", response.status);
+        console.error("Error generating quotation:", response);
       }
     } catch (error) {
       console.error("Error:", error);
+      
     }
   };
   const handleGenerateInvoice = async (leadId: string) => {

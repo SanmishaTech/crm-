@@ -145,10 +145,26 @@ export default function EditLeadPage() {
         toast.success("Lead updated successfully");
       },
       onError: (error) => {
-        if (error.message && error.message.includes("duplicate lead")) {
-          toast.error("Lead name is duplicated. Please use a unique name.");
+        if (error.response && error.response.data.errors) {
+          const serverStatus = error.response.data.status;
+          const serverErrors = error.response.data.errors;
+          // Assuming the error is for the department_name field
+          if (serverStatus === false) {
+            if (serverErrors.contact_id) {
+              form.setError("contact_id", {
+                type: "manual",
+                message: serverErrors.contact_id[0], // The error message from the server
+              });
+            }
+            if (serverErrors.error) {
+              // setError(serverErrors.error[0]);
+              toast.error(serverErrors.error[0]);
+            }
+          } else {
+            setError("Failed to update lead"); // For any other errors
+          }
         } else {
-          toast.error("Failed to submit the form. Please try again.");
+          setError("Failed to update lead");
         }
       },
     },

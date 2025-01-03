@@ -84,15 +84,22 @@ export default function InputForm() {
         console.log("error", error);
 
         // Check for the 'client' duplicate error
-        if (
-          error.errors &&
-          error.errors.client &&
-          console.log("erro", error.errors) &&
-          error.errors.client.includes("The client has already been taken.")
-        ) {
-          toast.error("Client name is duplicated. Please use a unique name.");
+        if (error.response && error.response.data.errors) {
+          const serverStatus = error.response.data.status;
+          const serverErrors = error.response.data.errors;
+          // Assuming the error is for the department_name field
+          if (serverStatus === false) {
+            if (serverErrors.client) {
+              form.setError("client", {
+                type: "manual",
+                message: serverErrors.client[0], // The error message from the server
+              });
+            }
+          } else {
+            setError("Failed to add Product"); // For any other errors
+          }
         } else {
-          toast.error("Failed to submit the form. Please try again.");
+          setError("Failed to add Product");
         }
       },
     },

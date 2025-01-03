@@ -114,7 +114,28 @@ export default function InputForm() {
         console.log("data", data);
         navigate("/contacts");
       },
-     
+      onError: (error) => {
+        console.log("error", error);
+
+        if (error.response && error.response.data.errors) {
+          const serverStatus = error.response.data.status;
+          const serverErrors = error.response.data.errors;
+          // Assuming the error is for the department_name field
+          if (serverStatus === false) {
+            if (serverErrors.contact_person) {
+              form.setError("contact_person", {
+                type: "manual",
+                message: serverErrors.contact_person[0], // The error message from the server
+              });
+            }
+          } else {
+            setError("Failed to add Contact"); // For any other errors
+          }
+        } else {
+          setError("Failed to add Contact");
+        }
+      },
+
     },
   });
 
