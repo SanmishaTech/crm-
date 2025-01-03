@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Employee;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\EmployeeResource;
+use App\Http\Requests\ResignationRequest;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\UpdateEmployeeRequest;
@@ -160,21 +162,71 @@ class EmployeesController extends BaseController
     /**
      * resignation.
      */
-    public function resignation(Request $request, string $id): JsonResponse
+    // public function resignation(Request $request, string $id): JsonResponse
+    // {
+    //     $employee = Employee::find($id);
+    //     if(!$employee){
+    //         return $this->sendError("employee not found", ['error'=>'employee not found']);
+    //     }
+    //     $activeVal = 1;
+    //     $inactiveVal = 0;
+        
+    //     $user = User::find($employee->user_id);
+    //     if(!empty($request->input('resignation_date'))){
+    //         $employee->resignation_date = $request->input('resignation_date');
+    //         $employee->save();
+    //         $user->active = $inactiveVal;
+    //         $user->save();
+    //     }
+    //     else{
+    //         $user->active = $inactiveVal;
+    //         $user->save();
+    //     }
+      
+       
+    //     return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "employee data updated successfully");
+    // }
+    public function resignation(ResignationRequest $request, string $id): JsonResponse
     {
         $employee = Employee::find($id);
-        if(!$employee){
-            return $this->sendError("employee not found", ['error'=>'employee not found']);
+        if (!$employee) {
+            return $this->sendError("employee not found", ['error' => 'employee not found']);
         }
-        $val = 0;
+    
+        $activeVal = 1;
+        $inactiveVal = 0;
+    
         $user = User::find($employee->user_id);
-        $employee->resignation_date = $request->input('resignation_date');
-        $employee->save();
-        $user->active = $val;
-        $user->save();
-        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "employee data updated successfully");
+    
+        // Check if resignation_date is null or an empty string
+        $resignationDate = $request->input('resignation_date');
+        if ($resignationDate !== null && $resignationDate !== "") {
+            $carbonDate = Carbon::parse($resignationDate);
+            $today = Carbon::today();
+    
+            // If the resignation date is in the future, return a validation error
+            if ($carbonDate->gt($today)) {
+                return $this->sendError('Validation Error', ['error' => 'Resignation date cannot be in the future']);
+            }
+            
+            $employee->resignation_date = $resignationDate;
+            $employee->save();
+            $user->active = $inactiveVal;
+            $user->save();
+            // dd("if working");
+        } else {
+            // If resignation_date is empty or null, set the user status to inactive
+            $employee->resignation_date = $resignationDate;
+            $employee->save();
+            $user->active = $activeVal;
+            $user->save();
+            // dd("else working");
+        }
+    
+        return $this->sendResponse(['User' => new UserResource($user), 'Employee' => new EmployeeResource($employee)], "employee data updated successfully");
     }
-
+    
+    
      
     
 }
