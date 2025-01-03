@@ -40,51 +40,50 @@ import {
 } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
+import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 import { usePutData } from "@/lib/HTTP/PUT";
-import { useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { QueryClient, useQueryClient } from "@tanstack/react-query";
 
-// Supplier type
+// Department type
 type Resign = {
   id: string;
-  department_name: string;
+  resignation_date: string;
 };
 
-type PaginationData = {
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-};
-
+// Form Validation Schema
 const formSchema = z.object({
-  resignation_date: z.string().optional(),
+  resignation_date: z.string().min(1, "Resignation Date is required"),
 });
 
-const Resign = ({ id, employee }) => {
+const Resign = ({ id }) => {
+  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false); // Manage the dialog state
   const today = new Date().toISOString().split("T")[0];
   const queryClient = useQueryClient();
-  const [editEmployee, setEditEmployee] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const [open, setOpen] = useState(false); // Manage the dialog state
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      resignation_date: employee.resignation_date || today,
+      resignation_date: today,
     },
   });
 
+  const handleDialogOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpen(false);
+  };
+
+  // Add Department mutation function
   type FormValues = z.infer<typeof FormSchema>;
-  const storeResignationDate = usePostData({
-    endpoint: "/api/departments",
+  const storeResignationDate = usePutData({
+    endpoint: `/api/employee_resignation/${id}`,
     params: {
       onSuccess: (data) => {
-        console.log("department data", data);
+        queryClient.invalidateQueries("employees");
         form.reset();
-        handleInvalidateQuery();
-        // fetchDepartments();
         handleDialogClose();
       },
       onError: (error) => {
@@ -92,103 +91,72 @@ const Resign = ({ id, employee }) => {
           const serverErrors = error.response.data.errors;
           // Assuming the error is for the department_name field
           if (serverErrors.department_name) {
-            form.setError("department_name", {
-              type: "manual",
-              message: serverErrors.department_name[0], // The error message from the server
-            });
-          } else {
-            setError("Failed to add department"); // For any other errors
-          }
-        } else {
-          setError("Failed to add department");
-        }
-      },
-    },
-  });
-
-  //update department mutation function
-  const updateResignationDate = usePutData({
-    endpoint: `/api/employee_resignation/${id}`,
-    params: {
-      onSuccess: (data) => {
-        console.log("working");
-        queryClient.invalidateQueries("employees");
-        setEditEmployee(null); // Reset edit mode
-        form.reset();
-        handleDialogClose();
-        setLoading(false);
-      },
-      onError: (error) => {
-        if (error.response && error.response.data.errors) {
-          const serverErrors = error.response.data.errors;
-          // Assuming the error is for the department_name field
-          if (serverErrors.resignation_date) {
             form.setError("resignation_date", {
               type: "manual",
               message: serverErrors.resignation_date[0], // The error message from the server
             });
           } else {
-            setError("Failed to update resignation date"); // For any other errors
+            setError("Failed to add date"); // For any other errors
           }
         } else {
-          setError("Failed to update resignation date");
+          setError("Failed to add date");
         }
-        setLoading(false);
       },
     },
   });
 
-  // onSubmit function
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    if (editEmployee) {
-      setLoading(true);
-      updateResignationDate.mutate(data);
-    } else {
-      storeResignationDate.mutate(data);
-    }
-  };
-
-  const handleDialogOpen = () => {
-    // setEditEmployee(null);
-    // form.setValue("resignation_date", ""); // Populate form with existing data
-    setOpen(true);
-  };
-
-  const handleEdit = () => {
-    setEditEmployee(employee);
-    form.setValue("resignation_date", employee.resignation_date || today); // Populate form with existing data
-    // handleEditDialogOpen();
-    handleDialogOpen();
-  };
-
-  const handleDialogClose = () => {
-    setOpen(false);
+    storeResignationDate.mutate(data);
+    // axios
+    //   .post("/api/departments", data, {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: "Bearer " + localStorage.getItem("token"),
+    //     },
+    //   })
+    //   .then((response) => {
+    //     form.reset();
+    //     handleDialogClose();
+    //     // window.location.reload();
+    //   })
+    //   .catch((error) => {
+    //     if (error.response && error.response.data.errors) {
+    //       const serverErrors = error.response.data.errors;
+    //       // Assuming the error is for the department_name field
+    //       if (serverErrors.department_name) {
+    //         form.setError("department_name", {
+    //           type: "manual",
+    //           message: serverErrors.department_name[0], // The error message from the server
+    //         });
+    //       } else {
+    //         setError("Failed to update department"); // For any other errors
+    //       }
+    //     } else {
+    //       setError("Failed to update department");
+    //     }
+    //   });
   };
 
   return (
     <>
+      {/* Add(Dialog) Starts */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
-            className=" w-full text-sm p-0 bg-transparent border-none"
             variant="outline"
-            // onClick={handleDialogOpen}
-            onClick={() => handleEdit(employee)}
+            className=" w-full text-sm p-0 bg-transparent border-none" // Custom styles for a minimal button
+            onClick={handleDialogOpen}
           >
             Resign
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>
-              {editEmployee ? "Edit" : "Add"} Departments
-            </DialogTitle>
-            <DialogDescription>
-              {editEmployee ? "Edit" : "Add"} your department details here.
-              Click save when you're done.
-            </DialogDescription>
+            <DialogTitle>Add Resignation Date</DialogTitle>
+            {/* <DialogDescription>
+              Add your department details here. Click save when you're done.
+            </DialogDescription> */}
           </DialogHeader>
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="">
               {/* <FormField
@@ -226,14 +194,13 @@ const Resign = ({ id, employee }) => {
               />
 
               <DialogFooter className="mt-5">
-                <Button type="submit">
-                  {loading ? "Loading..." : "Save Changes"}
-                </Button>
+                <Button type="submit">Save changes</Button>
               </DialogFooter>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
+      {/* Add(Dialog) Ends */}
     </>
   );
 };
