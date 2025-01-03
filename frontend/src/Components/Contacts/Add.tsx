@@ -135,6 +135,7 @@ export default function InputForm() {
           setError("Failed to add Contact");
         }
       },
+
     },
   });
 
@@ -143,7 +144,7 @@ export default function InputForm() {
     params: {
       queryKey: ["clients"],
       retry: 1,
-      onSuccess: (data) => {
+      onSuccess: (data) => {  
         queryClient.invalidateQueries({ queryKey: ["clients"] });
         setClients(data.data.Client);
         setLoading(false);

@@ -54,7 +54,22 @@ const usePostData = ({
     onSuccess:
       params.onSuccess ?? (() => toast.success("Data posted successfully")),
     onError:
-      params.onError ?? ((error: AxiosError) => toast.error(error.message)),
+      params.onError ??
+      ((error: AxiosError) => {
+        if (error.response) {
+          const { message, errors } = error.response.data;
+
+          if (message && errors?.error) {
+            const errorMessage = errors.error.join(", ") || message;
+            toast.error(errorMessage);
+          } else {
+            toast.error(message || "An unknown error occurred.");
+          }
+        } else {
+          toast.error("Network error occurred");
+        }
+      }),
+
     retry: params.retry ?? 0,
     onSettled: (data) => {
       console.log(data);
