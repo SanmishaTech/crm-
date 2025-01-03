@@ -363,7 +363,7 @@ export default function EditLeadPage() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[550px] justify-between relative top-[10px]",
+                                "w-[550px] lg:w-[350px] md:w-[250px] justify-between relative top-[10px]",
                                 !field.value && "text-muted-foreground"
                               )}
                             >

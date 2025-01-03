@@ -101,7 +101,7 @@ class LeadsController extends BaseController
             });
         }
 
-        $leads = $query->paginate(50);
+        $leads = $query->paginate(11);
 
         return $this->sendResponse(["Lead"=>LeadResource::collection($leads),
         'pagination' => [

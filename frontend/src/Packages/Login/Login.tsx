@@ -2,13 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { buttonVariants } from "@/components/ui/button";
 import { UseFormHook } from "@/components/ui/HookFormcomp";
-import background from "@/images/backgroundimage.jpg";
+import background from "@/images/LightBackground.jpeg";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/darktheme/CustomTheme";
-import darkBackground  from "@/images/darkbackground.jpg";
+import darkBackground from "@/images/Darkbackground.jpeg";
 
 const Login = () => {
   const navigate = useNavigate();
