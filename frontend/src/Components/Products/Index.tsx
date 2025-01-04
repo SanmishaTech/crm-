@@ -32,6 +32,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -145,14 +146,6 @@ export default function TableDemo() {
     return 0;
   });
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   // Pagination functions
   const totalPages = pagination?.last_page || 1;
 
@@ -173,6 +166,81 @@ export default function TableDemo() {
       setCurrentPage(page);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex">
+        {/* <Sidebar className="" /> */}
+        <div className="p-6 w-full bg-accent/60 ml-4 rounded-lg shadow-lg">
+          <div className="p-2">
+            <div className="flex justify-between items-center">
+              <Skeleton className="h-6 w-32 mx-auto" />
+            </div>
+          </div>
+          <div className="flex justify-between items-center py-1 space-x-3 mr-4">
+            <div className="ml-4 mt-2">
+              <Skeleton className="h-4 w-4" />
+            </div>
+            <div className="flex-1 space-x-2">
+              <Skeleton className="h-10 w-full" />
+            </div>
+            <div className="flex space-x-2">
+              <Skeleton className="h-10 w-24" />
+            </div>
+          </div>
+
+          <div className="panel p-4 rounded-md bg-card">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>
+                    <Skeleton className="h-4 w-20" />
+                  </TableHead>
+                  <TableHead>
+                    <Skeleton className="h-4 w-32" />
+                  </TableHead>
+                  <TableHead>
+                    <Skeleton className="h-4 w-24" />
+                  </TableHead>
+                  <TableHead>
+                    <Skeleton className="h-4 w-16" />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <Skeleton className="h-4 w-16 ml-auto" />
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[...Array(5)].map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-40" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <div className=" flex justify-center">
+              <Skeleton className="h-5 w-96" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="flex h-full">

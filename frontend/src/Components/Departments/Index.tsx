@@ -132,6 +132,7 @@ export default function TableDemo() {
     if (isDepartmentSuccess) {
       setDepartments(departmentData.data.Departments);
       setPagination(departmentData.data.Pagination);
+      setLoading(false);
     }
     if (isDepartmentError) {
       console.log("Error", isDepartmentError.message);
@@ -152,6 +153,14 @@ export default function TableDemo() {
   const handleEditDialogOpen = () => {
     setOpen(true);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="p-5 h-full mx-auto bg-accent/60 rounded-lg shadow-lg">

@@ -190,9 +190,7 @@ export default function TableDemo() {
                     <TableCell>
                       <Skeleton className="h-4 w-20" />
                     </TableCell>
-                    <TableCell className="text-right">
-                      <Skeleton className="h-8 w-8 ml-auto rounded-md" />
-                    </TableCell>
+                    
                   </TableRow>
                 ))}
               </TableBody>
