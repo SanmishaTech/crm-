@@ -127,6 +127,7 @@ export default function InputForm() {
                 type: "manual",
                 message: serverErrors.contact_person[0], // The error message from the server
               });
+              toast.error("The contact person has already been taken.");
             }
           } else {
             setError("Failed to add Contact"); // For any other errors
@@ -135,7 +136,6 @@ export default function InputForm() {
           setError("Failed to add Contact");
         }
       },
-
     },
   });
 
@@ -144,7 +144,7 @@ export default function InputForm() {
     params: {
       queryKey: ["clients"],
       retry: 1,
-      onSuccess: (data) => {  
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["clients"] });
         setClients(data.data.Client);
         setLoading(false);

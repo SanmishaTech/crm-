@@ -149,6 +149,7 @@ export default function EditSupplierPage() {
                 type: "manual",
                 message: serverErrors.supplier[0], // The error message from the server
               });
+              toast.error("The supplier has already been taken.");
             }
           } else {
             setError("Failed to add Supplier"); // For any other errors

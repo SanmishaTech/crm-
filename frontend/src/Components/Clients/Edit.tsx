@@ -108,6 +108,7 @@ export default function EditClientPage() {
                 type: "manual",
                 message: serverErrors.client[0], // The error message from the server
               });
+              toast.error("The Client has already been taken.");
             }
           } else {
             setError("Failed to add Product"); // For any other errors

@@ -109,7 +109,13 @@ const Navbar = () => {
             >
               Dashboard
             </Button>
-
+            <Button
+              onClick={() => navigate("/leads")}
+              variant="ghost"
+              className="text-foreground hover:text-foreground/80 hover:bg-accent"
+            >
+              Leads
+            </Button>
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
                 <NavigationMenuItem className="group">
@@ -180,13 +186,6 @@ const Navbar = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-            <Button
-              onClick={() => navigate("/leads")}
-              variant="ghost"
-              className="text-foreground hover:text-foreground/80 hover:bg-accent"
-            >
-              Leads
-            </Button>
 
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">

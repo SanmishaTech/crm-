@@ -145,6 +145,7 @@ export default function InputForm() {
                 type: "manual",
                 message: serverErrors.product[0], // The error message from the server
               });
+              toast.error("The product has already been taken.");
             }
             if (serverErrors.product_category_id) {
               form.setError("product_category_id", {
