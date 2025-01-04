@@ -285,7 +285,7 @@ export default function InputForm() {
                   )}
                 />
               </div>
-              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+              <div className="grid grid-cols-2 gap-4 mb-5">
                 <FormField
                   control={form.control}
                   name="mobile_1"
@@ -335,7 +335,7 @@ export default function InputForm() {
                   )}
                 />
               </div>
-              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+              <div className="grid grid-cols-2 gap-4 mb-5">
                 <FormField
                   control={form.control}
                   name="department"
