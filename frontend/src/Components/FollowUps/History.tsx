@@ -9,10 +9,11 @@ import {
 } from "@/components/ui/card";
 import {
   Table,
+  TableBody,
+  TableCell,
+  TableHead,
   TableHeader,
   TableRow,
-  TableCell,
-  TableBody,
 } from "@/components/ui/table";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -25,7 +26,7 @@ const History = ({ leads }) => {
   }, [queryClient]);
 
   if (!leads) {
-    return <div>Loading lead data...</div>;
+    return <div className="text-center py-4">Loading lead data...</div>;
   }
 
   const followUps = leads.follow_ups;
@@ -34,7 +35,9 @@ const History = ({ leads }) => {
   console.log(followUps);
 
   if (!followUps || followUps.length === 0) {
-    return <div>No follow-up details available.</div>;
+    return (
+      <div className="text-center py-4">No follow-up details available.</div>
+    );
   }
 
   // Sort follow-ups to show the latest first
@@ -43,35 +46,46 @@ const History = ({ leads }) => {
   );
 
   return (
-    <div className="overflow-hidden py-4">
+    <div className="overflow-hidden py-4 space-y-6">
       {/* Follow-Up Count Card at the top */}
-      <div className="mb-6">
-        <Card className="bg-accent/70 w-full">
+      <div className="space-y-4">
+        <Card className="bg-muted/70">
           <CardHeader>
-            <CardTitle>Follow-Up Count: {followUps.length}</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-xl font-semibold text-primary">
+              Follow-Up Count: {followUps.length}
+            </CardTitle>
+            <CardDescription className="text-sm text-">
               Total number of follow-ups for this lead
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <p>Total follow-ups: {followUps.length}</p>
+          <CardContent>
+            <p className="text-sm text-">
+              Total follow-ups: {followUps.length}
+            </p>
           </CardContent>
-          <CardFooter></CardFooter>
+          <CardFooter />
         </Card>
       </div>
 
       {/* Follow-Up Details Table */}
-      <Table className="min-w-full bg-white">
-        <TableHeader>
-          <TableRow className="bg-accent/100">
-            <TableCell className="py-2">Number</TableCell>
-            <TableCell className="py-2">Follow-Up Date</TableCell>
-            <TableCell className="py-2">Next Follow-Up Date</TableCell>
-            <TableCell className="py-2">Follow-Up Type</TableCell>
-            <TableCell className="py-2">Remarks</TableCell>
-            <TableCell className="py-2">Created At</TableCell>
+      <Table className="min-w-full bg-background rounded-md shadow-lg border border-muted">
+        <TableHeader className="bg-muted text-sm">
+          <TableRow>
+            <TableCell className="px-4 py-2 text-left">#</TableCell>
+            <TableCell className="px-4 py-2 text-left">
+              Follow-Up Date
+            </TableCell>
+            <TableCell className="px-4 py-2 text-left">
+              Next Follow-Up Date
+            </TableCell>
+            <TableCell className="px-4 py-2 text-left">
+              Follow-Up Type
+            </TableCell>
+            <TableCell className="px-4 py-2 text-left">Remarks</TableCell>
+            <TableCell className="px-4 py-2 text-left">Created At</TableCell>
           </TableRow>
         </TableHeader>
+
         <TableBody>
           {sortedFollowUps.map((followUp, index) => {
             const {
@@ -83,27 +97,35 @@ const History = ({ leads }) => {
             } = followUp;
 
             return (
-              <TableRow key={index} className="bg-accent/100">
-                <TableCell className="border px-4 py-2">{index + 1}</TableCell>
-                <TableCell className="border px-4 py-2">
+              <TableRow
+                key={index}
+                className="hover:bg-muted/10 transition-colors duration-150"
+              >
+                <TableCell className="border-t px-4 py-2 text-sm">
+                  {index + 1}
+                </TableCell>
+                <TableCell className="border-t px-4 py-2 text-sm">
                   {follow_up_date
                     ? new Date(follow_up_date).toLocaleDateString()
                     : "N/A"}
                 </TableCell>
-                <TableCell className="border px-4 py-2">
+                <TableCell className="border-t px-4 py-2 text-sm">
                   {next_follow_up_date
                     ? new Date(next_follow_up_date).toLocaleDateString()
                     : "N/A"}
                 </TableCell>
-                <TableCell className="border px-4 py-2">
+                <TableCell className="border-t px-4 py-2 text-sm">
                   {follow_up_type || "N/A"}
                 </TableCell>
-                <TableCell className="border px-4 py-2">
+                <TableCell className="border-t px-4 py-2 text-sm">
                   {remarks || "N/A"}
                 </TableCell>
-                <TableCell className="border px-4 py-2">
+
+                <TableCell className="border-t px-4 py-2 text-sm">
                   {created_at
-                    ? new Date(created_at).toLocaleDateString()
+                    ? `${new Date(created_at).toLocaleDateString()} (${new Date(
+                        created_at
+                      ).toLocaleTimeString()})`
                     : "N/A"}
                 </TableCell>
               </TableRow>
