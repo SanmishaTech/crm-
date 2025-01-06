@@ -54,6 +54,17 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
@@ -451,24 +462,7 @@ export default function TableDemo() {
                                       >
                                         Edit
                                       </Button>
-                                      {lead.lead_status === "Deal" && (
-                                        <Button
-                                          variant="ghost"
-                                          size="sm"
-                                          onClick={() => {
-                                            handleGenerateInvoice(lead.id);
-                                            queryClient.invalidateQueries(
-                                              "invoices"
-                                            );
-                                          }}
-                                          className="w-full text-sm"
-                                        >
-                                          Deal
-                                        </Button>
-                                      )}
-
                                       <AlertDialogbox url={lead.id} />
-
                                       <Button
                                         variant="ghost"
                                         size="sm"
@@ -481,18 +475,86 @@ export default function TableDemo() {
                                       >
                                         Follow Up
                                       </Button>
+
                                       {(lead.lead_status === "Quotation" ||
                                         lead.lead_status === "Deal") && (
-                                        <Button
-                                          variant="ghost"
-                                          size="sm"
-                                          className="w-full text-sm"
-                                          onClick={() => {
-                                            handleGenerateQuotation(lead.id);
-                                          }}
-                                        >
-                                          Quotation
-                                        </Button>
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="w-full text-sm"
+                                            >
+                                              Quotation
+                                            </Button>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>
+                                                Are you absolutely sure?
+                                              </AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                "Are you sure you want to
+                                                download the Quotation PDF?"
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel>
+                                                Cancel
+                                              </AlertDialogCancel>
+                                              <AlertDialogAction
+                                                onClick={() => {
+                                                  handleGenerateQuotation(
+                                                    lead.id
+                                                  );
+                                                }}
+                                              >
+                                                Download Quotation
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
+                                      )}
+                                      {lead.lead_status === "Deal" && (
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="w-full text-sm"
+                                            >
+                                              Deal
+                                            </Button>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>
+                                                Are you absolutely sure?
+                                              </AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                "Are you sure you want to
+                                                download the Invoice PDF?"
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel>
+                                                Cancel
+                                              </AlertDialogCancel>
+                                              <AlertDialogAction
+                                                onClick={() => {
+                                                  handleGenerateInvoice(
+                                                    lead.id
+                                                  );
+                                                  queryClient.invalidateQueries(
+                                                    "invoices"
+                                                  );
+                                                }}
+                                              >
+                                                Download Invoice
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
                                       )}
                                     </DropdownMenuContent>
                                   </DropdownMenu>
