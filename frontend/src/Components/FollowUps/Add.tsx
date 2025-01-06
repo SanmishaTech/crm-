@@ -227,10 +227,10 @@ export default function InputForm() {
           </Form>
         </TabsContent>
         <TabsContent value="summary">
-          <Summary leads={leads} />.
+          <Summary leads={leads} />
         </TabsContent>
         <TabsContent value="history">
-          <History leads={leads} />.
+          <History leads={leads} />
         </TabsContent>
       </Tabs>
     </div>
