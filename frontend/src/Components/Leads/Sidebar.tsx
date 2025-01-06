@@ -2,15 +2,21 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { create } from "zustand";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface SidebarStore {
   isMinimized: boolean;
@@ -28,7 +34,7 @@ export const useSidebar = create<SidebarStore>((set) => ({
   toggle: () => set((state) => ({ isMinimized: !state.isMinimized })),
   searchTerm: "",
   setSearchTerm: (term: string) => set({ searchTerm: term }),
-  leadStatus: "Open",
+  leadStatus: "",
   setLeadStatus: (leadStatus: string) => set({ leadStatus }),
   filters: { streetAddress: false, area: false, city: false },
   setFilter: (filter: string, value: boolean) =>
@@ -39,19 +45,39 @@ export const useSidebar = create<SidebarStore>((set) => ({
 
 type SidebarProps = {
   className?: string;
+  onFilterChange: (filters: { status: string }) => void;
 };
 
-export default function Sidebar({ className }: SidebarProps) {
+const leadStatusOptions = [
+  { value: "Open", label: "Open" },
+  { value: "In Progress", label: "In Progress" },
+  { value: "Quotation", label: "Quotation" },
+  { value: "Deal", label: "Deal" },
+  { value: "Close", label: "Close" },
+];
+
+export default function Sidebar({ className, onFilterChange }: SidebarProps) {
   const {
     isMinimized,
     toggle,
     searchTerm,
     setSearchTerm,
-    filters,
-    setFilter,
     leadStatus,
     setLeadStatus,
   } = useSidebar();
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleReset = () => {
+    // Reset all filter states to their default values
+    setLeadStatus('');
+     
+    
+    
+     onFilterChange({
+      status: ''
+    });
+  };
 
   return (
     <aside
@@ -63,7 +89,7 @@ export default function Sidebar({ className }: SidebarProps) {
         className
       )}
     >
-      <div className="p-2  space-x-2 mt-7 justify-items-center">
+      <div className="p-2 space-x-2 mt-7 justify-items-center">
         <div>
           <h3 className="text-lg font-semibold">Leads Filter</h3>
         </div>
@@ -74,24 +100,61 @@ export default function Sidebar({ className }: SidebarProps) {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div>
-          <Select onValueChange={setLeadStatus} value={leadStatus}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Lead Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Lead Status</SelectLabel>
-                <SelectItem value="Open">Open</SelectItem>
-                <SelectItem value="In Progress">In Progress</SelectItem>
-                <SelectItem value="Quotation">Quotation</SelectItem>
-                <SelectItem value="Deal">Deal</SelectItem>
-                <SelectItem value="Close">Close</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+        <div className="mt-2">
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className="w-[200px] justify-between"
+              >
+                {leadStatus
+                  ? leadStatusOptions.find((status) => status.value === leadStatus)?.label
+                  : "Select status..."}
+                <ChevronsUpDown className="opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search status..." className="h-9" />
+                <CommandList>
+                  <CommandEmpty>No status found.</CommandEmpty>
+                  <CommandGroup>
+                    {leadStatusOptions.map((status) => (
+                      <CommandItem
+                        key={status.value}
+                        value={status.value}
+                        onSelect={(currentValue) => {
+                          const newValue = currentValue === leadStatus ? "" : currentValue;
+                          setLeadStatus(newValue);
+                          onFilterChange({ status: newValue });
+                          setOpen(false);
+                        }}
+                      >
+                        {status.label}
+                        <Check
+                          className={cn(
+                            "ml-auto",
+                            leadStatus === status.value ? "opacity-100" : "opacity-0"
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
-        <div className="mt-4"></div>
+        <div className="mt-4">
+          <button 
+            onClick={handleReset}
+            className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+            Reset Filters
+          </button>
+        </div>
       </div>
     </aside>
   );
