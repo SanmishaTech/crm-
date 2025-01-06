@@ -303,7 +303,7 @@ export default function EditEmployeePage() {
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Employee Form</h2>
             <p className="text-xs mb-9 text-muted-foreground">
-              Edit/Update the employee.
+              Update employee details.
             </p>
           </div>
         </div>

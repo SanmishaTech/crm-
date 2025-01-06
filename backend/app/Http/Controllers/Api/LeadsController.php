@@ -90,26 +90,75 @@ class LeadsController extends BaseController
     /**
      * All Leads .
      */
+    // public function index(Request $request): JsonResponse
+    // {
+    //     $query = Lead::query();
+    //     if ($request->query('search')) {
+    //         $searchTerm = $request->query('search');
+    //         $query->where(function ($query) use ($searchTerm) {
+    //             $query->where('lead_owner', 'like', '%' . $searchTerm . '%'
+    //              ->orWhere('lead_status', 'like', '%'.$searchTerm.'%'));
+    //         });
+    //     }
+
+    //     $leads = $query->paginate(11);
+
+    //     return $this->sendResponse(["Lead"=>LeadResource::collection($leads),
+    //     'pagination' => [
+    //         'current_page' => $leads->currentPage(),
+    //         'last_page' => $leads->lastPage(),
+    //         'per_page' => $leads->perPage(),
+    //         'total' => $leads->total(),
+    //     ]], "Leads retrieved successfully");
+    // }
+
     public function index(Request $request): JsonResponse
     {
-        $query = Lead::query();
+        $query = Lead::with(['contact', 'employee', 'leadProducts']);
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
+        
             $query->where(function ($query) use ($searchTerm) {
-                $query->where('lead_owner', 'like', '%' . $searchTerm . '%'
-                 ->orWhere('lead_status', 'like', '%'.$searchTerm.'%'));
+                $query->where('lead_owner', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('lead_number', 'like', '%' . $searchTerm . '%')
+                    // Search in the contact_name of the related contact table
+                    ->orWhereHas('contact', function ($query) use ($searchTerm) {
+                        $query->where('contact_name', 'like', '%' . $searchTerm . '%');
+                    });
             });
         }
 
-        $leads = $query->paginate(11);
+        if ($request->query('leadStatus')) {
+            $leadStatus = $request->query("leadStatus");
+        
+            $query->where(function ($query) use ($leadStatus) {
+                $query->where('lead_status', 'like', '%' . $leadStatus . '%');
+            });
+        }
+        
+          // If there are product filters (product_ids array), filter by related products
+        if ($request->query('productIds')) {
+           $productIds = $request->query('productIds'); // Get the array of product IDs
+        
+           // Filter the leads by related products (assuming the relationship is leadProducts)
+            $query->whereHas('leadProducts', function ($query) use ($productIds) {
+            $query->whereIn('product_id', $productIds); // assuming 'product_id' is the foreign key in leadProducts
+            });
+        }
 
-        return $this->sendResponse(["Lead"=>LeadResource::collection($leads),
-        'pagination' => [
-            'current_page' => $leads->currentPage(),
-            'last_page' => $leads->lastPage(),
-            'per_page' => $leads->perPage(),
-            'total' => $leads->total(),
-        ]], "Leads retrieved successfully");
+      
+    
+        $leads = $query->paginate(5);
+    
+        return $this->sendResponse([
+            "Lead" => LeadResource::collection($leads),
+            'pagination' => [
+                'current_page' => $leads->currentPage(),
+                'last_page' => $leads->lastPage(),
+                'per_page' => $leads->perPage(),
+                'total' => $leads->total(),
+            ]
+        ], "Leads retrieved successfully");
     }
 
     /**

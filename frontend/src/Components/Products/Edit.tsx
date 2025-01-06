@@ -286,7 +286,7 @@ export default function EditProductPage() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Products Form</h2>
-            <p className="text-xs mb-9">Edit/Update the product </p>
+            <p className="text-xs mb-9">Update the product details.</p>
           </div>
         </div>
       </div>
