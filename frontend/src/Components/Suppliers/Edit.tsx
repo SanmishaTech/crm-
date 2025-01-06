@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Form,
   FormControl,
@@ -221,7 +222,109 @@ export default function EditSupplierPage() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="p-6 mx-auto">
+        <div className="flex items-center justify-between w-full">
+          <div className="mb-7">
+            <Button
+              onClick={() => navigate("/employees")}
+              variant="ghost"
+              className="mr-4"
+              type="button"
+            >
+              <ChevronLeft />
+              Back
+            </Button>
+          </div>
+          <div className="flex-1 mr-9 text-center">
+            <div className="-ml-4">
+              <h2 className="text-2xl font-semibold">Supplier Edit Form</h2>
+              <p className="text-xs mb-9 text-muted-foreground">
+                Edit/Update the supplier.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <Card className="bg-accent/40">
+              <CardHeader className="text- justify-between space-y-0 pb-2">
+                <CardTitle className="text-xl font-semibold">
+                  Supplier Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                  <Skeleton className="w-full h-10" />
+                  <Skeleton className="w-full h-10" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-accent/40">
+              <CardHeader className="text- justify-between space-y-0 pb-2">
+                <CardTitle className="text-xl font-semibold">
+                  GST Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                  <Skeleton className="w-full h-10" />
+                  <Skeleton className="w-full h-10" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-accent/40">
+              <CardHeader className="text- justify-between space-y-0 pb-2">
+                <CardTitle className=" text-xl  font-semibold">
+                  Contact Supplier
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                  <Skeleton className="w-full h-10" />
+                  <Skeleton className="w-full h-10" />
+                </div>
+                <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                  <Skeleton className="w-full h-10" />
+                  <Skeleton className="w-full h-10" />
+                </div>
+                <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                  <Skeleton className="w-full h-10" />
+                  <Skeleton className="w-full h-10" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-accent/40">
+              <CardHeader className="text- justify-between space-y-0 pb-2">
+                <CardTitle className=" text-xl  font-semibold">
+                  Supplier Address Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                  <Skeleton className="w-full h-10" />
+                  <Skeleton className="w-full h-10" />
+                </div>
+                <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                  <Skeleton className="w-full h-10" />
+                  <Skeleton className="w-full h-10" />
+                </div>
+                <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                  <Skeleton className="w-full h-10" />
+                  <Skeleton className="w-full h-10" />
+                </div>
+              </CardContent>
+            </Card>
+            <div className="flex justify-end space-x-4 mt-6">
+              <Skeleton className="w-24 h-10 bg-gray-400 rounded-md" />
+              <Skeleton className="w-24 h-10 bg-gray-400 rounded-md" />
+            </div>
+          </form>
+        </Form>
+      </div>
+    );
   }
   if (isError) {
     return <div>Error fetching data. Please try again.</div>;

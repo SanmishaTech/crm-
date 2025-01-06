@@ -259,7 +259,7 @@ export default function TableDemo() {
         document.body.removeChild(link);
         queryClient.invalidateQueries({ queryKey: ["lead"] });
 
-        console.log("Quotation generated and downloaded successfully!");
+        console.log("Invoice generated and downloaded successfully!");
       } else {
         // Handle error response
         const errorData = await response.json(); // Parse the error response JSON
