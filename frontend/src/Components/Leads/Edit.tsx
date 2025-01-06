@@ -331,7 +331,7 @@ export default function EditLeadPage() {
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Lead Edit Form</h2>
             <p className="text-xs mb-9 text-muted-foreground">
-              Edit lead details.
+            Update the lead details.
             </p>
           </div>
         </div>

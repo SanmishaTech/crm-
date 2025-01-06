@@ -198,7 +198,7 @@ export default function EditClientPage() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Client Form</h2>
-            <p className="text-xs mb-9">Edit/Update clients.</p>
+            <p className="text-xs mb-9">Update the client details.</p>
           </div>
         </div>
       </div>
