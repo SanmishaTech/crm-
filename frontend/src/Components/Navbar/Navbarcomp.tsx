@@ -116,6 +116,7 @@ const Navbar = () => {
             >
               Leads
             </Button>
+
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
                 <NavigationMenuItem className="group">
@@ -181,6 +182,15 @@ const Navbar = () => {
                       onClick={() => navigate("/products")}
                     >
                       Products
+                    </Button>
+                    <Separator className="w-full justify-center bg-border" />
+
+                    <Button
+                      onClick={() => navigate("/inventory")}
+                      variant="ghost"
+                      className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+                    >
+                      Inventory
                     </Button>
                   </NavigationMenuContent>
                 </NavigationMenuItem>

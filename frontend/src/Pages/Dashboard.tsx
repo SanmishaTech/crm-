@@ -27,6 +27,8 @@ import ProductsEdit from "@/Components/Products/Edit";
 import FollowUps from "@/Components/FollowUps/Add";
 import InvoiceComponent from "@/Components/Invoices/Index";
 import InvoicesEdit from "@/Components/Invoices/Edit";
+import Inventory from "@/Components/Inventory/Index";
+import InventoryAdd from "@/Components/Inventory/Add";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -101,6 +103,9 @@ const Dashboard = () => {
         {location.pathname === "/employees" && <Employees />}
         {location.pathname === "/employees/add" && <EmployeesAdd />}
         {/\/employees\/edit\/\d+/.test(location.pathname) && <EmployeesEdit />}
+
+        {location.pathname === "/inventory" && <Inventory />}
+        {location.pathname === "/inventory/add" && <InventoryAdd />}
       </main>
     </div>
   );

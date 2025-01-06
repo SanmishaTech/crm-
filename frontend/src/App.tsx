@@ -164,6 +164,8 @@ function App() {
         <Route path="/leads/followUps/:id" element={<Dashboard />} />
         <Route path="/leads/generateQuotation/:id" element={<Dashboard />} />
         <Route path="/leads/generateInvoice/:id" element={<Dashboard />} />
+        <Route path="/inventory" element={<Dashboard />} />
+        <Route path="/inventory/add" element={<Dashboard />} />
 
         <Route path="/departments" element={<Dashboard />} />
         <Route path="/departments/add" element={<Dashboard />} />
