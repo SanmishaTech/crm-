@@ -248,10 +248,10 @@ export default function TableDemo() {
           <div className="flex space-x-2">
             <Button
               variant="outline"
-              onClick={() => navigate("/inventory /add")}
+              onClick={() => navigate("/inventory/add")}
               className="text-foreground hover:text-foreground/80 hover:bg-accent"
             >
-              Add Inventory
+              3ventory
             </Button>
           </div>
         </div>
