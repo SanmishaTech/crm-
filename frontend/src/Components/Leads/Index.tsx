@@ -105,7 +105,14 @@ export default function TableDemo() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
+  const {
+    searchTerm,
+    setSearchTerm,
+    leadStatus,
+    setLeadStatus,
+    toggle,
+    isMinimized,
+  } = useSidebar();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -131,9 +138,9 @@ export default function TableDemo() {
   };
 
   const { data: Sup } = useGetData({
-    endpoint: `/api/leads?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
+    endpoint: `/api/leads?search=${searchTerm}&page=${currentPage}&total=${totalPages}&leadStatus=${leadStatus}`,
     params: {
-      queryKey: ["lead", searchTerm, currentPage],
+      queryKey: ["lead", searchTerm, currentPage, leadStatus],
       retry: 1,
       onSuccess: (data) => {
         setSuppliers(data?.Lead);
@@ -307,6 +314,7 @@ export default function TableDemo() {
               </Tooltip>
             </TooltipProvider>
           </div>
+
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input

@@ -2,12 +2,23 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { create } from "zustand";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SidebarStore {
   isMinimized: boolean;
   toggle: () => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  leadStatus: string;
+  setLeadStatus: (leadStatus: string) => void;
   filters: { [key: string]: boolean };
   setFilter: (filter: string, value: boolean) => void;
 }
@@ -17,6 +28,8 @@ export const useSidebar = create<SidebarStore>((set) => ({
   toggle: () => set((state) => ({ isMinimized: !state.isMinimized })),
   searchTerm: "",
   setSearchTerm: (term: string) => set({ searchTerm: term }),
+  leadStatus: "Open",
+  setLeadStatus: (leadStatus: string) => set({ leadStatus }),
   filters: { streetAddress: false, area: false, city: false },
   setFilter: (filter: string, value: boolean) =>
     set((state) => ({
@@ -29,8 +42,16 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ className }: SidebarProps) {
-  const { isMinimized, toggle, searchTerm, setSearchTerm, filters, setFilter } =
-    useSidebar();
+  const {
+    isMinimized,
+    toggle,
+    searchTerm,
+    setSearchTerm,
+    filters,
+    setFilter,
+    leadStatus,
+    setLeadStatus,
+  } = useSidebar();
 
   return (
     <aside
@@ -52,6 +73,19 @@ export default function Sidebar({ className }: SidebarProps) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+        </div>
+        <div>
+          <Select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a fruit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Fruits</SelectLabel>
+                <SelectItem value="apple">Apple</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
         <div className="mt-4"></div>
       </div>
