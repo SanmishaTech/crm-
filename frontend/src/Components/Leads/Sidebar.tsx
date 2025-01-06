@@ -75,14 +75,18 @@ export default function Sidebar({ className }: SidebarProps) {
           />
         </div>
         <div>
-          <Select>
+          <Select onValueChange={setLeadStatus} value={leadStatus}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a fruit" />
+              <SelectValue placeholder="Lead Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Fruits</SelectLabel>
-                <SelectItem value="apple">Apple</SelectItem>
+                <SelectLabel>Lead Status</SelectLabel>
+                <SelectItem value="Open">Open</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Quotation">Quotation</SelectItem>
+                <SelectItem value="Deal">Deal</SelectItem>
+                <SelectItem value="Close">Close</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
