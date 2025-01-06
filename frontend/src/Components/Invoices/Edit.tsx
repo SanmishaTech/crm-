@@ -35,6 +35,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Form validation schema
 const formSchema = z.object({
@@ -125,7 +126,46 @@ export default function EditSupplierPage() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="mx-auto p-6 mt-12">
+        <div className="flex items-center justify-between w-full">
+          <div className="mb-7">
+            <Button
+              onClick={() => navigate("/invoices")}
+              variant="ghost"
+              className="mr-4"
+              type="button"
+            >
+              <ChevronLeft />
+              Back
+            </Button>
+          </div>
+          <div className="flex-1 mr-9 text-center">
+            <div className="-ml-4">
+              <h2 className="text-2xl font-semibold">Invoice Form</h2>
+            </div>
+          </div>
+        </div>
+        <Card className="bg-accent/40">
+          <CardHeader className="text- justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-semibold">
+              <Skeleton className="h-6 w-40" /> {/* Skeleton for Title */}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 gap-4">
+              <Skeleton className="h-10 w-full" />{" "}
+              {/* Skeleton for Input Field */}
+              <Skeleton className="h-10 w-32" /> {/* Skeleton for Button */}
+            </div>
+          </CardContent>
+        </Card>
+        <div className="flex justify-end space-x-4 mt-6">
+          <Skeleton className="w-24 h-10 bg-gray-400 rounded-md" />
+          <Skeleton className="w-24 h-10 bg-gray-400 rounded-md" />
+        </div>
+      </div>
+    );
   }
   if (isError) {
     return <div>Error fetching data. Please try again.</div>;

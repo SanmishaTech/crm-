@@ -7,22 +7,28 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Table, TableHeader, TableRow, TableCell, TableBody } from "@/components/ui/table";
-import { useQueryClient } from '@tanstack/react-query';
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@/components/ui/table";
+import { useQueryClient } from "@tanstack/react-query";
 
 const History = ({ leads }) => {
   const queryClient = useQueryClient();
 
   React.useEffect(() => {
     // Refetch the leads data when the component mounts
-    queryClient.invalidateQueries('leads');
+    queryClient.invalidateQueries("leads");
   }, [queryClient]);
 
   if (!leads) {
     return <div>Loading lead data...</div>;
   }
 
-  const followUps = leads.follow_ups;  
+  const followUps = leads.follow_ups;
 
   // Log the leads data for debugging
   console.log(followUps);
@@ -32,7 +38,9 @@ const History = ({ leads }) => {
   }
 
   // Sort follow-ups to show the latest first
-  const sortedFollowUps = [...followUps].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const sortedFollowUps = [...followUps].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
 
   return (
     <div className="overflow-hidden py-4">
@@ -55,7 +63,7 @@ const History = ({ leads }) => {
       {/* Follow-Up Details Table */}
       <Table className="min-w-full bg-white">
         <TableHeader>
-          <TableRow>
+          <TableRow className="bg-accent/100">
             <TableCell className="py-2">Number</TableCell>
             <TableCell className="py-2">Follow-Up Date</TableCell>
             <TableCell className="py-2">Next Follow-Up Date</TableCell>
@@ -75,18 +83,28 @@ const History = ({ leads }) => {
             } = followUp;
 
             return (
-              <TableRow key={index} className="bg-gray-100">
+              <TableRow key={index} className="bg-accent/100">
                 <TableCell className="border px-4 py-2">{index + 1}</TableCell>
                 <TableCell className="border px-4 py-2">
-                  {follow_up_date ? new Date(follow_up_date).toLocaleDateString() : "N/A"}
+                  {follow_up_date
+                    ? new Date(follow_up_date).toLocaleDateString()
+                    : "N/A"}
                 </TableCell>
                 <TableCell className="border px-4 py-2">
-                  {next_follow_up_date ? new Date(next_follow_up_date).toLocaleDateString() : "N/A"}
+                  {next_follow_up_date
+                    ? new Date(next_follow_up_date).toLocaleDateString()
+                    : "N/A"}
                 </TableCell>
-                <TableCell className="border px-4 py-2">{follow_up_type || "N/A"}</TableCell>
-                <TableCell className="border px-4 py-2">{remarks || "N/A"}</TableCell>
                 <TableCell className="border px-4 py-2">
-                  {created_at ? new Date(created_at).toLocaleDateString() : "N/A"}
+                  {follow_up_type || "N/A"}
+                </TableCell>
+                <TableCell className="border px-4 py-2">
+                  {remarks || "N/A"}
+                </TableCell>
+                <TableCell className="border px-4 py-2">
+                  {created_at
+                    ? new Date(created_at).toLocaleDateString()
+                    : "N/A"}
                 </TableCell>
               </TableRow>
             );
