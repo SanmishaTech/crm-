@@ -251,7 +251,7 @@ export default function TableDemo() {
               onClick={() => navigate("/inventory/add")}
               className="text-foreground hover:text-foreground/80 hover:bg-accent"
             >
-              3ventory
+              Inventory
             </Button>
           </div>
         </div>

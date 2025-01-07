@@ -331,7 +331,7 @@ export default function EditLeadPage() {
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Lead Edit Form</h2>
             <p className="text-xs mb-9 text-muted-foreground">
-            Update the lead details.
+              Update the lead details.
             </p>
           </div>
         </div>
@@ -529,29 +529,28 @@ export default function EditLeadPage() {
 
                       <FormMessage />
                       {field.value === "Close" && (
-                  <FormField
-                    control={form.control}
-                    name="lead_closing_reason"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Closing Reason</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Enter closing reason"
-                            className="resize-none"
-                            {...field}
-                          />
-                        </FormControl>
+                        <FormField
+                          control={form.control}
+                          name="lead_closing_reason"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Closing Reason</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Enter closing reason"
+                                  className="resize-none"
+                                  {...field}
+                                />
+                              </FormControl>
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
                     </FormItem>
                   )}
                 />
-               
               </div>
             </CardContent>
           </Card>

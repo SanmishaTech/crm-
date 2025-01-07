@@ -33,6 +33,7 @@ class ProductsController extends BaseController
         }
         $products = $query->orderBy('id', 'DESC')->paginate(5);
 
+
         return $this->sendResponse(["Products"=>ProductResource::collection($products),
         'Pagination' => [
             'current_page' => $products->currentPage(),

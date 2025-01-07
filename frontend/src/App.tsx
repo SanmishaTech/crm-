@@ -43,7 +43,9 @@ import {
 } from "@/components/ui/command";
 import { Icons } from "@/Dashboard/Icon";
 import { Editor } from "@/Components/Editor/Editor";
-import Navbar from "@/Components/Navbar/Navbarcomp"; // Import Navbar
+// import Navbar from "@/Navbar/NewNavbar";
+import Navbar from "@/Components/Navbar/Navbarcomp";
+
 import { navItems } from "@/Config/data";
 
 function App() {
