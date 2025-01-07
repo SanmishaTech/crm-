@@ -123,7 +123,7 @@ class LeadsController extends BaseController
                     ->orWhere('lead_number', 'like', '%' . $searchTerm . '%')
                     // Search in the contact_name of the related contact table
                     ->orWhereHas('contact', function ($query) use ($searchTerm) {
-                        $query->where('contact_name', 'like', '%' . $searchTerm . '%');
+                        $query->where('contact_person', 'like', '%' . $searchTerm . '%');
                     });
             });
         }
