@@ -115,15 +115,15 @@ class LeadsController extends BaseController
     public function index(Request $request): JsonResponse
     {
         $query = Lead::with(['contact', 'employee', 'leadProducts']);
-        if ($request->query('search')) {
-            $searchTerm = $request->query('search');
+        if ($request->query('searchTerm')) {
+            $searchTerm = $request->query('searchTerm');
         
             $query->where(function ($query) use ($searchTerm) {
                 $query->where('lead_owner', 'like', '%' . $searchTerm . '%')
                     ->orWhere('lead_number', 'like', '%' . $searchTerm . '%')
                     // Search in the contact_name of the related contact table
                     ->orWhereHas('contact', function ($query) use ($searchTerm) {
-                        $query->where('contact_name', 'like', '%' . $searchTerm . '%');
+                        $query->where('contact_person', 'like', '%' . $searchTerm . '%');
                     });
             });
         }
