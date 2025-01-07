@@ -263,14 +263,23 @@ const Navbar = () => {
               <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />
             </Button>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setOpen(true)}
-              className="text-foreground hover:text-foreground/80 hover:bg-accent"
-            >
-              <Search className="h-4" style={{ strokeWidth: 1.5 }} />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setOpen(true)}
+                    className="text-foreground hover:text-foreground/80 hover:bg-accent"
+                  >
+                    <Search className="h-4" style={{ strokeWidth: 1.5 }} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Search Modules</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
 
           {/* Theme toggle and profile - always visible */}
@@ -493,9 +502,22 @@ const Navbar = () => {
 
         {/* Mobile menu footer with icons */}
         <div className="mt-4 pt-4 border-t border-border flex justify-around">
-          <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
-            <Search className="h-5 w-5" />
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setOpen(true)}
+                >
+                  <Search className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Search Modules</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
           </Button>

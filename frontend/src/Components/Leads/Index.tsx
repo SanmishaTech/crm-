@@ -110,6 +110,8 @@ export default function TableDemo() {
     setSearchTerm,
     leadStatus,
     setLeadStatus,
+    productIds,
+    setProductIds,
     toggle,
     isMinimized,
   } = useSidebar();
@@ -138,23 +140,38 @@ export default function TableDemo() {
   };
 
   const [sortField, setSortField] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const handleSort = (field: string) => {
     if (sortField === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortOrder('asc');
+      setSortOrder("asc");
     }
   };
 
   const { data: Sup } = useGetData({
-    endpoint: `/api/leads?searchTerm=${encodeURIComponent(searchTerm || '')}&page=${currentPage}&total=${totalPages}&leadStatus=${leadStatus}${sortField ? `&sortField=${sortField}&sortOrder=${sortOrder}` : ''}`,
+    endpoint: `/api/leads?searchTerm=${encodeURIComponent(
+      searchTerm || ""
+    )}&page=${currentPage}&total=${totalPages}&leadStatus=${leadStatus}${
+      sortField
+        ? `&sortField=${sortField}&sortOrder=${sortOrder}&productIds=${productIds}`
+        : ""
+    }`,
     params: {
-      queryKey: ["lead", searchTerm, currentPage, leadStatus, sortField, sortOrder],
+      queryKey: [
+        "lead",
+        searchTerm,
+        currentPage,
+        leadStatus,
+        productIds,
+        sortField,
+        sortOrder,
+      ],
       retry: 1,
       onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["lead"] });  
         if (data?.data?.Lead) {
           setSuppliers(data.data.Lead);
           setPagination(data.data.pagination);
@@ -309,15 +326,15 @@ export default function TableDemo() {
   };
 
   const handleFilterChange = (filters: any) => {
-    // Update the filters
     if (filters.status !== undefined) {
       setLeadStatus(filters.status);
+      setProductIds(filters.productIds);
     }
   };
 
   return (
     <div className="flex ">
-      <Sidebar className="" onFilterChange={handleFilterChange} />
+      <Sidebar onFilterChange={handleFilterChange} />
       <div className="p-6 w-full  bg-accent/60 ml-4 rounded-lg shadow-lg ">
         <div className="p-2  ">
           <div className="flex justify-between items-center ">
