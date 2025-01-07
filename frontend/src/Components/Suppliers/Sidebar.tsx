@@ -2,6 +2,8 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { create } from "zustand";
 import { Input } from "@/components/ui/input";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface SidebarStore {
   isMinimized: boolean;
@@ -35,26 +37,49 @@ export default function Sidebar({ className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        `hidden min-h-screen flex-none bg-light transition-all duration-500 md:block sticky ease-in-out rounded`,
+        `min-h-screen flex-none bg-light transition-all duration-500 md:block sticky ease-in-out rounded`,
         !isMinimized
           ? "w-72 opacity-100 block bg-accent/70"
-          : " w-1 opacity-0 bg-white hidden",
+          : "w-1 opacity-0 bg-white hidden",
         className
       )}
     >
-      <div className="p-2 space-x-2 mt-7 justify-items-center">
-        <div>
+      <div className="p-4 space-y-4">
+        <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Supplier Filter</h3>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggle}
+            className="hover:bg-accent block md:hidden"
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close sidebar</span>
+          </Button>
         </div>
-        <div className="mt-2">
+        <div>
           <Input
             placeholder="Search suppliers..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full"
           />
         </div>
-        <div className="mt-4"></div>
+        <div className="space-y-2">
+          {Object.entries(filters).map(([key, value]) => (
+            <label key={key} className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={value}
+                onChange={(e) => setFilter(key, e.target.checked)}
+                className="rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <span className="text-sm capitalize">{key}</span>
+            </label>
+          ))}
+        </div>
       </div>
     </aside>
   );
 }
+

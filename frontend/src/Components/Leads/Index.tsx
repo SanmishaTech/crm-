@@ -137,21 +137,37 @@ export default function TableDemo() {
     }
   };
 
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
+
   const { data: Sup } = useGetData({
-    endpoint: `/api/leads?search=${searchTerm}&page=${currentPage}&total=${totalPages}&leadStatus=${leadStatus}`,
+    endpoint: `/api/leads?searchTerm=${encodeURIComponent(searchTerm || '')}&page=${currentPage}&total=${totalPages}&leadStatus=${leadStatus}${sortField ? `&sortField=${sortField}&sortOrder=${sortOrder}` : ''}`,
     params: {
-      queryKey: ["lead", searchTerm, currentPage, leadStatus],
+      queryKey: ["lead", searchTerm, currentPage, leadStatus, sortField, sortOrder],
       retry: 1,
       onSuccess: (data) => {
-        setSuppliers(data?.Lead);
-        setPagination(data.data.pagination);
+        if (data?.data?.Lead) {
+          setSuppliers(data.data.Lead);
+          setPagination(data.data.pagination);
+        } else {
+          setSuppliers([]);
+        }
         setLoading(false);
-        queryClient.invalidateQueries({ queryKey: ["lead"] });
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate supplier")) {
           toast.error("Supplier name is duplicated. Please use a unique name.");
         }
+        setLoading(false);
       },
     },
   });

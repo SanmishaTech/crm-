@@ -68,13 +68,15 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
 
   const [open, setOpen] = React.useState(false);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+  };
+
   const handleReset = () => {
-    // Reset all filter states to their default values
     setLeadStatus('');
-     
-    
-    
-     onFilterChange({
+    setSearchTerm('');
+    onFilterChange({
       status: ''
     });
   };
@@ -97,7 +99,7 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
           <Input
             placeholder="Search Leads..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
           />
         </div>
         <div className="mt-2">
