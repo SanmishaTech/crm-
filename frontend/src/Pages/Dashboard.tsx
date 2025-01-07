@@ -29,6 +29,7 @@ import InvoiceComponent from "@/Components/Invoices/Index";
 import InvoicesEdit from "@/Components/Invoices/Edit";
 import Inventory from "@/Components/Inventory/Index";
 import InventoryAdd from "@/Components/Inventory/Add";
+import Navbar from "@/Components/Navbar/Navbarcomp";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -46,7 +47,8 @@ const Dashboard = () => {
       <div className="min-h-screen relative top-0 bg-accent/40">
         {/* <Sidebar className="min-h-full" />   */}
       </div>
-      <main className="w-full flex-1 overflow-hidden ">
+      <main className="w-full flex-1 overflow-hidden pt-[5rem] ">
+        {<Navbar />}
         {location.pathname === "/dashboard" && <Dashboardcomponent />}
         {location.pathname === "/suppliers" && <Suppliers />}
         {location.pathname === "/suppliers/add" && <SuppliersAdd />}

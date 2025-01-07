@@ -163,59 +163,60 @@ export default function TableDemo() {
   }
 
   return (
-    <div className="p-6 w-full h-full bg-accent/60 ml-4 rounded-lg shadow-lg ">
-      <div className="flex justify-center items-center p-3 space-x-2">
-        <h3 className="text-lg font-semibold">Departments List</h3>
-      </div>
-
-      <div className="flex justify-between items-center py-1 space-x-2 w-full">
-        {/* Search Bar Starts */}
-        <div className="flex-1 space-x-2">
-          <Input
-            placeholder="Search departments..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="flex h-full">
+      <div className="p-6 w-full h-full bg-accent/60 mr-5 ml-5 rounded-lg shadow-lg  ">
+        <div className="flex justify-center items-center p-3 space-x-2">
+          <h3 className="text-lg font-semibold">Departments List</h3>
         </div>
-        {/* Search Bar Ends */}
-        <div className="flex space-x-2">
-          {/* Add(Dialog) Starts */}
-          <DepartmentDialog
-            loading={loading}
-            setLoading={setLoading}
-            setOpen={setOpen}
-            open={open}
-            editDepartment={editDepartment}
-            setEditDepartment={setEditDepartment}
-            setError={setError}
-            form={form}
-            handleInvalidateQuery={handleInvalidateQuery}
-            // fetchDepartments={fetchDepartments}
-          />
-          {/* Add(Dialog) Ends */}
-        </div>
-      </div>
 
-      <div className="panel p-4 rounded-md bg-card">
-        {/* Table Start */}
-        <Table>
-          <TableCaption>A list of your departments.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead onClick={() => handleSort("department")}>
-                Departments
-              </TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableFooter></TableFooter>
-          <TableBody>
-            {departments &&
-              departments.map((department) => (
-                <TableRow key={department.id}>
-                  <TableCell>{department.department_name}</TableCell>
-                  <TableCell className="text-right">
-                    {/* <button
+        <div className="flex justify-between items-center py-1 space-x-2 w-full ">
+          {/* Search Bar Starts */}
+          <div className="flex-1 space-x-2 ">
+            <Input
+              placeholder="Search departments..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          {/* Search Bar Ends */}
+          <div className="flex space-x-2">
+            {/* Add(Dialog) Starts */}
+            <DepartmentDialog
+              loading={loading}
+              setLoading={setLoading}
+              setOpen={setOpen}
+              open={open}
+              editDepartment={editDepartment}
+              setEditDepartment={setEditDepartment}
+              setError={setError}
+              form={form}
+              handleInvalidateQuery={handleInvalidateQuery}
+              // fetchDepartments={fetchDepartments}
+            />
+            {/* Add(Dialog) Ends */}
+          </div>
+        </div>
+
+        <div className="panel p-4 rounded-md bg-card">
+          {/* Table Start */}
+          <Table>
+            <TableCaption>A list of your departments.</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead onClick={() => handleSort("department")}>
+                  Departments
+                </TableHead>
+                <TableHead className="text-right">Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableFooter></TableFooter>
+            <TableBody>
+              {departments &&
+                departments.map((department) => (
+                  <TableRow key={department.id}>
+                    <TableCell>{department.department_name}</TableCell>
+                    <TableCell className="text-right">
+                      {/* <button
                       onClick={() => handleEdit(department)}
                       className="text-blue-500 hover:text-blue-700"
                     >
@@ -225,49 +226,50 @@ export default function TableDemo() {
                       handleInvalidateQuery={handleInvalidateQuery}
                       url={department.id}
                     /> */}
-                    {/*  */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="w-full flex-col items-center flex justify-center"
-                      >
-                        <DropdownMenuLabel className="hover:cursor-default text-foreground">
-                          Actions
-                        </DropdownMenuLabel>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(department)}
-                          className="w-full text-sm"
+                      {/*  */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="center"
+                          className="w-full flex-col items-center flex justify-center"
                         >
-                          Edit
-                        </Button>
-                        {/* <DropdownMenuSeparator /> */}
-                        <AlertDialogbox
-                          handleInvalidateQuery={handleInvalidateQuery}
-                          url={department.id}
-                        />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-        {/* Table End */}
-        {/* Pagination Start */}
-        <PaginationComponent
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          pagination={pagination}
-        />
-        {/* Pagination End */}
+                          <DropdownMenuLabel className="hover:cursor-default text-foreground">
+                            Actions
+                          </DropdownMenuLabel>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEdit(department)}
+                            className="w-full text-sm"
+                          >
+                            Edit
+                          </Button>
+                          {/* <DropdownMenuSeparator /> */}
+                          <AlertDialogbox
+                            handleInvalidateQuery={handleInvalidateQuery}
+                            url={department.id}
+                          />
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+          {/* Table End */}
+          {/* Pagination Start */}
+          <PaginationComponent
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            pagination={pagination}
+          />
+          {/* Pagination End */}
+        </div>
       </div>
     </div>
   );

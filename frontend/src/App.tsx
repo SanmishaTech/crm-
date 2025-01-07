@@ -106,8 +106,7 @@ function App() {
         className={theme === "dark" ? "toaster-red" : "toaster-light"}
       />
 
-      {isLoggedIn && <Navbar />}
-      <CommandDialog open={open} onOpenChange={setOpen}>
+       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Search Modules..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
@@ -146,11 +145,13 @@ function App() {
       </CommandDialog>
 
       {/* Main Routes */}
+
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/registration" element={<Dashboard />} />
         <Route path="/registrationlist" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+
         <Route path="/suppliers" element={<Dashboard />} />
         <Route path="/suppliers/add" element={<Dashboard />} />
         <Route path="/suppliers/edit/:id" element={<Dashboard />} />
@@ -182,6 +183,7 @@ function App() {
         <Route path="/employees/add" element={<Dashboard />} />
         <Route path="/employees/edit/:id" element={<Dashboard />} />
       </Routes>
+
       {isVisible && (
         <Button
           type="button"

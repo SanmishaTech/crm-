@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@/darktheme/CustomTheme";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import {
   Menu,
@@ -65,9 +66,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-background py-4 px-6 top-0 left-0 right-0 z-10">
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
+    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-2">
+      <div className="flex items-center border gap-4 p-4 min-w-[90%] max-w-[20rem] mx-auto rounded-xl h-[3rem] justify-between bg-background">
         <div className="flex items-center space-x-3">
           <Link
             to="/dashboard"
@@ -81,7 +81,7 @@ const Navbar = () => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="mr-2 h-6 w-6"
+              className="mr-1 h-5 w-6"
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"></path>
             </svg>
@@ -95,7 +95,7 @@ const Navbar = () => {
             className="ml-2 lg:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-6 w-6 bg-background" />
           </Button>
 
           {/* Desktop Navigation */}
@@ -182,13 +182,13 @@ const Navbar = () => {
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
 
-                    <Button
+                    {/* <Button
                       onClick={() => navigate("/inventory")}
                       variant="ghost"
                       className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
                     >
                       Inventory
-                    </Button>
+                    </Button> */}
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -369,35 +369,47 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Navigation Menu */}
-      <div
-        className={`lg:hidden ${
-          mobileMenuOpen ? "block" : "hidden"
-        } pt-4 pb-3 px-2`}
-      >
-        <div className="space-y-1">
-          <Button
-            onClick={() => {
-              navigate("/dashboard");
-              setMobileMenuOpen(false);
-            }}
-            variant="ghost"
-            className="w-full text-left justify-start"
-          >
-            Dashboard
-          </Button>
-          <Button
-            onClick={() => {
-              navigate("/leads");
-              setMobileMenuOpen(false);
-            }}
-            variant="ghost"
-            className="w-full text-left justify-start"
-          >
-            Leads
-          </Button>
 
-          {/* Mobile Clients submenu */}
-          <div className="space-y-1 pl-4">
+      <div
+        className={`lg:hidden bg-background ${
+          mobileMenuOpen ? "block" : "hidden"
+        } pt-2  pb-3 px-2`}
+      >
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+                <Search className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Search Modules</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <ScrollArea className="rounded-md border p-4 overflow-auto max-h-[500px]">
+          <div className="space-y-1 ">
+            <Button
+              onClick={() => {
+                navigate("/dashboard");
+                setMobileMenuOpen(false);
+              }}
+              variant="ghost"
+              className="w-full text-left justify-start"
+            >
+              Dashboard
+            </Button>
+            <Button
+              onClick={() => {
+                navigate("/leads");
+                setMobileMenuOpen(false);
+              }}
+              variant="ghost"
+              className="w-full text-left justify-start"
+            >
+              Leads
+            </Button>
+
             <Button
               onClick={() => {
                 navigate("/clients");
@@ -418,10 +430,7 @@ const Navbar = () => {
             >
               Contacts
             </Button>
-          </div>
 
-          {/* Mobile Products submenu */}
-          <div className="space-y-1 pl-4">
             <Button
               onClick={() => {
                 navigate("/suppliers");
@@ -452,7 +461,7 @@ const Navbar = () => {
             >
               Products
             </Button>
-            <Button
+            {/* <Button
               onClick={() => {
                 navigate("/inventory");
                 setMobileMenuOpen(false);
@@ -461,11 +470,8 @@ const Navbar = () => {
               className="w-full text-left justify-start"
             >
               Inventory
-            </Button>
-          </div>
+            </Button> */}
 
-          {/* Mobile Users submenu */}
-          <div className="space-y-1 pl-4">
             <Button
               onClick={() => {
                 navigate("/employees");
@@ -486,48 +492,21 @@ const Navbar = () => {
             >
               Departments
             </Button>
+
+            <Button
+              onClick={() => {
+                navigate("/invoices");
+                setMobileMenuOpen(false);
+              }}
+              variant="ghost"
+              className="w-full text-left justify-start"
+            >
+              Invoices
+            </Button>
           </div>
-
-          <Button
-            onClick={() => {
-              navigate("/invoices");
-              setMobileMenuOpen(false);
-            }}
-            variant="ghost"
-            className="w-full text-left justify-start"
-          >
-            Invoices
-          </Button>
-        </div>
-
-        {/* Mobile menu footer with icons */}
-        <div className="mt-4 pt-4 border-t border-border flex justify-around">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setOpen(true)}
-                >
-                  <Search className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Search Modules</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon">
-            <CalendarDays className="h-5 w-5" />
-          </Button>
-        </div>
+        </ScrollArea>
       </div>
 
-      {/* Keep the CommandDialog component */}
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput
           placeholder="Search Modules..."

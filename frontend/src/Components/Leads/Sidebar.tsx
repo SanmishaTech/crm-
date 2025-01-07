@@ -205,6 +205,7 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
         </div>
         {/* Product Filter */}
         {/* <div className="mt-2">
+
           <Popover open={openProductFilter} onOpenChange={setOpenProductFilter}>
             <PopoverTrigger asChild>
               <Button
@@ -214,6 +215,7 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
                 className="w-[200px] justify-between"
               >
                 {productIds
+
                   ? productOptions?.find(
                       (product) => product?.value === productIds
                     )?.label || "Product not found"

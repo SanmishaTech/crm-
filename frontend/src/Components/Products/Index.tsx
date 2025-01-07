@@ -171,7 +171,7 @@ export default function TableDemo() {
     return (
       <div className="flex">
         {/* <Sidebar className="" /> */}
-        <div className="p-6 w-full bg-accent/60 ml-4 rounded-lg shadow-lg">
+        <div className="p-6 w-full bg-accent/60 ml-4  rounded-lg shadow-lg">
           <div className="p-2">
             <div className="flex justify-between items-center">
               <Skeleton className="h-6 w-32 mx-auto" />
@@ -244,7 +244,7 @@ export default function TableDemo() {
 
   return (
     <div className="flex h-full">
-      <div className="p-6 w-full  bg-accent/60 ml-4 rounded-lg shadow-lg ">
+      <div className="p-6 w-full  bg-accent/60 ml-5 mr-5 rounded-lg shadow-lg ">
         <div className="p-2  ">
           <div className="flex justify-between items-center ">
             <h3 className="text-lg  font-semibold mx-auto">Products List</h3>
