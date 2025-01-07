@@ -203,8 +203,7 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
             </PopoverContent>
           </Popover>
         </div>
-        {/* Product Filter */}
-        <div className="mt-2">
+         {/* <div className="mt-2">
           <Popover open={openProductFilter} onOpenChange={setOpenProductFilter}>
             <PopoverTrigger asChild>
               <Button
@@ -213,8 +212,7 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
                 aria-expanded={openProductFilter ? "true" : "false"}
                 className="w-[200px] justify-between"
               >
-                {/* Check if productIds exists, then find the label in productOptions */}
-                {productIds
+                 {productIds
                   ? productOptions?.find(
                       (product) => product?.value === productIds
                     )?.label || "Product not found"
@@ -269,7 +267,7 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
               </Command>
             </PopoverContent>
           </Popover>
-        </div>
+        </div> */}
 
         {/* Reset Filters Button */}
         <div className="mt-4">

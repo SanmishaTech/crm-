@@ -182,13 +182,13 @@ const Navbar = () => {
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
 
-                    <Button
+                    {/* <Button
                       onClick={() => navigate("/inventory")}
                       variant="ghost"
                       className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
                     >
                       Inventory
-                    </Button>
+                    </Button> */}
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -461,7 +461,7 @@ const Navbar = () => {
             >
               Products
             </Button>
-            <Button
+            {/* <Button
               onClick={() => {
                 navigate("/inventory");
                 setMobileMenuOpen(false);
@@ -470,7 +470,7 @@ const Navbar = () => {
               className="w-full text-left justify-start"
             >
               Inventory
-            </Button>
+            </Button> */}
 
             <Button
               onClick={() => {

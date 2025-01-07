@@ -206,8 +206,7 @@ export default function InputForm() {
                 />
               </div>
               {error && <div className="text-red-500">{error}</div>}{" "}
-              {/* Error Message */}
-              {/* Buttons For Submit and Cancel */}
+             
               <div className="flex justify-end space-x-2">
                 <Button
                   onClick={() => navigate("/leads")}
