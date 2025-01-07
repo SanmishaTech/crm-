@@ -65,10 +65,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-3  ">
-      <div className="flex items-center border gap-4 p-4 min-w-[90%] max-w-[20rem] mx-auto rounded-lg h-[3rem] justify-between  bg-background ">
-        {/* Logo */}
-
+    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-2">
+      <div className="flex items-center border gap-4 p-4 min-w-[90%] max-w-[20rem] mx-auto rounded-xl h-[3rem] justify-between bg-background">
         <div className="flex items-center space-x-3">
           <Link
             to="/dashboard"
@@ -82,7 +80,7 @@ const Navbar = () => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="mr-2 h-6 w-6"
+              className="mr-1 h-5 w-6"
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"></path>
             </svg>

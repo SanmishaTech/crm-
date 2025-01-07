@@ -115,7 +115,7 @@ export default function TableDemo() {
   return (
     <div className="flex ">
       <Sidebar className="" />
-      <div className="p-6 w-full  bg-accent/60 ml-4 rounded-lg shadow-lg ">
+      <div className="p-6 w-full  bg-accent/60 ml-4 mr-8 rounded-lg shadow-lg ">
         <div className="p-2  ">
           <div className="flex justify-between items-center ">
             <h3 className="text-lg  font-semibold mx-auto">Employees List</h3>

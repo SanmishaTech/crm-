@@ -82,4 +82,3 @@ export default function Sidebar({ className }: SidebarProps) {
     </aside>
   );
 }
-
