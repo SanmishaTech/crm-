@@ -3,10 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@/darktheme/CustomTheme";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import CalenderDay from "./CalenderDay";
 
 import {
   Menu,
-  CalendarDays,
   Search,
   Bell,
   Settings,
@@ -255,13 +255,7 @@ const Navbar = () => {
               </Tooltip>
             </TooltipProvider>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-foreground hover:text-foreground/80 hover:bg-accent"
-            >
-              <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />
-            </Button>
+            <CalenderDay />
 
             <TooltipProvider>
               <Tooltip>
