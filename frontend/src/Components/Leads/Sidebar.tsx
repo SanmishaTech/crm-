@@ -142,7 +142,6 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
         <div>
           <h3 className="text-lg font-semibold">Leads Filter</h3>
         </div>
-
         {/* Search Input */}
         <div className="mt-2">
           <Input
@@ -151,7 +150,6 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
             onChange={handleSearchChange}
           />
         </div>
-
         {/* Lead Status Filter */}
         <div className="mt-2">
           <Popover open={openLeadStatus} onOpenChange={setOpenLeadStatus}>
@@ -205,7 +203,6 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
             </PopoverContent>
           </Popover>
         </div>
-
         {/* Product Filter */}
         <div className="mt-2">
           <Popover open={openProductFilter} onOpenChange={setOpenProductFilter}>
@@ -216,10 +213,11 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
                 aria-expanded={openProductFilter ? "true" : "false"}
                 className="w-[200px] justify-between"
               >
+                {/* Check if productIds exists, then find the label in productOptions */}
                 {productIds
-                  ? productOptions.find(
-                      (product) => product.value === productIds
-                    )?.label
+                  ? productOptions?.find(
+                      (product) => product?.value === productIds
+                    )?.label || "Product not found"
                   : "Select products..."}
                 <ChevronsUpDown className="opacity-50" />
               </Button>
@@ -227,6 +225,13 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
             <PopoverContent className="w-[200px] p-0">
               <Command>
                 <CommandInput
+                  value={
+                    productIds
+                      ? productOptions.find(
+                          (product) => product.value === productIds
+                        )?.label
+                      : ""
+                  }
                   placeholder="Search products..."
                   className="h-9"
                 />
@@ -243,7 +248,7 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
                           setProductIds(newProductIds);
                           onFilterChange({
                             status: leadStatus,
-                            productIds: newProductIds,
+                            productIds: newProductIds, // Ensure new productId is passed here
                           });
                           setOpenProductFilter(false); // Close the popover
                         }}
