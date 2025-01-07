@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@/darktheme/CustomTheme";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import {
   Menu,
@@ -368,35 +369,47 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Navigation Menu */}
+
       <div
         className={`lg:hidden bg-background ${
           mobileMenuOpen ? "block" : "hidden"
-        } pt-4 pb-3 px-2`}
+        } pt-2  pb-3 px-2`}
       >
-        <div className="space-y-1">
-          <Button
-            onClick={() => {
-              navigate("/dashboard");
-              setMobileMenuOpen(false);
-            }}
-            variant="ghost"
-            className="w-full text-left justify-start"
-          >
-            Dashboard
-          </Button>
-          <Button
-            onClick={() => {
-              navigate("/leads");
-              setMobileMenuOpen(false);
-            }}
-            variant="ghost"
-            className="w-full text-left justify-start"
-          >
-            Leads
-          </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+                <Search className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Search Modules</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <ScrollArea className="rounded-md border p-4 overflow-auto max-h-[500px]">
+          <div className="space-y-1 ">
+            <Button
+              onClick={() => {
+                navigate("/dashboard");
+                setMobileMenuOpen(false);
+              }}
+              variant="ghost"
+              className="w-full text-left justify-start"
+            >
+              Dashboard
+            </Button>
+            <Button
+              onClick={() => {
+                navigate("/leads");
+                setMobileMenuOpen(false);
+              }}
+              variant="ghost"
+              className="w-full text-left justify-start"
+            >
+              Leads
+            </Button>
 
-          {/* Mobile Clients submenu */}
-          <div className="space-y-1 pl-4">
             <Button
               onClick={() => {
                 navigate("/clients");
@@ -417,10 +430,7 @@ const Navbar = () => {
             >
               Contacts
             </Button>
-          </div>
 
-          {/* Mobile Products submenu */}
-          <div className="space-y-1 pl-4">
             <Button
               onClick={() => {
                 navigate("/suppliers");
@@ -461,10 +471,7 @@ const Navbar = () => {
             >
               Inventory
             </Button>
-          </div>
 
-          {/* Mobile Users submenu */}
-          <div className="space-y-1 pl-4">
             <Button
               onClick={() => {
                 navigate("/employees");
@@ -485,48 +492,21 @@ const Navbar = () => {
             >
               Departments
             </Button>
+
+            <Button
+              onClick={() => {
+                navigate("/invoices");
+                setMobileMenuOpen(false);
+              }}
+              variant="ghost"
+              className="w-full text-left justify-start"
+            >
+              Invoices
+            </Button>
           </div>
-
-          <Button
-            onClick={() => {
-              navigate("/invoices");
-              setMobileMenuOpen(false);
-            }}
-            variant="ghost"
-            className="w-full text-left justify-start"
-          >
-            Invoices
-          </Button>
-        </div>
-
-        {/* Mobile menu footer with icons */}
-        <div className="mt-4 pt-4 border-t border-border flex justify-around">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setOpen(true)}
-                >
-                  <Search className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Search Modules</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <Button variant="ghost" size="icon">
-            <Bell className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon">
-            <CalendarDays className="h-5 w-5" />
-          </Button>
-        </div>
+        </ScrollArea>
       </div>
 
-      {/* Keep the CommandDialog component */}
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput
           placeholder="Search Modules..."
