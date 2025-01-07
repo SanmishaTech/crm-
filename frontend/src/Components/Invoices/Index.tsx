@@ -159,15 +159,15 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="flex ">
-      <Sidebar className="" />
-      <div className="p-6 w-full bg-accent/60 ml-4 rounded-lg shadow-lg ">
+    <div className="flex flex-col md:flex-row min-h-screen  w-full ">
+      <Sidebar className="md:sticky md:top-0 md:h-screen" />
+      <div className="flex-1 p-2 md:p-6 w-full bg-accent/60 md:ml-4 mr-8 rounded-lg shadow-lg">
         <div className="p-2  ">
           <div className="flex justify-between items-center ">
             <h3 className="text-lg  font-semibold mx-auto">Invoice List</h3>
           </div>
         </div>
-        <div className="flex justify-between items-center py-1 space-x-3 mr-4  ">
+        <div className="flex justify-between items-center py-1 space-x-3   ">
           <div className="ml-4 mt-2">
             <TooltipProvider>
               <Tooltip>
