@@ -32,7 +32,7 @@ class DepartmentController extends BaseController
                 $query->where('department_name', 'like', '%' . $searchTerm . '%');
             });
         }
-        $departments = $query->orderBy("id", "DESC")->paginate(7);
+        $departments = $query->orderBy("id", "DESC")->paginate(5);
 
         return $this->sendResponse(["Departments"=>DepartmentResource::collection($departments),
         'Pagination' => [
@@ -40,7 +40,7 @@ class DepartmentController extends BaseController
             'last_page' => $departments->lastPage(),
             'per_page' => $departments->perPage(),
             'total' => $departments->total(),
-        ]], "Department retrived successfully");
+        ]], "Department retrieved successfully");
         
     }
 
