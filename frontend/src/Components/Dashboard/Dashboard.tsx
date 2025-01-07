@@ -44,7 +44,7 @@ const recentTests = [
     patientName: "John Doe",
     test: "Blood Panel",
     status: "Completed",
-    result: "High", 
+    result: "High",
   },
   {
     id: "T002",

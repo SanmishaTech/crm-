@@ -65,9 +65,10 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-background py-4 px-6 top-0 left-0 right-0 z-10">
-      <div className="container mx-auto flex justify-between items-center">
+    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-3  ">
+      <div className="flex items-center border gap-4 p-4 min-w-[90%] max-w-[20rem] mx-auto rounded-lg h-[3rem] justify-between  bg-background ">
         {/* Logo */}
+
         <div className="flex items-center space-x-3">
           <Link
             to="/dashboard"
@@ -95,7 +96,7 @@ const Navbar = () => {
             className="ml-2 lg:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-6 w-6 bg-background" />
           </Button>
 
           {/* Desktop Navigation */}
@@ -370,7 +371,7 @@ const Navbar = () => {
 
       {/* Mobile Navigation Menu */}
       <div
-        className={`lg:hidden ${
+        className={`lg:hidden bg-background ${
           mobileMenuOpen ? "block" : "hidden"
         } pt-4 pb-3 px-2`}
       >
