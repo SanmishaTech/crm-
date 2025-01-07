@@ -129,6 +129,7 @@ class LeadsController extends BaseController
         }
 
         if ($request->query('leadStatus')) {
+            // dd($request->query('leadStatus'));
             $leadStatus = $request->query("leadStatus");
         
             $query->where(function ($query) use ($leadStatus) {

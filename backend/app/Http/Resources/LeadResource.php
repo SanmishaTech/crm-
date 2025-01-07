@@ -31,6 +31,7 @@ class LeadResource extends JsonResource
             'contact_id' => $this->contact_id,
             'product_names'=>$productNames,
             'lead_owner' => $this->lead_owner,
+            'lead_number'=> $this->lead_number,
             'lead_type' => $this->lead_type,
             'tender_number' => $this->tender_number,
             'portal' => $this->portal,
