@@ -27,7 +27,7 @@ class InvoicesController extends BaseController
             });
         }
 
-        $invoices = $query->paginate(50);
+        $invoices = $query->paginate(5);
 
         return $this->sendResponse(["Invoices"=>InvoiceResource::collection($invoices),
         'Pagination' => [

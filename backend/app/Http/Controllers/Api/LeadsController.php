@@ -204,6 +204,9 @@ class LeadsController extends BaseController
         $productDetails = [];
         foreach ($products as $product) {
             $PRODUCT = Product::find($product['product_id']);
+            // if ($product['quantity'] > $PRODUCT->opening_quantity) {
+            //     return $this->sendError("Insufficient stock for product: ", ['error'=>['Insufficient stock for product ']]);
+            // }
             if($PRODUCT){
             $gstRate = $PRODUCT->gst_rate; 
             $amountWithoutGst = $product['quantity'] * $product['rate'];
