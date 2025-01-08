@@ -139,7 +139,7 @@ const CalenderDay = () => {
   };
 
   const footer = date ? (
-    <p className="text-center text-xs text-muted-foreground mt-1">
+    <p className="text-center text-[10px] text-muted-foreground m-0 p-0">
       {getFollowUpStatus(date) ? (
         <>
           <span
@@ -170,12 +170,11 @@ const CalenderDay = () => {
               );
             })
             .map((lead, index) => (
-              <div className="flex flex justify-center" key={index}>
+              <div className="flex flex justify-center text-[10px] m-0 p-0" key={index}>
                 <span style={{ fontWeight: "bold" }}>
                   {lead.follow_up_type}
                 </span>
-                <br />
-                <span>({lead.follow_up_remark})</span>
+                <span className="mx-1">({lead.follow_up_remark})</span>
               </div>
             ))}
         </>
@@ -205,27 +204,27 @@ const CalenderDay = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-auto p-2"
+        className="w-auto p-0"
         align="center"
         side="bottom"
         sideOffset={5}
       >
-        <div className="flex justify-center space-x-3 mb-2">
+        <div className="flex justify-center space-x-3 mb-1  ">
           <Button
             variant="outline"
             size="icon"
-            className="h-5 w-5"
+            className="h-9 w-9"
             onClick={handlePreviousMonth}
           >
-            <ChevronLeft className="h-3 w-3" />
+            <ChevronLeft className="h-6 w-6 " />
           </Button>
           <Button
             variant="outline"
             size="icon"
-            className="h-5 w-5"
+            className="h-9 w-9"
             onClick={handleNextMonth}
           >
-            <ChevronRight className="h-3 w-3" />
+            <ChevronRight className="h-6 w-6" />
           </Button>
         </div>
         <DayPicker
@@ -236,22 +235,22 @@ const CalenderDay = () => {
           modifiers={modifiers}
           modifiersStyles={modifiersStyles}
           showOutsideDays={false}
-          className="border-none scale-70 origin-top"
+          className="border-none scale-80 origin-top p-3 m-0 pb-0"
           classNames={{
             months:
-              "flex flex-col sm:flex-row space-y-2 sm:space-x-2 sm:space-y-0",
-            month: "space-y-2",
-            caption: "flex justify-center pt-1 relative items-center",
-            caption_label: "text-xs font-medium",
+              "flex flex-col items-center justify-center text-center sm:flex-row sm:space-x-1 sm:space-y-1",
+            month: "flex flex-col items-center  ",
+            caption: "flex justify-center relative items-center",
+            caption_label: "text-sm font-medium",
             nav: "hidden",
             nav_button: "hidden",
-            table: "w-full border-collapse space-y-1",
+            table: "w-full border-collapse space-y-0.5",
             head_row: "flex",
             head_cell:
-              "text-muted-foreground rounded-md w-6 font-normal text-[0.7rem]",
+              "text-muted-foreground rounded-md w-8 font-normal text-sm",
             row: "flex w-full mt-1",
-            cell: "relative p-0 text-center text-xs focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent",
-            day: "h-6 w-6 p-0 font-normal aria-selected:opacity-100",
+            cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent",
+            day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
             day_range_end: "day-range-end",
             day_selected:
               "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
