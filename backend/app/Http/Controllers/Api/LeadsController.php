@@ -659,6 +659,16 @@ class LeadsController extends BaseController
         return $response;
     }
 
+
+
+    public function allLeads(): JsonResponse
+    {
+        $lead = Lead::all();
+
+        return $this->sendResponse(["Lead"=>LeadResource::collection($lead),
+        ], "Lead retrieved successfully");
+
+    }
    
     
 }

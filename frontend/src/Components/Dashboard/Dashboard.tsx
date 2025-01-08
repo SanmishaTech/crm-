@@ -133,7 +133,7 @@ export default function ResponsiveLabDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/leads`, {
+        const response = await axios.get(`/api/all_leads`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer " + localStorage.getItem("token"),
@@ -154,23 +154,7 @@ export default function ResponsiveLabDashboard() {
         console.error("Error fetching leads data:", error);
       }
     };
-    // function setLeads(leads) {
-    //   leads.forEach((lead) => {
-    //     console.log("Lead Status:", lead.lead_status);
-    //     console.log("Follow-up Remark:", lead.follow_up_remark);
 
-    //     // Assuming that `lead.contact` contains the contact information
-    //     if (lead.contact) {
-    //       console.log("Contact Person:", lead.contact.contact_person);
-    //     }
-
-    //     lead.follow_ups.forEach((followUp) => {
-    //       console.log("Next Follow-up Date:", followUp.next_follow_up_date);
-    //       console.log("Follow-up Type:", followUp.follow_up_type);
-    //       console.log("Follow-up Remarks:", followUp.remarks);
-    //     });
-    //   });
-    // }
     fetchData();
   }, []);
 

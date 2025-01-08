@@ -48,6 +48,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/show_invoice/{files}', [InvoicesController::class, 'showInvoice'])->name("invoices.showFiles");
    Route::get('/all_departments', [DepartmentController::class, 'allDepartments'])->name("departments.all");
    Route::get('/all_contacts', [ContactsController::class, 'allContacts'])->name("contacts.all");
+   Route::get('/all_leads', [LeadsController::class, 'allLeads'])->name("leads.all");
    Route::get('/lead_attachments/{files}', [LeadsController::class, 'showLeadAttachment'])->name("leads.lead_attachment");
    Route::get('/invoices/{id}', [InvoicesController::class, 'show'])->name("invoices.show");
    Route::put('/invoices/{id}', [InvoicesController::class, 'update'])->name("invoices.update");
