@@ -38,74 +38,76 @@ import {
 } from "@/components/ui/table";
 import axios from "axios";
 import userAvatar from "@/images/Profile.jpg";
+
+// Updated data structure based on your requirements
 const recentTests = [
   {
     id: "T001",
-    patientName: "John Doe",
-    test: "Blood Panel",
+    contact_person: "John Doe",
+    follow_up_remark: "Blood Panel",
     status: "Completed",
-    result: "High",
+    follow_up_type: "High",
   },
   {
     id: "T002",
-    patientName: "Jane Smith",
-    test: "Urinalysis",
+    contact_person: "Jane Smith",
+    follow_up_remark: "Urinalysis",
     status: "Completed",
-    result: "Medium",
+    follow_up_type: "Medium",
   },
   {
     id: "T003",
-    patientName: "Bob Johnson",
-    test: "Lipid Panel",
+    contact_person: "Bob Johnson",
+    follow_up_remark: "Lipid Panel",
     status: "In Progress",
-    result: "Low",
+    follow_up_type: "Low",
   },
   {
     id: "T004",
-    patientName: "Alice Brown",
-    test: "Thyroid Function",
+    contact_person: "Alice Brown",
+    follow_up_remark: "Thyroid Function",
     status: "Completed",
-    result: "Medium",
+    follow_up_type: "Medium",
   },
   {
     id: "T005",
-    patientName: "Charlie Davis",
-    test: "Liver Function",
+    contact_person: "Charlie Davis",
+    follow_up_remark: "Liver Function",
     status: "Completed",
-    result: "High",
+    follow_up_type: "High",
   },
 ];
 
 const pendingTests = [
   {
     id: "T006",
-    patientName: "Eva White",
-    test: "Printing Dimensions",
-    priority: "High",
+    contact_person: "Eva White",
+    follow_up_remark: "Printing Dimensions",
+    follow_up_type: "High",
   },
   {
     id: "T007",
-    patientName: "Frank Miller",
-    test: "Commercial Press",
-    priority: "Medium",
+    contact_person: "Frank Miller",
+    follow_up_remark: "Commercial Press",
+    follow_up_type: "Medium",
   },
   {
     id: "T008",
-    patientName: "Grace Taylor",
-    test: "Feltz Printing Service",
-    priority: "Low",
+    contact_person: "Grace Taylor",
+    follow_up_remark: "Feltz Printing Service",
+    follow_up_type: "Low",
   },
   {
     id: "T009",
-    patientName: "Henry Wilson",
-    test: "Morlong Associates",
-    priority: "Medium",
+    contact_person: "Henry Wilson",
+    follow_up_remark: "Morlong Associates",
+    follow_up_type: "Medium",
   },
   {
     id: "T010",
-    patientName: "Sanjeev ",
-    test: "Sanmisha",
-    priority: "High",
+    contact_person: "Sanjeev",
+    follow_up_remark: "Sanmisha",
+    follow_up_type: "High",
   },
 ];
 
@@ -123,6 +125,7 @@ export default function ResponsiveLabDashboard() {
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
   const navigate = useNavigate();
+  const [leads, setLeads] = useState([]);
 
   const [openLeadsCount, setOpenLeadsCount] = useState(0);
   const [followUpLeadsCount, setFollowUpLeadsCount] = useState(0);
@@ -137,20 +140,37 @@ export default function ResponsiveLabDashboard() {
           },
         });
         const leads = response.data.data.Lead;
+        setLeads(leads);
         const openLeads = leads.filter((lead) => lead.lead_status === "Open");
         setMyLeads(leads.length);
         setOpenLeadsCount(openLeads.length);
         const followUpLeads = leads.filter(
           (lead) => lead.follow_up_type === "Call"
         );
-        console.log("followUpLeads", followUpLeads);
+        // console.log("followUpLeads", followUpLeads);
 
         setFollowUpLeadsCount(followUpLeads.length);
       } catch (error) {
         console.error("Error fetching leads data:", error);
       }
     };
+    // function setLeads(leads) {
+    //   leads.forEach((lead) => {
+    //     console.log("Lead Status:", lead.lead_status);
+    //     console.log("Follow-up Remark:", lead.follow_up_remark);
 
+    //     // Assuming that `lead.contact` contains the contact information
+    //     if (lead.contact) {
+    //       console.log("Contact Person:", lead.contact.contact_person);
+    //     }
+
+    //     lead.follow_ups.forEach((followUp) => {
+    //       console.log("Next Follow-up Date:", followUp.next_follow_up_date);
+    //       console.log("Follow-up Type:", followUp.follow_up_type);
+    //       console.log("Follow-up Remarks:", followUp.remarks);
+    //     });
+    //   });
+    // }
     fetchData();
   }, []);
 
@@ -233,17 +253,17 @@ export default function ResponsiveLabDashboard() {
                   <TableRow>
                     <TableHead className="w-[100px]">Task ID</TableHead>
                     <TableHead>Contact Name</TableHead>
-                    <TableHead>Test</TableHead>
+                    <TableHead>Follow-Up Remark</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Priority</TableHead>
+                    <TableHead>Follow-Up Type</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentTests.map((test) => (
                     <TableRow key={test.id}>
                       <TableCell className="font-medium">{test.id}</TableCell>
-                      <TableCell>{test.patientName}</TableCell>
-                      <TableCell>{test.test}</TableCell>
+                      <TableCell>{test.contact_person}</TableCell>
+                      <TableCell>{test.follow_up_remark}</TableCell>
                       <TableCell>
                         <Badge
                           variant={
@@ -258,14 +278,14 @@ export default function ResponsiveLabDashboard() {
                       <TableCell>
                         <Badge
                           variant={
-                            test.result === "Low"
+                            test.follow_up_type === "Low"
                               ? "success"
-                              : test.result === "High"
+                              : test.follow_up_type === "High"
                               ? "destructive"
                               : "outline"
                           }
                         >
-                          {test.result}
+                          {test.follow_up_type}
                         </Badge>
                       </TableCell>
                     </TableRow>
@@ -281,31 +301,55 @@ export default function ResponsiveLabDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {pendingTests.map((test) => (
+                {leads.slice(0, 5).map((test) => (
                   <div key={test.id} className="flex items-center">
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {test.patientName}
+                        {test.contact.contact_person}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {test.test}
+                        {test.follow_up_remark}
                       </p>
                     </div>
                     <div className="ml-auto font-medium">
                       <Badge
                         variant={
-                          test.priority === "High"
+                          test.follow_up_type === "High"
                             ? "destructive"
-                            : test.priority === "Medium"
+                            : test.follow_up_type === "Medium"
                             ? "default"
                             : "secondary"
                         }
                       >
-                        {test.priority}
+                        {test.follow_up_type}
                       </Badge>
+                      <p className="text-xs text-muted-foreground">
+                        {test.lead_follow_up_date
+                          ? `${new Date(test.lead_follow_up_date)
+                              .getDate()
+                              .toString()
+                              .padStart(2, "0")}/${(
+                              new Date(test.lead_follow_up_date).getMonth() + 1
+                            )
+                              .toString()
+                              .padStart(2, "0")}/${new Date(
+                              test.lead_follow_up_date
+                            ).getFullYear()}`
+                          : "DD/MM/YYYY"}
+                      </p>
                     </div>
                   </div>
                 ))}
+                {leads.length >= 5 && (
+                  <div className="mt-4 text-right">
+                    <button
+                      onClick={() => navigate("/leads")}
+                      className="text-xs hover:text-blue-500"
+                    >
+                      See More...
+                    </button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
