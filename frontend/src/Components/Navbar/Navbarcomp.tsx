@@ -10,6 +10,7 @@ import {
   Search,
   Bell,
   Settings,
+  CalendarDays,
   Headset,
   LogOut,
   CircleUserRound,
@@ -254,8 +255,25 @@ const Navbar = () => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-
-            <CalenderDay />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-foreground hover:text-foreground/80 hover:bg-accent"
+                  >
+                    <CalendarDays
+                      className="h-4"
+                      style={{ strokeWidth: 1.5 }}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Calender</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             <TooltipProvider>
               <Tooltip>
