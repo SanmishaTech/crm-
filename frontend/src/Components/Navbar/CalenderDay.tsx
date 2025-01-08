@@ -12,12 +12,14 @@ import { toast } from "sonner";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Lead {
   id: number;
   lead_follow_up_date: string;
   follow_up_type: string;
   follow_up_remark: string;
+  lead_follow_up_remark: string;
 }
 
 interface LeadsApiResponse {
@@ -30,17 +32,17 @@ const CalenderDay = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [month, setMonth] = useState<Date>(new Date());
   const [leads, setLeads] = useState<Lead[]>([]);
+  const queryClient = useQueryClient();
 
   // Fetch all leads
   useGetData({
-    endpoint: "/api/leads",
+    endpoint: "/api/all_leads",
     params: {
       queryKey: ["leads"],
       onSuccess: (data: LeadsApiResponse) => {
-        
+        queryClient.invalidateQueries({ queryKey: ["leads"] });
         if (data?.data?.Lead) {
           setLeads(data.data.Lead);
-          console.log("Leads data:", data.data.Lead); // Debug log
         }
       },
     },
@@ -59,9 +61,9 @@ const CalenderDay = () => {
         return followUpDate >= today && followUpDate <= oneWeekFromNow;
       });
 
-      if (upcomingLeads.length > 0) {
-        toast.info(`You have ${upcomingLeads.length} follow-ups in the next week!`);
-      }
+      // if (upcomingLeads.length > 0) {
+      //   toast.info(`You have ${upcomingLeads.length} follow-ups in the next week!`);
+      // }
     };
 
     checkUpcomingFollowUps();
@@ -87,16 +89,16 @@ const CalenderDay = () => {
     const oneMonthFromNow = new Date();
     oneMonthFromNow.setMonth(today.getMonth() + 1);
 
-    if (day <= oneWeekFromNow) return 'urgent';
-    if (day <= oneMonthFromNow) return 'upcoming';
-    return 'later';
+    if (day <= oneWeekFromNow) return "urgent";
+    if (day <= oneMonthFromNow) return "upcoming";
+    return "later";
   };
 
   // Custom modifiers for the calendar
   const modifiers = {
-    urgent: (date: Date) => getFollowUpStatus(date) === 'urgent',
-    upcoming: (date: Date) => getFollowUpStatus(date) === 'upcoming',
-    later: (date: Date) => getFollowUpStatus(date) === 'later',
+    urgent: (date: Date) => getFollowUpStatus(date) === "urgent",
+    upcoming: (date: Date) => getFollowUpStatus(date) === "upcoming",
+    later: (date: Date) => getFollowUpStatus(date) === "later",
   };
 
   // Custom styles for the modifiers
@@ -106,21 +108,21 @@ const CalenderDay = () => {
       color: "white",
       borderRadius: "50%",
       fontWeight: "bold",
-      textDecoration: "underline"
+      textDecoration: "underline",
     },
     upcoming: {
       backgroundColor: "#eab308", // Yellow
       color: "white",
       borderRadius: "50%",
       fontWeight: "bold",
-      textDecoration: "underline"
+      textDecoration: "underline",
     },
     later: {
       backgroundColor: "#22c55e", // Green
       color: "white",
       borderRadius: "50%",
       fontWeight: "bold",
-      textDecoration: "underline"
+      textDecoration: "underline",
     },
   };
 
@@ -140,15 +142,23 @@ const CalenderDay = () => {
     <p className="text-center text-xs text-muted-foreground mt-1">
       {getFollowUpStatus(date) ? (
         <>
-          <span className={`font-bold ${
-            getFollowUpStatus(date) === 'urgent' ? 'text-red-500' :
-            getFollowUpStatus(date) === 'upcoming' ? 'text-yellow-500' :
-            'text-green-500'
-          }`}>
-            {getFollowUpStatus(date) === 'urgent' ? 'Urgent' :
-             getFollowUpStatus(date) === 'upcoming' ? 'Upcoming' :
-             'Later'} Follow-ups
-          </span> scheduled for this date:
+          <span
+            className={`font-bold ${
+              getFollowUpStatus(date) === "urgent"
+                ? "text-red-500"
+                : getFollowUpStatus(date) === "upcoming"
+                ? "text-yellow-500"
+                : "text-green-500"
+            }`}
+          >
+            {getFollowUpStatus(date) === "urgent"
+              ? "Urgent"
+              : getFollowUpStatus(date) === "upcoming"
+              ? "Upcoming"
+              : "Later"}{" "}
+            Follow-ups
+          </span>{" "}
+          scheduled for this date:
           {leads
             .filter((lead) => {
               if (!lead.lead_follow_up_date) return false;
@@ -159,8 +169,15 @@ const CalenderDay = () => {
                 followUpDate.getFullYear() === date.getFullYear()
               );
             })
-            .map((lead) => lead.follow_up_type)
-            .join(", ")}
+            .map((lead, index) => (
+              <div className="flex flex justify-center" key={index}>
+                <span style={{ fontWeight: "bold" }}>
+                  {lead.follow_up_type}
+                </span>
+                <br />
+                <span>({lead.follow_up_remark})</span>
+              </div>
+            ))}
         </>
       ) : (
         "No follow-ups"
@@ -192,7 +209,12 @@ const CalenderDay = () => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-2" align="center" side="bottom" sideOffset={5}>
+      <PopoverContent
+        className="w-auto p-2"
+        align="center"
+        side="bottom"
+        sideOffset={5}
+      >
         <div className="flex justify-center space-x-3 mb-2">
           <Button
             variant="outline"
@@ -221,7 +243,8 @@ const CalenderDay = () => {
           showOutsideDays={false}
           className="border-none scale-70 origin-top"
           classNames={{
-            months: "flex flex-col sm:flex-row space-y-2 sm:space-x-2 sm:space-y-0",
+            months:
+              "flex flex-col sm:flex-row space-y-2 sm:space-x-2 sm:space-y-0",
             month: "space-y-2",
             caption: "flex justify-center pt-1 relative items-center",
             caption_label: "text-xs font-medium",
@@ -229,7 +252,8 @@ const CalenderDay = () => {
             nav_button: "hidden",
             table: "w-full border-collapse space-y-1",
             head_row: "flex",
-            head_cell: "text-muted-foreground rounded-md w-6 font-normal text-[0.7rem]",
+            head_cell:
+              "text-muted-foreground rounded-md w-6 font-normal text-[0.7rem]",
             row: "flex w-full mt-1",
             cell: "relative p-0 text-center text-xs focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent",
             day: "h-6 w-6 p-0 font-normal aria-selected:opacity-100",

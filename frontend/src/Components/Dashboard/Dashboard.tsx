@@ -78,39 +78,6 @@ const recentTests = [
   },
 ];
 
-const pendingTests = [
-  {
-    id: "T006",
-    contact_person: "Eva White",
-    follow_up_remark: "Printing Dimensions",
-    follow_up_type: "High",
-  },
-  {
-    id: "T007",
-    contact_person: "Frank Miller",
-    follow_up_remark: "Commercial Press",
-    follow_up_type: "Medium",
-  },
-  {
-    id: "T008",
-    contact_person: "Grace Taylor",
-    follow_up_remark: "Feltz Printing Service",
-    follow_up_type: "Low",
-  },
-  {
-    id: "T009",
-    contact_person: "Henry Wilson",
-    follow_up_remark: "Morlong Associates",
-    follow_up_type: "Medium",
-  },
-  {
-    id: "T010",
-    contact_person: "Sanjeev",
-    follow_up_remark: "Sanmisha",
-    follow_up_type: "High",
-  },
-];
-
 const testVolumeData = [
   { name: "Jan", tests: 165 },
   { name: "Feb", tests: 180 },
@@ -239,7 +206,7 @@ export default function ResponsiveLabDashboard() {
                     <TableHead>Contact Name</TableHead>
                     <TableHead>Follow-Up Remark</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Follow-Up Type</TableHead>
+                    <TableHead>Priority</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

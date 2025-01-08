@@ -239,41 +239,7 @@ const Navbar = () => {
         {/* Right side icons - make responsive */}
         <div className="flex items-center space-x-2">
           <div className="hidden sm:flex items-center space-x-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-foreground hover:text-foreground/80 hover:bg-accent"
-                  >
-                    <Bell className="h-4" style={{ strokeWidth: 1.5 }} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-popover text-popover-foreground">
-                  <p>Signals</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-foreground hover:text-foreground/80 hover:bg-accent"
-                  >
-                    <CalendarDays
-                      className="h-4"
-                      style={{ strokeWidth: 1.5 }}
-                    />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Calender</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <CalenderDay />
 
             <TooltipProvider>
               <Tooltip>
