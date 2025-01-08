@@ -119,16 +119,38 @@ const testVolumeData = [
 ];
 
 export default function ResponsiveLabDashboard() {
-  const [countRegister, setCountRegister] = useState(0);
+  const [myLeads, setMyLeads] = useState(0);
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
   const navigate = useNavigate();
+
+  const [openLeadsCount, setOpenLeadsCount] = useState(0);
+  const [followUpLeadsCount, setFollowUpLeadsCount] = useState(0);
+
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`/api/departments`);
-      console.log(response.data);
-      setCountRegister(response.data.length);
+      try {
+        const response = await axios.get(`/api/leads`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        const leads = response.data.data.Lead;
+        const openLeads = leads.filter((lead) => lead.lead_status === "Open");
+        setMyLeads(leads.length);
+        setOpenLeadsCount(openLeads.length);
+        const followUpLeads = leads.filter(
+          (lead) => lead.follow_up_type === "Call"
+        );
+        console.log("followUpLeads", followUpLeads);
+
+        setFollowUpLeadsCount(followUpLeads.length);
+      } catch (error) {
+        console.error("Error fetching leads data:", error);
+      }
     };
+
     fetchData();
   }, []);
 
@@ -142,40 +164,6 @@ export default function ResponsiveLabDashboard() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl md:text-3xl font-bold ">Welcome </h1>
           <div className="flex items-center gap-2">
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="overflow-hidden rounded-full"
-                >
-                  <img
-                    src={userAvatar}
-                    width={36}
-                    height={36}
-                    alt="Avatar"
-                    className="overflow-hidden rounded-full"
-                  />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("user");
-                    navigate("/");
-                  }}
-                >
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu> */}
-            {/* Mobile menu */}
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" className="md:hidden">
@@ -198,9 +186,7 @@ export default function ResponsiveLabDashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />{" "}
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {countRegister && countRegister}
-              </div>
+              <div className="text-2xl font-bold">{openLeadsCount}</div>
             </CardContent>
           </Card>
           <Card className="bg-accent/40">
@@ -211,7 +197,7 @@ export default function ResponsiveLabDashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />{" "}
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">11</div>
+              <div className="text-2xl font-bold">{openLeadsCount}</div>
             </CardContent>
           </Card>
           <Card className="bg-accent/40">
@@ -222,7 +208,7 @@ export default function ResponsiveLabDashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">5</div>
+              <div className="text-2xl font-bold">{followUpLeadsCount}</div>
             </CardContent>
           </Card>
           <Card className="bg-accent/40">
@@ -231,10 +217,7 @@ export default function ResponsiveLabDashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">2</div>
-              <p className="text-xs text-muted-foreground">
-                +1.2% from last month
-              </p>
+              <div className="text-2xl font-bold">{myLeads && myLeads}</div>
             </CardContent>
           </Card>
         </div>
