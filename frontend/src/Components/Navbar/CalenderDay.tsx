@@ -34,7 +34,6 @@ const CalenderDay = () => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const queryClient = useQueryClient();
 
-  // Fetch all leads
   useGetData({
     endpoint: "/api/all_leads",
     params: {
@@ -48,7 +47,6 @@ const CalenderDay = () => {
     },
   });
 
-  // Check for upcoming follow-ups within a week
   useEffect(() => {
     const checkUpcomingFollowUps = () => {
       const today = new Date();
@@ -61,9 +59,11 @@ const CalenderDay = () => {
         return followUpDate >= today && followUpDate <= oneWeekFromNow;
       });
 
-      // if (upcomingLeads.length > 0) {
-      //   toast.info(`You have ${upcomingLeads.length} follow-ups in the next week!`);
-      // }
+      if (upcomingLeads.length > 0) {
+        toast.info(
+          `You have ${upcomingLeads.length} follow-ups in the next week!`
+        );
+      }
     };
 
     checkUpcomingFollowUps();
@@ -201,12 +201,7 @@ const CalenderDay = () => {
             const oneWeekFromNow = new Date();
             oneWeekFromNow.setDate(today.getDate() + 7);
             return followUpDate >= today && followUpDate <= oneWeekFromNow;
-          }) && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-1 -right-1 h-2 w-2 rounded-full"
-            />
-          )}
+          })}
         </Button>
       </PopoverTrigger>
       <PopoverContent
