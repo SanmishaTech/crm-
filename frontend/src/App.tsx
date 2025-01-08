@@ -163,7 +163,7 @@ function App() {
         <Route path="/clients/edit/:id" element={<Dashboard />} />
         <Route path="/leads" element={<Dashboard />} />
         <Route path="/leads/add" element={<Dashboard />} />
-        <Route path="/leads/edit/:id" element={<LeadsEdit />} />
+        <Route path="/leads/edit/:id" element={<Dashboard />} />
         <Route path="/leads/followUps/:id" element={<Dashboard />} />
         <Route path="/leads/generateQuotation/:id" element={<Dashboard />} />
         <Route path="/leads/generateInvoice/:id" element={<Dashboard />} />
