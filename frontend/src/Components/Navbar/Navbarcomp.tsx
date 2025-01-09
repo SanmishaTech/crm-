@@ -239,7 +239,7 @@ const Navbar = () => {
         {/* Right side icons - make responsive */}
         <div className="flex items-center space-x-2">
           <div className="hidden sm:flex items-center space-x-2">
-            <CalenderDay />
+            {/* <CalenderDay /> */}
 
             <TooltipProvider>
               <Tooltip>
