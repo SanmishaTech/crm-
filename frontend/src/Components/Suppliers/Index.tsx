@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -12,21 +11,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  File,
-  PlusCircle,
-  Search,
-  Pencil,
-  Trash,
-  MoreHorizontal,
-  ListFilter,
-  Filter,
-} from "lucide-react";
+import { MoreHorizontal, Filter } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -55,7 +44,6 @@ import { useGetData } from "@/lib/HTTP/GET";
 import AlertDialogbox from "./Delete";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Supplier type
 type Supplier = {
   id: string;
   supplier: string;
@@ -182,13 +170,16 @@ export default function TableDemo() {
                       <Skeleton className="h-4 w-24" />
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-24" />
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-40" />
+                      <Skeleton className="h-4 w-24" />
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -263,30 +254,12 @@ export default function TableDemo() {
             </TableCaption>
             <TableHeader>
               <TableRow className="hover:bg-accent/50">
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("supplier")}
-                >
-                  Suppliers
-                </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("street_address")}
-                >
+                <TableHead className="text-foreground">Suppliers</TableHead>
+                <TableHead className="text-foreground">
                   Street Address
                 </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("area")}
-                >
-                  Area
-                </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("city")}
-                >
-                  City
-                </TableHead>
+                <TableHead className="text-foreground">Area</TableHead>
+                <TableHead className="text-foreground">City</TableHead>
                 <TableHead className="text-right text-foreground">
                   Action
                 </TableHead>
