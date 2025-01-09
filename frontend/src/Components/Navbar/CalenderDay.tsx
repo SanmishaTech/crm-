@@ -7,12 +7,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useGetData } from "@/lib/HTTP/GET";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 interface Lead {
   id: number;
@@ -22,39 +21,46 @@ interface Lead {
   lead_follow_up_remark: string;
 }
 
-interface LeadsApiResponse {
-  data: {
-    Lead: Lead[];
-  };
-}
-
 const CalenderDay = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [month, setMonth] = useState<Date>(new Date());
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const queryClient = useQueryClient();
+  const [calendarLeads, setCalendarLeads] = useState<Lead[]>([]);
 
   useGetData({
     endpoint: "/api/all_leads",
     params: {
-      queryKey: ["leads"],
-      onSuccess: (data: LeadsApiResponse) => {
-        queryClient.invalidateQueries({ queryKey: ["leads"] });
-        if (data?.data?.Lead) {
-          setLeads(data.data.Lead);
+      queryKey: ["calendar_leads"],
+      onSuccess: (response: any) => {
+        try {
+          const leads = response?.data?.Lead;
+          if (leads && Array.isArray(leads)) {
+            setCalendarLeads(leads);
+          } else {
+            console.error('Invalid leads data received:', response);
+            setCalendarLeads([]);
+          }
+        } catch (err) {
+          console.error('Error processing leads data:', err);
+          setCalendarLeads([]);
         }
       },
+      onError: (error: AxiosError) => {
+        console.error('Error fetching leads:', error);
+        setCalendarLeads([]);
+      }
     },
   });
 
   useEffect(() => {
     const checkUpcomingFollowUps = () => {
       const today = new Date();
+      today.setHours(0, 0, 0, 0);
       const oneWeekFromNow = new Date();
       oneWeekFromNow.setDate(today.getDate() + 7);
+      oneWeekFromNow.setHours(23, 59, 59, 999);
 
-      const upcomingLeads = leads.filter((lead) => {
-        if (!lead.lead_follow_up_date) return false;
+      const upcomingLeads = calendarLeads.filter((lead) => {
+        if (!lead?.lead_follow_up_date) return false;
         const followUpDate = new Date(lead.lead_follow_up_date);
         return followUpDate >= today && followUpDate <= oneWeekFromNow;
       });
@@ -67,58 +73,67 @@ const CalenderDay = () => {
     };
 
     checkUpcomingFollowUps();
-  }, [leads]);
+  }, [calendarLeads]);
 
-  // Function to check follow-up status for a date
   const getFollowUpStatus = (day: Date) => {
-    const followUpsForDay = leads.filter((lead) => {
-      if (!lead.lead_follow_up_date) return false;
+    if (!day) return null;
+    
+    const followUpsForDay = calendarLeads.filter((lead) => {
+      if (!lead?.lead_follow_up_date) return false;
+      
       const followUpDate = new Date(lead.lead_follow_up_date);
-      return (
-        followUpDate.getDate() === day.getDate() &&
-        followUpDate.getMonth() === day.getMonth() &&
-        followUpDate.getFullYear() === day.getFullYear()
-      );
+      followUpDate.setHours(0, 0, 0, 0);
+      
+      const compareDate = new Date(day);
+      compareDate.setHours(0, 0, 0, 0);
+      
+      return followUpDate.getTime() === compareDate.getTime();
     });
 
     if (followUpsForDay.length === 0) return null;
 
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
     const oneWeekFromNow = new Date();
     oneWeekFromNow.setDate(today.getDate() + 7);
+    oneWeekFromNow.setHours(23, 59, 59, 999);
+    
     const oneMonthFromNow = new Date();
     oneMonthFromNow.setMonth(today.getMonth() + 1);
+    oneMonthFromNow.setHours(23, 59, 59, 999);
 
-    if (day <= oneWeekFromNow) return "urgent";
-    if (day <= oneMonthFromNow) return "upcoming";
+    const compareDay = new Date(day);
+    compareDay.setHours(0, 0, 0, 0);
+
+    if (compareDay.getTime() <= oneWeekFromNow.getTime()) return "urgent";
+    if (compareDay.getTime() <= oneMonthFromNow.getTime()) return "upcoming";
     return "later";
   };
 
-  // Custom modifiers for the calendar
   const modifiers = {
     urgent: (date: Date) => getFollowUpStatus(date) === "urgent",
     upcoming: (date: Date) => getFollowUpStatus(date) === "upcoming",
     later: (date: Date) => getFollowUpStatus(date) === "later",
   };
 
-  // Custom styles for the modifiers
   const modifiersStyles = {
     urgent: {
-      backgroundColor: "#ef4444", // Red
+      backgroundColor: "#ef4444",
       color: "white",
       borderRadius: "50%",
       fontWeight: "bold",
       textDecoration: "underline",
     },
     upcoming: {
-      backgroundColor: "#eab308", // Yellow
+      backgroundColor: "#eab308",
       color: "white",
       borderRadius: "50%",
       fontWeight: "bold",
       textDecoration: "underline",
     },
     later: {
-      backgroundColor: "#22c55e", // Green
+      backgroundColor: "#22c55e",
       color: "white",
       borderRadius: "50%",
       fontWeight: "bold",
@@ -159,14 +174,15 @@ const CalenderDay = () => {
             Follow-ups
           </span>{" "}
           scheduled for this date:
-          {leads
+          {calendarLeads
             .filter((lead) => {
-              if (!lead.lead_follow_up_date) return false;
+              if (!lead?.lead_follow_up_date) return false;
               const followUpDate = new Date(lead.lead_follow_up_date);
+              const compareDate = new Date(date);
               return (
-                followUpDate.getDate() === date.getDate() &&
-                followUpDate.getMonth() === date.getMonth() &&
-                followUpDate.getFullYear() === date.getFullYear()
+                followUpDate.getDate() === compareDate.getDate() &&
+                followUpDate.getMonth() === compareDate.getMonth() &&
+                followUpDate.getFullYear() === compareDate.getFullYear()
               );
             })
             .map((lead, index) => (
@@ -193,14 +209,6 @@ const CalenderDay = () => {
           className="text-foreground hover:text-foreground/80 hover:bg-accent relative"
         >
           <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />
-          {leads.some((lead) => {
-            if (!lead.lead_follow_up_date) return false;
-            const followUpDate = new Date(lead.lead_follow_up_date);
-            const today = new Date();
-            const oneWeekFromNow = new Date();
-            oneWeekFromNow.setDate(today.getDate() + 7);
-            return followUpDate >= today && followUpDate <= oneWeekFromNow;
-          })}
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -209,14 +217,14 @@ const CalenderDay = () => {
         side="bottom"
         sideOffset={5}
       >
-        <div className="flex justify-center space-x-3 mb-1  ">
+        <div className="flex justify-center space-x-3 mb-1">
           <Button
             variant="outline"
             size="icon"
             className="h-9 w-9"
             onClick={handlePreviousMonth}
           >
-            <ChevronLeft className="h-6 w-6 " />
+            <ChevronLeft className="h-6 w-6" />
           </Button>
           <Button
             variant="outline"
@@ -237,28 +245,24 @@ const CalenderDay = () => {
           showOutsideDays={false}
           className="border-none scale-80 origin-top p-3 m-0 pb-0"
           classNames={{
-            months:
-              "flex flex-col items-center justify-center text-center sm:flex-row sm:space-x-1 sm:space-y-1",
-            month: "flex flex-col items-center  ",
+            months: "flex flex-col items-center justify-center text-center sm:flex-row sm:space-x-1 sm:space-y-1",
+            month: "flex flex-col items-center",
             caption: "flex justify-center relative items-center",
             caption_label: "text-sm font-medium",
             nav: "hidden",
             nav_button: "hidden",
             table: "w-full border-collapse space-y-0.5",
             head_row: "flex",
-            head_cell:
-              "text-muted-foreground rounded-md w-8 font-normal text-sm",
+            head_cell: "text-muted-foreground rounded-md w-8 font-normal text-sm",
             row: "flex w-full mt-1",
             cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent",
             day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
             day_range_end: "day-range-end",
-            day_selected:
-              "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+            day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
             day_today: "bg-accent text-accent-foreground",
             day_outside: "text-muted-foreground opacity-50",
             day_disabled: "text-muted-foreground opacity-50",
-            day_range_middle:
-              "aria-selected:bg-accent aria-selected:text-accent-foreground",
+            day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
             day_hidden: "invisible",
           }}
           footer={footer}
