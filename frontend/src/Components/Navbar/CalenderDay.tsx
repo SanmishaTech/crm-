@@ -229,7 +229,7 @@ const CalenderDay = () => {
           month={month}
           modifiers={modifiers}
           modifiersStyles={modifiersStyles}
-          showOutsideDays={false}
+          showOutsideDays={true}
           className="border-none scale-80 origin-top p-3 m-0 pb-0"
           disabled={{ before: new Date(1970, 0) }}
           onMonthChange={setMonth}
@@ -241,7 +241,7 @@ const CalenderDay = () => {
             caption: "flex justify-between px-6 relative items-center h-9 ",
             caption_label: "text-sm font-medium flex-1 text-center mx-4",
             nav_button:
-              "h-7   w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center ",
+              "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center  ",
             nav_button_previous: "",
             nav_button_next: "",
             table: "w-full border-collapse space-y-1",
@@ -255,7 +255,7 @@ const CalenderDay = () => {
             day_selected:
               "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
             day_today: "bg-accent text-accent-foreground",
-            day_outside: "text-muted-foreground opacity-50",
+            day_outside: "text-white opacity-50",
             day_disabled: "text-muted-foreground opacity-50",
             day_range_middle:
               "aria-selected:bg-accent aria-selected:text-accent-foreground",
