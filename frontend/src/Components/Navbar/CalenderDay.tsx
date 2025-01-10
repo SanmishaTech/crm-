@@ -10,7 +10,6 @@ import { useGetData } from "@/lib/HTTP/GET";
 import { toast } from "sonner";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AxiosError } from "axios";
 
 interface Lead {
@@ -25,6 +24,21 @@ const CalenderDay = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [month, setMonth] = useState<Date>(new Date());
   const [calendarLeads, setCalendarLeads] = useState<Lead[]>([]);
+  const [open, setOpen] = useState(false);
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      // When opening, set to today's date
+      const today = new Date();
+      setDate(today);
+      setMonth(today);
+    } else {
+      // When closing, reset the calendar
+      setDate(undefined);
+      setMonth(new Date());
+    }
+    setOpen(open);
+  };
 
   useGetData({
     endpoint: "/api/all_leads",
@@ -141,18 +155,6 @@ const CalenderDay = () => {
     },
   };
 
-  const handlePreviousMonth = () => {
-    const previousMonth = new Date(month);
-    previousMonth.setMonth(month.getMonth() - 1);
-    setMonth(previousMonth);
-  };
-
-  const handleNextMonth = () => {
-    const nextMonth = new Date(month);
-    nextMonth.setMonth(month.getMonth() + 1);
-    setMonth(nextMonth);
-  };
-
   const footer = date ? (
     <p className="text-center text-[10px] text-muted-foreground m-0 p-0">
       {getFollowUpStatus(date) ? (
@@ -201,7 +203,7 @@ const CalenderDay = () => {
   ) : null;
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
@@ -217,24 +219,6 @@ const CalenderDay = () => {
         side="bottom"
         sideOffset={5}
       >
-        <div className="flex justify-center space-x-3 mb-1">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-9 w-9"
-            onClick={handlePreviousMonth}
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-9 w-9"
-            onClick={handleNextMonth}
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
-        </div>
         <DayPicker
           mode="single"
           selected={date}
@@ -244,14 +228,20 @@ const CalenderDay = () => {
           modifiersStyles={modifiersStyles}
           showOutsideDays={false}
           className="border-none scale-80 origin-top p-3 m-0 pb-0"
+          disabled={{ before: new Date(1970, 0) }}
+          onMonthChange={setMonth}
+          showWeekNumber={false}
+          captionLayout="dropdown"
           classNames={{
-            months: "flex flex-col items-center justify-center text-center sm:flex-row sm:space-x-1 sm:space-y-1",
-            month: "flex flex-col items-center",
-            caption: "flex justify-center relative items-center",
-            caption_label: "text-sm font-medium",
-            nav: "hidden",
-            nav_button: "hidden",
-            table: "w-full border-collapse space-y-0.5",
+            months: "flex flex-col space-y-4",
+            month: "space-y-4",
+            caption: "flex justify-between px-6 relative items-center h-9",
+            caption_label: "text-sm font-medium flex-1 text-center mx-4",
+            nav: "flex items-center",
+            nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center",
+            nav_button_previous: "",
+            nav_button_next: "",
+            table: "w-full border-collapse space-y-1",
             head_row: "flex",
             head_cell: "text-muted-foreground rounded-md w-8 font-normal text-sm",
             row: "flex w-full mt-1",
@@ -267,6 +257,7 @@ const CalenderDay = () => {
           }}
           footer={footer}
         />
+      
       </PopoverContent>
     </Popover>
   );
