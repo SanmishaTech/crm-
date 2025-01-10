@@ -106,7 +106,7 @@ function App() {
         className={theme === "dark" ? "toaster-red" : "toaster-light"}
       />
 
-       <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Search Modules..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
@@ -182,6 +182,9 @@ function App() {
         <Route path="/employees" element={<Dashboard />} />
         <Route path="/employees/add" element={<Dashboard />} />
         <Route path="/employees/edit/:id" element={<Dashboard />} />
+        <Route path="/vendors" element={<Dashboard />} />
+        <Route path="/vendors/add" element={<Dashboard />} />
+        <Route path="/vendors/edit/:id" element={<Dashboard />} />
       </Routes>
 
       {isVisible && (

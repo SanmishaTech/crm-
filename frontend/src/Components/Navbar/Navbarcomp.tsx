@@ -143,6 +143,13 @@ const Navbar = () => {
                     >
                       Contacts
                     </Button>
+                    <Button
+                      variant="ghost"
+                      className=" text-sm hover:text-foreground/80 hover:bg-accent"
+                      onClick={() => navigate("/vendors")}
+                    >
+                      Vendors
+                    </Button>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -397,6 +404,16 @@ const Navbar = () => {
               className="w-full text-left justify-start"
             >
               Clients
+            </Button>
+            <Button
+              onClick={() => {
+                navigate("/vendors");
+                setMobileMenuOpen(false);
+              }}
+              variant="ghost"
+              className="w-full text-left justify-start"
+            >
+              Vendors
             </Button>
             <Button
               onClick={() => {

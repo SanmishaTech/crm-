@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\StoreVendorRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class VendorRequest extends FormRequest
+class StoreVendorRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +25,7 @@ class VendorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "vendor" => ['required', 'unique:vendors,vendor'],
+            "vendor_name" => ['required', 'unique:vendors,vendor_name'],
         ];
     }
 

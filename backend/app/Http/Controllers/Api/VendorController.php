@@ -6,8 +6,9 @@ use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\VendorRequest;
-use App\Http\Resources\VendorResource;
+ use App\Http\Resources\VendorResource;
+use App\Http\Requests\StoreVendorRequest;
+use App\Http\Requests\UpdateVendorRequest;
 
 
  /**
@@ -48,7 +49,7 @@ class VendorController extends BaseController
 
       /**
      * Store Vendor.
-     * @bodyParam vendor sting The name of the Vendor.
+     * @bodyParam vendor_name sting The name of the Vendor.
      * @bodyParam gstin string The GST number of the Vendor.
      * @bodyParam contact_name string The Contact Name of the Vendor.
      * @bodyParam email string The Email of the Vendor.
@@ -61,10 +62,10 @@ class VendorController extends BaseController
      * @bodyParam pincode string The Pincode of the Vendor.
      * @bodyParam country string The Country of the Vendor.
       */
-    public function store(VendorRequest $request): JsonResponse
+    public function store(StoreVendorRequest $request): JsonResponse
     {
         $vendor = new Vendor();
-        $vendor->vendor = $request->input("vendor");
+        $vendor->vendor_name = $request->input("vendor_name");
         $vendor->gstin = $request->input("gstin");
         $vendor->contact_name = $request->input("contact_name");
         $vendor->email = $request->input("email");  
@@ -77,6 +78,8 @@ class VendorController extends BaseController
         $vendor->pincode = $request->input("pincode");
         $vendor->country = $request->input("country");
 
+        $vendor->save();
+
         return $this->sendResponse(["Vendors"=> new VendorResource($vendor)], 'Vendor Stored Successfully');
     }
 
@@ -86,7 +89,7 @@ class VendorController extends BaseController
 
      public function show(string $id): JsonResponse
      {
-         $vendor = Supplier::find($id);
+         $vendor = Vendor::find($id);
          if(!$vendor){
              return $this->sendError("Vendors not found", ['error'=>'Vendors not found']);
          }
@@ -96,7 +99,7 @@ class VendorController extends BaseController
 
         /**
      * Store Vendor.
-     * @bodyParam vendor sting The name of the Vendor.
+     * @bodyParam vendor_name sting The name of the Vendor.
      * @bodyParam gstin string The GST number of the Vendor.
      * @bodyParam contact_name string The Contact Name of the Vendor.
      * @bodyParam email string The Email of the Vendor.
@@ -110,7 +113,7 @@ class VendorController extends BaseController
      * @bodyParam country string The Country of the Vendor.
       */
 
-      public function update(VendorRequest $request, string $id): JsonResponse 
+      public function update(UpdateVendorRequest $request, string $id): JsonResponse 
       {
         $vendor = Vendor::find($id);
 
@@ -119,7 +122,7 @@ class VendorController extends BaseController
         }
 
        
-        $vendor->vendor = $request->input("vendor");
+        $vendor->vendor_name = $request->input("vendor_name");
         $vendor->gstin = $request->input("gstin");
         $vendor->contact_name = $request->input("contact_name");
         $vendor->email = $request->input("email");  

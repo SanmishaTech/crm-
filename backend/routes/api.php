@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LeadsController;
+use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\InvoicesController;
@@ -24,6 +25,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('leads', LeadsController::class); 
    Route::resource('contacts', ContactsController::class);
    Route::resource('suppliers', SuppliersController::class);    
+   Route::resource('vendors', VendorController::class);
    Route::resource('departments', DepartmentController::class);  
    Route::resource('employees', EmployeesController::class);  
    Route::post('/follow_ups', [FollowUpsController::class, 'store'])->name("follow_ups.store");
