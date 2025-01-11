@@ -5,6 +5,15 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CalenderDay from "./CalenderDay";
 import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
+import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -16,6 +25,7 @@ import { Seperator } from "@/components/ui/separator";
 
 import {
   Menu,
+  ChartNoAxesGantt,
   Search,
   Bell,
   Settings,
@@ -78,8 +88,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-4">
-      <div className="flex items-center border gap-4 p-4 min-w-[73%] max-w-[20rem] mx-auto rounded-xl h-[3rem] justify-between bg-background">
+    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-4  ">
+      <div className="flex items-center border gap-4 p-4 min-w-[73%] max-w-[20rem] mx-auto rounded-xl h-[3rem] justify-between bg-background    ">
         <div className="flex items-center space-x-3">
           <Link
             to="/dashboard"
@@ -101,14 +111,6 @@ const Navbar = () => {
           </Link>
 
           {/* Mobile menu button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="ml-2 lg:hidden"
-            onClick={() => setIsSheetOpen(!isSheetOpen)}
-          >
-            <Menu className="h-6 w-6 bg-background" />
-          </Button>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-2">
@@ -272,6 +274,14 @@ const Navbar = () => {
 
           {/* Theme toggle and profile - always visible */}
           <div className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="ml-2 lg:hidden p-0 hover:bg-transparent hover:opacity-100 focus:outline-none focus:ring-0"
+              onClick={() => setIsSheetOpen(!isSheetOpen)}
+            >
+              <ChartNoAxesGantt className="h-5" />
+            </Button>
             <CalenderDay />
             <div className="relative flex items-center">
               <button
