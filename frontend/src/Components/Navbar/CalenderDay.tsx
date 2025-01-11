@@ -8,9 +8,19 @@ import {
 } from "@/components/ui/popover";
 import { useGetData } from "@/lib/HTTP/GET";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { AxiosError } from "axios";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Lead {
   id: number;
@@ -25,15 +35,14 @@ const CalenderDay = () => {
   const [month, setMonth] = useState<Date>(new Date());
   const [calendarLeads, setCalendarLeads] = useState<Lead[]>([]);
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
-      // When opening, set to today's date
       const today = new Date();
       setDate(today);
       setMonth(today);
     } else {
-      // When closing, reset the calendar
       setDate(undefined);
       setMonth(new Date());
     }
@@ -45,6 +54,7 @@ const CalenderDay = () => {
     params: {
       queryKey: ["calendar_leads"],
       onSuccess: (response: any) => {
+        queryClient.invalidateQueries({ queryKey: ["calendar_leads"] });
         try {
           const leads = response?.data?.Lead;
           if (leads && Array.isArray(leads)) {
@@ -79,11 +89,11 @@ const CalenderDay = () => {
         return followUpDate >= today && followUpDate <= oneWeekFromNow;
       });
 
-      // if (upcomingLeads.length > 0) {
-      //   toast.info(
-      //     `You have ${upcomingLeads.length} follow-ups in the next week!`
-      //   );
-      // }
+      if (upcomingLeads.length > 0) {
+        toast.info(
+          `You have ${upcomingLeads.length} follow-ups in the next week!`
+        );
+      }
     };
 
     checkUpcomingFollowUps();
@@ -155,116 +165,125 @@ const CalenderDay = () => {
     },
   };
 
-  const footer = date ? (
-    <p className="text-center text-[10px] text-muted-foreground m-0 p-0">
-      {getFollowUpStatus(date) ? (
-        <>
-          <span
-            className={`font-bold ${
-              getFollowUpStatus(date) === "urgent"
-                ? "text-red-500"
-                : getFollowUpStatus(date) === "upcoming"
-                ? "text-yellow-500"
-                : "text-green-500"
-            }`}
-          >
-            {getFollowUpStatus(date) === "urgent"
-              ? "Urgent"
-              : getFollowUpStatus(date) === "upcoming"
-              ? "Upcoming"
-              : "Later"}{" "}
-            Follow-ups
-          </span>{" "}
-          scheduled for this date:
-          {calendarLeads
-            .filter((lead) => {
-              if (!lead?.lead_follow_up_date) return false;
-              const followUpDate = new Date(lead.lead_follow_up_date);
-              const compareDate = new Date(date);
-              return (
-                followUpDate.getDate() === compareDate.getDate() &&
-                followUpDate.getMonth() === compareDate.getMonth() &&
-                followUpDate.getFullYear() === compareDate.getFullYear()
-              );
-            })
-            .map((lead, index) => (
-              <div
-                className="flex flex justify-center text-[10px] m-0 p-0"
-                key={index}
-              >
-                <span style={{ fontWeight: "bold" }}>
-                  {lead.follow_up_type}
+  const footer = (
+    <div className="w-full flex justify-end mt-2">
+      <div className="bg-background border p-4 rounded-lg shadow-md w-[320px] max-w-[350px] min-w-[300px]">
+        <p className="text-center text-sm text-muted-foreground ">
+          {date ? (
+            getFollowUpStatus(date) ? (
+              <>
+                <span
+                  className={`font-bold ${
+                    getFollowUpStatus(date) === "urgent"
+                      ? "text-red-500"
+                      : getFollowUpStatus(date) === "upcoming"
+                      ? "text-yellow-500"
+                      : "text-green-500"
+                  }`}
+                >
+                  {getFollowUpStatus(date) === "urgent"
+                    ? "Urgent"
+                    : getFollowUpStatus(date) === "upcoming"
+                    ? "Upcoming"
+                    : "Later"}{" "}
+                  Follow-ups
                 </span>
-                <span className="mx-1">({lead.follow_up_remark})</span>
-              </div>
-            ))}
-        </>
-      ) : (
-        "No follow-ups"
-      )}
-    </p>
-  ) : null;
+                <span className="block text-[11px] text-muted-foreground mt-1">
+                  scheduled for this date:
+                </span>
+                {calendarLeads
+                  .filter((lead) => {
+                    if (!lead?.lead_follow_up_date) return false;
+                    const followUpDate = new Date(lead.lead_follow_up_date);
+                    const compareDate = new Date(date);
+                    return (
+                      followUpDate.getDate() === compareDate.getDate() &&
+                      followUpDate.getMonth() === compareDate.getMonth() &&
+                      followUpDate.getFullYear() === compareDate.getFullYear()
+                    );
+                  })
+                  .map((lead, index) => (
+                    <div
+                      className="flex justify-center text-[10px] m-0 p-0"
+                      key={index}
+                    >
+                      <span style={{ fontWeight: "bold" }}>
+                        {lead.follow_up_type}
+                      </span>
+                      <span className="mx-1">({lead.follow_up_remark})</span>
+                    </div>
+                  ))}
+              </>
+            ) : (
+              "No follow-ups"
+            )
+          ) : (
+            <>
+              <span className="font-bold  text-red-500">Urgent</span> Follow-ups
+              <br />
+              <span className="font-bold text-yellow-500">Upcoming</span>{" "}
+              Follow-ups
+              <br />
+              <span className="font-bold text-green-500">Later</span> Follow-ups
+            </>
+          )}
+        </p>
+      </div>
+    </div>
+  );
 
   return (
-    <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-foreground hover:text-foreground/80 hover:bg-accent relative"
-        >
-          <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        className="w-auto p-0"
-        align="center"
-        side="bottom"
-        sideOffset={5}
-      >
-        <DayPicker
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          month={month}
-          modifiers={modifiers}
-          modifiersStyles={modifiersStyles}
-          showOutsideDays={true}
-          className="border-none scale-80 origin-top p-3 m-0 pb-0"
-          disabled={{ before: new Date(1970, 0) }}
-          onMonthChange={setMonth}
-          showWeekNumber={false}
-          captionLayout="dropdown"
-          classNames={{
-            months: "flex flex-col",
-            month: "",
-            caption: "flex justify-between px-6 relative items-center h-9 ",
-            caption_label: "text-sm font-medium flex-1 text-center mx-4",
-            nav_button:
-              "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center  ",
-            nav_button_previous: "",
-            nav_button_next: "",
-            table: "w-full border-collapse space-y-1",
-            head_row: "flex",
-            head_cell:
-              "text-muted-foreground rounded-md w-8 font-normal text-sm",
-            row: "flex w-full mt-1",
-            cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent",
-            day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
-            day_range_end: "day-range-end",
-            day_selected:
-              "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-            day_today: "bg-accent text-accent-foreground",
-            day_outside: "text-white opacity-50",
-            day_disabled: "text-muted-foreground opacity-50",
-            day_range_middle:
-              "aria-selected:bg-accent aria-selected:text-accent-foreground",
-            day_hidden: "invisible",
-          }}
-          footer={footer}
-        />
-      </PopoverContent>
-    </Popover>
+    <Dialog>
+      <DialogTrigger open={open} onOpenChange={handleOpenChange}>
+        <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />{" "}
+      </DialogTrigger>
+
+      <DialogContent className="flex justify-center items-center">
+        <div className="w-full max-w-[320px]">
+          <DayPicker
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            month={month}
+            modifiers={modifiers}
+            modifiersStyles={modifiersStyles}
+            showOutsideDays={true}
+            className="scale-80 origin-top p-3 m-0 pb-"
+            disabled={{ before: new Date(1970, 0) }}
+            onMonthChange={setMonth}
+            showWeekNumber={false}
+            captionLayout="dropdown"
+            classNames={{
+              months: "flex flex-col",
+              month: "",
+              caption: "flex justify-between px-6 relative items-center h-9 ",
+              caption_label: "text-sm font-medium flex-1 text-center mx-4",
+              nav_button:
+                "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center  ",
+              nav_button_previous: "",
+              nav_button_next: "",
+              table: "w-full border-collapse space-y-1",
+              head_row: "flex",
+              head_cell:
+                "text-muted-foreground rounded-md w-8 font-normal text-sm",
+              row: "flex w-full mt-1",
+              cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent",
+              day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
+              day_range_end: "day-range-end",
+              day_selected:
+                "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+              day_today: "bg-accent text-accent-foreground",
+              day_outside: "text-white opacity-50",
+              day_disabled: "text-muted-foreground opacity-50",
+              day_range_middle:
+                "aria-selected:bg-accent aria-selected:text-accent-foreground ",
+              day_hidden: "invisible",
+            }}
+            footer={footer}
+          />
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

@@ -4,6 +4,15 @@ import { useTheme } from "@/darktheme/CustomTheme";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CalenderDay from "./CalenderDay";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Seperator } from "@/components/ui/separator";
 
 import {
   Menu,
@@ -60,6 +69,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   const handleThemeToggle = () => {
@@ -67,8 +78,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-2">
-      <div className="flex items-center border gap-4 p-4 min-w-[90%] max-w-[20rem] mx-auto rounded-xl h-[3rem] justify-between bg-background">
+    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-4">
+      <div className="flex items-center border gap-4 p-4 min-w-[73%] max-w-[20rem] mx-auto rounded-xl h-[3rem] justify-between bg-background">
         <div className="flex items-center space-x-3">
           <Link
             to="/dashboard"
@@ -94,7 +105,7 @@ const Navbar = () => {
             variant="ghost"
             size="icon"
             className="ml-2 lg:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setIsSheetOpen(!isSheetOpen)}
           >
             <Menu className="h-6 w-6 bg-background" />
           </Button>
@@ -254,7 +265,8 @@ const Navbar = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setOpen(true)}
+                    // onClick={() => setOpen(true)}
+                    onClick={() => setIsSearchOpen(true)}
                     className="text-foreground hover:text-foreground/80 hover:bg-accent"
                   >
                     <Search className="h-4" style={{ strokeWidth: 1.5 }} />
@@ -354,155 +366,150 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Navigation Menu */}
-
       <div
         className={`lg:hidden bg-background ${
           mobileMenuOpen ? "block" : "hidden"
         } pt-2  pb-3 px-2`}
       >
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
-                <Search className="h-5 w-5" />
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Select the Module</SheetTitle>
+              <SheetDescription>Choose the module to navigate</SheetDescription>
+            </SheetHeader>
+
+            <div className="space-y-0 ">
+              <Button
+                onClick={() => {
+                  navigate("/dashboard");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Dashboard
               </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Search Modules</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        <ScrollArea className="rounded-md border p-4 overflow-auto max-h-[500px]">
-          <div className="space-y-1 ">
-            <Button
-              onClick={() => {
-                navigate("/dashboard");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Dashboard
-            </Button>
-            <Button
-              onClick={() => {
-                navigate("/leads");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Leads
-            </Button>
+              <Button
+                onClick={() => {
+                  navigate("/leads");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Leads
+              </Button>
 
-            <Button
-              onClick={() => {
-                navigate("/clients");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Clients
-            </Button>
-            <Button
-              onClick={() => {
-                navigate("/vendors");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Vendors
-            </Button>
-            <Button
-              onClick={() => {
-                navigate("/contacts");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Contacts
-            </Button>
+              <Button
+                onClick={() => {
+                  navigate("/clients");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Clients
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate("/vendors");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Vendors
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate("/contacts");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Contacts
+              </Button>
 
-            <Button
-              onClick={() => {
-                navigate("/suppliers");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Suppliers
-            </Button>
-            <Button
-              onClick={() => {
-                navigate("/productCategories");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Product Categories
-            </Button>
-            <Button
-              onClick={() => {
-                navigate("/products");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Products
-            </Button>
-            {/* <Button
-              onClick={() => {
-                navigate("/inventory");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Inventory
-            </Button> */}
+              <Button
+                onClick={() => {
+                  navigate("/suppliers");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Suppliers
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate("/productCategories");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Product Categories
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate("/products");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Products
+              </Button>
 
-            <Button
-              onClick={() => {
-                navigate("/employees");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Employees
-            </Button>
-            <Button
-              onClick={() => {
-                navigate("/departments");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Departments
-            </Button>
+              <Button
+                onClick={() => {
+                  navigate("/employees");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Employees
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate("/departments");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Departments
+              </Button>
 
-            <Button
-              onClick={() => {
-                navigate("/invoices");
-                setMobileMenuOpen(false);
-              }}
-              variant="ghost"
-              className="w-full text-left justify-start"
-            >
-              Invoices
-            </Button>
-          </div>
-        </ScrollArea>
+              <Button
+                onClick={() => {
+                  navigate("/invoices");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Invoices
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <CommandInput
           placeholder="Search Modules..."
           className="bg-background text-foreground"
