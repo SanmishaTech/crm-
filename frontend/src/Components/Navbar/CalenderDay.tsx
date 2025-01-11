@@ -185,7 +185,7 @@ const CalenderDay = () => {
                     ? "Urgent"
                     : getFollowUpStatus(date) === "upcoming"
                     ? "Upcoming"
-                    : "Later"}{" "}
+                    : "Later"}
                   Follow-ups
                 </span>
                 <span className="block text-[11px] text-muted-foreground mt-1">
@@ -233,13 +233,19 @@ const CalenderDay = () => {
   );
 
   return (
-    <Dialog>
+    <Dialog className="">
       <DialogTrigger open={open} onOpenChange={handleOpenChange}>
         <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />{" "}
       </DialogTrigger>
 
-      <DialogContent className="flex justify-center items-center">
-        <div className="w-full max-w-[320px]">
+      <DialogContent className="flex flex-col justify-center items-center ">
+        <DialogHeader>
+          <DialogTitle className="text-center"> Follow-up Calendar</DialogTitle>
+          <DialogDescription>View and manage your follow-ups</DialogDescription>
+        </DialogHeader>
+
+        <div className="">
+          {" "}
           <DayPicker
             mode="single"
             selected={date}
@@ -248,7 +254,7 @@ const CalenderDay = () => {
             modifiers={modifiers}
             modifiersStyles={modifiersStyles}
             showOutsideDays={true}
-            className="scale-80 origin-top p-3 m-0 pb-"
+            className=" scale-100 origin-top "
             disabled={{ before: new Date(1970, 0) }}
             onMonthChange={setMonth}
             showWeekNumber={false}
@@ -257,7 +263,7 @@ const CalenderDay = () => {
               months: "flex flex-col",
               month: "",
               caption: "flex justify-between px-6 relative items-center h-9 ",
-              caption_label: "text-sm font-medium flex-1 text-center mx-4",
+              caption_label: "text-sm  flex-1 text-center mx-4",
               nav_button:
                 "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center  ",
               nav_button_previous: "",
