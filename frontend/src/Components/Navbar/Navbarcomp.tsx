@@ -246,9 +246,8 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Right side icons - make responsive */}
         <div className="flex items-center space-x-2">
-          <div className="hidden sm:flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -267,10 +266,6 @@ const Navbar = () => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div>
-
-          {/* Theme toggle and profile - always visible */}
-          <div className="flex items-center space-x-2">
             <Button
               variant="ghost"
               size="icon"
@@ -279,7 +274,7 @@ const Navbar = () => {
             >
               <ChartNoAxesGantt className="h-5" />
             </Button>
-            <CalenderDay />
+            <CalenderDay  />
             <div className="relative flex items-center">
               <button
                 onClick={handleThemeToggle}
