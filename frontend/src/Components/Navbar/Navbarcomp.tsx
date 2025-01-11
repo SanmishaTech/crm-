@@ -154,13 +154,6 @@ const Navbar = () => {
                     >
                       Contacts
                     </Button>
-                    <Button
-                      variant="ghost"
-                      className=" text-sm hover:text-foreground/80 hover:bg-accent"
-                      onClick={() => navigate("/vendors")}
-                    >
-                      Vendors
-                    </Button>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -257,8 +250,6 @@ const Navbar = () => {
         {/* Right side icons - make responsive */}
         <div className="flex items-center space-x-2">
           <div className="hidden sm:flex items-center space-x-2">
-            <CalenderDay />
-
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -281,6 +272,7 @@ const Navbar = () => {
 
           {/* Theme toggle and profile - always visible */}
           <div className="flex items-center space-x-2">
+            <CalenderDay />
             <div className="relative flex items-center">
               <button
                 onClick={handleThemeToggle}
@@ -413,17 +405,7 @@ const Navbar = () => {
               >
                 Clients
               </Button>
-              <Button
-                onClick={() => {
-                  navigate("/vendors");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Vendors
-              </Button>
+
               <Button
                 onClick={() => {
                   navigate("/contacts");

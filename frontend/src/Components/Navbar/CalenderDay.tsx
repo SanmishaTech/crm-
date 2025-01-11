@@ -255,7 +255,7 @@ const CalenderDay = () => {
             modifiers={modifiers}
             modifiersStyles={modifiersStyles}
             showOutsideDays={true}
-            className="scale-5 origin-top"
+            className="scale-5 origin-top sm:scale-3" 
             disabled={{ before: new Date(1970, 0) }}
             onMonthChange={setMonth}
             showWeekNumber={false}
