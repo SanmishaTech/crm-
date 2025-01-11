@@ -43,7 +43,7 @@ const CalenderDay = () => {
       setDate(today);
       setMonth(today);
     } else {
-      setDate(undefined);
+      setDate(undefined); // or you could reset to `new Date()`
       setMonth(new Date());
     }
     setOpen(open);
@@ -204,7 +204,7 @@ const CalenderDay = () => {
                   })
                   .map((lead, index) => (
                     <div
-                      className="flex justify-center text-[10px] m-0 p-0"
+                      className="flex justify-center font-bold text-[12px] m-0 p-0"
                       key={index}
                     >
                       <span style={{ fontWeight: "bold" }}>
@@ -215,13 +215,13 @@ const CalenderDay = () => {
                   ))}
               </>
             ) : (
-              "No follow-ups"
+              "No follow-ups scheduled for this date"
             )
           ) : (
             <>
               <span className="font-bold  text-red-500">Urgent</span> Follow-ups
               <br />
-              <span className="font-bold text-yellow-500">Upcoming</span>{" "}
+              <span className="font-bold  text-yellow-500">Upcoming</span>{" "}
               Follow-ups
               <br />
               <span className="font-bold text-green-500">Later</span> Follow-ups
@@ -258,16 +258,15 @@ const CalenderDay = () => {
             disabled={{ before: new Date(1970, 0) }}
             onMonthChange={setMonth}
             showWeekNumber={false}
-            captionLayout="dropdown"
             classNames={{
               months: "flex flex-col",
               month: "",
-              caption: "flex justify-between px-6 relative items-center h-9 ",
-              caption_label: "text-sm  flex-1 text-center mx-4",
+              caption: "flex justify-between px-6 relative items-center h-9",
+              caption_label: "text-lg flex-1 text-left mx-4  mt-3",
               nav_button:
-                "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center  ",
-              nav_button_previous: "",
-              nav_button_next: "",
+                "h-7 w-7 bg-transparent p-0  opacity-50 hover:opacity-100 flex items-center justify-center",
+              nav_button_previous: "ml-auto",
+              nav_button_next: "ml-auto ",
               table: "w-full border-collapse space-y-1",
               head_row: "flex",
               head_cell:
@@ -282,7 +281,7 @@ const CalenderDay = () => {
               day_outside: "text-white opacity-50",
               day_disabled: "text-muted-foreground opacity-50",
               day_range_middle:
-                "aria-selected:bg-accent aria-selected:text-accent-foreground ",
+                "aria-selected:bg-accent aria-selected:text-accent-foreground",
               day_hidden: "invisible",
             }}
             footer={footer}
