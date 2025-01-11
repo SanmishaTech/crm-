@@ -43,8 +43,10 @@ const CalenderDay = () => {
       setDate(today);
       setMonth(today);
     } else {
-      setDate(undefined); // or you could reset to `new Date()`
+      // Reset calendar state when dialog closes
+      setDate(undefined);
       setMonth(new Date());
+      setCalendarLeads([]); // Optionally reset the leads data
     }
     setOpen(open);
   };
@@ -233,7 +235,7 @@ const CalenderDay = () => {
   );
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger>
         <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />
       </DialogTrigger>
@@ -245,7 +247,6 @@ const CalenderDay = () => {
         </DialogHeader>
 
         <div className="">
-          {" "}
           <DayPicker
             mode="single"
             selected={date}
@@ -254,7 +255,7 @@ const CalenderDay = () => {
             modifiers={modifiers}
             modifiersStyles={modifiersStyles}
             showOutsideDays={true}
-            className=" scale-5 origin-top "
+            className="scale-5 origin-top"
             disabled={{ before: new Date(1970, 0) }}
             onMonthChange={setMonth}
             showWeekNumber={false}
