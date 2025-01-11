@@ -50,7 +50,7 @@ const Dashboard = () => {
       <div className="min-h-screen relative top-0 bg-accent/40">
         {/* <Sidebar className="min-h-full" />   */}
       </div>
-      <main className="w-full flex-1 overflow-hidden pt-[5rem] max-h-screen ">
+      <main className="w-full flex-1 overflow-hidden pt-[5rem]  ">
         {<Navbar />}
         {location.pathname === "/dashboard" && <Dashboardcomponent />}
         {location.pathname === "/suppliers" && <Suppliers />}

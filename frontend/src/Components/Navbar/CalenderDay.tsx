@@ -237,7 +237,7 @@ const CalenderDay = () => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger>
-        <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />
+        <CalendarDays className="h-4 w-4" style={{ strokeWidth: 1.5 }} />
       </DialogTrigger>
 
       <DialogContent className="flex flex-col justify-center items-center  ">
@@ -255,7 +255,7 @@ const CalenderDay = () => {
             modifiers={modifiers}
             modifiersStyles={modifiersStyles}
             showOutsideDays={true}
-            className="scale-5 origin-top sm:scale-3" 
+            className="scale-5 origin-top sm:scale-3"
             disabled={{ before: new Date(1970, 0) }}
             onMonthChange={setMonth}
             showWeekNumber={false}
