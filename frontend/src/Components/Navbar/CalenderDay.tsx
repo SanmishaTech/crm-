@@ -233,12 +233,12 @@ const CalenderDay = () => {
   );
 
   return (
-    <Dialog className="">
-      <DialogTrigger open={open} onOpenChange={handleOpenChange}>
-        <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />{" "}
+    <Dialog>
+      <DialogTrigger>
+        <CalendarDays className="h-4" style={{ strokeWidth: 1.5 }} />
       </DialogTrigger>
 
-      <DialogContent className="flex flex-col justify-center items-center ">
+      <DialogContent className="flex flex-col justify-center items-center  ">
         <DialogHeader>
           <DialogTitle className="text-center"> Follow-up Calendar</DialogTitle>
           <DialogDescription>View and manage your follow-ups</DialogDescription>
@@ -254,20 +254,16 @@ const CalenderDay = () => {
             modifiers={modifiers}
             modifiersStyles={modifiersStyles}
             showOutsideDays={true}
-            className=" scale-100 origin-top "
+            className=" scale-5 origin-top "
             disabled={{ before: new Date(1970, 0) }}
             onMonthChange={setMonth}
             showWeekNumber={false}
             classNames={{
-              months: "flex flex-col",
-              month: "",
-              caption: "flex justify-between px-6 relative items-center h-9",
-              caption_label: "text-lg flex-1 text-left mx-4  mt-3",
+              caption: "flex items-center px-6 relative h-9",
+              caption_label: "text-lg flex-1 text-left mx-4 mt-3",
               nav_button:
-                "h-7 w-7 bg-transparent p-0  opacity-50 hover:opacity-100 flex items-center justify-center",
-              nav_button_previous: "ml-auto",
-              nav_button_next: "ml-auto ",
-              table: "w-full border-collapse space-y-1",
+                "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center absolute left-0",
+              table: "w-full border-collapse",
               head_row: "flex",
               head_cell:
                 "text-muted-foreground rounded-md w-8 font-normal text-sm",
