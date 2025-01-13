@@ -93,7 +93,10 @@ const CalenderDay = () => {
 
       if (upcomingLeads.length > 0) {
         toast.info(
-          `You have ${upcomingLeads.length} follow-ups in the next week!`
+          `You have ${upcomingLeads.length} follow-ups in the next week!`,
+          {
+            duration: 1200,
+          }
         );
       }
     };
