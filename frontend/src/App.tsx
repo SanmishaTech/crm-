@@ -98,12 +98,13 @@ function App() {
   };
 
   return (
-    <div className="overflow-x-hidden  ">
+    <div className="overflow-x-hidden">
       <Toaster
+        richColors
+        className=""
+        closeButton
         position="top-right"
         theme={theme === "dark" ? "dark" : "light"}
-        closeButton
-        className={theme === "dark" ? "toaster-red" : "toaster-light"}
       />
 
       <CommandDialog open={open} onOpenChange={setOpen}>
