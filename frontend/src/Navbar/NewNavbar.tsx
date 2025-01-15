@@ -90,24 +90,6 @@ const NewNavbar = () => {
                 >
                   Home
                 </Link>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-900 hover:text-primary"
-                >
-                  Lead
-                </Link>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-900 hover:text-primary"
-                >
-                  Contacts
-                </Link>
-                <Link
-                  to="/"
-                  className="text-sm font-medium text-gray-900 hover:text-primary"
-                >
-                  Accounts
-                </Link>
               </div>
             </div>
 

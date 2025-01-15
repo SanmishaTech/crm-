@@ -58,7 +58,7 @@ const formSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Password field must have at least 6 characters." }),
-  mobile: z.coerce.number().min(10, { message: "mobile field is required." }),
+  mobile: z.coerce.number().min(10, { message: "Mobile field is required." }),
   joining_date: z.string().optional(),
   // resignation_date: z.string().optional(),
   designation: z

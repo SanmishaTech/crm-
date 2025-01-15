@@ -85,7 +85,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-4  ">
+    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-4    ">
       <div className="flex items-center border shadow-lg gap-4 p-4 min-w-[73%] max-w-[20rem] mx-auto rounded-xl h-[3rem] justify-between bg-background    ">
         <div className="flex items-center space-x-3">
           <Link
@@ -192,14 +192,6 @@ const Navbar = () => {
                       Products
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
-
-                    {/* <Button
-                      onClick={() => navigate("/inventory")}
-                      variant="ghost"
-                      className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                    >
-                      Inventory
-                    </Button> */}
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>

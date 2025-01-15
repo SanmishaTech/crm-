@@ -57,7 +57,7 @@ const FormSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Password field must have at least 6 characters." }),
-  mobile: z.coerce.number().min(10, { message: "mobile field is required." }),
+  mobile: z.coerce.number().min(10, { message: "Mobile field is required." }),
   joining_date: z.string().optional(),
   designation: z
     .string()
@@ -120,7 +120,7 @@ export default function InputForm() {
       onError: (error) => {
         console.log("error", error);
 
-       if (error.response && error.response.data.errors) {
+        if (error.response && error.response.data.errors) {
           const serverStatus = error.response.data.status;
           const serverErrors = error.response.data.errors;
           // Assuming the error is for the department_name field
@@ -151,7 +151,7 @@ export default function InputForm() {
     formData.mutate(data);
   };
 
-  return ( 
+  return (
     <div className=" mx-auto p-6 ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
