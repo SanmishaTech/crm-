@@ -188,7 +188,7 @@ export default function EditSupplierPage() {
   }, [editData, form]);
 
   const getData = useGetData({
-    endpoint: `/api/clients`,
+    endpoint: `/api/all_clients`,
     params: {
       queryKey: ["clients"],
       retry: 1,
@@ -207,7 +207,7 @@ export default function EditSupplierPage() {
     },
   });
   const { data: fetchClients } = useGetData({
-    endpoint: `/api/clients`,
+    endpoint: `/api/all_clients`,
     params: {
       queryKey: ["clients"],
       retry: 1,

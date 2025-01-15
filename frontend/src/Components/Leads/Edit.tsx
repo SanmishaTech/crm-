@@ -171,7 +171,7 @@ export default function EditLeadPage() {
   });
 
   const { data: productsData } = useGetData({
-    endpoint: "/api/products",
+    endpoint: "/api/all_products",
     params: {
       queryKey: ["products"],
       retry: 1,

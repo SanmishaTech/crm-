@@ -168,7 +168,6 @@ export default function InputForm() {
           setError("Failed to add lead");
         }
       },
-
     },
   });
 
@@ -227,7 +226,7 @@ export default function InputForm() {
   const fetchProduct = () => {
     setLoading(true);
     axios
-      .get("/api/products", {
+      .get("/api/all_products", {
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),

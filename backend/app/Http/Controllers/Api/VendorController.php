@@ -35,7 +35,7 @@ class VendorController extends BaseController
         });
     }
 
-    $vendors = $query->paginate(5);
+    $vendors = $query->paginate(9);
 
     return $this->sendResponse(["Vendors"=>VendorResource::collection($vendors),
     'pagination' => [

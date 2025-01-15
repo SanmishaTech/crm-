@@ -31,7 +31,7 @@ class ProductsController extends BaseController
                 $query->where('product', 'like', '%' . $searchTerm . '%');
             });
         }
-        $products = $query->orderBy('id', 'DESC')->paginate(5);
+        $products = $query->orderBy('id', 'DESC')->paginate(9);
 
 
         return $this->sendResponse(["Products"=>ProductResource::collection($products),
@@ -127,5 +127,14 @@ class ProductsController extends BaseController
         }
          $product->delete();
          return $this->sendResponse([], "Product Deleted successfuly");
+    }
+
+    public function allProducts(): JsonResponse
+    {
+        $product = Product::all();
+
+        return $this->sendResponse(["Products"=>ProductResource::collection($product),
+        ], "Products retrived successfully");
+
     }
 }

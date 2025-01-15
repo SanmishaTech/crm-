@@ -34,7 +34,7 @@ class ContactsController extends BaseController
                 $query->where('contact_person', 'like', '%' . $searchTerm . '%');
             });
         }
-        $contact = $query->paginate(5);
+        $contact = $query->paginate(9);
 
         return $this->sendResponse(["Contact"=>ContactResource::collection($contact),
         'pagination' => [

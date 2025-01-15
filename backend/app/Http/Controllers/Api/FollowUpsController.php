@@ -29,7 +29,7 @@ class FollowUpsController extends BaseController
                 $query->where('follow_up_type', 'like', '%' . $searchTerm . '%');
             });
         }
-        $followUp = $query->orderBy("id", "DESC")->paginate(5);
+        $followUp = $query->orderBy("id", "DESC")->paginate(9);
 
         return $this->sendResponse(["FollowUp"=>FollowUpResource::collection($followUp),
         'Pagination' => [

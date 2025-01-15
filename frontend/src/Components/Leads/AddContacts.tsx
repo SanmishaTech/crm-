@@ -119,7 +119,7 @@ const AddContacts = ({ fetchContacts }) => {
   });
 
   const { data: fetchClients } = useGetData({
-    endpoint: `/api/clients`,
+    endpoint: `/api/all_clients`,
     params: {
       queryKey: ["clients"],
       retry: 1,
@@ -149,7 +149,7 @@ const AddContacts = ({ fetchContacts }) => {
         <DialogTrigger asChild>
           <Button
             variant="ghost"
-            className="h-12 bg-gray-300 text-black" 
+            className="h-12 bg-gray-300 text-black"
             onClick={handleDialogOpen}
           >
             Add Contacts

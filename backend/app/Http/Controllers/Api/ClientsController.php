@@ -37,7 +37,7 @@ class ClientsController extends BaseController
                 $query->where('client', 'like', '%' . $searchTerm . '%');
             });
         }
-        $clients = $query->paginate(5);
+        $clients = $query->paginate(9);
 
         return $this->sendResponse(["Client"=>ClientResource::collection($clients),
         'pagination' => [
@@ -141,6 +141,18 @@ class ClientsController extends BaseController
         }
         $clients->delete();
         return $this->sendResponse([], 'Client Deleted Successfully');
+
+    }
+
+      /**
+     * Fetch All Clients.
+     */
+    public function allClients(): JsonResponse
+    {
+        $clients = Client::all();
+
+        return $this->sendResponse(["Client"=>ClientResource::collection($clients),
+        ], "Client retrived successfully");
 
     }
 

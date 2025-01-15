@@ -140,7 +140,7 @@ export default function InputForm() {
   });
 
   const { data: fetchClients } = useGetData({
-    endpoint: `/api/clients`,
+    endpoint: `/api/all_clients`,
     params: {
       queryKey: ["clients"],
       retry: 1,

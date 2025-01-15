@@ -101,7 +101,7 @@ class LeadsController extends BaseController
     //         });
     //     }
 
-    //     $leads = $query->paginate(11);
+    //     $leads = $query->paginate(9);
 
     //     return $this->sendResponse(["Lead"=>LeadResource::collection($leads),
     //     'pagination' => [
@@ -149,7 +149,7 @@ class LeadsController extends BaseController
 
       
     
-        $leads = $query->paginate(5);
+        $leads = $query->paginate(9);
     
         return $this->sendResponse([
             "Lead" => LeadResource::collection($leads),
