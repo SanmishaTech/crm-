@@ -116,7 +116,7 @@ export default function EditSupplierPage() {
         console.log("editdata", data);
         queryClient.invalidateQueries({ queryKey: ["editsupplier"] });
         queryClient.invalidateQueries({ queryKey: ["editsupplier", id] });
-        toast.success("Supplier updated successfully");
+        toast.success("Contact updated successfully");
         navigate("/contacts");
       },
       onError: (error) => {

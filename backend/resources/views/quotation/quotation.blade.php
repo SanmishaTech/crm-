@@ -111,6 +111,10 @@
     </table>
     <div class="invoice-box">
         <div style="margin-bottom: 20px; line-height: 1.5;">
+            <p>To,</p>
+            <p><strong>{{@$leads->contact->contact_person}}</strong></p>
+            <p>Email: {{@$leads->contact->email}}</p>
+            <br>
             <p>Dear Sir,</p>
             <p>Greetings from Renuka Enterprises!</p>
             <p style="text-align: justify;">The Renuka Enterprises is the Quality & Safety Solutions Company catering High Performance Thermal Imaging Cameras of FLIR brand and MSA make Safety products. We are also catering Electrical, Electronic Testing & Measuring Equipments & Systems.</p>
