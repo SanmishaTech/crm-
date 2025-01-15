@@ -63,6 +63,8 @@ class SuppliersController extends BaseController
      * @bodyParam mobile_1 string The mobile 1 of the Supplier.
      * @bodyParam mobile_2 string The mobile 2 of the Supplier.
      * @bodyParam email string The email of the Supplier.
+     * @bodyParam alternate_email string The Alternate Email of the Supplier.
+
      */
     public function store(StoreSupplierRequest $request): JsonResponse
     {
@@ -81,6 +83,7 @@ class SuppliersController extends BaseController
         $suppliers->mobile_1 = $request->input("mobile_1");
         $suppliers->mobile_2 = $request->input("mobile_2");
         $suppliers->email = $request->input("email"); 
+        $suppliers->alternate_email = $request->input("alternate_email");
         $suppliers->save();
 
         return $this->sendResponse(["Suppliers"=> new SupplierResource($suppliers)], 'Supplier Stored Successfully');
@@ -116,6 +119,7 @@ class SuppliersController extends BaseController
      * @bodyParam mobile_1 string The mobile 1 of the Supplier.
      * @bodyParam mobile_2 string The mobile 2 of the Supplier.
      * @bodyParam email string The email of the Supplier.
+     * @bodyParam alternate_email string The Alternate Email of the Supplier.
      */
     public function update(UpdateSupplierRequest $request, string $id): JsonResponse
     {
@@ -141,6 +145,7 @@ class SuppliersController extends BaseController
         $suppliers->mobile_1 = $request->input("mobile_1");
         $suppliers->mobile_2 = $request->input("mobile_2");
         $suppliers->email = $request->input("email");
+        $suppliers->alternate_email = $request->input("alternate_email");
     
         // Save the updated supplier
         $suppliers->save();

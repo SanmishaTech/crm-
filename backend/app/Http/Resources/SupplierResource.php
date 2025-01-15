@@ -30,6 +30,7 @@ class SupplierResource extends JsonResource
             'mobile_1' => $this->mobile_1,
             'mobile_2' => $this->mobile_2,
             'email' => $this->email,
+            'alternate_email' => $this->alternate_email,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

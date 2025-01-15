@@ -94,6 +94,7 @@ const formSchema = z.object({
     .string()
     .email("Please enter a valid email address.")
     .nonempty("Email is required."),
+  alternate_email: z.any().optional(),
 });
 
 // Move FormValues type definition outside the component
@@ -124,6 +125,7 @@ export default function EditSupplierPage() {
       mobile_1: "",
       mobile_2: "",
       email: "",
+      alternate_email: "",
     },
   });
 
@@ -211,6 +213,7 @@ export default function EditSupplierPage() {
         mobile_1: newData.mobile_1 || "",
         mobile_2: newData.mobile_2 || "",
         email: newData.email || "",
+        alternate_email: newData.alternate_email || "",
       });
     }
   }, [editData, form]);
@@ -558,6 +561,26 @@ export default function EditSupplierPage() {
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="alternate_email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">
+                      Alternate Email{" "}
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="bg-background text-foreground border-input"
+                        placeholder="Enter Email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 

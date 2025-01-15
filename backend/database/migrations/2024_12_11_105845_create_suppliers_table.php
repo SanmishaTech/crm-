@@ -27,6 +27,8 @@ return new class extends Migration
             $table->string('mobile_1', 20)->nullable();
             $table->string('mobile_2', 20)->nullable();
             $table->string('email', 100)->nullable();
+            $table->string('alternate_email', 100)->nullable();
+
             $table->timestamps();
             
         });

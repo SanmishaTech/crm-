@@ -85,6 +85,7 @@ const FormSchema = z.object({
     .string()
     .email("Please enter a valid email address.")
     .nonempty("Email is required."),
+  alternate_email: z.any().optional(),
 });
 
 export default function InputForm() {
@@ -106,6 +107,7 @@ export default function InputForm() {
       mobile_1: "",
       mobile_2: "",
       email: "",
+      alternate_email: "",
     },
   });
   const queryClient = useQueryClient();
@@ -376,6 +378,26 @@ export default function InputForm() {
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="alternate_email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">
+                      Alternate Email{" "}
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="bg-background text-foreground border-input"
+                        placeholder="Enter Email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
