@@ -10,6 +10,14 @@
             font-size: 14px;
             color: #000;
         }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-width: 200px;
+            height: auto;
+        }
         .invoice-box {
             max-width: 800px;
             margin: auto;
@@ -72,6 +80,20 @@
         .text-left {
             text-align: left;
         }
+        .page-break {
+            page-break-after: always;
+        }
+        .terms-conditions {
+            margin-top: 20px;
+        }
+        .terms-conditions h5 {
+            margin-bottom: 10px;
+        }
+        .terms-conditions ul {
+            list-style-type: decimal;
+            padding-left: 20px;
+        }
+       
      
     </style>
 </head>
@@ -79,40 +101,76 @@
     @php
     $i = 1;
     @endphp
+    <div class="logo">
+        <img src="{{ public_path('images/Renuka.jpg') }}" alt="Renuka Enterprises Logo">
+    </div>
     <h4 style="text-align: center">QUOTATION</h4>
+    <table style="width: 100%; margin: 10px 0;">
+        <tr>
+            <td style="text-align: left;"><strong>Quotation Ref No: {{@$leads->quotation_number}}</strong></td>
+            <td style="text-align: right;"><strong>Date: {{@$leads->quotation_date}}</strong></td>
+        </tr>
+    </table>
+    <div class="invoice-box">
+        <div style="margin-bottom: 20px; line-height: 1.5;">
+            <p>Dear Sir,</p>
+            <p>Greetings from Renuka Enterprises!</p>
+            <p style="text-align: justify;">The Renuka Enterprises is the Quality & Safety Solutions Company catering High Performance Thermal Imaging Cameras of FLIR brand and MSA make Safety products. We are also catering Electrical, Electronic Testing & Measuring Equipments & Systems.</p>
+            <p>Thank You for giving us this opportunity.</p>
+        </div>
+        
+
+        <div>
+            <p>We are channel partners with following manufacturing companies/OEM.</p>
+            <table style="width: 100%; margin-top: 15px; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 8px; border: 1px solid black; width: 50%;"><strong>FLIR Systems India - USA</strong></td>
+                    <td style="padding: 8px; border: 1px solid black;">Thermal Imaging Cameras</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid black;"><strong>Extech Instruments - USA</strong></td>
+                    <td style="padding: 8px; border: 1px solid black;">Electrical Instruments</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid black;"><strong>MSA Safety Company - USA</strong></td>
+                    <td style="padding: 8px; border: 1px solid black;">Personal, Plant & Industrial Safety Solutions</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid black;"><strong>Scientech Technologies – Indore, India</strong></td>
+                    <td style="padding: 8px; border: 1px solid black;">India Educational & Research Equipments</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid black;"><strong>Motwane Manufacturing Company - Nasik, India</strong></td>
+                    <td style="padding: 8px; border: 1px solid black;">Electrical HV & LT Equipments</td>
+                </tr>
+            </table>
+            <p style="margin-top: 15px;">If you have any queries, our engineers are available to assist you on 9870201624/8928056500.</p>
+        </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="logo">
+        <img src="{{ public_path('images/Renuka.jpg') }}" alt="Renuka Enterprises Logo">
+    </div>
+    
     <div class="invoice-box">
         <table cellpadding="0" cellspacing="0">
-            {{-- <tr class="header">
-                <td colspan="6">
-                    <h4>INVOICE</h4>
-                    <h6>ORIGINAL</h6>
-                </td>
-            </tr> --}}
-
             <tr class="information">
                 <td colspan="4" style="padding-left:10px; ">
                   <strong>CRM</strong><br>
-                    {{-- HafyMish Technologies<br> --}}
                      <P>Maharashtra - 400605</P>
-                    {{-- {{$profile->state}} - {{$profile->pincode}}<br> --}}
-                    {{-- GST: {{$profile->gstin}} --}}
                 </td>
                 <td colspan="4" class="text-end" style=" text-align: right; padding-right:10px; padding-top:10px;">
-                    Quotation No: {{@$leads->quotation_number}}<br>
-                    {{-- Date: {{\Carbon\Carbon::now()->format('d-m-Y')}}<br> --}}
-                  Date: {{@$leads->quotation_date}}<br>
-                  version: {{@$leads->quotation_version}}<br>
+                    
+                   
+                    version: {{@$leads->quotation_version}}<br>
                     <strong>To</strong><br>
-                    {{-- {{$profile->name}}<br>
-                    {{$profile->city}},thane
-                    {{$profile->state}} <br>
-                    Mobile{{$profile->mobile}} <br>
-                    Email: {{$user->email}}        --}}
-                      test user<br>
-                      thane,
-                      Maharashtra<br> 
-                      Mobile: 9999887766 <br>
-                      Email: test@gmail.com
+                    test user<br>
+                    thane,
+                    Maharashtra<br> 
+                    Mobile: 9999887766 <br>
+                    Email: test@gmail.com
                     <br><br><br>
                 </td>
             </tr>
@@ -138,7 +196,6 @@
                 <td>{{@$product->amount_without_gst}}</td>
             </tr>
             @endforeach
-          
         </table>
 
         <table cellpadding="0" cellspacing="0">
@@ -155,14 +212,11 @@
             <tr class="totals">
                 <td colspan="5"></td>
                 <td>Total Taxable:</td>
-                {{-- <td>₹1000.00</td>     --}}
                 <td>₹{{$leads->total_taxable}}</td>    
-
             </tr>
             <tr class="totals">
                 <td colspan="5"></td>
                 <td>Total Tax:</td>
-                {{-- <td>₹180.00</td> --}}
                 <td>₹{{$leads->total_gst}}</td>    
             </tr>
             <tr class="round-off">
@@ -173,21 +227,31 @@
             <tr class="round-off">
                 <td colspan="5"></td>
                 <td><strong>Total:</strong></td>
-                {{-- <td><strong>₹1180.00</strong></td> --}}
                 <td><strong>{{$leads->total_amount_with_gst}}</strong></td>
             </tr>
         </table>
 
         <div class="text-center" style="margin-top: 20px;">
             <p>GST% 18% &nbsp;&nbsp; Taxable ₹{{$leads->total_taxable}} &nbsp;&nbsp; CGST ₹3.60&nbsp;&nbsp; SGST ₹3.60</p>
-            <p>Thank you. Have a great day!</p>
         </div>
 
-        <div class="text-end" style="margin-top: 20px;">
-            <p>For Gst Pro</p>
-            <p>Signatory</p>
+        <div class="terms-conditions" style="margin-top: 40px;">
+            <h5>Terms and Conditions:</h5>
+            <ul>
+                <li>Quotation is valid for 15 days from the date of issue.</li>
+                <li>50% advance payment is required with purchase order.</li>
+                <li>Balance payment should be made before delivery of goods.</li>
+                <li>Delivery period: 7-10 working days after confirmation of order.</li>
+                <li>Prices are subject to change without prior notice.</li>
+                <li>GST rates are applicable as per government norms.</li>
+                <li>Warranty as per manufacturer's terms and conditions.</li>
+                <li>Installation and training will be provided if applicable.</li>
+            </ul>
+        </div>
+
+        <div class="text-center" style="margin-top: 40px;">
+            <p>This is a computer-generated document. No signature is required.</p>
         </div>
     </div>
-    {{-- ₹ &#8377;  &#x20B9; --}}
-</body>
+ </body>
 </html>
