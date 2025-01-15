@@ -217,19 +217,19 @@ const Navbar = () => {
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="flex flex-col items-center justify-center bg-popover border rounded-md shadow-md">
                     <Button
-                      onClick={() => navigate("/employees")}
-                      variant="ghost"
-                      className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                    >
-                      Employees
-                    </Button>
-                    <Separator className="w-full justify-center bg-border" />
-                    <Button
                       onClick={() => navigate("/departments")}
                       variant="ghost"
                       className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
                     >
                       Department
+                    </Button>
+                    <Separator className="w-full justify-center bg-border" />
+                    <Button
+                      onClick={() => navigate("/employees")}
+                      variant="ghost"
+                      className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                    >
+                      Employees
                     </Button>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
@@ -274,7 +274,7 @@ const Navbar = () => {
             >
               <ChartNoAxesGantt className="h-5" />
             </Button>
-            <CalenderDay  />
+            <CalenderDay />
             <div className="relative flex items-center">
               <button
                 onClick={handleThemeToggle}
