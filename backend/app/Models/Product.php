@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Lead;
 use App\Models\Purchase;
+use App\Models\ProductCategory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -11,6 +12,10 @@ class Product extends Model
     public function purchaseDetails()
     {
       return $this->belongsToMany(Purchase::class, 'purchase_details');    
+    }
+    public function productCategory()
+    {
+      return $this->belongsTo(ProductCategory::class, 'product_category_id');    
     }
 
     // public function updateLeadProducts()

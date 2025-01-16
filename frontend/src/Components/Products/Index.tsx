@@ -275,6 +275,9 @@ export default function TableDemo() {
                 <TableHead onClick={() => handleSort("product")}>
                   Product
                 </TableHead>
+                <TableHead onClick={() => handleSort("product")}>
+                  Product Categories
+                </TableHead>
                 <TableHead onClick={() => handleSort("model")}>Model</TableHead>
                 <TableHead onClick={() => handleSort("Manufacturer")}>
                   Manufacturer
@@ -287,6 +290,7 @@ export default function TableDemo() {
               {sortedProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>{product.product}</TableCell>
+                  <TableCell>{product.product_category}</TableCell>
                   <TableCell>{product.model}</TableCell>
                   <TableCell>{product.manufacturer}</TableCell>
                   <TableCell className="text-right">
