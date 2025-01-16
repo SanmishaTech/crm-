@@ -19,6 +19,7 @@ return new class extends Migration
             $table->date("invoice_date")->nullable();
             $table->decimal("amount",10,2)->nullable();
             $table->string("dispatch_details")->nullable();
+            $table->string("payment_information")->nullable();
             $table->string("invoice_file")->nullable();
             $table->timestamps();
         });

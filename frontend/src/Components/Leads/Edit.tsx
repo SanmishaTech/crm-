@@ -81,6 +81,7 @@ const formSchema = z.object({
   tender_category: z.string().optional(),
   emd: z.coerce.number().optional(),
   lead_closing_reason: z.string().optional(),
+  deal_details: z.string().optional(),
   tender_status: z.string().optional(),
 });
 
@@ -246,6 +247,7 @@ export default function EditLeadPage() {
         quantity: newData?.quantity || "",
         rate: newData?.rate || null,
         product_id: newData?.product_id || "",
+        deal_details: newData?.deal_details || "",
       });
     }
   }, [editData]);
@@ -538,6 +540,26 @@ export default function EditLeadPage() {
                               <FormControl>
                                 <Textarea
                                   placeholder="Enter closing reason"
+                                  className="resize-none"
+                                  {...field}
+                                />
+                              </FormControl>
+
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                      {field.value === "Deal" && (
+                        <FormField
+                          control={form.control}
+                          name="deal_details"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Deal Details</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Enter Deal Detail"
                                   className="resize-none"
                                   {...field}
                                 />

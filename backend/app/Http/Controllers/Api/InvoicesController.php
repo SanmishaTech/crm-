@@ -53,6 +53,7 @@ class InvoicesController extends BaseController
     
         // Update the supplier properties
         $invoice->dispatch_details = $request->input("dispatch_details");
+        $invoice->payment_information = $request->input("payment_information");
         
         $invoice->save();
     

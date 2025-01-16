@@ -37,6 +37,7 @@ class LeadResource extends JsonResource
             'portal' => $this->portal,
             'tender_category' => $this->tender_category,
             'lead_closing_reason' => $this->lead_closing_reason,
+            'deal_details' => $this->deal_details,
             'lead_attachment' => $this->lead_attachment,
             'lead_quotation' => $this->lead_quotation,
             'lead_invoice' => $this->lead_invoice,
@@ -54,6 +55,7 @@ class LeadResource extends JsonResource
             'contact' => new ContactResource($this->contact),  
             'products' => $this->leadProducts,  
             'follow_ups' => $this->followUps,
+
         ];
     }
 }

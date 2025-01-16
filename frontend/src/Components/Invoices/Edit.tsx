@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+
 import {
   Form,
   FormControl,
@@ -40,6 +42,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 // Form validation schema
 const formSchema = z.object({
   dispatch_details: z.string().optional(),
+  payment_information: z.string().optional(),
   // .min(2, { message: "Supplier field must have at least 2 characters." })
   // .max(50, {
   //   message: "Supplier field must have no more than 50 characters.",
@@ -115,6 +118,7 @@ export default function EditSupplierPage() {
       console.log("newData", newData);
       form.reset({
         dispatch_details: newData.dispatch_details || "",
+        payment_information: newData.payment_information || "",
       });
     }
   }, [editData, form]);
@@ -220,6 +224,30 @@ export default function EditSupplierPage() {
                   )}
                 />
               </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Payment Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <FormField
+                control={form.control}
+                name="payment_information"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter Payment Information"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
           {error && <div className="text-red-500">{error}</div>}{" "}

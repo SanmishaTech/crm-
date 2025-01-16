@@ -190,7 +190,7 @@ class LeadsController extends BaseController
         $lead->bid_end_date = $request->input("bid_end_date");
         $lead->tender_status = $request->input("tender_status");
         $lead->lead_source = $request->input("lead_source");
-        if(config("data.lead_status.Open") === $request->input("lead_status") || config("data.lead_status.In Progress") === $request->input("lead_status")){
+          if(config("data.lead_status.Open") === $request->input("lead_status") || config("data.lead_status.In Progress") === $request->input("lead_status")){
         $lead->lead_status = $request->input("lead_status");
         }
         $lead->save();
@@ -288,6 +288,8 @@ class LeadsController extends BaseController
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
         $lead->lead_closing_reason = $request->input("lead_closing_reason");
+        $lead->deal_details = $request->input("deal_details");
+
         if($request->hasFile('lead_attachment')){
             $lead->lead_attachment = $quotationFileNameToStore;
          } 

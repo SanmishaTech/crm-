@@ -127,23 +127,23 @@
             <table style="width: 100%; margin-top: 15px; border-collapse: collapse; margin-left: auto; margin-right: auto;">
                 <tr>
                     <td style="padding: 8px; border: 1px solid black; width: 50%;"><strong>FLIR Systems India - USA</strong></td>
-                    <td style="padding: 8px; border: 1px solid black;">Thermal Imaging Cameras</td>
+                    <td style="padding: 8px; border: 1px solid black;"><strong>Thermal Imaging Cameras</strong></td>
                 </tr>
                 <tr>
                     <td style="padding: 8px; border: 1px solid black;"><strong>Extech Instruments - USA</strong></td>
-                    <td style="padding: 8px; border: 1px solid black;">Electrical Instruments</td>
+                    <td style="padding: 8px; border: 1px solid black;"><strong>Electrical Instruments</strong></td>
                 </tr>
                 <tr>
                     <td style="padding: 8px; border: 1px solid black;"><strong>MSA Safety Company - USA</strong></td>
-                    <td style="padding: 8px; border: 1px solid black;">Personal, Plant & Industrial Safety Solutions</td>
+                    <td style="padding: 8px; border: 1px solid black;"><strong>Personal, Plant & Industrial Safety Solutions</strong></td>
                 </tr>
                 <tr>
                     <td style="padding: 8px; border: 1px solid black;"><strong>Scientech Technologies – Indore, India</strong></td>
-                    <td style="padding: 8px; border: 1px solid black;">India Educational & Research Equipments</td>
+                    <td style="padding: 8px; border: 1px solid black;"><strong>India Educational & Research Equipments</strong></td>
                 </tr>
                 <tr>
                     <td style="padding: 8px; border: 1px solid black;"><strong>Motwane Manufacturing Company - Nasik, India</strong></td>
-                    <td style="padding: 8px; border: 1px solid black;">Electrical HV & LT Equipments</td>
+                    <td style="padding: 8px; border: 1px solid black;"><strong>Electrical HV & LT Equipments<strong></td>
                 </tr>
             </table>
             <p style="text-align: center; margin-top: 15px;">If you have any queries, our engineers are available to assist you on 9870201624/8928056500.</p>
@@ -157,6 +157,8 @@
     </div>
     
     <div class="invoice-box">
+        <p >With reference to your requirement of Product enclosed herewith our budgetary offer for the same.</p>
+        
         <table cellpadding="0" cellspacing="0">
  .            
             <tr class="heading">
@@ -184,15 +186,12 @@
 
         <table cellpadding="0" cellspacing="0">
             <tr>
-                <td colspan="7" style="border-top: 1px solid #000; border-bottom: none;">
-                    Items: {{ --$i}}
+                <td colspan="7" style="border-top: 1px solid #000; border-bottom: 1.5px solid #000;">
+                    Items: {{ --$i }}
                 </td>
             </tr>
-            <tr>
-                <td colspan="7" style="border-bottom: 1px solid #000; border-top: none;">
-                    E&amp;OE. Goods once sold cannot be taken back or exchanged
-                </td>
-            </tr>
+            
+            
             <tr class="totals">
                 <td colspan="5"></td>
                 <td>Total Taxable:</td>
@@ -219,13 +218,13 @@
             <p>GST% 18% &nbsp;&nbsp; Taxable ₹{{$leads->total_taxable}} &nbsp;&nbsp; CGST ₹3.60&nbsp;&nbsp; SGST ₹3.60</p>
         </div> -->
 
-        <div class="terms-conditions" style="margin-top: 40px;">
+        <div class="terms-conditions" style="margin-top: 20px;">
            
             <p style="font-weight: bold;"><u>Terms and Conditions</u></p>
             <ul style="list-style-type: disc; padding-left: 20px;">
                 <li>Prices               	:	FOR Mumbai</li>
                 <li>GST                  	:	Extra 18%</li>
-                <li>Freight             	:	Inclusive</li>
+                <li>Freight             	:	<strong>Inclusive</strong></li>
                 <li>Packing & Forwarding	:	Inclusive</li>
                 <li>Payment Terms       	:	100% against PI</li>
                 <li>Delivery           	:	4 weeks from the date of PO</li>
