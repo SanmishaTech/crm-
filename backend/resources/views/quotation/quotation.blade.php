@@ -90,6 +90,10 @@
             list-style-type: decimal;
             padding-left: 20px;
         }
+        .td-color{
+            color: rgb(1, 73, 161);
+            font: bold;
+        }
        
      
     </style>
@@ -116,7 +120,7 @@
             <p>Email: {{@$leads->contact->email}}</p>
             <br>
             <p>Dear Sir,</p>
-            <p>Greetings from Renuka Enterprises!</p>
+            <p>Greetings from <strong>Renuka Enterprises!</strong></p>
             <p style="text-align: justify;">The Renuka Enterprises is the Quality & Safety Solutions Company catering High Performance Thermal Imaging Cameras of FLIR brand and MSA make Safety products. We are also catering Electrical, Electronic Testing & Measuring Equipments & Systems.</p>
             <p>Thank You for giving us this opportunity.</p>
         </div>
@@ -157,7 +161,7 @@
     </div>
     
     <div class="invoice-box">
-        <p >With reference to your requirement of Product enclosed herewith our budgetary offer for the same.</p>
+        <p >With reference to your requirement of Product enclosed herewith our <u>budgetary offer</u> for the same.</p>
         
         <table cellpadding="0" cellspacing="0">
  .            
@@ -231,85 +235,85 @@
             </ul>
             
             <div style="text-align: left; margin-top: 30px;">
-                <p style="margin: 0;">For Renuka Enterprises</p>
+                <p style="margin: 0;"><strong>For Renuka Enterprises</strong></p>
                 <img src="{{ public_path('images/renuka sign.jpg') }}" alt="Signature" style="max-width: 150px; height: auto;">
-                <p style="margin: 0;">Manish</p>
+                <p style="margin: 0;"><strong>Manish</strong></p>
             </div>
 
-            <p style="text-align: center; margin-top: 20px; margin-bottom: 10px; font-weight: bold;">Our Product Range</p>
+            <p style="text-align: center; margin-top: 20px; margin-bottom: 10px; font-weight: bold; color: red;">Our Product Range</p>
             
-            <table style="width: 100%; border-collapse: collapse; font-size: 9px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 9px; padding: 2px;">
                 <tr>
-                    <td style="padding: 2px; border: none;">Air Quality Meters</td>
-                    <td style="padding: 2px; border: none;">Air Flow Meters</td>
-                    <td style="padding: 2px; border: none;">Automotive Meters</td>
-                    <td style="padding: 2px; border: none;">Battery Testers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Air Quality Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Air Flow Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Automotive Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Battery Testers</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">Borescope Cameras | Videoscopes</td>
-                    <td style="padding: 2px; border: none;">Cable Tracers</td>
-                    <td style="padding: 2px; border: none;">Calibrators</td>
-                    <td style="padding: 2px; border: none;">Circuit Identifiers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Borescope Cameras | Videoscopes</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Cable Tracers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Calibrators</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Circuit Identifiers</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">Clamp Meters</td>
-                    <td style="padding: 2px; border: none;">Continuity Testers</td>
-                    <td style="padding: 2px; border: none;">Decade Boxes</td>
-                    <td style="padding: 2px; border: none;">FLIR Thermal Imaging Cameras</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Clamp Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Continuity Testers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Decade Boxes</td>
+                    <td class="td-color" style="padding: 2px; border: none;">FLIR Thermal Imaging Cameras</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">FLIR Videoscopes</td>
-                    <td style="padding: 2px; border: none;">FLIR Flex Clamp Meters</td>
-                    <td style="padding: 2px; border: none;">Distance Meters</td>
-                    <td style="padding: 2px; border: none;">Electromagnetic Field Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">FLIR Videoscopes</td>
+                    <td class="td-color" style="padding: 2px; border: none;">FLIR Flex Clamp Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Distance Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Electromagnetic Field Meters</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">Force Gauges</td>
-                    <td style="padding: 2px; border: none;">Gas Detectors and Analyzers</td>
-                    <td style="padding: 2px; border: none;">Ground Resistance Testers</td>
-                    <td style="padding: 2px; border: none;">Heat Index Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Force Gauges</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Gas Detectors and Analyzers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Ground Resistance Testers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Heat Index Meters</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">Humidity Meters| Hygrometers</td>
-                    <td style="padding: 2px; border: none;">LCR Meters</td>
-                    <td style="padding: 2px; border: none;">Light Meters</td>
-                    <td style="padding: 2px; border: none;">Magnetic Field Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Humidity Meters| Hygrometers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">LCR Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Light Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Magnetic Field Meters</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">Megohm meters | Insulation Testers</td>
-                    <td style="padding: 2px; border: none;">Milliohm | Micro-Ohm Meters</td>
-                    <td style="padding: 2px; border: none;">Moisture Meters</td>
-                    <td style="padding: 2px; border: none;">Multimeters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Megohm meters | Insulation Testers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Milliohm | Micro-Ohm Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Moisture Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Multimeters</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">Non-contact Voltage Testers and Current Testers</td>
-                    <td style="padding: 2px; border: none;">Oscilloscopes</td>
-                    <td style="padding: 2px; border: none;">Pedometers</td>
-                    <td style="padding: 2px; border: none;">Phase Rotation | Motor Rotation Indicators</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Non-contact Voltage Testers and Current Testers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Oscilloscopes</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Pedometers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Phase Rotation | Motor Rotation Indicators</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">PID Controllers</td>
-                    <td style="padding: 2px; border: none;">Power Analyzers</td>
-                    <td style="padding: 2px; border: none;">Power Supplies</td>
-                    <td style="padding: 2px; border: none;">Pressure Meters | Manometers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">PID Controllers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Power Analyzers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Power Supplies</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Pressure Meters | Manometers</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">Receptacle Testers and Analyzers</td>
-                    <td style="padding: 2px; border: none;">Refractometers</td>
-                    <td style="padding: 2px; border: none;">Scales</td>
-                    <td style="padding: 2px; border: none;">Sound Meters | Decibel Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Receptacle Testers and Analyzers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Refractometers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Scales</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Sound Meters | Decibel Meters</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">Stopwatches and Timers</td>
-                    <td style="padding: 2px; border: none;">Tachometers</td>
-                    <td style="padding: 2px; border: none;">Thermometers</td>
-                    <td style="padding: 2px; border: none;">Thickness Gauges</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Stopwatches and Timers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Tachometers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Thermometers</td>
+                    <td class="td-color" style="padding: 2px; border: none;">Thickness Gauges</td>
                 </tr>
                 <tr>
-                    <td style="padding: 2px; border: none;">Vibration Meters</td>
-                    <td style="padding: 2px; border: none;">Water Quality Meters</td>
-                    <td style="padding: 2px; border: none;">And Many more........</td>
-                    <td style="padding: 2px; border: none;"></td>
+                    <td class="td-color" style="padding: 2px; border: none;"><stong>Vibration Meters</stong></td>
+                    <td class="td-color" style="padding: 2px; border: none;">Water Quality Meters</td>
+                    <td class="td-color" style="padding: 2px; border: none;">And Many more........</td>
+                    <td class="td-color" style="padding: 2px; border: none;"></td>
                 </tr>
                 <tr>
                     <td colspan="4" style="text-align: center; padding: 2px; border: none;">
