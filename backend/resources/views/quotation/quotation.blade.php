@@ -105,25 +105,34 @@
     <div class="logo">
         <img src="{{ public_path('images/Renuka.jpg') }}" alt="Renuka Enterprises Logo">
     </div>
-    <h4 style="text-align: center">                    version: {{@$leads->quotation_version}}<br>
-    </h4>
+     </h4>
     <table style="width: 100%; margin: 10px 0;">
         <tr>
             <td style="text-align: left;"><strong>Quotation Ref No: {{@$leads->quotation_number}}</strong></td>
-            <td style="text-align: right;"><strong>Date: {{@$leads->quotation_date}}</strong></td>
-        </tr>
+            <td style="text-align: right;">
+                <strong>
+                    Date: {{ @$leads->quotation_date ? \Carbon\Carbon::parse($leads->quotation_date)->format('d-m-Y') : '' }}
+                </strong>
+            </td>
+                    </tr>
     </table>
     <div class="invoice-box">
-        <div style="margin-bottom: 20px; line-height: 1.5;">
-            <p>To,</p>
-            <p><strong>{{@$leads->contact->contact_person}}</strong></p>
-            <p>Email: {{@$leads->contact->email}}</p>
+        <div style="line-height: 1.5; margin: 0; padding: 0;">
+            <p style="margin: 0;">To,</p>
+            <p style="margin: 0;"><strong>{{@$leads->contact->contact_person}},</strong></p>
+            <p style="margin: 0;"><strong>{{@$leads->contact->designation}},</strong></p>
+            <p style="margin: 0;"><strong>{{@$leads->contact->client->street_address}},</strong></p>
+            <p style="margin: 0;"><strong>{{@$leads->contact->client->city}}, {{@$leads->contact->client->state}} - {{@$leads->contact->client->pincode}}</strong></p>
+            <p style="margin: 0;"><strong>{{@$leads->contact->client->country}}</strong></p>
             <br>
-            <p>Dear Sir,</p>
-            <p>Greetings from <strong>Renuka Enterprises!</strong></p>
-            <p style="text-align: justify;">The Renuka Enterprises is the Quality & Safety Solutions Company catering High Performance Thermal Imaging Cameras of FLIR brand and MSA make Safety products. We are also catering Electrical, Electronic Testing & Measuring Equipments & Systems.</p>
-            <p>Thank You for giving us this opportunity.</p>
+            <p style="margin: 0; margin-bottom: 10px">Dear Sir,</p>
+            <p style="margin: 0; margin-bottom: 10px">Greetings from <strong>Renuka Enterprises!</strong></p>
+            <p style="margin: 0; text-align: justify;">
+                The Renuka Enterprises is the Quality & Safety Solutions Company catering High Performance Thermal Imaging Cameras of FLIR brand and MSA make Safety products. We are also catering Electrical, Electronic Testing & Measuring Equipments & Systems.
+            </p>
+            <p style="margin: 0;">Thank You for giving us this opportunity.</p>
         </div>
+        
         
 
         <div>
@@ -214,7 +223,7 @@
             <tr class="round-off">
                 <td colspan="5"></td>
                 <td><strong>Total:</strong></td>
-                <td><strong>{{$leads->total_amount_with_gst}}</strong></td>
+                <td><strong>₹{{$leads->total_amount_with_gst}}</strong></td>
             </tr>
         </table>
 
