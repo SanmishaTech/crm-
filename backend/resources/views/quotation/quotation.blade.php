@@ -119,11 +119,33 @@
     <div class="invoice-box">
         <div style="line-height: 1.5; margin: 0; padding: 0;">
             <p style="margin: 0;">To,</p>
-            <p style="margin: 0;"><strong>{{@$leads->contact->contact_person}},</strong></p>
-            <p style="margin: 0;"><strong>{{@$leads->contact->designation}},</strong></p>
-            <p style="margin: 0;"><strong>{{@$leads->contact->client->street_address}},</strong></p>
-            <p style="margin: 0;"><strong>{{@$leads->contact->client->city}}, {{@$leads->contact->client->state}} - {{@$leads->contact->client->pincode}}</strong></p>
-            <p style="margin: 0;"><strong>{{@$leads->contact->client->country}}</strong></p>
+
+            @if (!empty($leads->contact->contact_person))
+                <p style="margin: 0;"><strong>{{ $leads->contact->contact_person }},</strong></p>
+            @endif
+            
+            @if (!empty($leads->contact->designation))
+                <p style="margin: 0;"><strong>{{ $leads->contact->designation }},</strong></p>
+            @endif
+            
+            @if (!empty($leads->contact->client->street_address))
+                <p style="margin: 0;"><strong>{{ $leads->contact->client->street_address }},</strong></p>
+            @endif
+            
+            @if (!empty($leads->contact->client->city) || !empty($leads->contact->client->state) || !empty($leads->contact->client->pincode))
+                <p style="margin: 0;">
+                    <strong>
+                        {{ $leads->contact->client->city ?? '' }}{{ !empty($leads->contact->client->state) ? ', ' . $leads->contact->client->state : '' }}
+                        {{ !empty($leads->contact->client->pincode) ? ' - ' . $leads->contact->client->pincode : '' }},
+                    </strong>
+                </p>
+            @endif
+            
+            @if (!empty($leads->contact->client->country))
+                <p style="margin: 0;"><strong>{{ $leads->contact->client->country }}</strong></p>
+            @endif
+            
+            
             <br>
             <p style="margin: 0; margin-bottom: 10px">Dear Sir,</p>
             <p style="margin: 0; margin-bottom: 10px">Greetings from <strong>Renuka Enterprises!</strong></p>
