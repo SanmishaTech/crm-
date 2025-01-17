@@ -255,8 +255,10 @@
 
         <div class="terms-conditions" style="margin-top: 20px;">
            <h4><u>Terms and Conditions</u></h4>
-            <p style="font-weight: bold;">{{@$leads->terms}}</p>
-             
+           <p style="font-weight: bold;">
+            {!! nl2br(e($leads->terms)) !!}
+        </p>
+                     
             
             <div style="text-align: left; margin-top: 30px;">
                 <p style="margin: 0;"><strong>For Renuka Enterprises</strong></p>

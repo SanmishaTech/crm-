@@ -105,10 +105,11 @@ const AlertQuotation = ({ leadId }) => {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Are you sure you want to download the Quotation?
+            Are you sure you want to generate the Quotation?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Please provide your quotation number before proceeding.
+            Please provide your <strong>Quotation Number</strong> and the{" "}
+            <strong>Terms & Condition</strong> before proceeding.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <Form {...form}>
@@ -121,14 +122,12 @@ const AlertQuotation = ({ leadId }) => {
                   <FormLabel>Quotation Number</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter quotation number"
+                      placeholder="Enter Quotation Number"
                       {...field} // Ensure that field is being passed correctly
                       disabled={isSubmitting}
                     />
                   </FormControl>
-                  <FormDescription>
-                    This will be associated with the generated quotation.
-                  </FormDescription>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -141,18 +140,18 @@ const AlertQuotation = ({ leadId }) => {
                   <FormLabel>Terms & Conditions</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Tell us a little bit about yourself"
+                      placeholder="Terms and Conditions of the Quotation"
                       className="resize-none"
+                      rows={7}
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    You can <span>@mention</span> other users and organizations.
-                  </FormDescription>
+
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <AlertDialogFooter>
               <AlertDialogCancel disabled={isSubmitting}>
                 Cancel
