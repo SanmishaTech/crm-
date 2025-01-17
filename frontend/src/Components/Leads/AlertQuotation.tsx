@@ -48,24 +48,59 @@ const AlertQuotation = ({ leadId }) => {
     },
   });
 
-  // Load the previous PDF URL from localStorage when the component mounts
+  // Fetch the lead details and get the previous quotation
   useEffect(() => {
-    const storedPdfUrl = localStorage.getItem("previousPdfUrl");
-    if (storedPdfUrl) {
-      setPreviousPdfUrl(storedPdfUrl);
+    const fetchLeadDetails = async () => {
+      try {
+        const response = await fetch(`/api/leads/${leadId}`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+
+        if (response.ok) {
+          const leadData = await response.json();
+          setPreviousPdfUrl(leadData?.lead_quotation || null);
+        } else {
+          console.error("Failed to fetch lead details.");
+        }
+      } catch (error) {
+        console.error("Error fetching lead details:", error);
+      }
+    };
+
+    if (leadId) {
+      fetchLeadDetails();
     }
-  }, []);
+  }, [leadId]);
+  useEffect(() => {
+    const fetchLeadDetails = async () => {
+      try {
+        const response = await fetch(`/api/leads/${leadId}`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        const leadData = await response.json();
+        console.log("Lead Data:", leadData);
+        setPreviousPdfUrl(leadData?.lead_quotation || null);
+      } catch (error) {
+        console.error("Error fetching lead details:", error);
+      }
+    };
+    if (leadId) fetchLeadDetails();
+  }, [leadId]);
 
   const handleGenerateQuotation = async (data) => {
     setIsSubmitting(true);
     try {
       const response = await fetch(`/api/generate_quotation/${leadId}`, {
-        method: "POST", // Corrected method to POST (capitalized)
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify(data), // Ensure the form data is sent as the body
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
@@ -74,14 +109,12 @@ const AlertQuotation = ({ leadId }) => {
         const link = document.createElement("a");
 
         link.href = url;
-        link.target = "_blank"; // Open in a new tab instead of downloading
+        link.target = "_blank";
 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        // Store the previously viewed PDF URL in localStorage
-        localStorage.setItem("previousPdfUrl", url);
         setPreviousPdfUrl(url);
 
         queryClient.invalidateQueries({ queryKey: ["lead"] });
@@ -91,11 +124,7 @@ const AlertQuotation = ({ leadId }) => {
         );
       } else {
         const errorData = await response.json();
-        if (response.status === 401 && errorData.status === false) {
-          toast.error(errorData.errors.error);
-        } else {
-          toast.error("Failed to generate Quotation.");
-        }
+        toast.error(errorData.errors?.error || "Failed to generate Quotation.");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -106,7 +135,7 @@ const AlertQuotation = ({ leadId }) => {
   };
 
   const onSubmit = async (data) => {
-    console.log("Form Data:", data); // Check form data for debugging
+    console.log("Form Data:", data);
     await handleGenerateQuotation(data);
   };
 
@@ -138,11 +167,10 @@ const AlertQuotation = ({ leadId }) => {
                     <FormControl>
                       <Input
                         placeholder="Enter Quotation Number"
-                        {...field} // Ensure that field is being passed correctly
+                        {...field}
                         disabled={isSubmitting}
                       />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -161,7 +189,6 @@ const AlertQuotation = ({ leadId }) => {
                         {...field}
                       />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -185,9 +212,12 @@ const AlertQuotation = ({ leadId }) => {
         onClick={() => {
           if (previousPdfUrl) {
             window.open(previousPdfUrl, "_blank");
+          } else {
+            toast.error("No previous quotation available for this lead.");
           }
         }}
         className="w-full text-sm mt-4"
+        disabled={!previousPdfUrl}
       >
         {previousPdfUrl ? "View Previous Quotation" : "No Previous Quotation"}
       </Button>
