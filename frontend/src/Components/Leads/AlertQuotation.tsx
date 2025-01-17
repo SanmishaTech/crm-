@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -38,6 +38,7 @@ const formSchema = z.object({
 const AlertQuotation = ({ leadId }) => {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previousPdfUrl, setPreviousPdfUrl] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -46,6 +47,14 @@ const AlertQuotation = ({ leadId }) => {
       terms: "",
     },
   });
+
+  // Load the previous PDF URL from localStorage when the component mounts
+  useEffect(() => {
+    const storedPdfUrl = localStorage.getItem("previousPdfUrl");
+    if (storedPdfUrl) {
+      setPreviousPdfUrl(storedPdfUrl);
+    }
+  }, []);
 
   const handleGenerateQuotation = async (data) => {
     setIsSubmitting(true);
@@ -70,6 +79,10 @@ const AlertQuotation = ({ leadId }) => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+
+        // Store the previously viewed PDF URL in localStorage
+        localStorage.setItem("previousPdfUrl", url);
+        setPreviousPdfUrl(url);
 
         queryClient.invalidateQueries({ queryKey: ["lead"] });
 
@@ -98,72 +111,87 @@ const AlertQuotation = ({ leadId }) => {
   };
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button className="w-full text-sm">Quotation</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            Are you sure you want to generate the Quotation?
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            Please provide your <strong>Quotation Number</strong> and the{" "}
-            <strong>Terms & Condition</strong> before proceeding.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="quotation_number"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Quotation Number</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Quotation Number"
-                      {...field} // Ensure that field is being passed correctly
-                      disabled={isSubmitting}
-                    />
-                  </FormControl>
+    <div className="space-y-4">
+      {/* Quotation Button */}
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button className="w-full text-sm">Quotation</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you sure you want to generate the Quotation?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Please provide your <strong>Quotation Number</strong> and the{" "}
+              <strong>Terms & Condition</strong> before proceeding.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="quotation_number"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Quotation Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter Quotation Number"
+                        {...field} // Ensure that field is being passed correctly
+                        disabled={isSubmitting}
+                      />
+                    </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="terms"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Terms & Conditions</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Terms and Conditions of the Quotation"
-                      className="resize-none"
-                      rows={7}
-                      {...field}
-                    />
-                  </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="terms"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Terms & Conditions</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Terms and Conditions of the Quotation"
+                        className="resize-none"
+                        rows={7}
+                        {...field}
+                      />
+                    </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <AlertDialogFooter>
-              <AlertDialogCancel disabled={isSubmitting}>
-                Cancel
-              </AlertDialogCancel>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Submit"}
-              </Button>
-            </AlertDialogFooter>
-          </form>
-        </Form>
-      </AlertDialogContent>
-    </AlertDialog>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isSubmitting}>
+                  Cancel
+                </AlertDialogCancel>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Submitting..." : "Submit"}
+                </Button>
+              </AlertDialogFooter>
+            </form>
+          </Form>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Always visible "View Previous Quotation" button */}
+      <Button
+        onClick={() => {
+          if (previousPdfUrl) {
+            window.open(previousPdfUrl, "_blank");
+          }
+        }}
+        className="w-full text-sm mt-4"
+      >
+        {previousPdfUrl ? "View Previous Quotation" : "No Previous Quotation"}
+      </Button>
+    </div>
   );
 };
 

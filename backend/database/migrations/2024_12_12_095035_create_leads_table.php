@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string("lead_source")->nullable();
             $table->string("lead_invoice")->nullable(); 
             $table->string("lead_quotation")->nullable(); 
+            $table->string("previous_lead_quotation")->nullable(); 
             $table->string("lead_attachment")->nullable(); 
             $table->string("lead_closing_reason")->nullable(); 
             $table->string("deal_details")->nullable(); 
@@ -42,6 +43,7 @@ return new class extends Migration
             //
             $table->date("quotation_date")->nullable();
             $table->string("quotation_number")->nullable(); 
+
             $table->string("terms")->nullable(); 
             $table->unsignedBigInteger("quotation_version")->default(0); 
 

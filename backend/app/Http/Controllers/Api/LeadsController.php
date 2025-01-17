@@ -441,9 +441,14 @@ class LeadsController extends BaseController
             return $this->sendError("Client not found", ['error'=>['Client not found to generate an Quotation']]);
 
         }
+        if(!empty($leads->previous_lead_quotation) && Storage::exists('public/Lead/generated_quotations/'.$leads->previous_lead_quotation)) {
+            Storage::delete('public/Lead/generated_quotations/'.$leads->previous_lead_quotation);
+        }
+        
         if(!empty($leads->lead_quotation) && Storage::exists('public/Lead/generated_quotations/'.$leads->lead_quotation)) {
             Storage::delete('public/Lead/generated_quotations/'.$leads->lead_quotation);
         }
+      
 
         if(!$leads->quotation_date){
             $leads->quotation_date = now()->format("Y-m-d");
