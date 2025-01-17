@@ -46,7 +46,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/follow_up_types', [LeadsController::class, 'follow_up_types'])->name("follow_up_types.index");
    Route::get('/lead_status', [LeadsController::class, 'leadStatus'])->name("lead_status.index");
    Route::get('/close_lead/{id}', [LeadsController::class, 'closeLead'])->name("close_lead.update");
-   Route::get('/generate_quotation/{id}', [LeadsController::class, 'generateQuotation'])->name("generate_quotation.generate");
+   Route::post('/generate_quotation/{id}', [LeadsController::class, 'generateQuotation'])->name("generate_quotation.generate");
    Route::get('/generate_invoice/{id}', [LeadsController::class, 'generateInvoice'])->name("generate_invoice.generate");
    Route::get('/invoices', [InvoicesController::class, 'index'])->name("invoices.index");
    Route::get('/show_invoice/{files}', [InvoicesController::class, 'showInvoice'])->name("invoices.showFiles");
