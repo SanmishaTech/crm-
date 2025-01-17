@@ -72,6 +72,7 @@ import { useGetData } from "@/lib/HTTP/GET";
 import AlertDialogbox from "./AlertBox";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import AlertQuotation from "./AlertQuotation";
 
 // Supplier type
 type Supplier = {
@@ -526,42 +527,7 @@ export default function TableDemo() {
 
                                       {(lead.lead_status === "Quotation" ||
                                         lead.lead_status === "Deal") && (
-                                        <AlertDialog>
-                                          <AlertDialogTrigger asChild>
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              className="w-full text-sm"
-                                            >
-                                              Quotation
-                                            </Button>
-                                          </AlertDialogTrigger>
-                                          <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                              <AlertDialogTitle>
-                                                Are you absolutely sure?
-                                              </AlertDialogTitle>
-                                              <AlertDialogDescription>
-                                                "Are you sure you want to
-                                                download the Quotation PDF?"
-                                              </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                              <AlertDialogCancel>
-                                                Cancel
-                                              </AlertDialogCancel>
-                                              <AlertDialogAction
-                                                onClick={() => {
-                                                  handleGenerateQuotation(
-                                                    lead.id
-                                                  );
-                                                }}
-                                              >
-                                                Download Quotation
-                                              </AlertDialogAction>
-                                            </AlertDialogFooter>
-                                          </AlertDialogContent>
-                                        </AlertDialog>
+                                        <AlertQuotation leadId={lead.id} />
                                       )}
                                       {lead.lead_status === "Deal" && (
                                         <AlertDialog>

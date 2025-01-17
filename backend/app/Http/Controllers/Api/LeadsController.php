@@ -412,7 +412,7 @@ class LeadsController extends BaseController
     }
 
 
-    public function generateQuotation(string $id)
+    public function generateQuotation(Request $request, string $id)
     {
         $leadStatus = config('data.lead_status.Quotation');
         $DealLeadStatus = config('data.lead_status.Deal');
@@ -448,9 +448,10 @@ class LeadsController extends BaseController
         if(!$leads->quotation_date){
             $leads->quotation_date = now()->format("Y-m-d");
         }
-        if(!$leads->quotation_number){
-            $leads->quotation_number = $this->generateQuotationNumber();
-        }
+        // if(!$leads->quotation_number){
+        //     $leads->quotation_number = $this->generateQuotationNumber();
+        // }
+        $leads->quotation_number = $request->input("quotation_number");
         $leads->lead_status  = $leadStatus;
         $leads->quotation_version = $leads->quotation_version + 1;
         $leads->save();

@@ -40,16 +40,9 @@ const FormSchema = z.object({
   pincode: z.string().min(3, "Pincode cannot be empty").optional(),
   country: z.string().min(3, "Country cannot be empty").optional(),
   gstin: z.any().optional(),
-  contact_no: z
-    .string()
-    .regex(/^(\+?\d{1,3}[-.\s]?)?(\(?\d{1,4}\)?[-.\s]?)?[\d\s.-]{5,20}$/, {
-      message: "Invalid mobile number format",
-    })
-    .nonempty({ message: "Mobile number field is required." }),
-  email: z
-    .string()
-    .email("Please enter a valid email address.")
-    .nonempty("Email is required."),
+  contact_no: z.string().optional(),
+
+  email: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -163,9 +156,7 @@ export default function InputForm() {
                   name="contact_no"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Contact Number <span style={{ color: "red" }}>*</span>
-                      </FormLabel>
+                      <FormLabel>Contact Number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Contact"
@@ -187,9 +178,7 @@ export default function InputForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Email <span style={{ color: "red" }}>*</span>
-                      </FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
                           className="justify-left"
