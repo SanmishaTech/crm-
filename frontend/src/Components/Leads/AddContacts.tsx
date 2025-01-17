@@ -57,12 +57,16 @@ type Contacts = {
   id: string;
   contact_person: string;
   client_id: string;
+  mobile_1: string;
+  email: string;
 };
 
 // Form Validation Schema
 const formSchema = z.object({
   contact_person: z.string().min(1, "Contact name is required").max(50),
-  client_id: z.string().min(1, "Client name is required").max(50),
+  client: z.string().min(1, "Client name is required").max(50),
+  mobile_1: z.string().optional(),
+  email: z.string().optional(),
 });
 
 const AddContacts = ({ fetchContacts }) => {
@@ -76,7 +80,9 @@ const AddContacts = ({ fetchContacts }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       contact_person: "",
-      client_id: "",
+      client: "",
+      mobile_1: "",
+      email: "",
     },
   });
 
@@ -118,8 +124,8 @@ const AddContacts = ({ fetchContacts }) => {
     },
   });
 
-  const { data: fetchClients } = useGetData({
-    endpoint: `/api/all_clients`,
+  const { data: fetchClients } = usePostData({
+    endpoint: `/api/clients`,
     params: {
       queryKey: ["clients"],
       retry: 1,
@@ -140,6 +146,7 @@ const AddContacts = ({ fetchContacts }) => {
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     storeContactData.mutate(data);
+    fetchClients.mutate(data);
   };
 
   return (
@@ -170,7 +177,22 @@ const AddContacts = ({ fetchContacts }) => {
               }}
               className=""
             >
-              <div className="space-y-4">
+              <div className="space-y-5">
+                <FormField
+                  control={form.control}
+                  name="client"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-2">
+                      <FormLabel className="w-40">
+                        Client Name: <span style={{ color: "red" }}>*</span>
+                      </FormLabel>{" "}
+                      <FormControl className="flex-1">
+                        <Input placeholder="Enter Client Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="contact_person"
@@ -180,44 +202,40 @@ const AddContacts = ({ fetchContacts }) => {
                         Contact Name: <span style={{ color: "red" }}>*</span>
                       </FormLabel>{" "}
                       <FormControl className="flex-1">
-                        <Input placeholder="Contact" {...field} />
+                        <Input placeholder="Enter Contact Name" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
-                  name="client_id"
+                  name="mobile_1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Client <span style={{ color: "red" }}>*</span>
-                      </FormLabel>
+                      <FormLabel>Contact Number:</FormLabel>
                       <FormControl>
-                        <Select
-                          value={String(field.value)}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="">
-                            <SelectValue placeholder="Select Client" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {loading ? (
-                              <SelectItem disabled>Loading...</SelectItem>
-                            ) : (
-                              clients?.map((client) => (
-                                <SelectItem
-                                  key={client.id}
-                                  value={String(client.id)}
-                                >
-                                  {client.client}
-                                </SelectItem>
-                              ))
-                            )}
-                          </SelectContent>
-                        </Select>
+                        <Input
+                          placeholder="Enter Contact Number "
+                          {...field}
+                          type="text"
+                          inputMode="numeric"
+                          pattern="\d{10}"
+                          maxLength={10}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-2">
+                      <FormLabel className="w-40">Email:</FormLabel>{" "}
+                      <FormControl className="flex-1">
+                        <Input placeholder="Enter Email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

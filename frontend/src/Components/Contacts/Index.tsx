@@ -180,6 +180,7 @@ export default function TableDemo() {
                 <TableHead>Department</TableHead>
                 <TableHead>Designation</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Primary Mobile</TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -194,6 +195,7 @@ export default function TableDemo() {
                   <TableCell>{contact.department || "N/A"}</TableCell>
                   <TableCell>{contact.designation || "N/A"}</TableCell>
                   <TableCell>{contact.email || "N/A"}</TableCell>
+                  <TableCell>{contact.mobile_1 || "N/A"}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
