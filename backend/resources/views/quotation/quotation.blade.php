@@ -254,16 +254,9 @@
         </div> -->
 
         <div class="terms-conditions" style="margin-top: 20px;">
-           
-            <p style="font-weight: bold;"><u>Terms and Conditions</u></p>
-            <ul style="list-style-type: disc; padding-left: 20px;">
-                <li>Prices               	:	FOR Mumbai</li>
-                <li>GST                  	:	Extra 18%</li>
-                <li>Freight             	:	<strong>Inclusive</strong></li>
-                <li>Packing & Forwarding	:	Inclusive</li>
-                <li>Payment Terms       	:	100% against PI</li>
-                <li>Delivery           	:	4 weeks from the date of PO</li>
-            </ul>
+           <h4><u>Terms and Conditions</u></h4>
+            <p style="font-weight: bold;">{{@$leads->terms}}</p>
+             
             
             <div style="text-align: left; margin-top: 30px;">
                 <p style="margin: 0;"><strong>For Renuka Enterprises</strong></p>

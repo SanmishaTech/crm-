@@ -452,6 +452,7 @@ class LeadsController extends BaseController
         //     $leads->quotation_number = $this->generateQuotationNumber();
         // }
         $leads->quotation_number = $request->input("quotation_number");
+        $leads->terms = $request->input("terms");
         $leads->lead_status  = $leadStatus;
         $leads->quotation_version = $leads->quotation_version + 1;
         $leads->save();

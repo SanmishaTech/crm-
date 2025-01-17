@@ -10,6 +10,8 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog"; // Adjust import path based on your project structure
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,6 +32,7 @@ const formSchema = z.object({
   quotation_number: z.string().min(2, {
     message: "Quotation number must be at least 2 characters.",
   }),
+  terms: z.string().optional(),
 });
 
 const AlertQuotation = ({ leadId }) => {
@@ -39,7 +42,8 @@ const AlertQuotation = ({ leadId }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      quotation_number: "", // Default value for quotation_number
+      quotation_number: "",
+      terms: "",
     },
   });
 
@@ -124,6 +128,26 @@ const AlertQuotation = ({ leadId }) => {
                   </FormControl>
                   <FormDescription>
                     This will be associated with the generated quotation.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="terms"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Terms & Conditions</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell us a little bit about yourself"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    You can <span>@mention</span> other users and organizations.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

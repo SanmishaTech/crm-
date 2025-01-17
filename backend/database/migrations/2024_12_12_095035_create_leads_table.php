@@ -41,7 +41,8 @@ return new class extends Migration
             $table->decimal("total_amount_with_gst",10,2)->nullable(); 
             //
             $table->date("quotation_date")->nullable();
-            $table->string("quotation_number",20)->nullable(); 
+            $table->string("quotation_number")->nullable(); 
+            $table->string("terms")->nullable(); 
             $table->unsignedBigInteger("quotation_version")->default(0); 
 
 

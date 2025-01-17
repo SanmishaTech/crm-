@@ -200,10 +200,10 @@ export default function TableDemo() {
         setLoading(false);
       },
       onError: (error) => {
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        if (error.message && error.message.includes("duplicate lead")) {
+          toast.error("Lead name is duplicated. Please use a unique name.");
         } else {
-          toast.error("Failed to fetch supplier data. Please try again.");
+          toast.error("Failed to fetch Lead data. Please try again.");
         }
       },
     },
