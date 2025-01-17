@@ -65,7 +65,7 @@ const AlertQuotation = ({ leadId }) => {
         const link = document.createElement("a");
 
         link.href = url;
-        link.download = `Quotation-${leadId}.pdf`;
+        link.target = "_blank"; // Open in a new tab instead of downloading
 
         document.body.appendChild(link);
         link.click();
@@ -74,7 +74,7 @@ const AlertQuotation = ({ leadId }) => {
         queryClient.invalidateQueries({ queryKey: ["lead"] });
 
         toast.success(
-          `Quotation for ${data.quotation_number} generated and downloaded successfully!`
+          `Quotation for ${data.quotation_number} generated and opened successfully!`
         );
       } else {
         const errorData = await response.json();
