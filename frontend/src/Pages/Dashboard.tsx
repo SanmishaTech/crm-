@@ -33,6 +33,9 @@ import Navbar from "@/Components/Navbar/Navbarcomp";
 import Vendors from "@/Components/Vendors/Index";
 import VendorAdd from "@/Components/Vendors/Add";
 import VendorEdit from "@/Components/Vendors/Edit";
+import Purchase from "@/Components/Purchase/Index";
+import PurchaseAdd from "@/Components/Purchase/Add";
+import PurchaseEdit from "@/Components/Purchase/Edit";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -115,6 +118,10 @@ const Dashboard = () => {
         {location.pathname === "/vendors" && <Vendors />}
         {location.pathname === "/vendors/add" && <VendorAdd />}
         {/\/vendors\/edit\/\d+/.test(location.pathname) && <VendorEdit />}
+
+        {location.pathname === "/purchase" && <Purchase />}
+        {location.pathname === "/purchase/add" && <PurchaseAdd />}
+        {/\/purchase\/edit\/\d+/.test(location.pathname) && <PurchaseEdit />}
       </main>
     </div>
   );

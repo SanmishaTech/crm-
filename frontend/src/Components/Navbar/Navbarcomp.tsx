@@ -126,6 +126,13 @@ const Navbar = () => {
             >
               Leads
             </Button>
+            <Button
+              onClick={() => navigate("/purchase")}
+              variant="ghost"
+              className="text-foreground hover:text-foreground/80 hover:bg-accent"
+            >
+              Purchase
+            </Button>
 
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
@@ -386,6 +393,13 @@ const Navbar = () => {
                 className="w-full text-left justify-start"
               >
                 Leads
+              </Button>
+              <Button
+                onClick={() => navigate("/purchase")}
+                variant="ghost"
+                className="text-foreground hover:text-foreground/80 hover:bg-accent"
+              >
+                Purchase
               </Button>
 
               <Button

@@ -53,7 +53,7 @@ class PurchasesController extends BaseController
     public function purchase(Request $request): JsonResponse
     {
         $purchase = new Purchase();
-        $purchase->employee_id = $request->input("employee_id");
+        $purchase->employee_id = auth()->user()->employee->id;
         $purchase->supplier_id = $request->input("supplier_id");
         $purchase->payment_ref_no = $request->input("payment_ref_no");
         $purchase->payment_remarks = $request->input("payment_remarks");
@@ -107,7 +107,7 @@ class PurchasesController extends BaseController
             return $this->sendError("Purchase details not found", ['error'=>['Purchase details not found']]);
         }
         
-        return $this->sendResponse(["Purchase"=>new PurchaseResource($purchase), 'PurchaseDetails'=>new PurchaseDetailResource($purchase->purchaseDetails)], "Purchase Details retrived successfully");
+        return $this->sendResponse(["Purchase"=>new PurchaseResource($purchase), 'PurchaseDetails'=> PurchaseDetailResource::collection($purchase->purchaseDetails)], "Purchase Details retrived successfully");
     }
 
     

@@ -36,9 +36,11 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('products', ProductsController::class);  
    Route::resource('product_categories', ProductCategoriesController::class);  
    Route::get('/logout', [UserController::class, 'logout'])->name('user.logout');
+
    Route::post('/purchase', [PurchasesController::class, 'purchase'])->name("purchase.products");
    Route::get('/purchase/{id}', [PurchasesController::class, 'show'])->name("purchase.show");
    Route::get('/purchase', [PurchasesController::class, 'index'])->name("purchase.index");
+   
    Route::get('/all_product_categories', [ProductCategoriesController::class, 'allProductCategories'])->name("product_categories.all");
    Route::get('/all_suppliers', [SuppliersController::class, 'allSuppliers'])->name("suppliers.all");
    Route::get('/all_clients', [ClientsController::class, 'allClients'])->name("clients.all");

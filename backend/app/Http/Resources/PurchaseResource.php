@@ -15,10 +15,17 @@ class PurchaseResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
+        $productNames = $this->updatePurchaseProducts->map(function($updatePurchaseProduct) {
+            return $updatePurchaseProduct->product;
+        });
+        
         return [
             'id' => $this->id,
             'employee_id' => $this->employee_id,
             'supplier_id' => $this->supplier_id,
+            'supplier'=> $this->supplier->supplier,
+            'product_names'=>$productNames,
             'payment_remarks' => $this->payment_remarks,
             'payment_ref_no' => $this->payment_ref_no,
             'is_paid' => $this->is_paid,

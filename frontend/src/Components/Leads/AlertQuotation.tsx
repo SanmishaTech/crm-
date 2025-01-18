@@ -151,7 +151,7 @@ const AlertQuotation = ({ leadId }) => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Are you sure you want to generate the Quotation?
+              Are you sure you want to generate or view the Quotation?
             </AlertDialogTitle>
             <AlertDialogDescription>
               Please provide your <strong>Quotation Number</strong> and the{" "}
@@ -201,7 +201,7 @@ const AlertQuotation = ({ leadId }) => {
                   Cancel
                 </AlertDialogCancel>
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Submitting..." : "Submit"}
+                  {isSubmitting ? "Viewing Quotation..." : "View Quotation"}
                 </Button>
               </AlertDialogFooter>
             </form>
