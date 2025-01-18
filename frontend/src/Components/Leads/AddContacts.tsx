@@ -59,14 +59,16 @@ type Contacts = {
   client_id: string;
   mobile_1: string;
   email: string;
+  client: string;
 };
 
 // Form Validation Schema
 const formSchema = z.object({
   contact_person: z.string().min(1, "Contact name is required").max(50),
-  client: z.string().min(1, "Client name is required").max(50),
+  client: z.string().optional(),
   mobile_1: z.string().optional(),
   email: z.string().optional(),
+  client_id: z.string().optional(),
 });
 
 const AddContacts = ({ fetchContacts }) => {
@@ -75,12 +77,14 @@ const AddContacts = ({ fetchContacts }) => {
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false); // To handle loading state
   const [clients, setClients] = useState<any[]>([]); // State to store fetched clients
+  const [isCustomClient, setIsCustomClient] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       contact_person: "",
       client: "",
+      client_id: "",
       mobile_1: "",
       email: "",
     },
@@ -124,7 +128,7 @@ const AddContacts = ({ fetchContacts }) => {
     },
   });
 
-  const { data: fetchClients } = usePostData({
+  const { data: Clients } = usePostData({
     endpoint: `/api/clients`,
     params: {
       queryKey: ["clients"],
@@ -143,10 +147,30 @@ const AddContacts = ({ fetchContacts }) => {
       },
     },
   });
+  const { data: fetchClients } = useGetData({
+    endpoint: `/api/all_clients`,
+    params: {
+      queryKey: ["fetchClients"],
+      retry: 1,
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["fetchClients"] });
+        setClients(data.data.Client);
+        setLoading(false);
+      },
+      onError: (error) => {
+        if (error.message && error.message.includes("duplicate client")) {
+          toast.error("Client name is duplicated. Please use a unique name.");
+        } else {
+          toast.error("Failed to fetch client data. Please try again.");
+        }
+      },
+    },
+  });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     storeContactData.mutate(data);
     fetchClients.mutate(data);
+    Clients.mutate(data);
   };
 
   return (
@@ -178,21 +202,6 @@ const AddContacts = ({ fetchContacts }) => {
               className=""
             >
               <div className="space-y-5">
-                <FormField
-                  control={form.control}
-                  name="client"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col space-y-2">
-                      <FormLabel className="w-40">
-                        Client Name: <span style={{ color: "red" }}>*</span>
-                      </FormLabel>{" "}
-                      <FormControl className="flex-1">
-                        <Input placeholder="Enter Client Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                 <FormField
                   control={form.control}
                   name="contact_person"
@@ -241,6 +250,71 @@ const AddContacts = ({ fetchContacts }) => {
                     </FormItem>
                   )}
                 />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="custom-client"
+                    checked={isCustomClient}
+                    onChange={() => setIsCustomClient(!isCustomClient)}
+                  />
+                  <label htmlFor="custom-client" className="cursor-pointer">
+                    Create New Client
+                  </label>
+                </div>
+                {isCustomClient ? (
+                  <FormField
+                    control={form.control}
+                    name="client"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-2">
+                        <FormLabel className="w-40">
+                          Client Name: <span style={{ color: "red" }}>*</span>
+                        </FormLabel>
+                        <FormControl className="flex-1">
+                          <Input placeholder="Enter Client Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="client_id"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col space-y-2">
+                        <FormLabel className="w-40">
+                          Select Client: <span style={{ color: "red" }}>*</span>
+                        </FormLabel>
+                        <FormControl className="flex-1">
+                          <Select
+                            value={String(field.value)}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger className="">
+                              <SelectValue placeholder="Select Client" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {loading ? (
+                                <SelectItem disabled>Loading...</SelectItem>
+                              ) : (
+                                clients?.map((client) => (
+                                  <SelectItem
+                                    key={client.id}
+                                    value={String(client.id)}
+                                  >
+                                    {client.client}
+                                  </SelectItem>
+                                ))
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
 
               <DialogFooter className="mt-5">

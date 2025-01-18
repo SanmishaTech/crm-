@@ -144,7 +144,9 @@ const AlertQuotation = ({ leadId }) => {
       {/* Quotation Button */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button className="w-full text-sm">Quotation</Button>
+          <Button variant="ghost" className="w-full text-sm">
+            Quotation
+          </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -206,21 +208,6 @@ const AlertQuotation = ({ leadId }) => {
           </Form>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Always visible "View Previous Quotation" button */}
-      <Button
-        onClick={() => {
-          if (previousPdfUrl) {
-            window.open(previousPdfUrl, "_blank");
-          } else {
-            toast.error("No previous quotation available for this lead.");
-          }
-        }}
-        className="w-full text-sm mt-4"
-        disabled={!previousPdfUrl}
-      >
-        {previousPdfUrl ? "View Previous Quotation" : "No Previous Quotation"}
-      </Button>
     </div>
   );
 };
