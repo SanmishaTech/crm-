@@ -188,7 +188,7 @@ function App() {
         <Route path="/vendors/edit/:id" element={<Dashboard />} />
         <Route path="/purchase" element={<Dashboard />} />
         <Route path="/purchase/add" element={<Dashboard />} />
-        <Route path="/purchase/edit/:id" element={<Dashboard />} />
+        <Route path="/purchase/view/:id" element={<Dashboard />} />
       </Routes>
 
       {isVisible && (

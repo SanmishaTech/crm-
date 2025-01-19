@@ -490,75 +490,6 @@ export default function EditLeadPage() {
           </Card>
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold">
-                GST Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="flex justify-center  grid grid-cols-2 gap-4">
-                <FormItem>
-                  <FormLabel>Total CGST</FormLabel>
-                  <FormControl>
-                    <div>
-                      {" "}
-                      {form.watch("Products") &&
-                      form.watch("Products").length > 0 ? (
-                        form.watch("Products").map((product, index) => (
-                          <div key={index}>
-                            <p>Product ID: {product.product_id}</p>
-                            <p>Quantity: {product.quantity}</p>
-                            <p>Rate: {product.rate}</p>
-                            <p>CGST: {product.cgst}</p>
-                            <p>SGST: {product.sgst}</p>
-                            <p>IGST: {product.igst}</p>
-                            <p>Pre-Tax Amount: {product.pre_tax_amount}</p>
-                            <p>Post-Tax Amount: {product.post_tax_amount}</p>
-                          </div>
-                        ))
-                      ) : (
-                        <div>No products available</div>
-                      )}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-
-                <FormItem>
-                  <FormLabel>Total SGST</FormLabel>
-                  <FormControl>
-                    <div>{form.watch("total_sgst") || "0.00"}</div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-
-                <FormItem>
-                  <FormLabel>Total IGST</FormLabel>
-                  <FormControl>
-                    <div>{form.watch("total_igst") || "0.00"}</div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-
-                <FormItem>
-                  <FormLabel>Total Tax Amount</FormLabel>
-                  <FormControl>
-                    <div>{form.watch("total_tax_amount") || "0.00"}</div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-
-                <FormItem>
-                  <FormLabel>Total Amount</FormLabel>
-                  <FormControl>
-                    <div>{form.watch("total_amount") || "0.00"}</div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-accent/40">
-            <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold">Products</CardTitle>
               <CardDescription>Add your Products & Quantity</CardDescription>
             </CardHeader>
@@ -571,104 +502,36 @@ export default function EditLeadPage() {
                     <TableHead>Products</TableHead>
                     <TableHead>Quantity</TableHead>
                     <TableHead>Rate</TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+                    <TableHead>CGST</TableHead>
+                    <TableHead>SGST</TableHead>
+                    <TableHead>IGST</TableHead>
+                    <TableHead>Pre-Tax Amount</TableHead>
+                    <TableHead>Post-Tax Amount</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {productRows.map((row, index) => (
+                  {editData?.data?.Purchase?.Products?.map((product, index) => (
                     <TableRow key={index}>
                       <TableCell>
-                        <Popover
-                          open={row.isOpen}
-                          onOpenChange={(isOpen) => {
-                            const newRows = [...productRows];
-                            newRows[index].isOpen = isOpen;
-                            setProductRows(newRows);
-                          }}
-                        >
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              aria-expanded={row.isOpen}
-                              className="w-[200px] justify-between"
-                            >
-                              {row.product_id
-                                ? frameworks.find(
-                                    (framework) =>
-                                      framework.value === row.product_id
-                                  )?.label || "Select products..."
-                                : "Select products..."}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Search products..." />
-                              <CommandList>
-                                <CommandEmpty>No products found.</CommandEmpty>
-                                <CommandGroup>
-                                  {frameworks.map((framework) => (
-                                    <CommandItem
-                                      key={framework.value}
-                                      value={framework.value}
-                                      onSelect={() => {
-                                        const newRows = [...productRows];
-                                        newRows[index].product_id =
-                                          framework.value;
-                                        newRows[index].isOpen = false;
-                                        setProductRows(newRows);
-                                      }}
-                                    >
-                                      <Check
-                                        className={cn(
-                                          "mr-2 h-4 w-4",
-                                          row.product_id === framework.value
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                      {framework.label}
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
+                        {frameworks.find(f => f.value === product.product_id.toString())?.label || 'Unknown Product'}
                       </TableCell>
-                      <TableCell>{row.product?.rate}</TableCell>
-                      <TableCell>
-                        <Input
-                          placeholder="Rate"
-                          name="rate"
-                          value={row.product?.rate}
-                          onChange={(e) => {
-                            const newRows = [...productRows];
-                            newRows[index].rate = e.target.value;
-                            setProductRows(newRows);
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell className="flex justify-end">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          onClick={() => {
-                            const newRows = productRows.filter(
-                              (_, i) => i !== index
-                            );
-                            setProductRows(newRows);
-                          }}
-                        >
-                          <X />
-                        </Button>
-                      </TableCell>
+                      <TableCell>{product.quantity}</TableCell>
+                      <TableCell>{product.rate}</TableCell>
+                      <TableCell>{product.cgst}</TableCell>
+                      <TableCell>{product.sgst}</TableCell>
+                      <TableCell>{product.igst}</TableCell>
+                      <TableCell>{product.pre_tax_amount}</TableCell>
+                      <TableCell>{product.post_tax_amount}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
                 <TableFooter>
-                  <TableRow></TableRow>
+                  <TableRow>
+                    <TableCell colSpan={7}>Total</TableCell>
+                    <TableCell className="text-right">
+                      {form.watch("total_amount") || "0.00"}
+                    </TableCell>
+                  </TableRow>
                 </TableFooter>
               </Table>
 
@@ -689,11 +552,10 @@ export default function EditLeadPage() {
                 navigate("/purchase");
               }}
             >
-              Cancel
+              Back
             </Button>
 
-            <Button type="submit">Save Changes</Button>
-          </div>
+           </div>
         </form>
       </Form>
     </div>

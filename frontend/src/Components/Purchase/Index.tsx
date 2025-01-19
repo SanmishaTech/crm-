@@ -466,11 +466,11 @@ export default function TableDemo() {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => {
-                                    navigate(`/purchase/edit/${lead.id}`);
+                                    navigate(`/purchase/view/${lead.id}`);
                                   }}
                                   className="w-full text-sm"
                                 >
-                                  Edit
+                                  View Purchase Details
                                 </Button>
                               </DropdownMenuContent>
                             </DropdownMenu>

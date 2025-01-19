@@ -35,7 +35,7 @@ import VendorAdd from "@/Components/Vendors/Add";
 import VendorEdit from "@/Components/Vendors/Edit";
 import Purchase from "@/Components/Purchase/Index";
 import PurchaseAdd from "@/Components/Purchase/Add";
-import PurchaseEdit from "@/Components/Purchase/Edit";
+import PurchaseView from "@/Components/Purchase/View";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -121,7 +121,7 @@ const Dashboard = () => {
 
         {location.pathname === "/purchase" && <Purchase />}
         {location.pathname === "/purchase/add" && <PurchaseAdd />}
-        {/\/purchase\/edit\/\d+/.test(location.pathname) && <PurchaseEdit />}
+        {/\/purchase\/view\/\d+/.test(location.pathname) && <PurchaseView />}
       </main>
     </div>
   );
