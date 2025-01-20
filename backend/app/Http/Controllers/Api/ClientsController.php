@@ -65,15 +65,21 @@ class ClientsController extends BaseController
     {
         $clients = new Client();
         $clients->client = $request->input("client");
+        $clients->contact_no = $request->input("contact_no");
+        $clients->email = $request->input("email"); 
+        $clients->gstin = $request->input("gstin");
         $clients->street_address = $request->input("street_address");
         $clients->area = $request->input("area");
         $clients->city = $request->input("city");
         $clients->state = $request->input("state");
         $clients->pincode = $request->input("pincode");
         $clients->country = $request->input("country");
-        $clients->gstin = $request->input("gstin");
-        $clients->contact_no = $request->input("contact_no");
-        $clients->email = $request->input("email"); 
+        $clients->shipping_street = $request->input("shipping_street");
+        $clients->shipping_area = $request->input("shipping_area");
+        $clients->shipping_city = $request->input("shipping_city");
+        $clients->shipping_state = $request->input("shipping_state");
+        $clients->shipping_pincode = $request->input("shipping_pincode");
+        $clients->shipping_country = $request->input("shipping_country");
         $clients->save();
 
         return $this->sendResponse(["Client"=> new ClientResource($clients)], 'Client Stored Successfully');
@@ -115,15 +121,21 @@ class ClientsController extends BaseController
         }
 
         $clients->client = $request->input("client");
+        $clients->contact_no = $request->input("contact_no");
+        $clients->email = $request->input("email"); 
+        $clients->gstin = $request->input("gstin");
         $clients->street_address = $request->input("street_address");
         $clients->area = $request->input("area");
         $clients->city = $request->input("city");
         $clients->state = $request->input("state");
         $clients->pincode = $request->input("pincode");
         $clients->country = $request->input("country");
-        $clients->gstin = $request->input("gstin");
-        $clients->contact_no = $request->input("contact_no");
-        $clients->email = $request->input("email"); 
+        $clients->shipping_street = $request->input("shipping_street");
+        $clients->shipping_area = $request->input("shipping_area");
+        $clients->shipping_city = $request->input("shipping_city");
+        $clients->shipping_state = $request->input("shipping_state");
+        $clients->shipping_pincode = $request->input("shipping_pincode");
+        $clients->shipping_country = $request->input("shipping_country");
         $clients->save();
 
         return $this->sendResponse(["Client"=> new ClientResource($clients)], 'Client Updated Successfully');

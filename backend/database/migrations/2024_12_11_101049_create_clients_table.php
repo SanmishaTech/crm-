@@ -14,15 +14,22 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
             $table->string('client')->nullable();
+            $table->string('contact_no')->nullable();
+            $table->string('email')->nullable();
+            $table->string('gstin')->nullable();
             $table->string('street_address')->nullable();
             $table->string('area')->nullable();
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('pincode')->nullable();
             $table->string('country')->nullable();
-            $table->string('gstin')->nullable();
-            $table->string('contact_no')->nullable();
-            $table->string('email')->nullable();
+            $table->string('shipping_street')->nullable();
+            $table->string('shipping_area')->nullable();
+            $table->string('shipping_city')->nullable();
+            $table->string('shipping_state')->nullable();
+            $table->string('shipping_pincode')->nullable();
+            $table->string('shipping_country')->nullable();
+
             $table->timestamps();
         });
     }

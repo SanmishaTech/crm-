@@ -43,6 +43,12 @@ const FormSchema = z.object({
   contact_no: z.string().optional(),
 
   email: z.string().optional(),
+  shipping_street: z.string().optional(),
+  shipping_area: z.string().optional(),
+  shipping_city: z.string().optional(),
+  shipping_state: z.string().optional(),
+  shipping_pincode: z.string().optional(),
+  shipping_country: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -51,15 +57,23 @@ export default function InputForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       client: "",
+
+      contact_no: "",
+      email: "",
+      gstin: "",
+
       street_address: "",
       area: "",
       city: "",
       state: "",
       pincode: "",
       country: "India",
-      gstin: "",
-      contact_no: "",
-      email: "",
+      shipping_street: "",
+      shipping_area: "",
+      shipping_city: "",
+      shipping_state: "",
+      shipping_pincode: "",
+      shipping_country: "India",
     },
   });
 
@@ -224,7 +238,7 @@ export default function InputForm() {
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold">
-                Address Information
+                Billing Address Information
               </CardTitle>
             </CardHeader>
             <CardContent className=" space-y-4 p-6">
@@ -320,6 +334,124 @@ export default function InputForm() {
                 <FormField
                   control={form.control}
                   name="country"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Country <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter Country"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-accent/40">
+            <CardHeader className="text- justify-between space-y-0 pb-2">
+              <CardTitle className="text-xl font-semibold">
+                Shipping Address Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className=" space-y-4 p-6">
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="shipping_street"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Street Address <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Street Address" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="shipping_area"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Area</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Area" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="shipping_city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        City <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className="justify-left"
+                          placeholder="Enter City"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* Feilds Second Row Ends */}
+              {/* Feilds Third Row Starts */}
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="shipping_state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        State <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter State" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="shipping_pincode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        Pincode <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter Pincode"
+                          {...field}
+                          type="text"
+                          inputMode="numeric"
+                          pattern="\d{6}"
+                          maxLength={6}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="shipping_country"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
