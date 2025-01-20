@@ -233,7 +233,6 @@ export default function EditLeadPage() {
       const newData = editData.data.Purchase;
       console.log("Products:", newData?.Products);
 
-      // Assuming you want to reset the form with all products, you could loop through each product
       const productFields = newData?.Products.map((product) => ({
         product_id: product?.product_id || "",
         quantity: product?.quantity || "",
@@ -245,7 +244,6 @@ export default function EditLeadPage() {
         post_tax_amount: product?.post_tax_amount || null,
       }));
 
-      // You can then pass this array of product fields to the form
       form.reset({
         supplier_id: newData?.supplier_id || "",
         supplier: newData?.supplier || "",
@@ -491,7 +489,7 @@ export default function EditLeadPage() {
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold">Products</CardTitle>
-              <CardDescription>Add your Products & Quantity</CardDescription>
+              <CardDescription>A list of your products.</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               {/* Table Start */}
@@ -513,7 +511,9 @@ export default function EditLeadPage() {
                   {editData?.data?.Purchase?.Products?.map((product, index) => (
                     <TableRow key={index}>
                       <TableCell>
-                        {frameworks.find(f => f.value === product.product_id.toString())?.label || 'Unknown Product'}
+                        {frameworks.find(
+                          (f) => f.value === product.product_id.toString()
+                        )?.label || "Unknown Product"}
                       </TableCell>
                       <TableCell>{product.quantity}</TableCell>
                       <TableCell>{product.rate}</TableCell>
@@ -534,15 +534,6 @@ export default function EditLeadPage() {
                   </TableRow>
                 </TableFooter>
               </Table>
-
-              <Button
-                type="button"
-                onClick={addRow}
-                variant="outline"
-                className="mb-4"
-              >
-                Add Row
-              </Button>
             </CardContent>
           </Card>
           <div className="flex justify-end space-x-2">
@@ -554,8 +545,7 @@ export default function EditLeadPage() {
             >
               Back
             </Button>
-
-           </div>
+          </div>
         </form>
       </Form>
     </div>

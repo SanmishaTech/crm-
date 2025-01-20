@@ -168,7 +168,6 @@ export default function TableDemo() {
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["purchase"] });
         if (data?.data?.Purchases) {
-          // setSuppliers(data.data.Purchases);
           setPagination(data.data.pagination);
         } else {
           // setSuppliers([]);
@@ -203,123 +202,6 @@ export default function TableDemo() {
     },
   });
 
-  // const handleGenerateQuotation = async (leadId: string) => {
-  //   try {
-  //     const response = await fetch(`/api/generate_quotation/${leadId}`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: "Bearer " + localStorage.getItem("token"),
-  //       },
-  //     });
-
-  //     if (response.ok) {
-  //       const blob = await response.blob();
-
-  //       const url = window.URL.createObjectURL(blob);
-  //       const link = document.createElement("a");
-
-  //       link.href = url;
-  //       link.download = `Quotation-${leadId}.pdf`;
-
-  //       document.body.appendChild(link);
-
-  //       link.click();
-
-  //       document.body.removeChild(link);
-  //       queryClient.invalidateQueries({ queryKey: ["lead"] });
-
-  //       console.log("Quotation generated and downloaded successfully!");
-  //     } else {
-  //       console.error("Error generating quotation:", response);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-
-  //   }
-  // };
-  const handleGenerateQuotation = async (leadId: string) => {
-    try {
-      const response = await fetch(`/api/generate_quotation/${leadId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-
-      if (response.ok) {
-        // Handle successful response
-        const blob = await response.blob();
-
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = `Quotation-${leadId}.pdf`;
-
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        queryClient.invalidateQueries({ queryKey: ["lead"] });
-
-        console.log("Quotation generated and downloaded successfully!");
-      } else {
-        // Handle error response
-        const errorData = await response.json(); // Parse the error response JSON
-        if (response.status === 401 && errorData.status === false) {
-          toast.error(errorData.errors.error);
-        } else {
-          toast.error("failed to generate Quotation");
-        }
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const handleGenerateInvoice = async (leadId: string) => {
-    try {
-      const response = await fetch(`/api/generate_invoice/${leadId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = `Invoices-${leadId}.pdf`;
-
-        document.body.appendChild(link);
-
-        link.click();
-
-        document.body.removeChild(link);
-        queryClient.invalidateQueries({ queryKey: ["lead"] });
-
-        console.log("Invoice generated and downloaded successfully!");
-      } else {
-        // Handle error response
-        const errorData = await response.json(); // Parse the error response JSON
-        if (response.status === 401 && errorData.status === false) {
-          toast.error(errorData.errors.error);
-        } else {
-          toast.error("failed to generate Invoice");
-        }
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const handleFilterChange = (filters: any) => {
     if (filters.status !== undefined) {
       setLeadStatus(filters.status);
@@ -329,7 +211,6 @@ export default function TableDemo() {
 
   return (
     <div className="flex ">
-      {/* <Sidebar onFilterChange={handleFilterChange} /> */}
       <div className="p-6 w-full  bg-accent/60 ml-4 mr-8 rounded-lg shadow-lg ">
         <div className="p-2  ">
           <div className="flex justify-between items-center ">
@@ -337,27 +218,14 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex justify-between items-center space-x-2 py-1 w-full">
-          <div className=" mt-2">
-            {/* <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Filter onClick={toggle} className=" h-5  " />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Filter</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider> */}
-          </div>
+          <div className=" mt-2"></div>
 
           <div className="flex-1 space-x-2">
-            {isMinimized ? (
-              <Input
-                placeholder="Purchase Leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            ) : null}
+            <Input
+              placeholder="Purchase Leads..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
           <div className="flex space-x-2">
             <Button variant="outline" onClick={() => navigate("/purchase/add")}>
@@ -383,17 +251,17 @@ export default function TableDemo() {
                 </TableHead>
 
                 <TableHead onClick={() => handleSort("follow_up_type")}>
-                  Next Follow Up Date
+                  Payment Reference No.
                 </TableHead>
                 <TableHead onClick={() => handleSort("follow_up_type")}>
-                  Follow Up Type
+                  Payment Status
                 </TableHead>
                 {/* <TableHead onClick={() => handleSort("follow_up_type")}>
                  Follow Up Type
                 </TableHead> */}
 
                 <TableHead onClick={() => handleSort("lead_status")}>
-                  Lead Status
+                  Invoice Number
                 </TableHead>
                 <TableHead className="text-right">Action</TableHead>
               </TableRow>

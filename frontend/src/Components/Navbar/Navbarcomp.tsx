@@ -126,13 +126,6 @@ const Navbar = () => {
             >
               Leads
             </Button>
-            <Button
-              onClick={() => navigate("/purchase")}
-              variant="ghost"
-              className="text-foreground hover:text-foreground/80 hover:bg-accent"
-            >
-              Purchase
-            </Button>
 
             <NavigationMenu className="relative inline-block">
               <NavigationMenuList className="list-none p-0 m-0">
@@ -197,6 +190,15 @@ const Navbar = () => {
                       onClick={() => navigate("/products")}
                     >
                       Products
+                    </Button>
+                    <Separator className="w-full justify-center bg-border" />
+
+                    <Button
+                      onClick={() => navigate("/purchase")}
+                      variant="ghost"
+                      className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+                    >
+                      Purchase
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
                   </NavigationMenuContent>
@@ -394,13 +396,6 @@ const Navbar = () => {
               >
                 Leads
               </Button>
-              <Button
-                onClick={() => navigate("/purchase")}
-                variant="ghost"
-                className="text-foreground hover:text-foreground/80 hover:bg-accent"
-              >
-                Purchase
-              </Button>
 
               <Button
                 onClick={() => {
@@ -458,6 +453,13 @@ const Navbar = () => {
                 className="w-full text-left justify-start"
               >
                 Products
+              </Button>
+              <Button
+                onClick={() => navigate("/purchase")}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Purchase
               </Button>
 
               <Button
