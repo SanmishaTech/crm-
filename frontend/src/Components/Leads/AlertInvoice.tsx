@@ -104,13 +104,19 @@ const AlertQuotation = ({ leadId }) => {
   const handleGenerateQuotation = async (data) => {
     setIsSubmitting(true);
     try {
+      // Format the date to dd-mm-yyyy if it exists
+      const formattedData = {
+        ...data,
+        buyers_date: data.buyers_date ? data.buyers_date.split('-').reverse().join('-') : data.buyers_date
+      };
+
       const response = await fetch(`/api/generate_invoice/${leadId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(formattedData),
       });
 
       if (response.ok) {
@@ -166,7 +172,7 @@ const AlertQuotation = ({ leadId }) => {
           </AlertDialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="flex flex-grid col-2 space-x-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="invoice_number"
@@ -178,6 +184,7 @@ const AlertQuotation = ({ leadId }) => {
                           placeholder="Enter Quotation Number"
                           {...field}
                           disabled={isSubmitting}
+                          className="w-full"
                         />
                       </FormControl>
                       <FormMessage />
@@ -195,6 +202,7 @@ const AlertQuotation = ({ leadId }) => {
                           placeholder="Enter Mode of Payment"
                           {...field}
                           disabled={isSubmitting}
+                          className="w-full"
                         />
                       </FormControl>
                       <FormMessage />
@@ -202,7 +210,7 @@ const AlertQuotation = ({ leadId }) => {
                   )}
                 />
               </div>
-              <div className="flex flex-grid col-2 space-x-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="ref_no"
@@ -214,6 +222,7 @@ const AlertQuotation = ({ leadId }) => {
                           placeholder="Enter Reference Number"
                           {...field}
                           disabled={isSubmitting}
+                          className="w-full"
                         />
                       </FormControl>
                       <FormMessage />
@@ -231,6 +240,7 @@ const AlertQuotation = ({ leadId }) => {
                           placeholder="Enter Other Reference"
                           {...field}
                           disabled={isSubmitting}
+                          className="w-full"
                         />
                       </FormControl>
                       <FormMessage />
@@ -238,7 +248,7 @@ const AlertQuotation = ({ leadId }) => {
                   )}
                 />
               </div>
-              <div className="flex flex-grid col-2 space-x-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="buyer_order_no"
@@ -250,13 +260,13 @@ const AlertQuotation = ({ leadId }) => {
                           placeholder="Enter Buyers Order Number"
                           {...field}
                           disabled={isSubmitting}
+                          className="w-full"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="buyers_date"
@@ -264,7 +274,12 @@ const AlertQuotation = ({ leadId }) => {
                     <FormItem>
                       <FormLabel>Buyers</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} disabled={isSubmitting} />
+                        <Input 
+                          type="date" 
+                          {...field} 
+                          disabled={isSubmitting}
+                          className="w-full" 
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -280,7 +295,7 @@ const AlertQuotation = ({ leadId }) => {
                     <FormControl>
                       <Textarea
                         placeholder="Terms and Conditions of the Quotation"
-                        className="resize-none"
+                        className="resize-none w-full"
                         rows={7}
                         {...field}
                       />
@@ -290,11 +305,18 @@ const AlertQuotation = ({ leadId }) => {
                 )}
               />
 
-              <AlertDialogFooter>
-                <AlertDialogCancel disabled={isSubmitting}>
+              <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
+                <AlertDialogCancel 
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto"
+                >
                   Cancel
                 </AlertDialogCancel>
-                <Button type="submit" disabled={isSubmitting}>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto"
+                >
                   {isSubmitting ? "Viewing Quotation..." : "View Quotation"}
                 </Button>
               </AlertDialogFooter>

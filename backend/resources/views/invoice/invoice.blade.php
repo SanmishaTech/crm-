@@ -81,7 +81,7 @@
 
                     <tr>
                         <td class="line">Dated</td>
-                        <td class="line">{{ @$leads->quotation_date ? \Carbon\Carbon::parse($leads->quotation_date)->format('d-m-Y') : 'N/A' }}</td>
+                        <td class="line">{{ \Carbon\Carbon::now()->format('d-m-Y') }}</td>
                     </tr>
                     
                     
@@ -114,25 +114,47 @@
             <td class="border-cell">
                 <div style="margin-bottom: 15px;">
                     <strong>Consignee (Ship to) </strong><br>
-                    {{$leads->contact->client->client}}<br>
-                    {{$leads->contact->client->shipping_street}},{{$leads->contact->client->shipping_area}},{{$leads->contact->client->shipping_city}},
-                     {{$leads->contact->client->shipping_pincode}}<br>
-                    GSTIN : {{$leads->contact->client->gstin}}<br>
-                    State Name : {{$leads->contact->client->state}}<br>
-                    Contact person : {{$leads->contact->contact_person}}<br>
-                    Contact : {{$leads->contact->mobile_1}}
+                    @if($leads->contact->client->client)
+                        {{$leads->contact->client->client}}<br>
+                    @endif
+                    @php
+                        $address_parts = array_filter([
+                            $leads->contact->client->shipping_street,
+                            $leads->contact->client->shipping_area,
+                            $leads->contact->client->shipping_city,
+                            $leads->contact->client->shipping_pincode
+                        ]);
+                        if (!empty($address_parts)) {
+                            echo implode(', ', $address_parts) . '<br>';
+                        }
+                    @endphp
+                    @if($leads->contact->client->gstin)GSTIN : {{$leads->contact->client->gstin}}<br>@endif
+                    @if($leads->contact->client->state)State Name : {{$leads->contact->client->state}}<br>@endif
+                    @if($leads->contact->contact_person)Contact person : {{$leads->contact->contact_person}}<br>@endif
+                    @if($leads->contact->mobile_1)Contact : {{$leads->contact->mobile_1}}@endif
                 </div>
                 <hr style="border-top: 1px solid #000; margin: 20px 0;">
                 <div>
                     <strong>Buyer (Bill to)</strong><br>
-                    {{$leads->contact->client->client}}<br>
-                    {{$leads->contact->client->shipping_street}},{{$leads->contact->client->shipping_area}},{{$leads->contact->client->shipping_city}},
-                     {{$leads->contact->client->shipping_pincode}}<br>
-                    GSTIN: {{$leads->contact->client->gstin}}<br>
-                    State Name : {{$leads->contact->client->shipping_state}}<br>
-                    Place of Supply : {{$leads->contact->client->shipping_state}}<br>
-                    Contact person :  {{$leads->contact->client->client}}<br>
-                    Contact : {{$leads->contact->client->contact_no}}
+                    @if($leads->contact->client->client)
+                        {{$leads->contact->client->client}}<br>
+                    @endif
+                    @php
+                        $billing_address_parts = array_filter([
+                            $leads->contact->client->shipping_street,
+                            $leads->contact->client->shipping_area,
+                            $leads->contact->client->shipping_city,
+                            $leads->contact->client->shipping_pincode
+                        ]);
+                        if (!empty($billing_address_parts)) {
+                            echo implode(', ', $billing_address_parts) . '<br>';
+                        }
+                    @endphp
+                    @if($leads->contact->client->gstin)GSTIN: {{$leads->contact->client->gstin}}<br>@endif
+                    @if($leads->contact->client->shipping_state)State Name : {{$leads->contact->client->shipping_state}}<br>@endif
+                    @if($leads->contact->client->shipping_state)Place of Supply : {{$leads->contact->client->shipping_state}}<br>@endif
+                    @if($leads->contact->client->client)Contact person : {{$leads->contact->client->client}}<br>@endif
+                    @if($leads->contact->client->contact_no)Contact : {{$leads->contact->client->contact_no}}@endif
                 </div>
             </td>
             <td class="border-cell">
@@ -196,13 +218,12 @@
                                     A/c No. : 010330110000095<br>
                                     Branch & IFS Code : BKID0000103
                                 </div>
-                              
-                              
+
                                     <div style="vertical-align: bottom; ">
-                                        for Renuka Enterprises, (from 1.4.2023)<br><br><br>
+                                        for Renuka Enterprises, (from 1.4.2023) 
                                         Authorised Signatory
                                     </div>
-                                
+ 
                             </td>
                         </tr>
                     </table>
