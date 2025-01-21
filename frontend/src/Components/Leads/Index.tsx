@@ -209,41 +209,6 @@ export default function TableDemo() {
     },
   });
 
-  // const handleGenerateQuotation = async (leadId: string) => {
-  //   try {
-  //     const response = await fetch(`/api/generate_quotation/${leadId}`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: "Bearer " + localStorage.getItem("token"),
-  //       },
-  //     });
-
-  //     if (response.ok) {
-  //       const blob = await response.blob();
-
-  //       const url = window.URL.createObjectURL(blob);
-  //       const link = document.createElement("a");
-
-  //       link.href = url;
-  //       link.download = `Quotation-${leadId}.pdf`;
-
-  //       document.body.appendChild(link);
-
-  //       link.click();
-
-  //       document.body.removeChild(link);
-  //       queryClient.invalidateQueries({ queryKey: ["lead"] });
-
-  //       console.log("Quotation generated and downloaded successfully!");
-  //     } else {
-  //       console.error("Error generating quotation:", response);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error:", error);
-
-  //   }
-  // };
   const handleGenerateQuotation = async (leadId: string) => {
     try {
       const response = await fetch(`/api/generate_quotation/${leadId}`, {
@@ -255,29 +220,21 @@ export default function TableDemo() {
       });
 
       if (response.ok) {
-        // Handle successful response
         const blob = await response.blob();
-
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = `Quotation-${leadId}.pdf`;
-
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
+        
+        // Open in new tab instead of downloading
+        window.open(url, '_blank');
+        
         queryClient.invalidateQueries({ queryKey: ["lead"] });
-
-        console.log("Quotation generated and downloaded successfully!");
+        console.log("Quotation opened in new tab successfully!");
       } else {
         // Handle error response
-        const errorData = await response.json(); // Parse the error response JSON
+        const errorData = await response.json();
         if (response.status === 401 && errorData.status === false) {
           toast.error(errorData.errors.error);
         } else {
-          toast.error("failed to generate Quotation");
+          toast.error("Failed to generate Quotation");
         }
       }
     } catch (error) {
@@ -297,28 +254,20 @@ export default function TableDemo() {
 
       if (response.ok) {
         const blob = await response.blob();
-
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = `Invoices-${leadId}.pdf`;
-
-        document.body.appendChild(link);
-
-        link.click();
-
-        document.body.removeChild(link);
+        
+        // Open in new tab instead of downloading
+        window.open(url, '_blank');
+        
         queryClient.invalidateQueries({ queryKey: ["lead"] });
-
-        console.log("Invoice generated and downloaded successfully!");
+        console.log("Invoice opened in new tab successfully!");
       } else {
         // Handle error response
-        const errorData = await response.json(); // Parse the error response JSON
+        const errorData = await response.json();
         if (response.status === 401 && errorData.status === false) {
           toast.error(errorData.errors.error);
         } else {
-          toast.error("failed to generate Invoice");
+          toast.error("Failed to generate Invoice");
         }
       }
     } catch (error) {

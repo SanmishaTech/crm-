@@ -6,189 +6,200 @@
     <title>Invoice</title>
     <style>
         body {
-            font-family: Arial, sans-serif; 
-            font-size: 14px;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
             color: #000;
         }
-        .invoice-box {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #000;
-        }
-        .invoice-box h4 {
-            margin: 0;
-            font-size: 18px;
-        }
-        .invoice-box h6 {
-            margin: 0;
-            font-size: 14px;
-        }
-        .invoice-box table {
+        table {
             width: 100%;
             border-collapse: collapse;
         }
-        .invoice-box table, .invoice-box th, .invoice-box td {
-            border: 1px solid black;
+        table.main-table {
+            border: 1px solid #000;
         }
-        .invoice-box th, .invoice-box td {
-            padding: 8px;
-            text-align: left;
+        td {
+            padding: 3px;
+            vertical-align: top;
         }
-        .invoice-box .header, .invoice-box .footer {
-            text-align: center;
-            margin-bottom: 20px;
+        .border-cell {
+            border: 1px solid #000;
         }
-        .invoice-box .header td {
-            border: none;
-            padding: 0;
+        .company-title {
+            font-weight: bold;
+            margin-bottom: 5px;
         }
-        .invoice-box .information td {
-            border: none;
-            padding: 0;
+        .header-section {
+            margin-bottom: 10px;
         }
-        .invoice-box .totals td {
-            border: none;
-            text-align: right;
-            padding: 5px 5px;
-        }
-        .invoice-box .totals td:last-child {
-            width: 100px;
-            border-bottom: 1px solid #000;
-        }
-        .invoice-box .round-off td {
-            border: none;
-            text-align: right;
-            padding: 5px 5px;
-        }
-        .invoice-box .round-off td:last-child {
-            border-bottom: 2px solid #000;
-        }
-        .text-end {
-            text-align: right;
-        }
-        .text-center {
+        .items-table th {
+            border: 1px solid #000;
+            padding: 5px;
             text-align: center;
         }
-        .text-left {
-            text-align: left;
+        .items-table td {
+            border: 1px solid #000;
+            padding: 5px;
         }
-     
+        .bank-details {
+            margin-top: 10px;
+            border-top: 1px solid #000;
+        }
+        .footer-text {
+            font-size: 10px;
+            text-align: center;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
-    @php
-    $i = 1;
-    @endphp
-    <h4 style="text-align: center">INVOICE</h4>
-    <div class="invoice-box">
-        <table cellpadding="0" cellspacing="0">
-            {{-- <tr class="header">
-                <td colspan="6">
-                    <h4>INVOICE</h4>
-                    <h6>ORIGINAL</h6>
-                </td>
-            </tr> --}}
-
-            <tr class="information">
-                <td colspan="4" style="padding-left:10px; ">
-                  <strong>CRM</strong><br>
-                    {{-- HafyMish Technologies<br> --}}
-                     <P>Maharashtra - 400605</P>
-                    {{-- {{$profile->state}} - {{$profile->pincode}}<br> --}}
-                    {{-- GST: {{$profile->gstin}} --}}
-                </td>
-                <td colspan="4" class="text-end" style=" text-align: right; padding-right:10px; padding-top:10px;">
-                    Invoice No: {{@$leads->leadInvoice->invoice_number}}<br>
-                    Date: {{\Carbon\Carbon::now()->format('d-m-Y')}}<br>
-                    <strong>To</strong><br>
-                    {{-- {{$profile->name}}<br>
-                    {{$profile->city}},thane
-                    {{$profile->state}} <br>
-                    Mobile{{$profile->mobile}} <br>
-                    Email: {{$user->email}}        --}}
-                      test user<br>
-                      thane,
-                      Maharashtra<br> 
-                      Mobile: 9999887766 <br>
-                      Email: test@gmail.com
-                    <br><br><br>
-                </td>
-            </tr>
-            
-            <tr class="heading">
-                <th>Sl.</th>
-                <th>Product Name</th>
-                <th>Rate</th>
-                <th>Qty</th>
-                <th>Gst%</th>
-                <th>Gst₹</th>
-                <th>Total</th>
-            </tr>
-
-            @if(@$leads->leadInvoice->invoiceDetails)
-            @foreach(@$leads->leadInvoice->invoiceDetails as $product)
-            <tr class="item">
-                <td>{{$i++}}</td>
-                <td>{{@$product->product->product}}</td>
-                <td>₹{{@$product->rate}}</td>
-                <td>{{@$product->quantity}}</td>
-                <td>{{@$product->gst_rate}}%</td>
-                <td>₹{{@$product->gst_amount}}</td>
-                <td>₹{{@$product->total_taxable_amount}}</td>
-            </tr>
-            @endforeach
-            @endif
-          
-        </table>
-
-        <table cellpadding="0" cellspacing="0">
-            <tr>
-                <td colspan="7" style="border-top: 1px solid #000; border-bottom: none;">
-                    Items: {{ --$i}}
-                </td>
-            </tr>
-            <tr>
-                <td colspan="7" style="border-bottom: 1px solid #000; border-top: none;">
-                    E&amp;OE. Goods once sold cannot be taken back or exchanged
-                </td>
-            </tr>
-            <tr class="totals">
-                <td colspan="5"></td>
-                <td>Total Taxable:</td>
-                {{-- <td>₹1000.00</td>     --}}
-                <td>₹{{@$leads->total_taxable}}</td>    
-
-            </tr>
-            <tr class="totals">
-                <td colspan="5"></td>
-                <td>Total Tax:</td>
-                {{-- <td>₹180.00</td> --}}
-                <td>₹{{@$leads->total_gst}}</td>    
-            </tr>
-            <tr class="round-off">
-                <td colspan="5"></td>
-                <td>Round-off:</td>
-                <td>₹0.00</td>
-            </tr>
-            <tr class="round-off">
-                <td colspan="5"></td>
-                <td><strong>Total:</strong></td>
-                {{-- <td><strong>₹1180.00</strong></td> --}}
-                <td><strong>₹{{@$leads->leadInvoice->amount}}</strong></td>
-            </tr>
-        </table>
-
-        <div class="text-center" style="margin-top: 20px;">
-            <p>GST% 18% &nbsp;&nbsp; Taxable ₹{{@$leads->total_taxable}} &nbsp;&nbsp; CGST ₹3.60&nbsp;&nbsp; SGST ₹3.60</p>
-            <p>Thank you. Have a great day!</p>
-        </div>
-
-        <div class="text-end" style="margin-top: 20px;">
-            <p>For Gst Pro</p>
-            <p>Signatory</p>
-        </div>
-    </div>
-    {{-- ₹ &#8377;  &#x20B9; --}}
+    <div style="text-align: center; margin-bottom: 10px;"><strong>INVOICE</strong></div>
+    <table class="main-table">
+        <tr>
+            <td style="width: 60%;" class="border-cell">
+                <div class="company-title">Renuka Enterprises, (from 1.4.2023)</div>
+                Off - A-103, Amberyog 3, Ayre<br>
+                Road, Dombivli East, 421201<br>
+                Mumbai Maharashtra<br>
+                UDYAM : UDYAM-MH-33-0026297 (Micro)<br>
+                GSTIN/UIN: 27APCPM1801Q1ZQ<br>
+                State Name : Maharashtra, Code : 27<br>
+                Contact : 0251-2480403,9870201624<br>
+                E-Mail : sales.renukaenter@rediffmail.com
+            </td>
+            <td style="width: 40%;" class="border-cell">
+                <table style="width: 100%">
+                    <tr>
+                        <td>Invoice No.</td>
+                        <td>RE/138/24-25</td>
+                    </tr>
+                    <tr>
+                        <td>Dated</td>
+                        <td>18-Jan-25</td>
+                    </tr>
+                    <tr>
+                        <td>Mode/Terms of Payment</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Reference No. & Date</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Other References</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Buyer's Order No.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Dated</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Terms of Delivery</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="border-cell">
+                <div style="margin-bottom: 15px;">
+                    <strong>Consignee (Ship to)</strong><br>
+                    Electro Trade Link (Dr)<br>
+                    1-2/ 501, Jaydeep Park, Main Road, Majiwada<br>
+                    Gaon, Thane West<br>
+                    GSTIN/UIN : 27ADGPM7595P1ZI<br>
+                    State Name : Maharashtra, Code : 27<br>
+                    Contact person : Mr. Avinash Kamble<br>
+                    Contact : 9870201624
+                </div>
+                <hr style="border-top: 1px solid #000; margin: 10px 0;">
+                <div>
+                    <strong>Buyer (Bill to)</strong><br>
+                    Electro Trade Link (Dr)<br>
+                    1-2/ 501, Jaydeep Park, Main Road, Majiwada<br>
+                    Gaon, Thane West<br>
+                    GSTIN/UIN : 27ADGPM7595P1ZI<br>
+                    State Name : Maharashtra, Code : 27<br>
+                    Place of Supply : Maharashtra<br>
+                    Contact person : Mr. Avinash Kamble<br>
+                    Contact : 9870201624
+                </div>
+            </td>
+            <td class="border-cell">
+                <strong>Terms and Conditions:</strong><br>
+                1. Goods once sold will not be taken back.<br>
+                2. Interest @18% p.a. will be charged if the payment is not made within the stipulated time.<br>
+                3. Subject to Mumbai Jurisdiction.<br>
+                4. Our responsibility ceases once the goods leave our premises.<br>
+                5. Payment should be made by crossed cheque/DD only.
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <table class="items-table" style="width: 100%">
+                    <tr>
+                        <th>SI</th>
+                        <th>Description of Goods</th>
+                        <th>HSN/SAC</th>
+                        <th>Quantity</th>
+                        <th>Rate</th>
+                        <th>per</th>
+                        <th>Amount</th>
+                    </tr>
+                    @if(@$leads->leadInvoice->invoiceDetails)
+                        @foreach(@$leads->leadInvoice->invoiceDetails as $product)
+                        <tr>
+                            <td style="text-align: center">{{$loop->iteration}}</td>
+                            <td>{{@$product->product->product}}</td>
+                            <td style="text-align: center">{{@$product->hsn_code}}</td>
+                            <td style="text-align: right">{{@$product->quantity}}</td>
+                            <td style="text-align: right">{{@$product->rate}}</td>
+                            <td style="text-align: center">{{@$product->unit}}</td>
+                            <td style="text-align: right">{{@$product->total_taxable_amount}}</td>
+                        </tr>
+                        @endforeach
+                    @endif
+                    <tr>
+                        <td colspan="6" style="text-align: right"><strong>Total</strong></td>
+                        <td style="text-align: right">{{@$leads->leadInvoice->amount}}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="border-cell">
+                <div style="text-align: right; margin-bottom: 10px;">E. & O.E</div>
+                <div style="margin-top: 10px;">
+                    <table style="width: 100%">
+                        <tr>
+                            <td style="width: 50%; vertical-align: top;">
+                                Company's PAN : APCPM1801Q<br>
+                                Declaration:<br>
+                                We declare that this invoice shows the actual price of<br>
+                                the goods described and that all particulars are true and<br>
+                                correct.
+                            </td>
+                            <td style="width: 50%; text-align: right;">
+                                <div class="bank-details" style="text-align: left; margin-bottom: 20px;">
+                                    <strong>Company's Bank Details</strong><br>
+                                    A/c Holder's Name : Renuka Enterprises<br>
+                                    Bank Name : BANK OF INDIA<br>
+                                    A/c No. : 010330110000095<br>
+                                    Branch & IFS Code : BKID0000103
+                                </div>
+                                for Renuka Enterprises, (from 1.4.2023)<br><br><br>
+                                Authorised Signatory
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div class="footer-text">This is a Computer Generated Invoice</div>
 </body>
 </html>
