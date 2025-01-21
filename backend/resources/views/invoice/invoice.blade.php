@@ -68,7 +68,7 @@
                 UDYAM : UDYAM-MH-33-0026297 (Micro)<br>
                 GSTIN/UIN: 27APCPM1801Q1ZQ<br>
                 State Name : Maharashtra, Code : 27<br>
-                Contact : 0251-2480403,9870201624<br>
+                Contact : 0251-2480403/9870201624<br>
                 E-Mail : sales.renukaenter@rediffmail.com
             </td>
             <td style="width: 40%;" class="border-cell">
@@ -113,26 +113,26 @@
         <tr>
             <td class="border-cell">
                 <div style="margin-bottom: 15px;">
-                    <strong>Consignee (Ship to)</strong><br>
-                    Electro Trade Link (Dr)<br>
-                    1-2/ 501, Jaydeep Park, Main Road, Majiwada<br>
-                    Gaon, Thane West<br>
-                    GSTIN/UIN : 27ADGPM7595P1ZI<br>
-                    State Name : Maharashtra, Code : 27<br>
-                    Contact person : Mr. Avinash Kamble<br>
-                    Contact : 9870201624
+                    <strong>Consignee (Ship to) </strong><br>
+                    {{$leads->contact->client->client}}<br>
+                    {{$leads->contact->client->shipping_street}},{{$leads->contact->client->shipping_area}},{{$leads->contact->client->shipping_city}},
+                     {{$leads->contact->client->shipping_pincode}}<br>
+                    GSTIN : {{$leads->contact->client->gstin}}<br>
+                    State Name : {{$leads->contact->client->state}}<br>
+                    Contact person : {{$leads->contact->contact_person}}<br>
+                    Contact : {{$leads->contact->mobile_1}}
                 </div>
-                <hr style="border-top: 1px solid #000; margin: 10px 0;">
+                <hr style="border-top: 1px solid #000; margin: 20px 0;">
                 <div>
                     <strong>Buyer (Bill to)</strong><br>
-                    Electro Trade Link (Dr)<br>
-                    1-2/ 501, Jaydeep Park, Main Road, Majiwada<br>
-                    Gaon, Thane West<br>
-                    GSTIN/UIN : 27ADGPM7595P1ZI<br>
-                    State Name : Maharashtra, Code : 27<br>
-                    Place of Supply : Maharashtra<br>
-                    Contact person : Mr. Avinash Kamble<br>
-                    Contact : 9870201624
+                    {{$leads->contact->client->client}}<br>
+                    {{$leads->contact->client->shipping_street}},{{$leads->contact->client->shipping_area}},{{$leads->contact->client->shipping_city}},
+                     {{$leads->contact->client->shipping_pincode}}<br>
+                    GSTIN: {{$leads->contact->client->gstin}}<br>
+                    State Name : {{$leads->contact->client->shipping_state}}<br>
+                    Place of Supply : {{$leads->contact->client->shipping_state}}<br>
+                    Contact person :  {{$leads->contact->client->client}}<br>
+                    Contact : {{$leads->contact->client->contact_no}}
                 </div>
             </td>
             <td class="border-cell">
@@ -163,10 +163,12 @@
                             <td style="text-align: center">{{@$product->unit}}</td>
                             <td style="text-align: right">{{@$product->total_taxable_amount}}</td>
                         </tr>
+                        
                         @endforeach
                     @endif
                     <tr>
-                        <td colspan="6" style="text-align: right"><strong>Total</strong></td>
+                        <td colspan="6" style="text-align: right"><strong>Total </strong></td>
+                       
                         <td style="text-align: right">{{@$leads->leadInvoice->amount}}</td>
                     </tr>
                 </table>
@@ -174,20 +176,21 @@
         </tr>
         <tr>
             <td colspan="2" class="border-cell">
-                <div style="text-align: right; margin-bottom: 10px;">E. & O.E</div>
+                <div style="text-align: right; margin-bottom: 10px;"> E. & O.E</div>
                 <div style="margin-top: 10px;">
                     <table style="width: 100%">
                         <tr>
-                            <td style="width: 50%; vertical-align: top;">
-                                Company's PAN : APCPM1801Q<br>
-                                Declaration:<br>
+                            
+                            <td style="width: 50%; vertical-align: bottom;">
+                                <u>Company's PAN</u> : <strong>APCPM1801Q</strong><br><br><br>
+                                <u>Declaration</u>:<br>
                                 We declare that this invoice shows the actual price of<br>
                                 the goods described and that all particulars are true and<br>
                                 correct.
                             </td>
                             <td style="width: 50%; text-align: right;">
                                 <div   style="text-align: left; ">
-                                    <strong>Company's Bank Details</strong><br>
+                                    <strong><u>Company's Bank Details</u></strong><br>
                                     A/c Holder's Name : Renuka Enterprises<br>
                                     Bank Name : BANK OF INDIA<br>
                                     A/c No. : 010330110000095<br>
@@ -195,13 +198,10 @@
                                 </div>
                               
                               
-                                    <div>
+                                    <div style="vertical-align: bottom; ">
                                         for Renuka Enterprises, (from 1.4.2023)<br><br><br>
                                         Authorised Signatory
                                     </div>
-                                
-                                
-                                
                                 
                             </td>
                         </tr>

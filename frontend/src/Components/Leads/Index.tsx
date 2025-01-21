@@ -479,47 +479,9 @@ export default function TableDemo() {
                                         lead.lead_status === "Deal") && (
                                         <AlertQuotation leadId={lead.id} />
                                       )}
-                                      <AlertInvoice leadId={lead.id} />
+
                                       {lead.lead_status === "Deal" && (
-                                        <AlertDialog>
-                                          <AlertDialogTrigger asChild>
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              className="w-full text-sm"
-                                            >
-                                              Deal
-                                            </Button>
-                                          </AlertDialogTrigger>
-                                          <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                              <AlertDialogTitle>
-                                                Are you absolutely sure?
-                                              </AlertDialogTitle>
-                                              <AlertDialogDescription>
-                                                "Are you sure you want to
-                                                download the Invoice PDF?"
-                                              </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                              <AlertDialogCancel>
-                                                Cancel
-                                              </AlertDialogCancel>
-                                              <AlertDialogAction
-                                                onClick={() => {
-                                                  handleGenerateInvoice(
-                                                    lead.id
-                                                  );
-                                                  queryClient.invalidateQueries(
-                                                    "invoices"
-                                                  );
-                                                }}
-                                              >
-                                                Download Invoice
-                                              </AlertDialogAction>
-                                            </AlertDialogFooter>
-                                          </AlertDialogContent>
-                                        </AlertDialog>
+                                        <AlertInvoice leadId={lead.id} />
                                       )}
                                     </DropdownMenuContent>
                                   </DropdownMenu>
