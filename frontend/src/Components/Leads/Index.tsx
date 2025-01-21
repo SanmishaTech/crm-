@@ -73,6 +73,7 @@ import AlertDialogbox from "./AlertBox";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import AlertQuotation from "./AlertQuotation";
+import AlertInvoice from "./AlertInvoice";
 
 // Supplier type
 type Supplier = {
@@ -222,10 +223,10 @@ export default function TableDemo() {
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        
+
         // Open in new tab instead of downloading
-        window.open(url, '_blank');
-        
+        window.open(url, "_blank");
+
         queryClient.invalidateQueries({ queryKey: ["lead"] });
         console.log("Quotation opened in new tab successfully!");
       } else {
@@ -255,10 +256,10 @@ export default function TableDemo() {
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        
+
         // Open in new tab instead of downloading
-        window.open(url, '_blank');
-        
+        window.open(url, "_blank");
+
         queryClient.invalidateQueries({ queryKey: ["lead"] });
         console.log("Invoice opened in new tab successfully!");
       } else {
@@ -478,6 +479,7 @@ export default function TableDemo() {
                                         lead.lead_status === "Deal") && (
                                         <AlertQuotation leadId={lead.id} />
                                       )}
+                                      <AlertInvoice leadId={lead.id} />
                                       {lead.lead_status === "Deal" && (
                                         <AlertDialog>
                                           <AlertDialogTrigger asChild>

@@ -40,13 +40,21 @@ return new class extends Migration
             $table->decimal("total_taxable",10,2)->nullable(); 
             $table->decimal("total_gst",10,2)->nullable(); 
             $table->decimal("total_amount_with_gst",10,2)->nullable(); 
-            //
+            //quotation
             $table->date("quotation_date")->nullable();
             $table->string("quotation_number")->nullable(); 
-
             $table->string("terms")->nullable(); 
             $table->unsignedBigInteger("quotation_version")->default(0); 
+            //invoice
+            $table->string("invoice_number")->nullable();
+            $table->string("invoice_date")->nullable();
 
+            $table->string("mode_of_payment")->nullable();
+            $table->string("ref_no")->nullable();
+            $table->string("other_ref")->nullable();
+            $table->string("buyer_order_no")->nullable();
+            $table->string("buyers_date")->nullable();
+            $table->string("invoice_terms")->nullable();
 
             $table->timestamps();
         });

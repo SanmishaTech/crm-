@@ -50,6 +50,10 @@
             text-align: center;
             margin-top: 5px;
         }
+        .line{
+            border-bottom: 1px solid #000;
+
+        }
     </style>
 </head>
 <body>
@@ -70,37 +74,39 @@
             <td style="width: 40%;" class="border-cell">
                 <table style="width: 100%">
                     <tr>
-                        <td>Invoice No.</td>
-                        <td>RE/138/24-25</td>
+                        <td class="line">Invoice No.</td>
+                        <td class="line">{{@$leads->invoice_number}}</td>
+                    </tr>
+                    
+
+                    <tr>
+                        <td class="line">Dated</td>
+                        <td class="line">{{ @$leads->quotation_date ? \Carbon\Carbon::parse($leads->quotation_date)->format('d-m-Y') : 'N/A' }}</td>
+                    </tr>
+                    
+                    
+                    
+                    <tr>
+                        <td class="line">Mode/Terms of Payment</td>
+                        <td class="line">{{@$leads->mode_of_payment}}</td>
+                    </tr>
+                    <tr>
+                        <td class="line">Reference No. & Date</td>
+                        <td class="line">{{@$leads->ref_no}}</td>
+                    </tr>
+                    <tr>
+                        <td class="line">Other References</td>
+                        <td class="line">{{@$leads->other_ref}}</td>
+                    </tr>
+                    <tr>
+                        <td class="line">Buyer's Order No.</td>
+                        <td class="line">{{@$leads->buyer_order_no}}</td>
                     </tr>
                     <tr>
                         <td>Dated</td>
-                        <td>18-Jan-25</td>
+                        <td>{{@$leads->buyers_date}}</td>
                     </tr>
-                    <tr>
-                        <td>Mode/Terms of Payment</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Reference No. & Date</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Other References</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Buyer's Order No.</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Dated</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Terms of Delivery</td>
-                        <td></td>
-                    </tr>
+                     
                 </table>
             </td>
         </tr>
@@ -131,11 +137,7 @@
             </td>
             <td class="border-cell">
                 <strong>Terms and Conditions:</strong><br>
-                1. Goods once sold will not be taken back.<br>
-                2. Interest @18% p.a. will be charged if the payment is not made within the stipulated time.<br>
-                3. Subject to Mumbai Jurisdiction.<br>
-                4. Our responsibility ceases once the goods leave our premises.<br>
-                5. Payment should be made by crossed cheque/DD only.
+                {!! nl2br(e($leads->invoice_terms)) !!}
             </td>
         </tr>
         <tr>
@@ -184,15 +186,23 @@
                                 correct.
                             </td>
                             <td style="width: 50%; text-align: right;">
-                                <div class="bank-details" style="text-align: left; margin-bottom: 20px;">
+                                <div   style="text-align: left; ">
                                     <strong>Company's Bank Details</strong><br>
                                     A/c Holder's Name : Renuka Enterprises<br>
                                     Bank Name : BANK OF INDIA<br>
                                     A/c No. : 010330110000095<br>
                                     Branch & IFS Code : BKID0000103
                                 </div>
-                                for Renuka Enterprises, (from 1.4.2023)<br><br><br>
-                                Authorised Signatory
+                              
+                              
+                                    <div>
+                                        for Renuka Enterprises, (from 1.4.2023)<br><br><br>
+                                        Authorised Signatory
+                                    </div>
+                                
+                                
+                                
+                                
                             </td>
                         </tr>
                     </table>

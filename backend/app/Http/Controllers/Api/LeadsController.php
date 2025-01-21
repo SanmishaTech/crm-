@@ -499,7 +499,7 @@ class LeadsController extends BaseController
 
     }
 
-    public function generateInvoice(string $id)
+    public function generateInvoice(Request $request,string $id)
     {
         $leadStatus = config('data.lead_status.Deal');
 
@@ -594,6 +594,17 @@ class LeadsController extends BaseController
             $ltpProduct->last_traded_price = $product['rate'];
             $ltpProduct->save();
         }
+        $leads->invoice_number = $request->input("invoice_number");
+        $leads->mode_of_payment = $request->input("mode_of_payment");
+        $leads->ref_no = $request->input("ref_no");
+        $leads->other_ref = $request->input("other_ref");
+        $leads->buyer_order_no = $request->input("buyer_order_no");
+        $leads->buyers_date = $request->input("buyers_date");
+        $leads->invoice_terms = $request->input("invoice_terms");
+        if(!$leads->invoice_date){
+            $leads->invoice_date = now()->format("d-m-Y");
+        }
+
         $invoice->invoiceDetails()->saveMany($invoiceDetails);
         // foreach ($stockLedgerDetails as $stockLedger) {
         //     $stockLedger->save();
