@@ -220,7 +220,7 @@
                                 </div>
 
                                     <div style="vertical-align: bottom; ">
-                                        for Renuka Enterprises, (from 1.4.2023) 
+                                        for Renuka Enterprises, (from 1.4.2023) <br><br><br>
                                         Authorised Signatory
                                     </div>
  
