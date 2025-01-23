@@ -60,6 +60,12 @@ type Contacts = {
   mobile_1: string;
   email: string;
   client: string;
+  street_address: string;
+  area: string;
+  city: string;
+  state: string;
+  pincode: string;
+  country: string;
 };
 
 // Form Validation Schema
@@ -69,6 +75,12 @@ const formSchema = z.object({
   mobile_1: z.string().optional(),
   email: z.string().optional(),
   client_id: z.string().optional(),
+  street_address: z.string().optional(),
+  area: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  pincode: z.string().optional(),
+  country: z.string().optional(),
 });
 
 const AddContacts = ({ fetchContacts }) => {
@@ -87,6 +99,12 @@ const AddContacts = ({ fetchContacts }) => {
       client_id: "",
       mobile_1: "",
       email: "",
+      street_address: "",
+      area: "",
+      city: "",
+      state: "",
+      pincode: "",
+      country: "",
     },
   });
 
@@ -180,17 +198,15 @@ const AddContacts = ({ fetchContacts }) => {
         <DialogTrigger asChild>
           <Button
             variant="ghost"
-            className="h-12 bg-gray-300 text-black"
+            className="h-10 bg-gray-300 text-black"
             onClick={handleDialogOpen}
           >
             Add Contacts
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px] ">
+        <DialogContent className="sm:max-w-[425px]  ">
           <DialogHeader>
-            <DialogTitle className="text-center   mb-4">
-              Add Contacts
-            </DialogTitle>
+            <DialogTitle className="text-center mb-2">Add Contacts</DialogTitle>{" "}
           </DialogHeader>
           <Form {...form}>
             <form
@@ -201,42 +217,44 @@ const AddContacts = ({ fetchContacts }) => {
               }}
               className=""
             >
-              <div className="space-y-5">
-                <FormField
-                  control={form.control}
-                  name="contact_person"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col space-y-2">
-                      <FormLabel className="w-40">
-                        Contact Name: <span style={{ color: "red" }}>*</span>
-                      </FormLabel>{" "}
-                      <FormControl className="flex-1">
-                        <Input placeholder="Enter Contact Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="mobile_1"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contact Number:</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Contact Number "
-                          {...field}
-                          type="text"
-                          inputMode="numeric"
-                          pattern="\d{10}"
-                          maxLength={10}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <div className="space-y-5 ">
+                <div className="flex flex-grid col-2 space-x-2">
+                  <FormField
+                    control={form.control}
+                    name="contact_person"
+                    render={({ field }) => (
+                      <FormItem className="">
+                        <FormLabel className="w-40">
+                          Contact Name: <span style={{ color: "red" }}>*</span>
+                        </FormLabel>{" "}
+                        <FormControl className="flex-1">
+                          <Input placeholder="Enter Contact Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="mobile_1"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Number:</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter Contact Number "
+                            {...field}
+                            type="text"
+                            inputMode="numeric"
+                            pattern="\d{10}"
+                            maxLength={10}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="email"
@@ -250,7 +268,8 @@ const AddContacts = ({ fetchContacts }) => {
                     </FormItem>
                   )}
                 />
-                <div className="flex items-center space-x-2">
+
+                <div className=" space-x-2">
                   <input
                     type="checkbox"
                     id="custom-client"
@@ -261,22 +280,128 @@ const AddContacts = ({ fetchContacts }) => {
                     Create New Client
                   </label>
                 </div>
+
                 {isCustomClient ? (
-                  <FormField
-                    control={form.control}
-                    name="client"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-2">
-                        <FormLabel className="w-40">
-                          Client Name: <span style={{ color: "red" }}>*</span>
-                        </FormLabel>
-                        <FormControl className="flex-1">
-                          <Input placeholder="Enter Client Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="client"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col space-y-2">
+                          <FormLabel className="w-40">Client Name:</FormLabel>
+                          <FormControl className="flex-1">
+                            <Input placeholder="Enter Client Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="flex flex-grid col-2 space-x-2">
+                      <FormField
+                        control={form.control}
+                        name="street_address"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col space-y-2">
+                            <FormLabel className="w-40">
+                              Street Address:
+                            </FormLabel>
+                            <FormControl className="flex-1">
+                              <Input
+                                placeholder="Enter Client Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="area"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col space-y-2">
+                            <FormLabel className="w-40">
+                              Area: <span style={{ color: "red" }}>*</span>
+                            </FormLabel>
+                            <FormControl className="flex-1">
+                              <Input
+                                placeholder="Enter Client Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex flex-grid col-2 space-x-2">
+                      <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col space-y-2">
+                            <FormLabel className="w-40">City:</FormLabel>
+                            <FormControl className="flex-1">
+                              <Input
+                                placeholder="Enter Client Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="state"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col space-y-2">
+                            <FormLabel className="w-40">
+                              State: <span style={{ color: "red" }}>*</span>
+                            </FormLabel>
+                            <FormControl className="flex-1">
+                              <Input
+                                placeholder="Enter Client Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex flex-grid col-2 space-x-2">
+                      <FormField
+                        control={form.control}
+                        name="pincode"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col space-y-2">
+                            <FormLabel className="w-40">Pincode:</FormLabel>
+                            <FormControl className="flex-1">
+                              <Input
+                                placeholder="Enter Client Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="country"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col space-y-2">
+                            <FormLabel className="w-40">Country:</FormLabel>
+                            <FormControl className="flex-1">
+                              <Input placeholder="Enter Country" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </>
                 ) : (
                   <FormField
                     control={form.control}
@@ -317,7 +442,7 @@ const AddContacts = ({ fetchContacts }) => {
                 )}
               </div>
 
-              <DialogFooter className="mt-5">
+              <DialogFooter className="mt-3">
                 <Button type="submit">Save changes</Button>
               </DialogFooter>
             </form>

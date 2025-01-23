@@ -99,32 +99,17 @@ const AddContacts = ({ fetchContacts }) => {
   };
 
   type FormValues = z.infer<typeof FormSchema>;
-  const storeContactData = usePostData({
+  const storeSupplierData = usePostData({
     endpoint: "/api/suppliers",
     queryKey: ["suppliers"],
     params: {
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+        queryClient.invalidateQueries({ queryKey: ["suppliers", id] });
         form.reset();
         handleDialogClose();
         fetchContacts();
       },
-      // onError: (error) => {
-      //   if (error.response && error.response.data.errors) {
-      //     const serverErrors = error.response.data.errors;
-      //     // Assuming the error is for the product_category field
-      //     if (serverErrors.product_category) {
-      //       form.setError("product_category", {
-      //         type: "manual",
-      //         message: serverErrors.product_category[0], // The error message from the server
-      //       });
-      //     } else {
-      //       setError("Failed to add product category"); // For any other errors
-      //     }
-      //   } else {
-      //     setError("Failed to add product category");
-      //   }
-      // },
     },
   });
 
@@ -135,6 +120,8 @@ const AddContacts = ({ fetchContacts }) => {
       retry: 1,
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+        queryClient.invalidateQueries({ queryKey: ["suppliers", id] });
+
         setSuppliers(data.data.Client);
         setLoading(false);
       },
@@ -168,9 +155,9 @@ const AddContacts = ({ fetchContacts }) => {
   });
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    storeContactData.mutate(data);
     Suppliers.mutate(data);
     fetchSuppliers.mutate(data);
+    storeSupplierData.mutate(data);
   };
 
   return (
@@ -236,7 +223,7 @@ const AddContacts = ({ fetchContacts }) => {
                     render={({ field }) => (
                       <FormItem className="flex flex-col space-y-2">
                         <FormLabel className="w-40">
-                          Select Supplier:{" "}
+                          Select Supplier:
                           <span style={{ color: "red" }}>*</span>
                         </FormLabel>
                         <FormControl className="flex-1">

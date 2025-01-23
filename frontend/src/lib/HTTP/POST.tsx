@@ -65,9 +65,10 @@ const usePostData = ({
           } else {
             toast.error(message || "An unknown error occurred.");
           }
-        } else {
-          toast.error("Network error occurred");
         }
+        // else {
+        //   toast.error("Network error occurred");
+        // }
       }),
 
     retry: params.retry ?? 0,

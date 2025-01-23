@@ -536,7 +536,7 @@ class LeadsController extends BaseController
         if(!$invoice){
              $invoice = new Invoice();
              $invoice->invoice_number = $this->generateInvoiceNumber();
-             $invoice->invoice_date = now()->format("Y-m-d");
+            //  $invoice->invoice_date = now()->format("Y-m-d");
              $invoice->client_id = $leads->contact->client->id;
              $invoice->employee_id = $leads->employee_id;
              $invoice->amount = $leads->total_amount_with_gst;
@@ -581,7 +581,7 @@ class LeadsController extends BaseController
 
             $StockLedgerDetails[] = new StockLedger([
                 'product_id' => $product['product_id'],
-                't_date' =>  $invoice->invoice_date,
+                // 't_date' =>  $invoice->invoice_date,
                 // 'received' => $product['rate'],
                 'issued'=> $product['quantity'],
                 'module' => $module,
@@ -601,9 +601,9 @@ class LeadsController extends BaseController
         $leads->buyer_order_no = $request->input("buyer_order_no");
         $leads->buyers_date = $request->input("buyers_date");
         $leads->invoice_terms = $request->input("invoice_terms");
-        if(!$leads->invoice_date){
-            $leads->invoice_date = now()->format("d-m-Y");
-        }
+        // if(!$leads->invoice_date){
+        //     $leads->invoice_date = now()->format("d-m-Y");
+        // }
 
         $invoice->invoiceDetails()->saveMany($invoiceDetails);
         // foreach ($stockLedgerDetails as $stockLedger) {

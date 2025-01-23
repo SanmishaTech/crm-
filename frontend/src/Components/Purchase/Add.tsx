@@ -82,12 +82,7 @@ const FormSchema = z.object({
   supplier: z.any().optional(),
   payment_ref_no: z.string().optional(),
   payment_remarks: z.string().optional(),
-  is_paid: z
-    .number()
-    .refine((val) => val === 0 || val === 1, {
-      message: "is_paid must be 0 or 1",
-    })
-    .optional(),
+  is_paid: z.any().optional(),
   payment_status: z.string().optional(),
   invoice_no: z.string().optional(),
   invoice_date: z.string().optional(),
@@ -521,7 +516,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total CGST.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Invoice Number" {...field} />
+                        <Input placeholder="Total CGST" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -534,7 +529,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total SGST.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Invoice Number" {...field} />
+                        <Input placeholder="Total SGST" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -547,7 +542,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total IGST.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Invoice Number" {...field} />
+                        <Input placeholder="Total IGST" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -560,7 +555,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total Tax Amount.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Invoice Tax Amount" {...field} />
+                        <Input placeholder="Total Tax Amount" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -573,7 +568,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total Amount.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Invoice  Amount" {...field} />
+                        <Input placeholder="Total Amount" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

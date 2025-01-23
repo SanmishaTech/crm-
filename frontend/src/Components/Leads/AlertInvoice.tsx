@@ -30,7 +30,7 @@ import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
   invoice_number: z.string().min(2, {
-    message: "Quotation number must be at least 2 characters.",
+    message: "Invoice number must be at least 2 characters.",
   }),
   mode_of_payment: z.string().optional(),
   ref_no: z.string().optional(),
@@ -107,7 +107,9 @@ const AlertQuotation = ({ leadId }) => {
       // Format the date to dd-mm-yyyy if it exists
       const formattedData = {
         ...data,
-        buyers_date: data.buyers_date ? data.buyers_date.split('-').reverse().join('-') : data.buyers_date
+        buyers_date: data.buyers_date
+          ? data.buyers_date.split("-").reverse().join("-")
+          : data.buyers_date,
       };
 
       const response = await fetch(`/api/generate_invoice/${leadId}`, {
@@ -136,15 +138,15 @@ const AlertQuotation = ({ leadId }) => {
         queryClient.invalidateQueries({ queryKey: ["lead"] });
 
         toast.success(
-          `Quotation for ${data.quotation_number} generated and opened successfully!`
+          `Invoice for ${data.quotation_number} generated and opened successfully!`
         );
       } else {
         const errorData = await response.json();
-        toast.error(errorData.errors?.error || "Failed to generate Quotation.");
+        toast.error(errorData.errors?.error || "Failed to generate Invoice.");
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("An error occurred while generating the quotation.");
+      toast.error("An error occurred while generating the invoice.");
     } finally {
       setIsSubmitting(false);
     }
@@ -167,7 +169,7 @@ const AlertQuotation = ({ leadId }) => {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Are you sure you want to generate or view the Quotation?
+              Are you sure you want to generate or view the Invoice?
             </AlertDialogTitle>
           </AlertDialogHeader>
           <Form {...form}>
@@ -178,10 +180,10 @@ const AlertQuotation = ({ leadId }) => {
                   name="invoice_number"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Quotation Number</FormLabel>
+                      <FormLabel>Invoice Number</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter Quotation Number"
+                          placeholder="Enter Invoice Number"
                           {...field}
                           disabled={isSubmitting}
                           className="w-full"
@@ -274,11 +276,11 @@ const AlertQuotation = ({ leadId }) => {
                     <FormItem>
                       <FormLabel>Buyers</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="date" 
-                          {...field} 
+                        <Input
+                          type="date"
+                          {...field}
                           disabled={isSubmitting}
-                          className="w-full" 
+                          className="w-full"
                         />
                       </FormControl>
                       <FormMessage />
@@ -294,7 +296,7 @@ const AlertQuotation = ({ leadId }) => {
                     <FormLabel>Terms & Conditions</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Terms and Conditions of the Quotation"
+                        placeholder="Terms and Conditions of the Invoice"
                         className="resize-none w-full"
                         rows={7}
                         {...field}
@@ -306,18 +308,18 @@ const AlertQuotation = ({ leadId }) => {
               />
 
               <AlertDialogFooter className="flex flex-col sm:flex-row gap-2">
-                <AlertDialogCancel 
+                <AlertDialogCancel
                   disabled={isSubmitting}
                   className="w-full sm:w-auto"
                 >
                   Cancel
                 </AlertDialogCancel>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSubmitting}
                   className="w-full sm:w-auto"
                 >
-                  {isSubmitting ? "Viewing Quotation..." : "View Quotation"}
+                  {isSubmitting ? "Viewing Invoice..." : "View Invoice"}
                 </Button>
               </AlertDialogFooter>
             </form>

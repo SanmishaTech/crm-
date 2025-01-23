@@ -347,9 +347,9 @@ export default function EditLeadPage() {
         </div>
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
-            <h2 className="text-2xl font-semibold">Lead Edit Form</h2>
+            <h2 className="text-2xl font-semibold"> View Purchase </h2>
             <p className="text-xs mb-9 text-muted-foreground">
-              Update the Purchase details.
+              View your Purchase details.
             </p>
           </div>
         </div>
