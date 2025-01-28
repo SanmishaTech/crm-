@@ -18,7 +18,6 @@ class ProductResource extends JsonResource
             'id' => $this->id,
             'product_category_id' => $this->product_category_id,
             'product_category' => $this->productCategory ? $this->productCategory->product_category : "" ,
-
             'supplier_id' => $this->supplier_id,
             'product' => $this->product,
             'gst_rate' => $this->gst_rate,

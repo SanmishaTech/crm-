@@ -21,11 +21,11 @@ return new class extends Migration
             $table->string("payment_status",20)->nullable();
             $table->string("invoice_no",100)->nullable();
             $table->date("invoice_date")->nullable();
-            $table->decimal('total_cgst', 10, 2)->nullable();            //amount not %
+            $table->decimal('total_cgst', 10, 2)->nullable();           
             $table->decimal('total_sgst', 10, 2)->nullable();
             $table->decimal('total_igst', 10, 2)->nullable(); 
-            $table->decimal('total_tax_amount', 10, 2)->nullable();      //1500
-            $table->decimal("total_amount",10,2)->nullable();            //35000
+            $table->decimal('total_tax_amount', 10, 2)->nullable();       
+            $table->decimal("total_amount",10,2)->nullable();             
             $table->timestamps();
         });
     }

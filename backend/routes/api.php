@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\ClientsController;
+use App\Http\Controllers\Api\ReplaceController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\InvoicesController;
 use App\Http\Controllers\Api\ProductsController;
@@ -58,5 +59,10 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/lead_attachments/{files}', [LeadsController::class, 'showLeadAttachment'])->name("leads.lead_attachment");
    Route::get('/invoices/{id}', [InvoicesController::class, 'show'])->name("invoices.show");
    Route::put('/invoices/{id}', [InvoicesController::class, 'update'])->name("invoices.update");
+
+
+   Route::resource('replacements', ReplaceController::class);    
+   Route::get('/all_replacements', [ReplaceController::class, 'allReplaces'])->name("replacements.all");
+
 
 });
