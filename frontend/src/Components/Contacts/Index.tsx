@@ -175,13 +175,19 @@ export default function TableDemo() {
             <TableCaption>A list of your contacts.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead>Contact person</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Department</TableHead>
-                <TableHead>Designation</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Primary Mobile</TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-foreground">
+                  Contact person
+                </TableHead>
+                <TableHead className="text-foreground">Client</TableHead>
+                <TableHead className="text-foreground">Department</TableHead>
+                <TableHead className="text-foreground">Designation</TableHead>
+                <TableHead className="text-foreground">Email</TableHead>
+                <TableHead className="text-foreground">
+                  Primary Mobile
+                </TableHead>
+                <TableHead className="text-foreground text-right">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

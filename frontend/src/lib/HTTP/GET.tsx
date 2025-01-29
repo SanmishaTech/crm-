@@ -38,7 +38,7 @@ const useGetData = ({
   useEffect(() => {
     const newCustomParams: ParamsType = {
       queryKey: params.queryKey,
-      retry: params.retry ?? 5,
+      retry: params.retry ?? 1,
       refetchOnWindowFocus: params.refetchOnWindowFocus ?? true,
       enabled: params.enabled ?? true,
     };

@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
  use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+ use Illuminate\Contracts\Validation\Validator;
+ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateReplaceRequest extends FormRequest
 {
@@ -26,7 +26,7 @@ class UpdateReplaceRequest extends FormRequest
         return [
           'customer_name' => [ 
             'required',
-            'unique:replaces,customer_name,' . $this->route('customer_name'),
+            'unique:replaces,customer_name,' . $this->route('replacement'),
           ],
         ];
     }

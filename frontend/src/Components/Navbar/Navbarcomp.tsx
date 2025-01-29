@@ -201,6 +201,15 @@ const Navbar = () => {
                       Purchase
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
+
+                    <Button
+                      onClick={() => navigate("/replacements")}
+                      variant="ghost"
+                      className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+                    >
+                      Replacements & Repiar
+                    </Button>
+                    <Separator className="w-full justify-center bg-border" />
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -370,7 +379,7 @@ const Navbar = () => {
           <SheetContent>
             <SheetHeader>
               <SheetTitle>Select the Module</SheetTitle>
-              <SheetDescription>Choose the module to navigate</SheetDescription>
+              <SheetDescription>Choose the module</SheetDescription>
             </SheetHeader>
 
             <div className="space-y-0 ">
@@ -453,6 +462,13 @@ const Navbar = () => {
                 className="w-full text-left justify-start"
               >
                 Products
+              </Button>
+              <Button
+                onClick={() => navigate("/replacements")}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Replacements & Repiar
               </Button>
               <Button
                 onClick={() => navigate("/purchase")}

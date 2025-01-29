@@ -1,6 +1,25 @@
-//@ts-nocheck
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import Sidebar, { useSidebar } from "./Sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { MoreHorizontal, Filter } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -11,38 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useGetData } from "@/lib/HTTP/GET";
-import Sidebar, { useSidebar } from "./Sidebar";
-import { useQueryClient } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  File,
-  PlusCircle,
-  Search,
-  Pencil,
-  Trash,
-  MoreHorizontal,
-  ListFilter,
-  Filter,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import {
   Pagination,
   PaginationContent,
@@ -50,16 +38,15 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
-import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { usePostData } from "@/lib/HTTP/DELETE";
-import AlertDialogbox from "./AlertBox";
+import { useGetData } from "@/lib/HTTP/GET";
+import AlertDialogbox from "./Delete";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// Client type
-type Client = {
+type Replacement = {
   id: string;
-  client: string;
+  supplier: string;
   street_address: string;
   area: string;
   city: string;
@@ -67,8 +54,6 @@ type Client = {
   pincode: string;
   country: string;
   gstin: string;
-  contact_no: string;
-  email: string;
 };
 
 type PaginationData = {
@@ -78,9 +63,8 @@ type PaginationData = {
   total: number;
 };
 
-// Form Validation Schema
 const formSchema = z.object({
-  client: z.string().min(2).max(50),
+  supplier: z.string().min(2).max(50),
   street_address: z.string().min(2).max(50),
   area: z.string().min(2).max(50),
   city: z.string().min(2).max(50),
@@ -91,18 +75,13 @@ const formSchema = z.object({
 });
 
 export default function TableDemo() {
-  const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-
+  const [currentPage, setCurrentPage] = useState(1);
   const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  // Pagination functions
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const totalPages = pagination?.last_page || 1;
-  const [currentPage, setCurrentPage] = useState(1);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -121,55 +100,27 @@ export default function TableDemo() {
     },
   });
 
-  const { data: ClientsData } = useGetData({
-    endpoint: `/api/clients?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
+  const { data: Sup } = useGetData({
+    endpoint: `/api/replacements?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
     params: {
-      queryKey: ["clients", searchTerm, currentPage],
+      queryKey: ["replacements", searchTerm, currentPage],
       retry: 1,
 
       onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["clients"] });
-
-        setClients(data?.data?.Client);
         setPagination(data?.data?.pagination);
         setLoading(false);
       },
       onError: (error) => {
-        if (error.message && error.message.includes("duplicate client")) {
-          toast.error("Client name is duplicated. Please use a unique name.");
+        if (error.message && error.message.includes("Duplicate Replacements")) {
+          toast.error(
+            "Replacements name is Duplicated. Please use a unique name."
+          );
         } else {
-          toast.error("Failed to fetch client data. Please try again.");
+          toast.error("Failed to fetch supplier data. Please try again.");
         }
       },
     },
   });
-
-  // // Fetch Client
-  // useEffect(() => {
-  //   axios
-  //     .get("/api/clients", {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: "Bearer " + localStorage.getItem("token"),
-  //       },
-  //       params: {
-  //         page: currentPage,
-  //         limit: itemsPerPage,
-  //         search: searchTerm,
-  //       },
-  //     })
-  //     .then((response) => {
-  //       setClients(response.data.data.Client);
-  //       setPagination(response.data.data.pagination);
-  //       setLoading(false);
-  //     })
-  //     .catch(() => {
-  //       setError("Failed to load data");
-  //       setLoading(false);
-  //     });
-  // }, [currentPage, itemsPerPage, searchTerm]);
-
-  // Sorting function
 
   if (loading) {
     return (
@@ -221,13 +172,16 @@ export default function TableDemo() {
                       <Skeleton className="h-4 w-24" />
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-24" />
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-40" />
+                      <Skeleton className="h-4 w-24" />
                     </TableCell>
                     <TableCell>
-                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-4 w-24" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-24" />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -247,112 +201,105 @@ export default function TableDemo() {
   }
 
   return (
-    <div className="flex ">
-      <Sidebar />
-      <div className="p-6 w-full  bg-accent/60 ml-4 mr-8 rounded-lg shadow-lg ">
-        <div className="p-2  ">
-          <div className="flex justify-between items-center ">
-            <h3 className="text-lg  font-semibold mx-auto">Clients List</h3>
+    <div className="flex flex-col md:flex-row min-h-screen  w-full ">
+      <Sidebar className="md:sticky md:top-0 md:h-screen" />
+      <div className="flex-1 p-2 md:p-6 w-full bg-accent/60 md:ml-4 mr-8 rounded-lg shadow-lg">
+        <div className="p-2">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold mx-auto text-foreground">
+              Replacements & Repairs List
+            </h3>
           </div>
         </div>
-        <div className="flex justify-between items-center py-1 space-x-3   ">
-          <div className="ml-4 mt-2">
+        <div className="flex flex-col md:flex-row justify-between items-center py-1 space-y-2 md:space-y-0 md:space-x-3 ">
+          {/* <div className="w-full md:w-auto flex items-center space-x-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Filter onClick={toggle} className=" h-5  " />
+                  <Filter
+                    onClick={toggle}
+                    className="h-5 text-foreground hover:text-foreground/80"
+                  />
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="bg-popover text-popover-foreground">
                   <p>Filter</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div>
+          </div> */}
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
-                placeholder="Search Clients..."
+                className="bg-background text-foreground border-border"
+                placeholder="Search Replacements..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             ) : null}
           </div>
+
           <div className="flex space-x-2">
-            <Button variant="outline" onClick={() => navigate("/clients/add")}>
-              Add Client
+            <Button
+              variant="outline"
+              onClick={() => navigate("/replacements/add")}
+              className="text-foreground hover:text-foreground/80 hover:bg-accent"
+            >
+              Add Replacement
             </Button>
           </div>
         </div>
 
-        <div className="panel p-4 rounded-md bg-card">
-          {/* Table Start */}
+        <div className="p-4 rounded-md bg-card">
           <Table>
-            <TableCaption>A list of your clients.</TableCaption>
+            <TableCaption className="text-muted-foreground">
+              A list of your replacements.
+            </TableCaption>
             <TableHeader>
-              <TableRow>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("client")}
-                >
-                  Clients
-                </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("contact_no")}
-                >
-                  Contact Number
-                </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("area")}
-                >
-                  Email
-                </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("city")}
-                >
-                  City
-                </TableHead>
-                <TableHead className="text-foreground text-right">
+              <TableRow className="hover:bg-accent/50">
+                <TableHead className="text-foreground">Customer</TableHead>
+                <TableHead className="text-foreground">Contact</TableHead>
+                <TableHead className="text-foreground">Email</TableHead>
+                <TableHead className="text-foreground">Instrument</TableHead>
+                <TableHead className="text-foreground">Registered</TableHead>
+                <TableHead className="text-right text-foreground">
                   Action
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableFooter></TableFooter>
+            <TableFooter className="bg-muted/50"></TableFooter>
             <TableBody>
-              {ClientsData?.data?.Client?.map((client) => (
-                <TableRow key={client.id}>
-                  <TableCell>{client.client || "N/A"}</TableCell>
-                  <TableCell>{client.contact_no || "N/A"}</TableCell>
-                  <TableCell>{client.email || "N/A"}</TableCell>
-                  <TableCell>{client.city || "N/A"}</TableCell>
-                  <TableCell className="text-right">
-                    {/* <button
-                    onClick={() => navigate(`/clients/edit/${client.id}`)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    Edit
-                  </button>
-                  <AlertDialogbox url={client.id} /> */}
+              {Sup?.data?.Replaces?.map((replacement) => (
+                <TableRow key={replacement.id} className="hover:bg-accent/50">
+                  <TableCell className="text-foreground">
+                    {replacement.customer_name}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {replacement.customer_mobile}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {replacement.customer_email}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {replacement.instrument}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {replacement.registered ? "Yes" : "No"}
+                  </TableCell>
 
-                    {/* <button
-                    onClick={() => handleDelete(client.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Delete
-                  </button> */}
-                    {/*  */}
+                  <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button
+                          variant="ghost"
+                          className="h-8 w-8 p-0 text-foreground hover:text-foreground/80 hover:bg-accent"
+                        >
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="center"
-                        className="w-full flex-col items-center flex justify-center"
+                        className="w-full flex-col items-center flex justify-center bg-popover border-border"
                       >
                         <DropdownMenuLabel className="hover:cursor-default text-foreground">
                           Actions
@@ -361,14 +308,13 @@ export default function TableDemo() {
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            navigate(`/clients/edit/${client.id}`);
+                            navigate(`/replacements/edit/${replacement.id}`);
                           }}
-                          className="w-full text-sm"
+                          className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
                         >
                           Edit
                         </Button>
-                        {/* <DropdownMenuSeparator /> */}
-                        <AlertDialogbox url={client.id} />
+                        <AlertDialogbox url={replacement.id} />
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -376,26 +322,29 @@ export default function TableDemo() {
               ))}
             </TableBody>
           </Table>
-          {/* Table End */}
-          {/* Pagination Start */}
+
           <Pagination>
             <PaginationContent className="flex items-center space-x-4">
-              {/* Previous Button */}
               <PaginationPrevious
+                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
+                  currentPage === 1
+                    ? "cursor-default opacity-50"
+                    : "cursor-pointer"
+                }`}
                 onClick={goToPreviousPage}
-                disabled={currentPage === 1}
               >
                 Previous
               </PaginationPrevious>
 
-              {/* Page Number */}
-              <span className="text-sm">
+              <span className="text-sm text-foreground">
                 Page {currentPage} of {totalPages}
               </span>
-
-              {/* Next Button */}
               <PaginationNext
-                className="hover:pointer"
+                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
+                  currentPage === totalPages
+                    ? "cursor-default opacity-50"
+                    : "cursor-pointer"
+                }`}
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
               >
@@ -403,7 +352,6 @@ export default function TableDemo() {
               </PaginationNext>
             </PaginationContent>
           </Pagination>
-          {/* Pagination End */}
         </div>
       </div>
     </div>

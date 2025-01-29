@@ -272,17 +272,33 @@ export default function TableDemo() {
             <TableCaption>A list of your products.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead onClick={() => handleSort("product")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("product")}
+                >
                   Product
                 </TableHead>
-                <TableHead onClick={() => handleSort("product")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("product")}
+                >
                   Product Categories
                 </TableHead>
-                <TableHead onClick={() => handleSort("model")}>Model</TableHead>
-                <TableHead onClick={() => handleSort("Manufacturer")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("model")}
+                >
+                  Model
+                </TableHead>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("Manufacturer")}
+                >
                   Manufacturer
                 </TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-foreground text-right">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>

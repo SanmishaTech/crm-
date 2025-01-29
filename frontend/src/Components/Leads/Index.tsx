@@ -328,30 +328,47 @@ export default function TableDemo() {
             <TableCaption>A list of your leads.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead onClick={() => handleSort("contact_id")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("contact_id")}
+                >
                   Contact
                 </TableHead>
                 {/* <TableHead onClick={() => handleSort("lead_source")}>
                   Lead Source
                 </TableHead> */}
-                <TableHead onClick={() => handleSort("follow_up_type")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("follow_up_type")}
+                >
                   Products
                 </TableHead>
 
-                <TableHead onClick={() => handleSort("follow_up_type")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("follow_up_type")}
+                >
                   Next Follow Up Date
                 </TableHead>
-                <TableHead onClick={() => handleSort("follow_up_type")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("follow_up_type")}
+                >
                   Follow Up Type
                 </TableHead>
                 {/* <TableHead onClick={() => handleSort("follow_up_type")}>
                  Follow Up Type
                 </TableHead> */}
 
-                <TableHead onClick={() => handleSort("lead_status")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("lead_status")}
+                >
                   Lead Status
                 </TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-foreground text-right">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>

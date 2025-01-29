@@ -121,8 +121,8 @@ export default function TableDemo() {
             <h3 className="text-lg  font-semibold mx-auto">Employees List</h3>
           </div>
         </div>
-        <div className="flex justify-between items-center py-1 space-x-3 mr-4  ">
-          <div className="ml-4 mt-2">
+        <div className="flex justify-between items-center py-1 space-x-3 mr-  ">
+          {/* <div className="ml-4 mt-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -133,7 +133,7 @@ export default function TableDemo() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div>
+          </div> */}
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
@@ -144,7 +144,7 @@ export default function TableDemo() {
             ) : null}
           </div>
 
-          <div className="flex space-x-2">
+          <div className="flex ">
             <Button
               variant="outline"
               onClick={() => navigate("/employees/add")}
@@ -160,23 +160,45 @@ export default function TableDemo() {
             <TableCaption>A list of your employees.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead onClick={() => handleSort("name")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("name")}
+                >
                   Employee Name
                 </TableHead>
-                <TableHead onClick={() => handleSort("designation")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("designation")}
+                >
                   Designation
                 </TableHead>
-                <TableHead onClick={() => handleSort("department_id")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("department_id")}
+                >
                   Department
                 </TableHead>
-                <TableHead onClick={() => handleSort("email")}>Email</TableHead>
-                <TableHead onClick={() => handleSort("mobile")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("email")}
+                >
+                  Email
+                </TableHead>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("mobile")}
+                >
                   Contact Number
                 </TableHead>
-                <TableHead onClick={() => handleSort("mobile")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("mobile")}
+                >
                   Status
                 </TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-foreground text-right">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>

@@ -206,22 +206,39 @@ export default function TableDemo() {
             <TableCaption>A list of your Invoices.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead onClick={() => handleSort("invoice_number")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("invoice_number")}
+                >
                   Invoice Number
                 </TableHead>
-                <TableHead onClick={() => handleSort("products")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("products")}
+                >
                   Products
                 </TableHead>
-                <TableHead onClick={() => handleSort("invoice_date")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("invoice_date")}
+                >
                   Invoice Date
                 </TableHead>
-                <TableHead onClick={() => handleSort("amount")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("amount")}
+                >
                   Amount
                 </TableHead>
-                <TableHead onClick={() => handleSort("dispatch_details")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("dispatch_details")}
+                >
                   Dispatch Details
                 </TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-foreground text-right">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>

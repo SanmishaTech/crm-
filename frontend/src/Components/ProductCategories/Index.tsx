@@ -207,7 +207,7 @@ export default function TableDemo() {
     setOpen(true);
   };
 
-  return (  
+  return (
     <div className="flex h-full">
       <div className="p-6 w-full h-full bg-accent/60  ml-5 mr-5 rounded-lg shadow-lg ">
         <div className="flex justify-center items-center   p-3 space-x-2">
@@ -249,10 +249,15 @@ export default function TableDemo() {
             <TableCaption>A list of your Product Categories.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead onClick={() => handleSort("productCategory")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("productCategory")}
+                >
                   Product Categories
                 </TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-foreground text-right">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>

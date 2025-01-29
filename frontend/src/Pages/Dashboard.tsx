@@ -36,6 +36,9 @@ import VendorEdit from "@/Components/Vendors/Edit";
 import Purchase from "@/Components/Purchase/Index";
 import PurchaseAdd from "@/Components/Purchase/Add";
 import PurchaseView from "@/Components/Purchase/View";
+import Replacements from "@/Components/Replacement/Index";
+import ReplacementsADD from "@/Components/Replacement/Add";
+import ReplacementsEDIT from "@/Components/Replacement/Edit";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -122,6 +125,12 @@ const Dashboard = () => {
         {location.pathname === "/purchase" && <Purchase />}
         {location.pathname === "/purchase/add" && <PurchaseAdd />}
         {/\/purchase\/view\/\d+/.test(location.pathname) && <PurchaseView />}
+
+        {location.pathname === "/replacements" && <Replacements />}
+        {location.pathname === "/replacements/add" && <ReplacementsADD />}
+        {/\/replacements\/edit\/\d+/.test(location.pathname) && (
+          <ReplacementsEDIT />
+        )}
       </main>
     </div>
   );

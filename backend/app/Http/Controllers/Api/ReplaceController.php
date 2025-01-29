@@ -65,8 +65,8 @@ class ReplaceController extends BaseController
 
    public function show(string $id):JsonResponse
    {
-    $replaces = Replaces::find($id);
-    if(!replaces){
+    $replaces = Replace::find($id);
+    if(!$replaces){
         return $this->sendError("Replaces not found", ['error' =>'Replaces not found']);
     }
     return  $this->sendResponse(["Replaces" => new ReplaceResource($replaces)], 'Replaces retrived Successfully');
@@ -81,8 +81,7 @@ class ReplaceController extends BaseController
            return $this->sendError("Replaces not found", ['error' => 'Replaces not found']);
        }
    
-       // Update the supplier properties
-        $replaces->date = $request->input("date");
+         $replaces->date = $request->input("date");
         $replaces->customer_name = $request->input("customer_name");
         $replaces->customer_mobile = $request->input("customer_mobile");
         $replaces->customer_email = $request->input("customer_email");
@@ -98,8 +97,7 @@ class ReplaceController extends BaseController
 
         $replaces->registered = $request->input('registered');
    
-       // Save the updated supplier
-       $replaces->save();
+        $replaces->save();
    
        return $this->sendResponse(["Replaces" => new ReplaceResource($replaces)], 'Replaces Updated Successfully');
    }

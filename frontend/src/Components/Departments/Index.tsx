@@ -203,10 +203,15 @@ export default function TableDemo() {
             <TableCaption>A list of your departments.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead onClick={() => handleSort("department")}>
+                <TableHead
+                  className="text-foreground"
+                  onClick={() => handleSort("department")}
+                >
                   Departments
                 </TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-foreground text-right">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>
