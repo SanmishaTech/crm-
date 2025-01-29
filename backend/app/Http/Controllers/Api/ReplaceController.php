@@ -6,6 +6,7 @@ use App\Models\Replace;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReplaceRequest;
 use App\Http\Resources\ReplaceResource;
 use App\Http\Requests\StoreReplaceRequest;
 use App\Http\Requests\UpdateReplaceRequest;
@@ -38,7 +39,7 @@ class ReplaceController extends BaseController
    }
 
 
-   public function store(StoreReplaceRequest $request):JsonResponse
+   public function store(ReplaceRequest $request):JsonResponse
    {
     $replaces = new Replace();
     $replaces->date = $request->input("date");
@@ -72,7 +73,7 @@ class ReplaceController extends BaseController
     return  $this->sendResponse(["Replaces" => new ReplaceResource($replaces)], 'Replaces retrived Successfully');
    }
 
-   public function update(UpdateReplaceRequest $request, string $id): JsonResponse
+   public function update(ReplaceRequest $request, string $id): JsonResponse
    {
        // Find the existing supplier
        $replaces = Replace::find($id);
