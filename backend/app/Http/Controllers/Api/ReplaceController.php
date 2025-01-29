@@ -22,7 +22,7 @@ class ReplaceController extends BaseController
         $searchTerm = $request->query('search');
 
         $query->where(function($query) use ($searchTerm){
-            $query->where('replaces', 'like', '%' . $searchTerm . '%');
+            $query->where('customer_name', 'like', '%' . $searchTerm . '%');
         });
     }
      

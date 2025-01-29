@@ -73,18 +73,6 @@ type PaginationData = {
   total: number;
 };
 
-// // Form Validation Schema
-// const formSchema = z.object({
-//   supplier: z.string().min(2).max(50),
-//   street_address: z.string().min(2).max(50),
-//   area: z.string().min(2).max(50),
-//   city: z.string().min(2).max(50),
-//   state: z.string().min(2).max(50),
-//   pincode: z.string().min(2).max(50),
-//   country: z.string().min(2).max(50),
-//   gstin: z.string().min(2).max(50),
-// });
-
 export default function TableDemo() {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,14 +93,8 @@ export default function TableDemo() {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
-  // const form = useForm<z.infer<typeof formSchema>>({
-  //   resolver: zodResolver(formSchema),
-  //   defaultValues: {
-  //     supplier: "",
-  //   },
-  // });
 
-  // Fetch Suppliers
+  // Fetch Invoice
   const { data: Invo } = useGetData({
     endpoint: `/api/invoices?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
     params: {
@@ -131,29 +113,23 @@ export default function TableDemo() {
   });
 
   const handleViewInvoice = async (fileName) => {
-    const token = localStorage.getItem("token"); // Assuming the token is stored in localStorage
+    const token = localStorage.getItem("token");
 
     try {
       const response = await axios.get(`/api/show_invoice/${fileName}`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          Authorization: `Bearer ${token}`,
         },
-        responseType: "blob", // Make sure the response is a blob (for PDF files)
+        responseType: "blob",
       });
-      // Create a blob URL from the response
       const blob = new Blob([response.data], { type: "application/pdf" });
-
-      // Create a link element to trigger the opening of the PDF in a new tab
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.target = "_blank"; // Open in a new tab
-      link.click(); // Programmatically click the link to open the PDF in the new tab
-
-      // Cleanup by revoking the object URL after use
+      link.target = "_blank";
+      link.click();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      // console.log("Error fetching the invoice:", error.response.data);
       toast.error("Invoice Not Found. Generate invoice again");
     }
   };

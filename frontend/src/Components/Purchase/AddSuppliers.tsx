@@ -55,11 +55,9 @@ import { useGetData } from "@/lib/HTTP/GET";
 // Supplier type
 type Contacts = {
   id: string;
-  contact_person: string;
-  client_id: string;
+  supplier: string;
   mobile_1: string;
   email: string;
-  client: string;
 };
 
 // Form Validation Schema
@@ -72,19 +70,14 @@ const formSchema = z.object({
 });
 
 const AddContacts = ({ fetchContacts }) => {
-  const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false); // Manage the dialog state
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false); // To handle loading state
-  const [suppliers, setSuppliers] = useState<any[]>([]); // State to store fetched clients
-  const [isCustomClient, setIsCustomClient] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      contact_person: "",
-      client: "",
-      client_id: "",
+      supplier: "",
       mobile_1: "",
       email: "",
     },
@@ -99,7 +92,7 @@ const AddContacts = ({ fetchContacts }) => {
   };
 
   type FormValues = z.infer<typeof FormSchema>;
-  const storeSupplierData = usePostData({
+  const SupplierData = usePostData({
     endpoint: "/api/suppliers",
     queryKey: ["suppliers"],
     params: {
@@ -113,51 +106,8 @@ const AddContacts = ({ fetchContacts }) => {
     },
   });
 
-  const { data: Suppliers } = usePostData({
-    endpoint: `/api/suppliers`,
-    params: {
-      queryKey: ["suppliers"],
-      retry: 1,
-      onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["suppliers"] });
-        queryClient.invalidateQueries({ queryKey: ["suppliers", id] });
-
-        setSuppliers(data.data.Client);
-        setLoading(false);
-      },
-      onError: (error) => {
-        if (error.message && error.message.includes("duplicate client")) {
-          toast.error("Client name is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to fetch client data. Please try again.");
-        }
-      },
-    },
-  });
-  const { data: fetchSuppliers } = useGetData({
-    endpoint: `/api/all_suppliers`,
-    params: {
-      queryKey: ["suppliers"],
-      retry: 1,
-      onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["suppliers"] });
-        setSuppliers(data.data.Suppliers);
-        setLoading(false);
-      },
-      onError: (error) => {
-        if (error.message && error.message.includes("duplicate client")) {
-          toast.error("Suppliers is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to fetch Suppliers data. Please try again.");
-        }
-      },
-    },
-  });
-
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    Suppliers.mutate(data);
-    fetchSuppliers.mutate(data);
-    storeSupplierData.mutate(data);
+    SupplierData.mutate(data);
   };
 
   return (
@@ -170,91 +120,41 @@ const AddContacts = ({ fetchContacts }) => {
             className="h-12 bg-gray-300 text-black"
             onClick={handleDialogOpen}
           >
-            Add Contacts
+            Add Supplier
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px] ">
           <DialogHeader>
             <DialogTitle className="text-center   mb-4">
-              Add Contacts
+              Add Supplier
             </DialogTitle>
           </DialogHeader>
           <Form {...form}>
+            {/* <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6"> */}
+
             <form
-              // onSubmit={form.handleSubmit(onSubmit)}
               onSubmit={(e) => {
-                e.stopPropagation(); // Prevent event bubbling to parent form
-                form.handleSubmit(onSubmit)(e); // Only handle the category form submit
+                e.stopPropagation();
+                form.handleSubmit(onSubmit)(e);
               }}
               className=""
             >
               <div className="space-y-5">
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="custom-client"
-                    checked={isCustomClient}
-                    onChange={() => setIsCustomClient(!isCustomClient)}
-                  />
-                  <label htmlFor="custom-client" className="cursor-pointer">
-                    Create New Client
-                  </label>
-                </div>
-                {isCustomClient ? (
-                  <FormField
-                    control={form.control}
-                    name="supplier"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-2">
-                        <FormLabel className="w-40">
-                          Supplier Name: <span style={{ color: "red" }}>*</span>
-                        </FormLabel>
-                        <FormControl className="flex-1">
-                          <Input placeholder="Enter Client Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                ) : (
-                  <FormField
-                    control={form.control}
-                    name="supplier_id"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col space-y-2">
-                        <FormLabel className="w-40">
-                          Select Supplier:
-                          <span style={{ color: "red" }}>*</span>
-                        </FormLabel>
-                        <FormControl className="flex-1">
-                          <Select
-                            value={String(field.value)}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger className="">
-                              <SelectValue placeholder="Select Supplier" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {loading ? (
-                                <SelectItem disabled>Loading...</SelectItem>
-                              ) : (
-                                suppliers?.map((supplier) => (
-                                  <SelectItem
-                                    key={supplier.id}
-                                    value={String(supplier.id)}
-                                  >
-                                    {supplier.supplier}
-                                  </SelectItem>
-                                ))
-                              )}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
+                <FormField
+                  control={form.control}
+                  name="supplier"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col space-y-2">
+                      <FormLabel className="w-40">
+                        Supplier Name: <span style={{ color: "red" }}>*</span>
+                      </FormLabel>
+                      <FormControl className="flex-1">
+                        <Input placeholder="Enter Client Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}

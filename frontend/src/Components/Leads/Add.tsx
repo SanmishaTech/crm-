@@ -242,7 +242,7 @@ export default function InputForm() {
             }))
           );
         } else {
-          toast.error("No products available.");
+          toast.info("No products available.");
         }
       })
       .catch((err) => {

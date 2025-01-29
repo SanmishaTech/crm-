@@ -256,7 +256,7 @@ const AlertQuotation = ({ leadId }) => {
                   name="buyer_order_no"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Buyers Order Number</FormLabel>
+                      <FormLabel>Buyer's Order Number</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Buyers Order Number"
@@ -274,7 +274,7 @@ const AlertQuotation = ({ leadId }) => {
                   name="buyers_date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Buyers</FormLabel>
+                      <FormLabel>Buyer's Date</FormLabel>
                       <FormControl>
                         <Input
                           type="date"

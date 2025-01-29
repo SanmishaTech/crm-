@@ -302,7 +302,7 @@ export default function InputForm() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className=" max-h-[260px] overflow-y-auto p-0">
+                        <PopoverContent className=" max-h-[260px] overflow-y-auto p-0 md:min-w-[700px] lg:min-w-[1000px]">
                           <Command>
                             <CommandInput
                               placeholder="Search Supplier..."
@@ -348,7 +348,7 @@ export default function InputForm() {
                                 )}
                               </CommandGroup>
                             </CommandList>
-                            <AddSuppliers FetchSuppliers={FetchSuppliers} />
+                            {/* <AddSuppliers FetchSuppliers={FetchSuppliers} /> */}
                           </Command>
                         </PopoverContent>
                       </Popover>
@@ -363,8 +363,30 @@ export default function InputForm() {
 
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold">
+              <CardTitle className="text-xl font-semibold flex justify-between items-center gap-4">
                 Payment Information
+                <FormField
+                  control={form.control}
+                  name="is_paid"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-2">
+                      <FormLabel className="mt-2">Is Paid</FormLabel>
+
+                      <FormControl>
+                        <Input
+                          className="w-4 h-4"
+                          type="checkbox"
+                          {...field}
+                          checked={field.value === 1}
+                          onChange={(e) =>
+                            field.onChange(e.target.checked ? 1 : 0)
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -462,6 +484,8 @@ export default function InputForm() {
                     </FormItem>
                   )}
                 />
+              </div>
+              <div className="flex justify-center mt-3  grid grid-cols-1 gap-4">
                 <FormField
                   control={form.control}
                   name="payment_remarks"
@@ -472,26 +496,6 @@ export default function InputForm() {
                         <Textarea
                           placeholder="Payment Reference Number"
                           {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="is_paid"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Is Paid</FormLabel>
-                      <FormControl>
-                        <input
-                          type="checkbox"
-                          {...field}
-                          checked={field.value === 1} // Set checkbox to checked if the value is 1
-                          onChange={(e) =>
-                            field.onChange(e.target.checked ? 1 : 0)
-                          } // Send 1 when checked, 0 when unchecked
                         />
                       </FormControl>
                       <FormMessage />

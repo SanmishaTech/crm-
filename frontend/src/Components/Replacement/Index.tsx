@@ -116,7 +116,7 @@ export default function TableDemo() {
             "Replacements name is Duplicated. Please use a unique name."
           );
         } else {
-          toast.error("Failed to fetch supplier data. Please try again.");
+          toast.error("Failed to  data. Please try again.");
         }
       },
     },

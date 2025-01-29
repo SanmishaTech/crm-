@@ -210,7 +210,7 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center py-1 space-y-2 md:space-y-0 md:space-x-3 ">
-          <div className="w-full md:w-auto flex items-center space-x-2">
+          {/* <div className="w-full md:w-auto flex items-center space-x-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -224,7 +224,7 @@ export default function TableDemo() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div>
+          </div> */}
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
@@ -255,10 +255,8 @@ export default function TableDemo() {
             <TableHeader>
               <TableRow className="hover:bg-accent/50">
                 <TableHead className="text-foreground">Suppliers</TableHead>
-                <TableHead className="text-foreground">
-                  Street Address
-                </TableHead>
-                <TableHead className="text-foreground">Area</TableHead>
+                <TableHead className="text-foreground">Email</TableHead>
+                <TableHead className="text-foreground">Mobile</TableHead>
                 <TableHead className="text-foreground">City</TableHead>
                 <TableHead className="text-right text-foreground">
                   Action
@@ -273,10 +271,10 @@ export default function TableDemo() {
                     {supplier.supplier}
                   </TableCell>
                   <TableCell className="text-foreground">
-                    {supplier.street_address}
+                    {supplier.email}
                   </TableCell>
                   <TableCell className="text-foreground">
-                    {supplier.area}
+                    {supplier.mobile_1}
                   </TableCell>
                   <TableCell className="text-foreground">
                     {supplier.city}

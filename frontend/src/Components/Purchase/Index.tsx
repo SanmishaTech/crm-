@@ -210,8 +210,8 @@ export default function TableDemo() {
   };
 
   return (
-    <div className="flex ">
-      <div className="p-6 w-full  bg-accent/60 ml-4 mr-8 rounded-lg shadow-lg ">
+    <div className="flex min-h-screen ">
+      <div className="p-6 w-full bg-accent/60 ml-4 mr-8 rounded-lg shadow-lg">
         <div className="p-2  ">
           <div className="flex justify-between items-center ">
             <h3 className="text-lg  font-semibold mx-auto">Purchase List</h3>

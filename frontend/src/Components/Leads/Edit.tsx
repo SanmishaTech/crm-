@@ -556,7 +556,7 @@ export default function EditLeadPage() {
                           name="deal_details"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Deal Details</FormLabel>
+                              <FormLabel className="">Deal Details</FormLabel>
                               <FormControl>
                                 <Textarea
                                   placeholder="Enter Deal Detail"
