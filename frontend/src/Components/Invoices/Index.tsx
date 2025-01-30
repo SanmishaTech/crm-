@@ -144,7 +144,7 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex justify-between items-center py-1 space-x-3   ">
-          <div className="ml-4 mt-2">
+          {/* <div className="ml-4 mt-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -155,7 +155,7 @@ export default function TableDemo() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div>
+          </div> */}
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
@@ -233,7 +233,6 @@ export default function TableDemo() {
                   </TableCell>
 
                   <TableCell>
-                    {" "}
                     {new Date(invoice.invoice_date).toLocaleDateString("en-GB")}
                   </TableCell>
                   <TableCell>₹{invoice.amount}</TableCell>

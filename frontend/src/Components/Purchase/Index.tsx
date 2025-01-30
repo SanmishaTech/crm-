@@ -212,14 +212,12 @@ export default function TableDemo() {
   return (
     <div className="flex min-h-screen ">
       <div className="p-6 w-full bg-accent/60 ml-4 mr-8 rounded-lg shadow-lg">
-        <div className="p-2  ">
+        <div className="p-2">
           <div className="flex justify-between items-center ">
             <h3 className="text-lg  font-semibold mx-auto">Purchase List</h3>
           </div>
         </div>
         <div className="flex justify-between items-center space-x-2 py-1 w-full">
-          <div className=" mt-2"></div>
-
           <div className="flex-1 space-x-2">
             <Input
               placeholder="Purchase Leads..."

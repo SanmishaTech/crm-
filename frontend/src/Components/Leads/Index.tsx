@@ -210,72 +210,6 @@ export default function TableDemo() {
     },
   });
 
-  const handleGenerateQuotation = async (leadId: string) => {
-    try {
-      const response = await fetch(`/api/generate_quotation/${leadId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-
-        // Open in new tab instead of downloading
-        window.open(url, "_blank");
-
-        queryClient.invalidateQueries({ queryKey: ["lead"] });
-        console.log("Quotation opened in new tab successfully!");
-      } else {
-        // Handle error response
-        const errorData = await response.json();
-        if (response.status === 401 && errorData.status === false) {
-          toast.error(errorData.errors.error);
-        } else {
-          toast.error("Failed to generate Quotation");
-        }
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const handleGenerateInvoice = async (leadId: string) => {
-    try {
-      const response = await fetch(`/api/generate_invoice/${leadId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-
-        // Open in new tab instead of downloading
-        window.open(url, "_blank");
-
-        queryClient.invalidateQueries({ queryKey: ["lead"] });
-        console.log("Invoice opened in new tab successfully!");
-      } else {
-        // Handle error response
-        const errorData = await response.json();
-        if (response.status === 401 && errorData.status === false) {
-          toast.error(errorData.errors.error);
-        } else {
-          toast.error("Failed to generate Invoice");
-        }
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
   const handleFilterChange = (filters: any) => {
     if (filters.status !== undefined) {
       setLeadStatus(filters.status);
@@ -328,44 +262,20 @@ export default function TableDemo() {
             <TableCaption>A list of your leads.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("contact_id")}
-                >
-                  Contact
-                </TableHead>
+                <TableHead className="text-foreground">Contact</TableHead>
                 {/* <TableHead onClick={() => handleSort("lead_source")}>
                   Lead Source
                 </TableHead> */}
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("follow_up_type")}
-                >
-                  Products
-                </TableHead>
+                <TableHead className="text-foreground">Products</TableHead>
 
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("follow_up_type")}
-                >
+                <TableHead className="text-foreground">
                   Next Follow Up Date
                 </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("follow_up_type")}
-                >
+                <TableHead className="text-foreground">
                   Follow Up Type
                 </TableHead>
-                {/* <TableHead onClick={() => handleSort("follow_up_type")}>
-                 Follow Up Type
-                </TableHead> */}
 
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("lead_status")}
-                >
-                  Lead Status
-                </TableHead>
+                <TableHead className="text-foreground">Lead Status</TableHead>
                 <TableHead className="text-foreground text-right">
                   Action
                 </TableHead>

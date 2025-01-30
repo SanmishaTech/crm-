@@ -256,7 +256,7 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex justify-between items-center py-1 space-x-3   ">
-          <div className="ml-4 mt-2">
+          {/* <div className="ml-4 mt-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -267,7 +267,7 @@ export default function TableDemo() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div>
+          </div> */}
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
@@ -367,7 +367,6 @@ export default function TableDemo() {
                         >
                           Edit
                         </Button>
-                        {/* <DropdownMenuSeparator /> */}
                         <AlertDialogbox url={client.id} />
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -376,11 +375,9 @@ export default function TableDemo() {
               ))}
             </TableBody>
           </Table>
-          {/* Table End */}
-          {/* Pagination Start */}
+
           <Pagination>
             <PaginationContent className="flex items-center space-x-4">
-              {/* Previous Button */}
               <PaginationPrevious
                 onClick={goToPreviousPage}
                 disabled={currentPage === 1}
@@ -388,12 +385,10 @@ export default function TableDemo() {
                 Previous
               </PaginationPrevious>
 
-              {/* Page Number */}
               <span className="text-sm">
                 Page {currentPage} of {totalPages}
               </span>
 
-              {/* Next Button */}
               <PaginationNext
                 className="hover:pointer"
                 onClick={goToNextPage}
@@ -403,7 +398,6 @@ export default function TableDemo() {
               </PaginationNext>
             </PaginationContent>
           </Pagination>
-          {/* Pagination End */}
         </div>
       </div>
     </div>
