@@ -53,6 +53,23 @@ class LeadResource extends JsonResource
             'updated_at' => $this->updated_at,
             'employee' => new EmployeeResource($this->employee),
             'contact' => new ContactResource($this->contact),  
+            // 'products' => $this->leadProducts->map(function ($leadProduct) {
+            //     return [
+            //         'id' => $leadProduct->id,
+            //         'lead_id' => $leadProduct->lead_id,
+            //         'product_id' => $leadProduct->product_id,
+            //         'quantity' => $leadProduct->quantity,
+            //         'rate' => $leadProduct->rate,
+            //         'gst_rate' => $leadProduct->gst_rate,
+            //         'gst_amount' => $leadProduct->gst_amount,
+            //         'amount_without_gst' => $leadProduct->amount_without_gst,
+            //         'total_amount' => $leadProduct->total_amount,
+            //         'created_at' => $leadProduct->created_at,
+            //         'updated_at' => $leadProduct->updated_at,
+            //         'product' => new ProductResource($leadProduct->product), 
+            //     ];
+            // }),
+            
             'products' => $this->leadProducts,  
             'follow_ups' => $this->followUps,
 

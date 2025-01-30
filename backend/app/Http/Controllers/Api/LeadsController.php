@@ -219,7 +219,7 @@ class LeadsController extends BaseController
         $productDetails[] = new LeadProduct([
             'product_id' => $product['product_id'],
             'quantity' => $product['quantity'],
-            'rate' => $product['rate'],
+             'rate' => $product['rate'],
             'gst_rate' => $gstRate,
             'amount_without_gst' => $amountWithoutGst,
             'gst_amount' => $gstAmount,
@@ -351,8 +351,8 @@ class LeadsController extends BaseController
         if(!$lead){
             return $this->sendError("Lead not found", ['error'=>['lead not found']]);
         }
-        return $this->sendResponse(["Lead"=>new LeadResource($lead)], "lead retrieved successfully");
-        // return $this->sendResponse(["lead"=> $lead, 'contact'=>new ContactResource($lead->contact)], "lead retrieved successfully");
+        return $this->sendResponse(["Lead"=>new LeadResource($lead)], "Lead retrieved successfully");
+        // return $this->sendResponse(["lead"=> $lead, 'contact'=>new ContactResource($lead->contact)], "Lead retrieved successfully");
       }
 
     /**

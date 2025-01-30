@@ -252,7 +252,7 @@ export default function TableDemo() {
         <div className="p-4 rounded-md bg-card">
           <Table>
             <TableCaption className="text-muted-foreground">
-              A list of your replacements.
+              A list of your replacements/repair.
             </TableCaption>
             <TableHeader>
               <TableRow className="hover:bg-accent/50">
@@ -261,6 +261,9 @@ export default function TableDemo() {
                 <TableHead className="text-foreground">Email</TableHead>
                 <TableHead className="text-foreground">Instrument</TableHead>
                 <TableHead className="text-foreground">Registered</TableHead>
+                <TableHead className="text-foreground">
+                  Current Status
+                </TableHead>
                 <TableHead className="text-right text-foreground">
                   Action
                 </TableHead>
@@ -284,6 +287,9 @@ export default function TableDemo() {
                   </TableCell>
                   <TableCell className="text-foreground">
                     {replacement.registered ? "Yes" : "No"}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {replacement.current_status}
                   </TableCell>
 
                   <TableCell className="text-right">

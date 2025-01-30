@@ -32,7 +32,6 @@ const History = ({ leads }) => {
   const followUps = leads.follow_ups;
 
   // Log the leads data for debugging
-  console.log(followUps);
 
   if (!followUps || followUps.length === 0) {
     return (
