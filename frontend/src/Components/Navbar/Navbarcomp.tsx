@@ -207,7 +207,7 @@ const Navbar = () => {
                       variant="ghost"
                       className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
                     >
-                      Replacements & Repiar
+                      Replacements & Repair
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
                   </NavigationMenuContent>
@@ -468,7 +468,7 @@ const Navbar = () => {
                 variant="ghost"
                 className="w-full text-left justify-start"
               >
-                Replacements & Repiar
+                Replacements & Repair
               </Button>
               <Button
                 onClick={() => navigate("/purchase")}
