@@ -10,6 +10,13 @@ import {
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog"; // Adjust import path based on your project structure
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useQueryClient } from "@tanstack/react-query";
@@ -160,55 +167,68 @@ const Report = ({ leadId }) => {
           </AlertDialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="flex gap-4">
+                <FormField
+                  control={form.control}
+                  name="quotation_number"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>From</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          placeholder="Enter Report Number"
+                          {...field}
+                          disabled={isSubmitting}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="quotation_number"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>To</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          placeholder="Enter Report Number"
+                          {...field}
+                          disabled={isSubmitting}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
-                name="quotation_number"
+                name="lead_status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Report Number</FormLabel>
+                    <FormLabel>Lead Status</FormLabel>
                     <FormControl>
-                      <Input
-                        type="date"
-                        placeholder="Enter Report Number"
-                        {...field}
-                        disabled={isSubmitting}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="quotation_number"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Report Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="date"
-                        placeholder="Enter Report Number"
-                        {...field}
-                        disabled={isSubmitting}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="terms"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Terms & Conditions</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Terms and Conditions of the Report"
-                        className="resize-none"
-                        rows={7}
-                        {...field}
-                      />
+                      <Select
+                        value={field.value}
+                        onValueChange={(value) => field.onChange(value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Lead Status" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
+                           <SelectItem value="Open">Open</SelectItem>
+                          <SelectItem value="Inprogress">In Progress</SelectItem>
+                          <SelectItem value="Quotation">Quotation</SelectItem>
+                          <SelectItem value="Deal">Deal</SelectItem>
+                          <SelectItem value="Close">Close</SelectItem>
+
+                        
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

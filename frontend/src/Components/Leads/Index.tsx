@@ -289,14 +289,7 @@ export default function TableDemo() {
             ) : null}
           </div>
           <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={() => handleGenerateQuotation({ leadId: lead.id })}
-            >
-              Report
-            </Button>
-          </div>
-          <div className="flex space-x-2">
+            <Report leadId={null} />
             <Button variant="outline" onClick={() => navigate("/leads/add")}>
               Add Leads
             </Button>
@@ -398,17 +391,7 @@ export default function TableDemo() {
                                 </TableCell>
 
                                 <TableCell>
-                                  {/* <Button
-                                    variant="outline"
-                                    onClick={() =>
-                                      handleGenerateQuotation({
-                                        leadId: lead.id,
-                                      })
-                                    }
-                                  >
-                                    Report
-                                  </Button> */}
-                                  <Report leadId={lead.id} />
+                                  
                                 </TableCell>
 
                                 <TableCell className="text-right">

@@ -693,62 +693,20 @@ class LeadsController extends BaseController
 
 
 
-    public function generateReport(Request $request, string $id)
+    public function generateReport(Request $request)
     {
-        $leadStatus = config('data.lead_status.Quotation');
-        $DealLeadStatus = config('data.lead_status.Deal');
-
-        // $leads = Lead::with('leadProducts.product')->find($id);
-        $leads = Lead::with(['leadProducts.product','contact.client','leadInvoice.invoiceDetails.product'])->find($id);
+        // Get all leads with their relationships
+        $leads = Lead::with(['contact', 'leadProducts.product'])->get();
         
-        if(!$leads){
-            return $this->sendError("Lead not found", ['error'=>['Lead not found']]);
+        if($leads->isEmpty()){
+            return $this->sendError("No leads found", ['error'=>['No leads found to generate report']]);
         }
 
-        // if($leadStatus !== $leads->lead_status && $DealLeadStatus !== $leads->lead_status)
-        // {
-        //     return $this->sendError("Lead Status is not set to Quotation", ['error'=>['Lead Status is not set to Quotation']]);
-        // }
-        if ($leads->leadProducts->isEmpty()) {
-            return $this->sendError("Products not found", ['error'=>['Products not found to generate Quotation']]);
-
-        }
-        
-        if($leads->total_amount_with_gst==0){
-            return $this->sendError("Add the rates of Products", ['error'=>['Add the rates of Products to generate quotation']]);
-        }
-        
-        if (!$leads->contact || !$leads->contact->client ) {
-            return $this->sendError("Client not found", ['error'=>['Client not found to generate an Quotation']]);
-
-        }
-        if(!empty($leads->previous_lead_quotation) && Storage::exists('public/Lead/generated_quotations/'.$leads->previous_lead_quotation)) {
-            Storage::delete('public/Lead/generated_quotations/'.$leads->previous_lead_quotation);
-        }
-        
-        if(!empty($leads->lead_quotation) && Storage::exists('public/Lead/generated_quotations/'.$leads->lead_quotation)) {
-            Storage::delete('public/Lead/generated_quotations/'.$leads->lead_quotation);
-        }
-      
-
-        if(!$leads->quotation_date){
-            $leads->quotation_date = now()->format("Y-m-d");
-        }
-        // if(!$leads->quotation_number){
-        //     $leads->quotation_number = $this->generateQuotationNumber();
-        // }
-        $leads->quotation_number = $request->input("quotation_number");
-        $leads->terms = $request->input("terms");
-        $leads->lead_status  = $leadStatus;
-        $leads->report_version = $leads->report_version + 1;
- 
-        $leads->save();
-        // 
         $user = auth()->user();
-        $employee = $user->employee->first();
-    
+        $employee = $user->employee;
+
         if (!$employee) {
-            return response()->json(['message' => 'Employee not found'], 404);
+            return $this->sendError("Employee not found", ['error'=>['Employee not found']]);
         }
         
         $data = [
@@ -760,25 +718,22 @@ class LeadsController extends BaseController
         // Render the Blade view to HTML
         $html = view('reports.lead', $data)->render();
 
-        // Create a new mPDF instance
-        $mpdf = new Mpdf();
+        // Create a new mPDF instance with custom margins
+        $mpdf = new Mpdf([
+            'margin_left' => 10,
+            'margin_right' => 10,
+            'margin_top' => 15,
+            'margin_bottom' => 15,
+        ]);
 
         // Write HTML to the PDF
         $mpdf->WriteHTML($html);
 
-        // Define the file path for saving the PDF
-        $filePath = 'public/Lead/generated_quotations/quotation_' . time(). $user->id . '.pdf'; // Store in 'storage/app/invoices'
-        $fileName = basename($filePath); // Extracts 'invoice_{timestamp}{user_id}.pdf'
-      
-        // Save PDF to storage
-        Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
-        $leads->lead_quotation = $fileName;
-        $leads->save();
-        
-        // Output the PDF for download
-        return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
-        // return $this->sendResponse([], "Quotation generated successfully");
+        // Define the file name
+        $fileName = 'leads_report_' . now()->format('Y_m_d_His') . '.pdf';
 
+        // Output the PDF for download
+        return $mpdf->Output($fileName, 'D');
     }
 
    

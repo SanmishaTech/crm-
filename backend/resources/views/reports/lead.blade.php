@@ -39,6 +39,13 @@
             max-width: 200px;
             height: auto;
         }
+        .report-header {
+            margin-bottom: 20px;
+        }
+        .report-date {
+            text-align: right;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -46,32 +53,38 @@
         <img src="{{ public_path('images/Renuka.jpg') }}" alt="Renuka Enterprises Logo">
     </div>
     <div class="report-container">
-        <h2>Lead Report</h2>
-        <p><strong>Version:</strong> {{ $leads->report_version }}</p>
+        <div class="report-header">
+            <h2>Lead Report</h2>
+            <div class="report-date">
+                <p><strong>Date:</strong> {{ now()->format('d/m/Y') }}</p>
+            </div>
+        </div>
+
         <table>
             <thead>
                 <tr>
-                    <th>Contact</th>
-                    <th>Contact</th>
+                    <th>Contact Person</th>
                     <th>Products</th>
-                    <th>Next Follow-up Date</th>
-                    <th>Follow-up Type</th>
+                    <th>Lead Type</th>
                     <th>Lead Status</th>
-                    <th>Remarks</th>
-                 
+                    <th>Follow-up Date</th>
+                    <th>Follow-up Type</th>
+                    <th>Remark</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($leads as $lead)
-                <tr>
-                    <td>{{ $lead->contact->contact_person ?? 'N/A' }}</td>
-                    <td>{{ $lead->contact->contact_person ?? 'N/A' }}</td>
-                    <td>{{ $lead->products ?? 'N/A' }}</td>
-                    <td>test</td>
-                    <td>{{ $lead->followup_type ?? 'N/A' }}</td>
-                    <td>{{ $lead->status ?? 'N/A' }}</td>
-                    <td>{{ $lead->remarks ?? 'N/A' }}</td>
-                 </tr>
+                    <tr>
+                        <td>{{ $lead->contact->contact_person ?? 'N/A' }}</td>
+                        <td>
+                            {{ $lead->leadProducts->pluck('product.product')->filter()->join(', ') ?: 'N/A' }}
+                        </td>
+                        <td>{{ $lead->lead_type }}</td>
+                        <td>{{ $lead->lead_status }}</td>
+                        <td>{{ $lead->lead_follow_up_date ? $lead->lead_follow_up_date->format('d/m/Y (H:i)') : 'N/A' }}</td>
+                        <td>{{ $lead->follow_up_type ?? 'N/A' }}</td>
+                        <td>{{ $lead->follow_up_remark ?? 'N/A' }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
