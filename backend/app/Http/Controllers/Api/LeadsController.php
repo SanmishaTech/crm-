@@ -705,10 +705,10 @@ class LeadsController extends BaseController
             return $this->sendError("Lead not found", ['error'=>['Lead not found']]);
         }
 
-        if($leadStatus !== $leads->lead_status && $DealLeadStatus !== $leads->lead_status)
-        {
-            return $this->sendError("Lead Status is not set to Quotation", ['error'=>['Lead Status is not set to Quotation']]);
-        }
+        // if($leadStatus !== $leads->lead_status && $DealLeadStatus !== $leads->lead_status)
+        // {
+        //     return $this->sendError("Lead Status is not set to Quotation", ['error'=>['Lead Status is not set to Quotation']]);
+        // }
         if ($leads->leadProducts->isEmpty()) {
             return $this->sendError("Products not found", ['error'=>['Products not found to generate Quotation']]);
 
@@ -740,7 +740,8 @@ class LeadsController extends BaseController
         $leads->quotation_number = $request->input("quotation_number");
         $leads->terms = $request->input("terms");
         $leads->lead_status  = $leadStatus;
-        $leads->quotation_version = $leads->quotation_version + 1;
+        $leads->report_version = $leads->report_version + 1;
+ 
         $leads->save();
         // 
         $user = auth()->user();

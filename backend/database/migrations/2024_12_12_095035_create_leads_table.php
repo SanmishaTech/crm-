@@ -55,6 +55,10 @@ return new class extends Migration
             $table->string("buyer_order_no")->nullable();
             $table->string("buyers_date")->nullable();
             $table->string("invoice_terms")->nullable();
+            //report 
+            $table->unsignedBigInteger("report_version")->default(0); 
+
+
 
             $table->timestamps();
         });
