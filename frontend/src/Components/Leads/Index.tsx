@@ -74,6 +74,7 @@ import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import AlertQuotation from "./AlertQuotation";
 import AlertInvoice from "./AlertInvoice";
+import Report from "./Report";
 
 // Supplier type
 type Supplier = {
@@ -210,6 +211,44 @@ export default function TableDemo() {
     },
   });
 
+  const handleGenerateQuotation = async ({ leadId, data }) => {
+    try {
+      const response = await fetch(`/api/generate_quotation/${leadId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify(data), // Now 'data' is defined
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.target = "_blank";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        queryClient.invalidateQueries({ queryKey: ["lead"] });
+
+        toast.success(
+          `Quotation for ${leadId} generated and opened successfully!`
+        );
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.errors?.error || "Failed to generate Quotation.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred while generating the quotation.");
+    }
+  };
+
   const handleFilterChange = (filters: any) => {
     if (filters.status !== undefined) {
       setLeadStatus(filters.status);
@@ -227,7 +266,7 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex justify-between items-center space-x-2 py-1 w-full">
-          <div className="ml-4 mt-2">
+          <div className="ml-1 mt-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -248,6 +287,14 @@ export default function TableDemo() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             ) : null}
+          </div>
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => handleGenerateQuotation({ leadId: lead.id })}
+            >
+              Report
+            </Button>
           </div>
           <div className="flex space-x-2">
             <Button variant="outline" onClick={() => navigate("/leads/add")}>
@@ -350,13 +397,19 @@ export default function TableDemo() {
                                     : "N/A"}
                                 </TableCell>
 
-                                {/* <TableCell>
-                                  {lead.products
-                                    ? lead.products
-                                        .map((product) => product.product_id)
-                                        .join(", ")
-                                    : "N/A"}
-                                </TableCell> */}
+                                <TableCell>
+                                  {/* <Button
+                                    variant="outline"
+                                    onClick={() =>
+                                      handleGenerateQuotation({
+                                        leadId: lead.id,
+                                      })
+                                    }
+                                  >
+                                    Report
+                                  </Button> */}
+                                  <Report leadId={lead.id} />
+                                </TableCell>
 
                                 <TableCell className="text-right">
                                   <DropdownMenu>

@@ -118,7 +118,7 @@ export default function ResponsiveLabDashboard() {
 
         setFollowUpLeadsCount(followUpLeads.length);
       } catch (error) {
-        console.error("Error fetching leads data:", error);
+        console.error("Error fetching dashboard leads data:", error);
       }
     };
 

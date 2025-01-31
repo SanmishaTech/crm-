@@ -71,7 +71,7 @@ const CalenderDay = () => {
         }
       },
       onError: (error: AxiosError) => {
-        console.error("Error fetching leads:", error);
+        // console.error("Error fetching calender leads:", error);
         setCalendarLeads([]);
       },
     },
