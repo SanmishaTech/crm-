@@ -693,47 +693,131 @@ class LeadsController extends BaseController
 
 
 
+    // public function generateReport(Request $request)
+    // {
+    //      $leads = Lead::with(['contact', 'leadProducts.product'])->get();
+        
+    //     if($leads->isEmpty()){
+    //         return $this->sendError("No leads found", ['error'=>['No leads found to generate report']]);
+    //     }
+
+    //     $user = auth()->user();
+    //     $employee = $user->employee;
+
+    //     if (!$employee) {
+    //         return $this->sendError("Employee not found", ['error'=>['Employee not found']]);
+    //     }
+        
+    //     $data = [
+    //         'user' => $user,
+    //         'employee' => $employee,
+    //         'leads' => $leads,
+    //     ];
+
+    //      $html = view('reports.lead', $data)->render();
+
+    //      $mpdf = new Mpdf([
+    //         'margin_left' => 10,
+    //         'margin_right' => 10,
+    //         'margin_top' => 15,
+    //         'margin_bottom' => 15,
+    //     ]);
+
+         
+    //     $mpdf->WriteHTML($html);
+
+    //      $fileName = 'leads_report_' . now()->format('Y_m_d_His') . '.pdf';
+
+    //      return $mpdf->Output($fileName, 'D');
+    // }
+
     public function generateReport(Request $request)
     {
-        // Get all leads with their relationships
-        $leads = Lead::with(['contact', 'leadProducts.product'])->get();
-        
-        if($leads->isEmpty()){
-            return $this->sendError("No leads found", ['error'=>['No leads found to generate report']]);
+        try {
+            // Build query with base relationships
+            $query = Lead::with(['contact', 'leadProducts.product']);
+            
+            // Apply date range filters
+            if ($request->query('from_date')) {
+                $query->whereDate('created_at', '>=', $request->query('from_date'));
+            }
+            
+            if ($request->query('to_date')) {
+                $query->whereDate('created_at', '<=', $request->query('to_date'));
+            }
+
+            // Get the filtered leads
+            $leads = $query->get();
+            
+            if($leads->isEmpty()){
+                return $this->sendError("No leads found", ['error'=>['No leads found for the selected date range']]);
+            }
+
+            // Create Spreadsheet
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Set headers of the excel
+            $sheet->setCellValue('A1', 'Contact Name');
+            $sheet->setCellValue('B1', 'Products');
+            $sheet->setCellValue('C1', 'Lead Type');
+            $sheet->setCellValue('D1', 'Status');
+            $sheet->setCellValue('E1', 'Follow-Up Date');
+            $sheet->setCellValue('F1', 'Follow-Up Type');
+            $sheet->setCellValue('G1', 'Remark');
+            $sheet->setCellValue('H1', 'Created Date');
+
+            // Style the header row
+            $headerStyle = [
+                'font' => ['bold' => true],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => 'E0E0E0']
+                ]
+            ];
+            $sheet->getStyle('A1:E1')->applyFromArray($headerStyle);
+
+            // Add data
+            $row = 2;
+            foreach ($leads as $lead) {
+                $products = $lead->leadProducts->map(function($leadProduct) {
+                    return $leadProduct->product ? $leadProduct->product->name : '';
+                })->filter()->join(', ');
+
+                $sheet->setCellValue('A' . $row, $lead->contact->contact_person ?? 'N/A');
+                $sheet->setCellValue('B' . $row, $lead->leadProducts->pluck('product.product')->filter()->join(', ') ?: 'N/A');
+                $sheet->setCellValue('C' . $row, $lead->lead_type);
+                $sheet->setCellValue('D' . $row, $lead->lead_status);
+                $sheet->setCellValue('E' . $row, $lead->lead_follow_up_date ? $lead->lead_follow_up_date->format('d/m/Y (H:i)') : 'N/A');
+                $sheet->setCellValue('F' . $row, $lead->follow_up_type ?? 'N/A');
+                $sheet->setCellValue('G' . $row, $lead->follow_up_remark ?? 'N/A');
+                $sheet->setCellValue('H' . $row, $lead->created_at->format('d/m/Y'));
+                
+                $row++;
+            }
+
+            // Auto-size columns
+            foreach(range('A','E') as $column) {
+                $sheet->getColumnDimension($column)->setAutoSize(true);
+            }
+
+            // Create Excel file
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            
+            // Save to temporary file
+            $fileName = 'leads_report_' . date('Y_m_d_His') . '.xlsx';
+            $tempFile = tempnam(sys_get_temp_dir(), 'leads_report');
+            $writer->save($tempFile);
+
+            // Return the file
+            return response()->download($tempFile, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ])->deleteFileAfterSend(true);
+
+        } catch (\Exception $e) {
+            \Log::error('Excel Generation Error: ' . $e->getMessage());
+            return $this->sendError("Error generating report", ['error' => $e->getMessage()]);
         }
-
-        $user = auth()->user();
-        $employee = $user->employee;
-
-        if (!$employee) {
-            return $this->sendError("Employee not found", ['error'=>['Employee not found']]);
-        }
-        
-        $data = [
-            'user' => $user,
-            'employee' => $employee,
-            'leads' => $leads,
-        ];
-
-        // Render the Blade view to HTML
-        $html = view('reports.lead', $data)->render();
-
-        // Create a new mPDF instance with custom margins
-        $mpdf = new Mpdf([
-            'margin_left' => 10,
-            'margin_right' => 10,
-            'margin_top' => 15,
-            'margin_bottom' => 15,
-        ]);
-
-        // Write HTML to the PDF
-        $mpdf->WriteHTML($html);
-
-        // Define the file name
-        $fileName = 'leads_report_' . now()->format('Y_m_d_His') . '.pdf';
-
-        // Output the PDF for download
-        return $mpdf->Output($fileName, 'D');
     }
 
    
