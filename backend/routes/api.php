@@ -50,7 +50,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/lead_status', [LeadsController::class, 'leadStatus'])->name("lead_status.index");
    Route::get('/close_lead/{id}', [LeadsController::class, 'closeLead'])->name("close_lead.update");
    Route::post('/generate_quotation/{id}', [LeadsController::class, 'generateQuotation'])->name("generate_quotation.generate");
-   Route::get('/generate_lead_report/{id}', [LeadsController::class, 'generateReport'])->name("generate_report.generate");
+   Route::post('/generate_lead_report/{id}', [LeadsController::class, 'generateReport'])->name("generate_report.generate");
    Route::get('/generate_invoice/{id}', [LeadsController::class, 'generateInvoice'])->name("generate_invoice.generate");
    Route::get('/invoices', [InvoicesController::class, 'index'])->name("invoices.index");
    Route::get('/show_invoice/{files}', [InvoicesController::class, 'showInvoice'])->name("invoices.showFiles");
@@ -64,6 +64,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    Route::resource('replacements', ReplaceController::class);    
    Route::get('/all_replacements', [ReplaceController::class, 'allReplaces'])->name("replacements.all");
+
+ 
 
 
 });

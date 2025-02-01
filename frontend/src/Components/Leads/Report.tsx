@@ -8,17 +8,8 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogCancel,
-} from "@/components/ui/alert-dialog"; // Adjust import path based on your project structure
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,68 +27,21 @@ import {
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  //   quotation_number: z.string().min(2, {
-  //     message: "Quotation number must be at least 2 characters.",
-  //   }),
-  quotation_number: z.string().optional(),
-  terms: z.string().optional(),
+  from_date: z.string().optional(),
+  to_date: z.string().optional(),
 });
 
 const Report = ({ leadId }) => {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [previousPdfUrl, setPreviousPdfUrl] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      quotation_number: "",
-      terms: "",
+      from_date: "",
+      to_date: "",
     },
   });
-
-  // Fetch the lead details and get the previous quotation
-  useEffect(() => {
-    const fetchLeadDetails = async () => {
-      try {
-        const response = await fetch(`/api/leads/${leadId}`, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-
-        if (response.ok) {
-          const leadData = await response.json();
-          setPreviousPdfUrl(leadData?.lead_quotation || null);
-        } else {
-          console.error("Failed to fetch lead details.");
-        }
-      } catch (error) {
-        console.error("Error fetching lead details:", error);
-      }
-    };
-
-    if (leadId) {
-      fetchLeadDetails();
-    }
-  }, [leadId]);
-  useEffect(() => {
-    const fetchLeadDetails = async () => {
-      try {
-        const response = await fetch(`/api/leads/${leadId}`, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        const leadData = await response.json();
-        console.log("Lead Data:", leadData);
-        setPreviousPdfUrl(leadData?.lead_quotation || null);
-      } catch (error) {
-        console.error("Error fetching lead details:", error);
-      }
-    };
-    if (leadId) fetchLeadDetails();
-  }, [leadId]);
 
   const handleGenerateQuotation = async (data) => {
     setIsSubmitting(true);
@@ -123,8 +67,6 @@ const Report = ({ leadId }) => {
         link.click();
         document.body.removeChild(link);
 
-        setPreviousPdfUrl(url);
-
         queryClient.invalidateQueries({ queryKey: ["lead"] });
 
         toast.success(
@@ -143,7 +85,6 @@ const Report = ({ leadId }) => {
   };
 
   const onSubmit = async (data) => {
-    console.log("Form Data:", data);
     await handleGenerateQuotation(data);
   };
 
@@ -170,7 +111,7 @@ const Report = ({ leadId }) => {
               <div className="flex gap-4">
                 <FormField
                   control={form.control}
-                  name="quotation_number"
+                  name="from_date"
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormLabel>From</FormLabel>
@@ -188,7 +129,7 @@ const Report = ({ leadId }) => {
                 />
                 <FormField
                   control={form.control}
-                  name="quotation_number"
+                  name="to_date"
                   render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormLabel>To</FormLabel>
@@ -205,36 +146,6 @@ const Report = ({ leadId }) => {
                   )}
                 />
               </div>
-              <FormField
-                control={form.control}
-                name="lead_status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Lead Status</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={field.value}
-                        onValueChange={(value) => field.onChange(value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Lead Status" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
-                           <SelectItem value="Open">Open</SelectItem>
-                          <SelectItem value="Inprogress">In Progress</SelectItem>
-                          <SelectItem value="Quotation">Quotation</SelectItem>
-                          <SelectItem value="Deal">Deal</SelectItem>
-                          <SelectItem value="Close">Close</SelectItem>
-
-                        
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <AlertDialogFooter>
                 <AlertDialogCancel disabled={isSubmitting}>
                   Cancel

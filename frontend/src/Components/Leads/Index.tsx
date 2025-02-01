@@ -289,7 +289,11 @@ export default function TableDemo() {
             ) : null}
           </div>
           <div className="flex space-x-2">
-            <Report leadId={null} />
+            <Button variant="outline" type="button">
+              <Report />
+            </Button>
+          </div>
+          <div className="flex space-x-2">
             <Button variant="outline" onClick={() => navigate("/leads/add")}>
               Add Leads
             </Button>
@@ -388,10 +392,6 @@ export default function TableDemo() {
                                     ? lead.lead_status.charAt(0).toUpperCase() +
                                       lead.lead_status.slice(1)
                                     : "N/A"}
-                                </TableCell>
-
-                                <TableCell>
-                                  
                                 </TableCell>
 
                                 <TableCell className="text-right">
