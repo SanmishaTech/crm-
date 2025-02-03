@@ -76,7 +76,7 @@
 
                 
                     <tr>
-                        <td>{{ $purchase->suppliers->supplier ?? 'N/A' }}</td>
+                        <td>{{ $purchase->supplier->supplier ?? 'N/A' }}</td>
                         {{-- @dd($purchase->payment_status)   --}}
                         <td>{{ $purchase->payment_ref_no ?? 'N/A' }}</td>
                         <td>{{ $purchase->payment_status ?? 'N/A' }}</td>
