@@ -96,7 +96,7 @@ class InvoicesController extends BaseController
     {
         try {
             // Retrieve invoices with their invoiceDetails and related product
-            $query = Invoice::with(['invoiceDetails.product', 'leadProducts.product']);
+            $query = Invoice::with(['invoiceDetails.product']);
             
             $from_date = $request->query('from_date');
             $to_date = $request->query('to_date');
