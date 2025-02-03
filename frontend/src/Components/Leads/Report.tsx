@@ -43,10 +43,10 @@ const Report = ({ leadId }) => {
     },
   });
 
-  const handleGenerateQuotation = async (data) => {
+  const handleGenerateReport = async (data, type) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/generate_lead_report/${leadId}`, {
+      const response = await fetch(`/api/generate_lead_report/${leadId}?type=${type}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,29 +63,31 @@ const Report = ({ leadId }) => {
         link.href = url;
         link.target = "_blank";
 
+        // Set filename based on type
+        const extension = type === 'excel' ? '.xlsx' : '.pdf';
+        link.download = `lead_report${extension}`;
+
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
         queryClient.invalidateQueries({ queryKey: ["lead"] });
 
-        toast.success(
-          `Quotation for ${data.quotation_number} generated and opened successfully!`
-        );
+        toast.success(`Report generated and downloaded successfully!`);
       } else {
         const errorData = await response.json();
-        toast.error(errorData.errors?.error || "Failed to generate Quotation.");
+        toast.error(errorData.errors?.error || "Failed to generate report.");
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("An error occurred while generating the quotation.");
+      toast.error("An error occurred while generating the report.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const onSubmit = async (data) => {
-    await handleGenerateQuotation(data);
+  const onSubmit = async (data, type) => {
+    await handleGenerateReport(data, type);
   };
 
   return (
@@ -98,16 +100,13 @@ const Report = ({ leadId }) => {
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              Are you sure you want to generate or view the Report?
-            </AlertDialogTitle>
+            <AlertDialogTitle>Generate Report</AlertDialogTitle>
             <AlertDialogDescription>
-              Please provide your <strong>Report Number</strong> and the{" "}
-              <strong>Terms & Condition</strong> before proceeding.
+              Please select the date range for your report.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form className="space-y-4">
               <div className="flex gap-4">
                 <FormField
                   control={form.control}
@@ -118,7 +117,7 @@ const Report = ({ leadId }) => {
                       <FormControl>
                         <Input
                           type="date"
-                          placeholder="Enter Report Number"
+                          placeholder="From Date"
                           {...field}
                           disabled={isSubmitting}
                         />
@@ -136,7 +135,7 @@ const Report = ({ leadId }) => {
                       <FormControl>
                         <Input
                           type="date"
-                          placeholder="Enter Report Number"
+                          placeholder="To Date"
                           {...field}
                           disabled={isSubmitting}
                         />
@@ -146,12 +145,23 @@ const Report = ({ leadId }) => {
                   )}
                 />
               </div>
-              <AlertDialogFooter>
+              <AlertDialogFooter className="flex gap-2">
                 <AlertDialogCancel disabled={isSubmitting}>
                   Cancel
                 </AlertDialogCancel>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Viewing Report..." : "View Report"}
+                <Button 
+                  type="button" 
+                  disabled={isSubmitting}
+                  onClick={() => form.handleSubmit((data) => onSubmit(data, 'excel'))()}
+                >
+                  {isSubmitting ? "Generating Excel..." : "Export to Excel"}
+                </Button>
+                <Button 
+                  type="button" 
+                  disabled={isSubmitting}
+                  onClick={() => form.handleSubmit((data) => onSubmit(data, 'pdf'))()}
+                >
+                  {isSubmitting ? "Generating PDF..." : "Export to PDF"}
                 </Button>
               </AlertDialogFooter>
             </form>
