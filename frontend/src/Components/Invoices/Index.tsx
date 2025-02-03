@@ -216,8 +216,13 @@ export default function TableDemo() {
                   </TableCell>
 
                   <TableCell>
-                    {new Date(invoice.invoice_date).toLocaleDateString("en-GB")}
+                    {invoice.invoice_date
+                      ? new Date(invoice.invoice_date).toLocaleDateString(
+                          "en-GB"
+                        )
+                      : "NA"}
                   </TableCell>
+
                   <TableCell>₹{invoice.amount}</TableCell>
                   <TableCell>{invoice.dispatch_details ?? "N/A"}</TableCell>
                   <TableCell className="text-right">

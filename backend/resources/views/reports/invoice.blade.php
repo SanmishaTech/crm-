@@ -63,27 +63,40 @@
         <table>
             <thead>
                 <tr>
-                    <th>Contact Person</th>
+                    <th>Invoice Number</th>
                     <th>Products</th>
-                    <th>Lead Type</th>
-                    <th>Lead Status</th>
-                    <th>Follow-up Date</th>
-                    <th>Follow-up Type</th>
-                    <th>Remark</th>
+                    <th>Invoice Date</th>
+                    <th>Amount</th>
+                    <th>Dispatch Details</th>
+                    <th>Created At</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($leads as $lead)
+                @foreach($invoices as $invoice)
+                {{-- @dd($invoice) <!-- This will dump the invoice and stop the script execution --> --}}
+
+                
                     <tr>
-                        <td>{{ $lead->contact->contact_person ?? 'N/A' }}</td>
+                        <td>{{ $invoice->invoice_number ?? 'N/A' }}</td>
                         <td>
-                            {{ $lead->leadProducts->pluck('product.product')->filter()->join(', ') ?: 'N/A' }}
+                            @if(is_array($invoice->product_names) && count($invoice->product_names) > 0)
+                            {{ implode(', ', $invoice->product_names) }}
+                        @else
+                            NA
+                        @endif
+                        
+                         
                         </td>
-                        <td>{{ $lead->lead_type }}</td>
-                        <td>{{ $lead->lead_status }}</td>
-                        <td>{{ $lead->lead_follow_up_date ? $lead->lead_follow_up_date->format('d/m/Y (H:i)') : 'N/A' }}</td>
-                        <td>{{ $lead->follow_up_type ?? 'N/A' }}</td>
-                        <td>{{ $lead->follow_up_remark ?? 'N/A' }}</td>
+                        <td>
+                            @if($invoice->invoice_date)
+                                {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}
+                            @else
+                                N/A
+                            @endif
+                        </td>
+                        <td>{{ $invoice->amount ?? 'N/A' }}</td>
+                        <td>{{ $invoice->dispatch_details ?? 'N/A' }}</td>
+                        <td>{{ $invoice->created_at ?? 'N/A' }}</td>
                     </tr>
                 @endforeach
             </tbody>
