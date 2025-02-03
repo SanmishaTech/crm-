@@ -57,6 +57,7 @@ return new class extends Migration
             $table->string("invoice_terms")->nullable();
             //report 
             $table->unsignedBigInteger("report_version")->default(0); 
+            
 
 
 

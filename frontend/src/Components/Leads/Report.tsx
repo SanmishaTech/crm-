@@ -31,7 +31,18 @@ const formSchema = z.object({
   to_date: z.string().optional(),
 });
 
-const Report = ({ leadId }) => {
+// Add type for form data
+type FormData = {
+  from_date: string;
+  to_date: string;
+};
+
+// Add type for props
+interface ReportProps {
+  leadId: string;
+}
+
+const Report = ({ leadId }: ReportProps) => {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,16 +54,22 @@ const Report = ({ leadId }) => {
     },
   });
 
-  const handleGenerateReport = async (data, type) => {
+  const handleGenerateReport = async (data: FormData, type: 'excel' | 'pdf') => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/generate_lead_report/${leadId}?type=${type}`, {
+      // Build query params including dates
+      const params = new URLSearchParams({
+        type: type,
+        ...(data.from_date && { from_date: data.from_date }),
+        ...(data.to_date && { to_date: data.to_date })
+      });
+
+      const response = await fetch(`/api/generate_lead_report/${leadId}?${params}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify(data),
       });
 
       if (response.ok) {
@@ -86,7 +103,7 @@ const Report = ({ leadId }) => {
     }
   };
 
-  const onSubmit = async (data, type) => {
+  const onSubmit = async (data: FormData, type: 'excel' | 'pdf') => {
     await handleGenerateReport(data, type);
   };
 
