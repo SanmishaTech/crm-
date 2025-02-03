@@ -59,10 +59,17 @@ const Report = ({ leadId }: ReportProps) => {
     defaultValues: {
       from_date: "",
       to_date: "",
-      lead_status: "",
+      lead_status: "none",
     },
   });
 
+  const handleReset = () => {
+    form.reset({
+      from_date: "",
+      to_date: "",
+      lead_status: "none",
+    });
+  };
 
   const handleGenerateReport = async (
     data: FormData,
@@ -75,7 +82,7 @@ const Report = ({ leadId }: ReportProps) => {
         type: type,
         ...(data.from_date && { from_date: data.from_date }),
         ...(data.to_date && { to_date: data.to_date }),
-        ...(data.lead_status && { lead_status: data.lead_status }),
+        ...(data.lead_status && data.lead_status !== "none" && { lead_status: data.lead_status }),
       });
 
       const response = await fetch(
@@ -92,13 +99,6 @@ const Report = ({ leadId }: ReportProps) => {
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.target = "_blank";
-
-        // Set filename based on type
-        const extension = type === "excel" ? ".xlsx" : ".pdf";
         const date = new Date();
         const formattedDate = `${String(date.getDate()).padStart(
           2,
@@ -107,15 +107,22 @@ const Report = ({ leadId }: ReportProps) => {
           2,
           "0"
         )}-${date.getFullYear()}`;
-        link.download = `Lead Report (${formattedDate})${extension}`;
 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        if (type === 'excel') {
+          // For Excel, create a download link
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `Lead Report (${formattedDate}).xlsx`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          // For PDF, open in a new tab
+          window.open(url, '_blank');
+        }
 
         queryClient.invalidateQueries({ queryKey: ["lead"] });
-
-        toast.success(`Report generated and downloaded successfully!`);
+        toast.success(`Report ${type === 'excel' ? 'downloaded' : 'opened'} successfully!`);
       } else {
         const errorData = await response.json();
         toast.error(errorData.errors?.error || "Failed to generate report.");
@@ -186,32 +193,44 @@ const Report = ({ leadId }: ReportProps) => {
                     </FormItem>
                   )}
                 />
-                  <FormField
-          control={form.control}
-          name="lead_status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Lead Status</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a verified email to display" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Open">Open</SelectItem>
-                  <SelectItem value="In Progress">In Progress</SelectItem>
-                  <SelectItem value="Quotation">Quotation</SelectItem>
-                  <SelectItem value="Deal">Deal</SelectItem>
-                  <SelectItem value="Close">Close</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormField
+                  control={form.control}
+                  name="lead_status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Lead Status</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">Not Selected</SelectItem>
+                          <SelectItem value="Open">Open</SelectItem>
+                          <SelectItem value="In Progress">In Progress</SelectItem>
+                          <SelectItem value="Quotation">Quotation</SelectItem>
+                          <SelectItem value="Deal">Deal</SelectItem>
+                          <SelectItem value="Close">Close</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <AlertDialogFooter className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleReset}
+                  disabled={isSubmitting}
+                >
+                  Reset Filters
+                </Button>
                 <AlertDialogCancel disabled={isSubmitting}>
                   Cancel
                 </AlertDialogCancel>
