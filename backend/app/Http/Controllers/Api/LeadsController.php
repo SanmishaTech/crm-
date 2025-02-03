@@ -739,6 +739,7 @@ class LeadsController extends BaseController
         $from_date = $request->query('from_date');
         $to_date = $request->query('to_date');
         $type = $request->query('type', 'excel'); 
+        $lead_status = $request->query('lead_status');
 
         if ($from_date) {
             $from_date = \Carbon\Carbon::parse($from_date)->startOfDay();
@@ -748,6 +749,10 @@ class LeadsController extends BaseController
         if ($to_date) {
             $to_date = \Carbon\Carbon::parse($to_date)->endOfDay();
             $query->whereDate('created_at', '<=', $to_date);
+        }
+
+        if ($lead_status) {
+            $query->where('lead_status', $lead_status);
         }
 
         $leads = $query->get();

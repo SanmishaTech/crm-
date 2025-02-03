@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -9,6 +9,13 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -18,7 +25,6 @@ import { z } from "zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -29,12 +35,14 @@ import { Input } from "@/components/ui/input";
 const formSchema = z.object({
   from_date: z.string().optional(),
   to_date: z.string().optional(),
+  lead_status: z.string().optional(),
 });
 
 // Add type for form data
 type FormData = {
   from_date: string;
   to_date: string;
+  lead_status: string;
 };
 
 // Add type for props
@@ -51,8 +59,10 @@ const Report = ({ leadId }: ReportProps) => {
     defaultValues: {
       from_date: "",
       to_date: "",
+      lead_status: "",
     },
   });
+
 
   const handleGenerateReport = async (
     data: FormData,
@@ -65,6 +75,7 @@ const Report = ({ leadId }: ReportProps) => {
         type: type,
         ...(data.from_date && { from_date: data.from_date }),
         ...(data.to_date && { to_date: data.to_date }),
+        ...(data.lead_status && { lead_status: data.lead_status }),
       });
 
       const response = await fetch(
@@ -175,6 +186,30 @@ const Report = ({ leadId }: ReportProps) => {
                     </FormItem>
                   )}
                 />
+                  <FormField
+          control={form.control}
+          name="lead_status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Lead Status</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a verified email to display" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="Open">Open</SelectItem>
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+                  <SelectItem value="Quotation">Quotation</SelectItem>
+                  <SelectItem value="Deal">Deal</SelectItem>
+                  <SelectItem value="Close">Close</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
               </div>
               <AlertDialogFooter className="flex gap-2">
                 <AlertDialogCancel disabled={isSubmitting}>
