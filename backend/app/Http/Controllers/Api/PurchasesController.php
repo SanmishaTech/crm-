@@ -188,23 +188,25 @@ class PurchasesController extends BaseController
                         'startColor' => ['rgb' => 'E0E0E0']
                     ]
                 ];
-                $sheet->getStyle('A1:E1')->applyFromArray($headerStyle);
+                $sheet->getStyle('A1:F1')->applyFromArray($headerStyle);
 
                 // Add data to the spreadsheet
                 $row = 2;
                 foreach ($purchases as $purchase) {
-                    // Process products: assuming product_names is stored as an array or a string.
-                    if (is_array($purchase->product_names)) {
-                        $products = implode(', ', $purchase->product_names);
+                    // Build products string
+                    $productsString = '';
+                    if ($purchase->purchaseDetails) {
+                        $productDetails = [];
+                        foreach ($purchase->purchaseDetails as $detail) {
+                            $productDetails[] = ($detail->product->product ?? 'N/A') . ' (Qty: ' . $detail->quantity . ')';
+                        }
+                        $productsString = implode(', ', $productDetails);
                     } else {
-                        $products = $purchase->product_names;
+                        $productsString = 'N/A';
                     }
 
-                    // Format the invoice date if available
-                    $purchaseDate = $purchase->purchase_date ? Carbon::parse($purchase->purchase_date)->format('d/m/Y') : 'N/A';
-
                     $sheet->setCellValue('A' . $row, $purchase->supplier->supplier ?? 'N/A');
-                    $sheet->setCellValue('B' . $row, $purchase->purchase->purchaseDetails->product->product ?? 'N/A');
+                    $sheet->setCellValue('B' . $row, $productsString);
                     $sheet->setCellValue('C' . $row, $purchase->payment_ref_no ?: 'N/A');
                     $sheet->setCellValue('D' . $row, $purchase->payment_status);
                     $sheet->setCellValue('E' . $row, $purchase->invoice_no);
@@ -213,7 +215,7 @@ class PurchasesController extends BaseController
                 }
 
                 // Auto-size columns
-                foreach (range('A', 'E') as $column) {
+                foreach (range('A', 'F') as $column) {
                     $sheet->getColumnDimension($column)->setAutoSize(true);
                 }
 
