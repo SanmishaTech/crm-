@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use Carbon\Carbon;
+use Mpdf\Mpdf as Enter;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
 use App\Models\PurchaseDetail;
@@ -9,7 +11,9 @@ use App\Models\PurchaseProduct;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PurchaseResource;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Http\Controllers\Api\BaseController;
+use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
 use App\Http\Resources\PurchaseDetailResource;
 
    /**
@@ -108,6 +112,126 @@ class PurchasesController extends BaseController
         }
         
         return $this->sendResponse(["Purchase"=>new PurchaseResource($purchase), 'PurchaseDetails'=> PurchaseDetailResource::collection($purchase->purchaseDetails)], "Purchase Details retrived successfully");
+    }
+
+    public function generateReport(Request $request)
+    {
+        try {
+            // Retrieve purchases with their purchaseDetails and related product
+            $query = Purchase::with(['purchaseDetails']);
+            
+            $from_date = $request->query('from_date');
+            $to_date = $request->query('to_date');
+            $type = $request->query('type', 'excel'); 
+
+            if ($from_date) {
+                $from_date = Carbon::parse($from_date)->startOfDay();
+                $query->whereDate('created_at', '>=', $from_date);
+            }
+
+            if ($to_date) {
+                $to_date = Carbon::parse($to_date)->endOfDay();
+                $query->whereDate('created_at', '<=', $to_date);
+            }
+
+            // Use a consistent variable name for the retrieved purchases
+            $purchases = $query->get();
+
+            if ($purchases->isEmpty()) {
+                return $this->sendError("No purchase found", ['error' => ['No purchases found for the selected date range']]);
+            }
+
+            if ($type === 'pdf') {
+                $user = auth()->user();
+                $employee = $user->employee;
+
+                if (!$employee) {
+                    return $this->sendError("Employee not found", ['error'=>['Employee not found']]);
+                }
+                
+                // Pass purchases as "purchases" to the view
+                $data = [
+                    'user'     => $user,
+                    'employee' => $employee,
+                    'purchases' => $purchases,
+                ];
+
+                $html = view('reports.purchase', $data)->render();
+                $mpdf = new Enter([
+                    'margin_left'   => 10,
+                    'margin_right'  => 10,
+                    'margin_top'    => 15,
+                    'margin_bottom' => 15,
+                ]);
+                
+                $mpdf->WriteHTML($html);
+                $fileName = 'purchase_report_' . now()->format('Y_m_d_His') . '.pdf';
+                return $mpdf->Output($fileName, 'D');
+            } else {
+                // Excel generation branch
+                $spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+
+                // Set headers for the Excel file
+                $sheet->setCellValue('A1', 'Contact');
+                $sheet->setCellValue('B1', 'Payment Reference No');
+                $sheet->setCellValue('C1', 'Payment Status');
+                $sheet->setCellValue('D1', 'Invoice Number');
+                $sheet->setCellValue('E1', 'Created At');
+
+                // Style the header row
+                $headerStyle = [
+                    'font' => ['bold' => true],
+                    'fill' => [
+                        'fillType'   => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'E0E0E0']
+                    ]
+                ];
+                $sheet->getStyle('A1:E1')->applyFromArray($headerStyle);
+
+                // Add data to the spreadsheet
+                $row = 2;
+                foreach ($purchases as $purchase) {
+                    // Process products: assuming product_names is stored as an array or a string.
+                    if (is_array($purchase->product_names)) {
+                        $products = implode(', ', $purchase->product_names);
+                    } else {
+                        $products = $purchase->product_names;
+                    }
+
+                    // Format the invoice date if available
+                    $purchaseDate = $purchase->purchase_date ? Carbon::parse($purchase->purchase_date)->format('d/m/Y') : 'N/A';
+
+                    $sheet->setCellValue('A' . $row, $purchase->suppliers->supplier ?? 'N/A');
+                    $sheet->setCellValue('B' . $row, $purchase->payment_ref_no ?: 'N/A');
+                    $sheet->setCellValue('C' . $row, $purchase->payment_status);
+                    $sheet->setCellValue('D' . $row, $purchase->invoice_no);
+                    $sheet->setCellValue('E' . $row, $purchase->created_at ?? 'N/A');
+                    $row++;
+                }
+
+                // Auto-size columns
+                foreach (range('A', 'E') as $column) {
+                    $sheet->getColumnDimension($column)->setAutoSize(true);
+                }
+
+                // Create Excel file
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+
+                // Save to a temporary file
+                $fileName = 'purchase_report_' . date('Y_m_d_His') . '.xlsx';
+                $tempFile = tempnam(sys_get_temp_dir(), 'purchase_report');
+                $writer->save($tempFile);
+
+                // Return the file as a download
+                return response()->download($tempFile, $fileName, [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ])->deleteFileAfterSend(true);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Report Generation Error: ' . $e->getMessage());
+            return $this->sendError("Error generating report", ['error' => $e->getMessage()]);
+        }
     }
 
     

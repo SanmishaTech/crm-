@@ -71,6 +71,7 @@ import { useGetData } from "@/lib/HTTP/GET";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import AlertQuotation from "./AlertQuotation";
+import Report from "./Report";
 
 // Supplier type
 type Supplier = {
@@ -225,6 +226,9 @@ export default function TableDemo() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          <Button variant="outline" type="button">
+            <Report />
+          </Button>
           <div className="flex space-x-2">
             <Button variant="outline" onClick={() => navigate("/purchase/add")}>
               Add Purchase

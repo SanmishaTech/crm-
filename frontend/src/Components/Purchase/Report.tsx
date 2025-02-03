@@ -68,7 +68,7 @@ const Report = ({ leadId }: ReportProps) => {
       });
 
       const response = await fetch(
-        `/api/generate_lead_report/${leadId}?${params}`,
+        `/api/generate_purchase_report/${leadId}?${params}`,
         {
           method: "POST",
           headers: {
@@ -88,7 +88,7 @@ const Report = ({ leadId }: ReportProps) => {
 
         // Set filename based on type
         const extension = type === "excel" ? ".xlsx" : ".pdf";
-        link.download = `lead_report${extension}`;
+        link.download = `purchase_report${extension}`;
 
         document.body.appendChild(link);
         link.click();
