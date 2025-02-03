@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Sidebar, { useSidebar } from "./Sidebar";
 import axios from "axios";
+import Report from "./Report";
 import {
   Tooltip,
   TooltipContent,
@@ -144,18 +145,6 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex justify-between items-center py-1 space-x-3   ">
-          {/* <div className="ml-4 mt-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Filter onClick={toggle} className="  h-5  " />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Filter</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div> */}
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
@@ -165,15 +154,9 @@ export default function TableDemo() {
               />
             ) : null}
           </div>
-
-          {/* <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/suppliers/add")}
-            >
-              Add Invoice
-            </Button>
-          </div> */}
+          <Button variant="outline" type="button">
+            <Report />
+          </Button>
         </div>
 
         <div className="p-4 rounded-md bg-card ">

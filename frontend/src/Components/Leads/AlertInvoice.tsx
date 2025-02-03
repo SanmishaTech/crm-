@@ -153,7 +153,6 @@ const AlertQuotation = ({ leadId }) => {
   };
 
   const onSubmit = async (data) => {
-    console.log("Form Data:", data);
     await handleGenerateQuotation(data);
   };
 

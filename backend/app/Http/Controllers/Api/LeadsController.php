@@ -834,7 +834,7 @@ class LeadsController extends BaseController
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
 
         // Save to a temporary file
-        $fileName = 'leads_report_' . date('Y_m_d_His') . '.xlsx';
+        $fileName = 'invoice_report_' . date('Y_m_d_His') . '.xlsx';
         $tempFile = tempnam(sys_get_temp_dir(), 'leads_report');
         $writer->save($tempFile);
 
