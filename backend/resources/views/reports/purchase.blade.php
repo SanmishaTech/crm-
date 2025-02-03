@@ -64,7 +64,8 @@
             <thead>
                 <tr>
                     <th>Contact</th>
-                     <th>Payment Reference No.</th>
+                    <th>Products</th>
+                    <th>Payment Reference No.</th>
                     <th>Payment Status</th>
                     <th>Invoice Number</th>
                     <th>Created At</th>
@@ -72,12 +73,19 @@
             </thead>
             <tbody>
                 @foreach($purchases as $purchase)
-                {{-- @dd($purchase)   --}}
-
-                
                     <tr>
                         <td>{{ $purchase->supplier->supplier ?? 'N/A' }}</td>
-                        {{-- @dd($purchase->payment_status)   --}}
+                        <td>
+                            @if($purchase->purchaseDetails)
+                                @foreach($purchase->purchaseDetails as $detail)
+                                    {{ $detail->product->product ?? 'N/A' }}
+                                    (Qty: {{ $detail->quantity }})
+                                    @if(!$loop->last), @endif
+                                @endforeach
+                            @else
+                                N/A
+                            @endif
+                        </td>
                         <td>{{ $purchase->payment_ref_no ?? 'N/A' }}</td>
                         <td>{{ $purchase->payment_status ?? 'N/A' }}</td>
                         <td>{{ $purchase->invoice_no ?? 'N/A' }}</td>

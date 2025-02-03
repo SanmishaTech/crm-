@@ -117,8 +117,8 @@ class PurchasesController extends BaseController
     public function generateReport(Request $request)
     {
         try {
-            // Retrieve purchases with their purchaseDetails and related product
-            $query = Purchase::with(['purchaseDetails']);
+            // Modify the query to include purchaseDetails and products
+            $query = Purchase::with(['purchaseDetails.product', 'supplier']);
             
             $from_date = $request->query('from_date');
             $to_date = $request->query('to_date');
@@ -174,10 +174,11 @@ class PurchasesController extends BaseController
 
                 // Set headers for the Excel file
                 $sheet->setCellValue('A1', 'Contact');
-                $sheet->setCellValue('B1', 'Payment Reference No');
-                $sheet->setCellValue('C1', 'Payment Status');
-                $sheet->setCellValue('D1', 'Invoice Number');
-                $sheet->setCellValue('E1', 'Created At');
+                $sheet->setCellValue('B1', 'pRODUCTS');
+                $sheet->setCellValue('C1', 'Payment Reference No');
+                $sheet->setCellValue('D1', 'Payment Status');
+                $sheet->setCellValue('E1', 'Invoice Number');
+                $sheet->setCellValue('F1', 'Created At');
 
                 // Style the header row
                 $headerStyle = [
@@ -202,11 +203,12 @@ class PurchasesController extends BaseController
                     // Format the invoice date if available
                     $purchaseDate = $purchase->purchase_date ? Carbon::parse($purchase->purchase_date)->format('d/m/Y') : 'N/A';
 
-                    $sheet->setCellValue('A' . $row, $purchase->suppliers->supplier ?? 'N/A');
-                    $sheet->setCellValue('B' . $row, $purchase->payment_ref_no ?: 'N/A');
-                    $sheet->setCellValue('C' . $row, $purchase->payment_status);
-                    $sheet->setCellValue('D' . $row, $purchase->invoice_no);
-                    $sheet->setCellValue('E' . $row, $purchase->created_at ?? 'N/A');
+                    $sheet->setCellValue('A' . $row, $purchase->supplier->supplier ?? 'N/A');
+                    $sheet->setCellValue('B' . $row, $purchase->purchase->purchaseDetails->product->product ?? 'N/A');
+                    $sheet->setCellValue('C' . $row, $purchase->payment_ref_no ?: 'N/A');
+                    $sheet->setCellValue('D' . $row, $purchase->payment_status);
+                    $sheet->setCellValue('E' . $row, $purchase->invoice_no);
+                    $sheet->setCellValue('F' . $row, $purchase->created_at ?? 'N/A');
                     $row++;
                 }
 
