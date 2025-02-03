@@ -54,23 +54,29 @@ const Report = ({ leadId }: ReportProps) => {
     },
   });
 
-  const handleGenerateReport = async (data: FormData, type: 'excel' | 'pdf') => {
+  const handleGenerateReport = async (
+    data: FormData,
+    type: "excel" | "pdf"
+  ) => {
     setIsSubmitting(true);
     try {
       // Build query params including dates
       const params = new URLSearchParams({
         type: type,
         ...(data.from_date && { from_date: data.from_date }),
-        ...(data.to_date && { to_date: data.to_date })
+        ...(data.to_date && { to_date: data.to_date }),
       });
 
-      const response = await fetch(`/api/generate_lead_report/${leadId}?${params}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      });
+      const response = await fetch(
+        `/api/generate_lead_report/${leadId}?${params}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      );
 
       if (response.ok) {
         const blob = await response.blob();
@@ -81,8 +87,16 @@ const Report = ({ leadId }: ReportProps) => {
         link.target = "_blank";
 
         // Set filename based on type
-        const extension = type === 'excel' ? '.xlsx' : '.pdf';
-        link.download = `lead_report${extension}`;
+        const extension = type === "excel" ? ".xlsx" : ".pdf";
+        const date = new Date();
+        const formattedDate = `${String(date.getDate()).padStart(
+          2,
+          "0"
+        )}-${String(date.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${date.getFullYear()}`;
+        link.download = `Lead Report (${formattedDate})${extension}`;
 
         document.body.appendChild(link);
         link.click();
@@ -103,7 +117,7 @@ const Report = ({ leadId }: ReportProps) => {
     }
   };
 
-  const onSubmit = async (data: FormData, type: 'excel' | 'pdf') => {
+  const onSubmit = async (data: FormData, type: "excel" | "pdf") => {
     await handleGenerateReport(data, type);
   };
 
@@ -166,17 +180,21 @@ const Report = ({ leadId }: ReportProps) => {
                 <AlertDialogCancel disabled={isSubmitting}>
                   Cancel
                 </AlertDialogCancel>
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   disabled={isSubmitting}
-                  onClick={() => form.handleSubmit((data) => onSubmit(data, 'excel'))()}
+                  onClick={() =>
+                    form.handleSubmit((data) => onSubmit(data, "excel"))()
+                  }
                 >
                   {isSubmitting ? "Generating Excel..." : "Export to Excel"}
                 </Button>
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   disabled={isSubmitting}
-                  onClick={() => form.handleSubmit((data) => onSubmit(data, 'pdf'))()}
+                  onClick={() =>
+                    form.handleSubmit((data) => onSubmit(data, "pdf"))()
+                  }
                 >
                   {isSubmitting ? "Generating PDF..." : "Export to PDF"}
                 </Button>

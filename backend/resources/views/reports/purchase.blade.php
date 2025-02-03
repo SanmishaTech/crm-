@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Report</title>
+    <title>Purchase Report</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,7 +54,7 @@
     </div>
     <div class="report-container">
         <div class="report-header">
-            <h2>Invoice Report</h2>
+            <h2>Purchase Report</h2>
             <div class="report-date">
                 <p><strong>Date:</strong> {{ now()->format('d/m/Y') }}</p>
             </div>

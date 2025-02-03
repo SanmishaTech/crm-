@@ -88,7 +88,15 @@ const Report = ({ invoiceId }: ReportProps) => {
 
         // Set filename based on type
         const extension = type === "excel" ? ".xlsx" : ".pdf";
-        link.download = `invoice_report${extension}`;
+        const date = new Date();
+        const formattedDate = `${String(date.getDate()).padStart(
+          2,
+          "0"
+        )}-${String(date.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${date.getFullYear()}`;
+        link.download = `Invoice Report (${formattedDate})${extension}`;
 
         document.body.appendChild(link);
         link.click();

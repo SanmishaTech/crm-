@@ -88,7 +88,15 @@ const Report = ({ leadId }: ReportProps) => {
 
         // Set filename based on type
         const extension = type === "excel" ? ".xlsx" : ".pdf";
-        link.download = `purchase_report${extension}`;
+        const date = new Date();
+        const formattedDate = `${String(date.getDate()).padStart(
+          2,
+          "0"
+        )}-${String(date.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${date.getFullYear()}`;
+        link.download = `Purchase Report (${formattedDate})${extension}`;
 
         document.body.appendChild(link);
         link.click();
