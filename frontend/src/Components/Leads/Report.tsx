@@ -15,7 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -82,7 +82,8 @@ const Report = ({ leadId }: ReportProps) => {
         type: type,
         ...(data.from_date && { from_date: data.from_date }),
         ...(data.to_date && { to_date: data.to_date }),
-        ...(data.lead_status && data.lead_status !== "none" && { lead_status: data.lead_status }),
+        ...(data.lead_status &&
+          data.lead_status !== "none" && { lead_status: data.lead_status }),
       });
 
       const response = await fetch(
@@ -108,7 +109,7 @@ const Report = ({ leadId }: ReportProps) => {
           "0"
         )}-${date.getFullYear()}`;
 
-        if (type === 'excel') {
+        if (type === "excel") {
           // For Excel, create a download link
           const link = document.createElement("a");
           link.href = url;
@@ -118,11 +119,13 @@ const Report = ({ leadId }: ReportProps) => {
           document.body.removeChild(link);
         } else {
           // For PDF, open in a new tab
-          window.open(url, '_blank');
+          window.open(url, "_blank");
         }
 
         queryClient.invalidateQueries({ queryKey: ["lead"] });
-        toast.success(`Report ${type === 'excel' ? 'downloaded' : 'opened'} successfully!`);
+        toast.success(
+          `Report ${type === "excel" ? "downloaded" : "opened"} successfully!`
+        );
       } else {
         const errorData = await response.json();
         toast.error(errorData.errors?.error || "Failed to generate report.");
@@ -147,7 +150,7 @@ const Report = ({ leadId }: ReportProps) => {
             Report
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-w-md w-full">
           <AlertDialogHeader>
             <AlertDialogTitle>Generate Report</AlertDialogTitle>
             <AlertDialogDescription>
@@ -156,7 +159,7 @@ const Report = ({ leadId }: ReportProps) => {
           </AlertDialogHeader>
           <Form {...form}>
             <form className="space-y-4">
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <FormField
                   control={form.control}
                   name="from_date"
@@ -193,36 +196,38 @@ const Report = ({ leadId }: ReportProps) => {
                     </FormItem>
                   )}
                 />
+              </div>
+              <div className="flex items-end gap-4">
                 <FormField
                   control={form.control}
                   name="lead_status"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex-1">
                       <FormLabel>Lead Status</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        value={field.value}
-                      >
-                        <FormControl>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder="Select status" />
                           </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">Not Selected</SelectItem>
-                          <SelectItem value="Open">Open</SelectItem>
-                          <SelectItem value="In Progress">In Progress</SelectItem>
-                          <SelectItem value="Quotation">Quotation</SelectItem>
-                          <SelectItem value="Deal">Deal</SelectItem>
-                          <SelectItem value="Close">Close</SelectItem>
-                        </SelectContent>
-                      </Select>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="Open">Open</SelectItem>
+                            <SelectItem value="In Progress">
+                              In Progress
+                            </SelectItem>
+                            <SelectItem value="Quotation">Quotation</SelectItem>
+                            <SelectItem value="Deal">Deal</SelectItem>
+                            <SelectItem value="Close">Close</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
-              <AlertDialogFooter className="flex gap-2">
                 <Button
                   type="button"
                   variant="outline"
@@ -231,6 +236,8 @@ const Report = ({ leadId }: ReportProps) => {
                 >
                   Reset Filters
                 </Button>
+              </div>
+              <AlertDialogFooter className="flex flex-wrap gap-2">
                 <AlertDialogCancel disabled={isSubmitting}>
                   Cancel
                 </AlertDialogCancel>
@@ -241,7 +248,7 @@ const Report = ({ leadId }: ReportProps) => {
                     form.handleSubmit((data) => onSubmit(data, "excel"))()
                   }
                 >
-                  {isSubmitting ? "Generating Excel..." : "Export to Excel"}
+                  {isSubmitting ? "Generating Excel..." : "To Excel"}
                 </Button>
                 <Button
                   type="button"
@@ -250,7 +257,7 @@ const Report = ({ leadId }: ReportProps) => {
                     form.handleSubmit((data) => onSubmit(data, "pdf"))()
                   }
                 >
-                  {isSubmitting ? "Generating PDF..." : "Export to PDF"}
+                  {isSubmitting ? "Generating PDF..." : "To PDF"}
                 </Button>
               </AlertDialogFooter>
             </form>

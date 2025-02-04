@@ -53,12 +53,20 @@
         <img src="{{ public_path('images/Renuka.jpg') }}" alt="Renuka Enterprises Logo">
     </div>
     <div class="report-container">
-        <div class="report-header">
-            <h2>Purchase Report</h2>
-            <div class="report-date">
-                <p><strong>Date:</strong> {{ now()->format('d/m/Y') }}</p>
-            </div>
-        </div>
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;">
+            <!-- Left empty cell to balance the grid -->
+            <div></div>
+            
+            <!-- Centered Title -->
+            <h2 style="grid-column: 2; text-align: center; margin: 0;">
+              Purchase Report
+            </h2>
+            
+            <!-- Right-aligned Date -->
+            <p style="grid-column: 3; text-align: right; margin: 0;">
+              <strong>Date:</strong> {{ now()->format('d/m/Y') }}
+            </p>
+          </div>
 
         <table>
             <thead>

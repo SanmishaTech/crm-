@@ -15,9 +15,9 @@
             margin: auto;
             padding: 20px;
         }
-        .report-container h2 {
-            text-align: center;
-        }
+        
+      
+      
         table {
             width: 100%;
             border-collapse: collapse;
@@ -39,13 +39,6 @@
             max-width: 200px;
             height: auto;
         }
-        .report-header {
-            margin-bottom: 20px;
-        }
-        .report-date {
-            text-align: right;
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
@@ -53,12 +46,23 @@
         <img src="{{ public_path('images/Renuka.jpg') }}" alt="Renuka Enterprises Logo">
     </div>
     <div class="report-container">
-        <div class="report-header">
-            <h2>Lead Report</h2>
-            <div class="report-date">
-                <p><strong>Date:</strong> {{ now()->format('d/m/Y') }}</p>
-            </div>
-        </div>
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;">
+            <!-- Left empty cell to balance the grid -->
+            <div></div>
+            
+            <!-- Centered Title -->
+            <h2 style="grid-column: 2; text-align: center; margin: 0;">
+              Lead Report
+            </h2>
+            
+            <!-- Right-aligned Date -->
+            <p style="grid-column: 3; text-align: right; margin: 0;">
+              <strong>Date:</strong> {{ now()->format('d/m/Y') }}
+            </p>
+          </div>
+          
+          
+          
 
         <table>
             <thead>
@@ -70,6 +74,7 @@
                     <th>Follow-up Date</th>
                     <th>Follow-up Type</th>
                     <th>Remark</th>
+                    <th>Created At</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,6 +89,8 @@
                         <td>{{ $lead->lead_follow_up_date ? $lead->lead_follow_up_date->format('d/m/Y (H:i)') : 'N/A' }}</td>
                         <td>{{ $lead->follow_up_type ?? 'N/A' }}</td>
                         <td>{{ $lead->follow_up_remark ?? 'N/A' }}</td>
+                        <td>{{ $lead->created_at ?? 'N/A' }}</td>
+
                     </tr>
                 @endforeach
             </tbody>

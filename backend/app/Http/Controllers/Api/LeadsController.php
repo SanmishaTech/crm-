@@ -758,7 +758,7 @@ class LeadsController extends BaseController
         $leads = $query->get();
 
         if ($leads->isEmpty()) {
-            return $this->sendError("No leads found", ['error' => ['No leads found for the selected date range']]);
+            return $this->sendError("No leads found", ['error' => ['No leads found for the selected filter']]);
         }
 
         if ($type === 'pdf') {
