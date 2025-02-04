@@ -138,7 +138,7 @@ class PurchasesController extends BaseController
             $purchases = $query->get();
 
             if ($purchases->isEmpty()) {
-                return $this->sendError("No purchase found", ['error' => ['No purchases found for the selected date range']]);
+                return $this->sendError("No purchase found", ['error' => ['No purchases found for the selected filter']]);
             }
 
             if ($type === 'pdf') {

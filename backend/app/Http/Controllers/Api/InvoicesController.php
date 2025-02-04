@@ -116,7 +116,7 @@ class InvoicesController extends BaseController
             $invoices = $query->get();
 
             if ($invoices->isEmpty()) {
-                return $this->sendError("No invoice found", ['error' => ['No invoices found for the selected date range']]);
+                return $this->sendError("No invoice found", ['error' => ['No invoices found for the selected filter']]);
             }
 
             if ($type === 'pdf') {

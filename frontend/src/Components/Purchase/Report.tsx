@@ -54,6 +54,13 @@ const Report = ({ leadId }: ReportProps) => {
     },
   });
 
+  const handleReset = () => {
+    form.reset({
+      from_date: "",
+      to_date: "",
+    });
+  };
+
   const handleGenerateReport = async (
     data: FormData,
     type: "excel" | "pdf"
@@ -176,6 +183,15 @@ const Report = ({ leadId }: ReportProps) => {
                   )}
                 />
               </div>
+              <Button
+                className="w-full"
+                type="button"
+                variant="outline"
+                onClick={handleReset}
+                disabled={isSubmitting}
+              >
+                Reset Filters
+              </Button>
               <AlertDialogFooter className="flex gap-2">
                 <AlertDialogCancel disabled={isSubmitting}>
                   Cancel
