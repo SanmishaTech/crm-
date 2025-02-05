@@ -157,7 +157,7 @@ export default function TableDemo() {
     )}&page=${currentPage}&total=${totalPages}`,
     params: {
       queryKey: [
-        "lead",
+        "purchase",
         searchTerm,
         currentPage,
         leadStatus,

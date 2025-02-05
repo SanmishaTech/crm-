@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useQueryClient } from "@tanstack/react-query";
 
 import AddSuppliers from "./AddSuppliers";
 
@@ -30,7 +31,6 @@ import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
@@ -144,7 +144,6 @@ export default function InputForm() {
     queryKey: ["purchase"],
     params: {
       onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["purchase"] });
         queryClient.invalidateQueries({ queryKey: ["purchase"] });
         navigate("/purchase");
       },
