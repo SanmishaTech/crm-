@@ -1,8 +1,9 @@
 //@ts-nocheck
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import {
@@ -12,6 +13,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -26,6 +36,7 @@ import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import AddProductCategory from "../ProductCategories/AddProductCategory";
 
 // Get QueryClient from the context
 // Form Schema
@@ -74,7 +85,7 @@ const FormSchema = z.object({
     .nonempty({ message: "Contact Name field is required." }),
 
   department: z.string().optional(),
-  designation: z.string().optional(),
+  location: z.string().optional(),
   mobile_1: z
     .string()
     .regex(/^(\+?\d{1,3}[-.\s]?)?(\(?\d{1,4}\)?[-.\s]?)?[\d\s.-]{5,20}$/, {
@@ -87,6 +98,7 @@ const FormSchema = z.object({
     .email("Please enter a valid email address.")
     .nonempty("Email is required."),
   alternate_email: z.any().optional(),
+  product_category_id: z.any().optional(),
 });
 
 export default function InputForm() {
@@ -105,15 +117,19 @@ export default function InputForm() {
       gstin: "",
       contact_name: "",
       department: "",
-      designation: "",
+      location: "",
       mobile_1: "",
       mobile_2: "",
       email: "",
       alternate_email: "",
+      product_category_id: "1",
     },
   });
   const queryClient = useQueryClient();
-
+  const [loading, setLoading] = useState(false); // To handle loading state
+  const [productCategories, setProductCategories] = useState<ProductCategory[]>(
+    []
+  );
   const navigate = useNavigate(); // Use For Navigation
 
   type FormValues = z.infer<typeof FormSchema>;
@@ -146,6 +162,26 @@ export default function InputForm() {
       },
     },
   });
+
+  const fetchProductCategories = () => {
+    axios
+      .get("/api/all_product_categories", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        setProductCategories(response.data.data.ProductCategories);
+      })
+      .catch(() => {
+        setError("Failed to load Product categories");
+      });
+  };
+
+  useEffect(() => {
+    fetchProductCategories();
+  }, []);
 
   const onSubmit = async (data: FormValues) => {
     formData.mutate(data);
@@ -223,7 +259,7 @@ export default function InputForm() {
                 />
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-6 space-y-3">
               <FormField
                 control={form.control}
                 name="supplier"
@@ -240,6 +276,45 @@ export default function InputForm() {
                       />
                     </FormControl>
                     <FormMessage className="text-destructive" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="product_category_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Product Category</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={String(field.value)}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="">
+                          <SelectValue placeholder="Select Product Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {loading ? (
+                            <SelectItem disabled>Loading...</SelectItem>
+                          ) : (
+                            productCategories.map((ProductCategory) => (
+                              <SelectItem
+                                key={ProductCategory.id}
+                                value={String(ProductCategory.id)}
+                              >
+                                {ProductCategory.product_category}
+                              </SelectItem>
+                            ))
+                          )}
+                          <div className="px-5 py-1">
+                            <AddProductCategory
+                              fetchProductCategories={fetchProductCategories}
+                            />
+                          </div>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -397,7 +472,7 @@ export default function InputForm() {
 
                 <FormField
                   control={form.control}
-                  name="designation"
+                  name="location"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
@@ -406,7 +481,7 @@ export default function InputForm() {
                       <FormControl>
                         <Input
                           className="bg-background text-foreground border-input"
-                          placeholder="Enter Designation"
+                          placeholder="Enter Location"
                           {...field}
                         />
                       </FormControl>

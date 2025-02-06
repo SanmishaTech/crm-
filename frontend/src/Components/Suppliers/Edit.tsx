@@ -16,6 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import axios from "axios";
 import {
   Select,
   SelectContent,
@@ -36,6 +37,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import AddProductCategory from "../ProductCategories/AddProductCategory";
 
 // Form validation schema
 const formSchema = z.object({
@@ -68,11 +70,7 @@ const formSchema = z.object({
     .min(2, { message: "Country field must have at least 2 characters." })
     .nonempty({ message: "Country field is required." }),
   gstin: z.string().optional(),
-  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-  //   message: "Invalid GST Number. Please enter a valid GSTIN. ",
-  // })
-  // .max(15, "GST Number must be exactly 15 characters")
-  // .min(15, "GST Number must be exactly 15 characters"),
+
   contact_name: z
     .string()
     .min(2, { message: "Contact Name field must have at least 2 characters." })
@@ -82,7 +80,7 @@ const formSchema = z.object({
     .nonempty({ message: "Contact Name field is required." }),
 
   department: z.string().optional(),
-  designation: z.string().optional(),
+  location: z.string().optional(),
   mobile_1: z
     .string()
     .regex(/^(\+?\d{1,3}[-.\s]?)?(\(?\d{1,4}\)?[-.\s]?)?[\d\s.-]{5,20}$/, {
@@ -96,6 +94,7 @@ const formSchema = z.object({
     .nonempty("Email is required."),
   alternate_email: z.any().optional(),
   supplier_type: z.any().optional(),
+  product_category_id: z.any().optional(),
 });
 
 // Move FormValues type definition outside the component
@@ -123,11 +122,12 @@ export default function EditSupplierPage() {
       gstin: "",
       contact_name: "",
       department: "",
-      designation: "",
+      location: "",
       mobile_1: "",
       mobile_2: "",
       email: "",
       alternate_email: "",
+      product_category_id: "",
     },
   });
 
@@ -198,6 +198,7 @@ export default function EditSupplierPage() {
       form.reset({
         supplier: newData.supplier || "",
         supplier_type: newData.supplier_type || "",
+        product_category_id: newData.product_category_id || "",
         street_address: newData.street_address || "",
         area: newData.area || "",
         city: newData.city || "",
@@ -207,7 +208,7 @@ export default function EditSupplierPage() {
         gstin: newData.gstin || "",
         contact_name: newData.contact_name || "",
         department: newData.department || "",
-        designation: newData.designation || "",
+        location: newData.location || "",
         mobile_1: newData.mobile_1 || "",
         mobile_2: newData.mobile_2 || "",
         email: newData.email || "",
@@ -215,6 +216,31 @@ export default function EditSupplierPage() {
       });
     }
   }, [editData, form]);
+
+  const [productCategories, setProductCategories] = useState([]);
+
+  const fetchProductCategories = () => {
+    axios
+      .get("/api/all_product_categories", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        // setProductCategories(response.data.data.ProductCategories);
+        const category = response.data.data.ProductCategories;
+        setProductCategories(category);
+        console.log("callled");
+      })
+      .catch(() => {
+        setError("Failed to load Product categories");
+      });
+  };
+
+  useEffect(() => {
+    fetchProductCategories();
+  }, []);
 
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
@@ -423,6 +449,46 @@ export default function EditSupplierPage() {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="product_category_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Product Category</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={String(field.value)}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="">
+                          <SelectValue placeholder="Select Product Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {loading ? (
+                            <SelectItem disabled>Loading...</SelectItem>
+                          ) : (
+                            productCategories.map((ProductCategory) => (
+                              <SelectItem
+                                key={ProductCategory.id}
+                                value={String(ProductCategory.id)}
+                              >
+                                {ProductCategory.product_category}
+                              </SelectItem>
+                            ))
+                          )}
+                          <div className="px-5 py-1">
+                            <AddProductCategory
+                              fetchProductCategories={fetchProductCategories}
+                            />
+                          </div>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
@@ -579,7 +645,7 @@ export default function EditSupplierPage() {
 
                 <FormField
                   control={form.control}
-                  name="designation"
+                  name="location"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
@@ -588,7 +654,7 @@ export default function EditSupplierPage() {
                       <FormControl>
                         <Input
                           className="bg-background text-foreground border-input"
-                          placeholder="Enter Designation"
+                          placeholder="Enter Location"
                           {...field}
                         />
                       </FormControl>

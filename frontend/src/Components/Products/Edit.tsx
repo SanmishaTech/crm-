@@ -160,62 +160,6 @@ export default function EditProductPage() {
     handleInvalidateQuery();
   }, [data, form]);
 
-  // const { data, isLoading, isFetching, isError } = useGetData({
-  //   endpoint: `/api/products/${id}`,
-  //   params: {
-  //     queryKey: ["product", id],
-  //     retry: 1,
-  //     onError: (error) => {
-  //       console.log("error", error);
-  //       if (error.message && error.message.includes("duplicate supplier")) {
-  //         toast.error("Supplier name is duplicated. Please use a unique name.");
-  //       } else {
-  //         toast.error("Failed to submit the form. Please try again.");
-  //       }
-  //     },
-  //     onSuccess: (data) => {
-  //       console.log("data", data);
-  //       // form.setValue(
-  //       //   "product_category_id",
-  //       //   data.data.Product.product_category_id
-  //       // );
-  //       // form.setValue("supplier_id", data.data.Product.supplier_id);
-  //     },
-  //   },
-  // });
-
-  // const { data: ProductCategoryData, isLoading: productCategoriesLoading } =
-  //   useGetData({
-  //     endpoint: `/api/product_categories`,
-  //     params: {
-  //       queryKey: ["product_category"],
-  //       retry: 1,
-  //       onSuccess: (data) => {
-  //         console.log(data.data.ProductCategories);
-  //         setProductCategories(data.data.ProductCategories);
-  //       },
-  //       onError: (error) => {
-  //         console.log(error);
-  //       },
-  //     },
-  //   });
-
-  // useEffect(() => {
-  //   if (data) {
-  //     const newData = data.data.Product;
-  //     form.reset({
-  //       product: newData.product || "",
-  //       product_category_id: newData.product_category_id || "",
-  //       supplier_id: newData.supplier_id || "",
-  //       model: newData.model || "",
-  //       manufacturer: newData.manufacturer || "",
-  //       opening_qty: newData.opening_qty || "",
-  //       closing_qty: newData.closing_qty || "",
-  //       last_traded_price: newData.last_traded_price || "",
-  //     });
-  //   }
-  // }, [data, form]);
-
   type FormValues = z.infer<typeof formSchema>;
   const fetchData = usePutData({
     endpoint: `/api/products/${id}`,
@@ -241,7 +185,6 @@ export default function EditProductPage() {
                 message: serverErrors.product[0], // The error message from the server
               });
               toast.error("The product has already been taken.");
-
             }
             if (serverErrors.product_category_id) {
               form.setError("product_category_id", {

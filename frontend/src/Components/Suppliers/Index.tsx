@@ -255,6 +255,9 @@ export default function TableDemo() {
             <TableHeader>
               <TableRow className="hover:bg-accent/50">
                 <TableHead className="text-foreground">Suppliers</TableHead>
+                <TableHead className="text-foreground">
+                  Product Category
+                </TableHead>
                 <TableHead className="text-foreground">Email</TableHead>
                 <TableHead className="text-foreground">Mobile</TableHead>
                 <TableHead className="text-foreground">City</TableHead>
@@ -269,6 +272,9 @@ export default function TableDemo() {
                 <TableRow key={supplier.id} className="hover:bg-accent/50">
                   <TableCell className="text-foreground">
                     {supplier.supplier}
+                  </TableCell>
+                  <TableCell className="text-foreground">
+                    {supplier.product_category}
                   </TableCell>
                   <TableCell className="text-foreground">
                     {supplier.email}

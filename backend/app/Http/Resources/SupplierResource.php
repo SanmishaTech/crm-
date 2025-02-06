@@ -17,6 +17,9 @@ class SupplierResource extends JsonResource
         return [
             'id' => $this->id,
             'supplier' => $this->supplier,
+            'product_category' => $this->productCategory ? $this->productCategory->product_category : "" ,
+
+            'product_category_id' => $this->product_category_id,
             'supplier_type' => $this->supplier_type,
             'street_address' => $this->street_address,
             'area' => $this->area,
@@ -27,7 +30,7 @@ class SupplierResource extends JsonResource
             'gstin' => $this->gstin,
             'contact_name' => $this->contact_name,
             'department' => $this->department,
-            'designation' => $this->designation,
+            'location' => $this->location,
             'mobile_1' => $this->mobile_1,
             'mobile_2' => $this->mobile_2,
             'email' => $this->email,

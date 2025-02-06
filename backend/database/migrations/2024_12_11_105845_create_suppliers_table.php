@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
             $table->string('supplier')->nullable();
+            $table->unsignedBigInteger("product_category_id")->nullable();
             $table->boolean('supplier_type')->nullable();
             $table->string('street_address')->nullable();
             $table->string('area')->nullable();
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->string('gstin', 15)->nullable();
             $table->string('contact_name')->nullable();
             $table->string('department', 100)->nullable();
-            $table->string('designation', 100)->nullable();
+            $table->string('location', 100)->nullable();
             $table->string('mobile_1', 20)->nullable();
             $table->string('mobile_2', 20)->nullable();
             $table->string('email', 100)->nullable();

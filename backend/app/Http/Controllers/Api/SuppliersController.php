@@ -60,7 +60,7 @@ class SuppliersController extends BaseController
      * @bodyParam gstin string The gstin of the Supplier.
      * @bodyParam contact_name string The contact number of the Supplier.
      * @bodyParam department string The department of the Supplier.
-     * @bodyParam designation string The designation of the Supplier.
+     * @bodyParam location string The location of the Supplier.
      * @bodyParam mobile_1 string The mobile 1 of the Supplier.
      * @bodyParam mobile_2 string The mobile 2 of the Supplier.
      * @bodyParam email string The email of the Supplier.
@@ -72,6 +72,7 @@ class SuppliersController extends BaseController
         $suppliers = new Supplier();
         $suppliers->supplier = $request->input("supplier");
         $suppliers->supplier_type = $request->input("supplier_type");
+        $suppliers->product_category_id = $request->input("product_category_id");
         $suppliers->street_address = $request->input("street_address");
         $suppliers->area = $request->input("area");
         $suppliers->city = $request->input("city");
@@ -81,7 +82,7 @@ class SuppliersController extends BaseController
         $suppliers->gstin = $request->input("gstin");
         $suppliers->contact_name = $request->input("contact_name");
         $suppliers->department = $request->input("department");
-        $suppliers->designation = $request->input("designation");
+        $suppliers->location = $request->input("location");
         $suppliers->mobile_1 = $request->input("mobile_1");
         $suppliers->mobile_2 = $request->input("mobile_2");
         $suppliers->email = $request->input("email"); 
@@ -118,7 +119,7 @@ class SuppliersController extends BaseController
      * @bodyParam gstin string The gstin of the Supplier.
      * @bodyParam contact_name string The contact number of the Supplier.
      * @bodyParam department string The department of the Supplier.
-     * @bodyParam designation string The designation of the Supplier.
+     * @bodyParam location string The location of the Supplier.
      * @bodyParam mobile_1 string The mobile 1 of the Supplier.
      * @bodyParam mobile_2 string The mobile 2 of the Supplier.
      * @bodyParam email string The email of the Supplier.
@@ -136,6 +137,7 @@ class SuppliersController extends BaseController
         // Update the supplier properties
         $suppliers->supplier = $request->input("supplier");
         $suppliers->supplier_type = $request->input("supplier_type");
+        $suppliers->product_category_id = $request->input("product_category_id");
         $suppliers->street_address = $request->input("street_address");
         $suppliers->area = $request->input("area");
         $suppliers->city = $request->input("city");
@@ -145,7 +147,7 @@ class SuppliersController extends BaseController
         $suppliers->gstin = $request->input("gstin");
         $suppliers->contact_name = $request->input("contact_name");
         $suppliers->department = $request->input("department");
-        $suppliers->designation = $request->input("designation");
+        $suppliers->location = $request->input("location");
         $suppliers->mobile_1 = $request->input("mobile_1");
         $suppliers->mobile_2 = $request->input("mobile_2");
         $suppliers->email = $request->input("email");
