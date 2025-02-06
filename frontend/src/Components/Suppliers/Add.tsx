@@ -30,6 +30,7 @@ import { useQueryClient } from "@tanstack/react-query";
 // Get QueryClient from the context
 // Form Schema
 const FormSchema = z.object({
+  supplier_type: z.any().optional(),
   supplier: z
     .string()
     .min(2, { message: "Supplier field must have at least 2 characters." })
@@ -94,6 +95,7 @@ export default function InputForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       supplier: "",
+      supplier_type: "",
       street_address: "",
       area: "",
       city: "",
@@ -119,13 +121,10 @@ export default function InputForm() {
     endpoint: "/api/suppliers",
     params: {
       onSuccess: (data) => {
-        console.log("data", data);
         queryClient.invalidateQueries({ queryKey: ["supplier"] });
         navigate("/suppliers");
       },
       onError: (error) => {
-        console.log("error", error);
-
         if (error.response && error.response.data.errors) {
           const serverStatus = error.response.data.status;
           const serverErrors = error.response.data.errors;
@@ -182,8 +181,46 @@ export default function InputForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold text-foreground">
+              <CardTitle className="text-xl font-semibold text-foreground flex justify-between items-center">
                 Supplier Information
+                <FormField
+                  control={form.control}
+                  name="supplier_type"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormLabel className="flex-shrink-0 mt-2 text-sm ">
+                        Supplier Type :
+                      </FormLabel>
+                      <FormControl className="flex space-x-4">
+                        <div className="flex  space-x-4">
+                          <div className="flex items-center space-x-2 text-sm">
+                            <Input
+                              type="radio"
+                              id="Trader"
+                              {...field}
+                              value="0"
+                              checked={field.value === "0"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="Trader">Trader</label>
+                          </div>
+                          <div className="flex items-center space-x-2 text-sm">
+                            <Input
+                              type="radio"
+                              id="Manufacturer"
+                              {...field}
+                              value="1"
+                              checked={field.value === "1"}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="Manufacturer">Manufacturer</label>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -327,8 +364,8 @@ export default function InputForm() {
                           {...field}
                           type="text"
                           inputMode="numeric"
-                          pattern="\d{10}"
-                          maxLength={10}
+                          // pattern="\d{10}"
+                          // maxLength={10}
                           className="bg-background text-foreground border-input"
                         />
                       </FormControl>
@@ -364,7 +401,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Designation
+                        Location
                       </FormLabel>
                       <FormControl>
                         <Input

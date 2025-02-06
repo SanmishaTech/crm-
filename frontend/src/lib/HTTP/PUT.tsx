@@ -66,7 +66,7 @@ const usePutData = ({
       params.onError ?? ((error: AxiosError) => toast.error(error.message)),
     retry: params.retry ?? 0,
     onSettled: (data) => {
-      console.log(data);
+      // console.log(data);
     },
   });
 };

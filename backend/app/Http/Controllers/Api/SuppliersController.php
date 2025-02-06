@@ -49,7 +49,8 @@ class SuppliersController extends BaseController
 
     /**
      * Store Supplier.
-     * @bodyParam supplier sting The name of the Supplier.
+     * @bodyParam supplier string The name of the Supplier.
+     * @bodyParam supplier_type string The type of the Supplier.
      * @bodyParam street_address string The street address of the Supplier.
      * @bodyParam area string The area of the Supplier.
      * @bodyParam city string The city of the Supplier.
@@ -70,6 +71,7 @@ class SuppliersController extends BaseController
     {
         $suppliers = new Supplier();
         $suppliers->supplier = $request->input("supplier");
+        $suppliers->supplier_type = $request->input("supplier_type");
         $suppliers->street_address = $request->input("street_address");
         $suppliers->area = $request->input("area");
         $suppliers->city = $request->input("city");
@@ -105,7 +107,8 @@ class SuppliersController extends BaseController
 
     /**
      * Update Suppliers.   
-     * @bodyParam supplier sting The name of the Supplier.
+     * @bodyParam supplier string The name of the Supplier.
+     * @bodyParam supplier_type string The type of the Supplier.
      * @bodyParam street_address string The street address of the Supplier.
      * @bodyParam area string The area of the Supplier.
      * @bodyParam city string The city of the Supplier.
@@ -132,6 +135,7 @@ class SuppliersController extends BaseController
     
         // Update the supplier properties
         $suppliers->supplier = $request->input("supplier");
+        $suppliers->supplier_type = $request->input("supplier_type");
         $suppliers->street_address = $request->input("street_address");
         $suppliers->area = $request->input("area");
         $suppliers->city = $request->input("city");

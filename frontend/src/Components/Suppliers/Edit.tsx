@@ -95,6 +95,7 @@ const formSchema = z.object({
     .email("Please enter a valid email address.")
     .nonempty("Email is required."),
   alternate_email: z.any().optional(),
+  supplier_type: z.any().optional(),
 });
 
 // Move FormValues type definition outside the component
@@ -112,6 +113,7 @@ export default function EditSupplierPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       supplier: "",
+      supplier_type: "",
       street_address: "",
       area: "",
       city: "",
@@ -135,7 +137,6 @@ export default function EditSupplierPage() {
 
     params: {
       onSuccess: (data) => {
-        console.log("editdata", data);
         queryClient.invalidateQueries({ queryKey: ["editsupplier"] });
         queryClient.invalidateQueries({ queryKey: ["editsupplier", id] });
         toast.success("Supplier updated successfully");
@@ -175,7 +176,6 @@ export default function EditSupplierPage() {
       retry: 1,
 
       onSuccess: (data) => {
-        console.log("GetData", data);
         setData(data?.Supplier);
         setLoading(false);
       },
@@ -190,16 +190,14 @@ export default function EditSupplierPage() {
     },
   });
 
-  useEffect(() => {
-    console.log("data", editData);
-  }, [editData]);
+  useEffect(() => {}, [editData]);
 
   useEffect(() => {
     if (editData?.data.Supplier) {
       const newData = editData.data.Supplier;
-      console.log("newData", newData);
       form.reset({
         supplier: newData.supplier || "",
+        supplier_type: newData.supplier_type || "",
         street_address: newData.street_address || "",
         area: newData.area || "",
         city: newData.city || "",
@@ -363,8 +361,46 @@ export default function EditSupplierPage() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold text-foreground">
+              <CardTitle className="text-xl font-semibold text-foreground flex justify-between items-center">
                 Supplier Information
+                <FormField
+                  control={form.control}
+                  name="supplier_type"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center space-x-2">
+                      <FormLabel className="flex-shrink-0 mt-2 text-sm ">
+                        Supplier Type :
+                      </FormLabel>
+                      <FormControl className="flex space-x-4">
+                        <div className="flex space-x-4">
+                          <div className="flex items-center space-x-2 text-sm">
+                            <Input
+                              type="radio"
+                              id="Trader"
+                              {...field}
+                              value="0"
+                              checked={field.value == 0}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="Trader">Trader</label>
+                          </div>
+                          <div className="flex items-center space-x-2 text-sm">
+                            <Input
+                              type="radio"
+                              id="Manufacturer"
+                              {...field}
+                              value="1"
+                              checked={field.value == 1}
+                              className="h-4 w-4"
+                            />
+                            <label htmlFor="Manufacturer">Manufacturer</label>
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
@@ -509,8 +545,8 @@ export default function EditSupplierPage() {
                           {...field}
                           type="text"
                           inputMode="numeric"
-                          pattern="\d{10}"
-                          maxLength={10}
+                          // pattern="\d{10}"
+                          // maxLength={10}
                           className="bg-background text-foreground border-input"
                         />
                       </FormControl>
@@ -547,7 +583,7 @@ export default function EditSupplierPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Designation
+                        Location
                       </FormLabel>
                       <FormControl>
                         <Input
