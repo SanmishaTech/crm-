@@ -21,6 +21,7 @@ class ContactResource extends JsonResource
         return [
             'id' => $this->id,
             'client_id' => $this->client_id,
+            'client_name'=>$this->client->client,
             'contact_person' => $this->contact_person,
             'department' => $this->department,
             'designation' => $this->designation,

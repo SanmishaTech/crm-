@@ -70,48 +70,12 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
   } = useSidebar();
 
   const [openLeadStatus, setOpenLeadStatus] = React.useState(false);
-  const [openProductFilter, setOpenProductFilter] = React.useState(false);
   const queryClient = useQueryClient();
-  const [loading, setLoading] = useState(true);
 
   // State to store fetched products
   const [productOptions, setProductOptions] = useState<
     { value: string; label: string }[]
   >([]);
-
-  const fetchProducts = () => {
-    setLoading(true);
-    axios
-      .get("/api/products", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((response) => {
-        const fetchedProducts = response.data.data.Products;
-        if (Array.isArray(fetchedProducts) && fetchedProducts.length > 0) {
-          setProductOptions(
-            fetchedProducts.map((product) => ({
-              value: product.id,
-              label: product.product,
-            }))
-          );
-        } else {
-          console.error("No products available.");
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to fetch products", err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -203,74 +167,6 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
             </PopoverContent>
           </Popover>
         </div>
-        {/* Product Filter */}
-        {/* <div className="mt-2">
-
-          <Popover open={openProductFilter} onOpenChange={setOpenProductFilter}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={openProductFilter ? "true" : "false"}
-                className="w-[200px] justify-between"
-              >
-                {productIds
-
-                  ? productOptions?.find(
-                      (product) => product?.value === productIds
-                    )?.label || "Product not found"
-                  : "Select products..."}
-                <ChevronsUpDown className="opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
-              <Command>
-                <CommandInput
-                  value={
-                    productIds
-                      ? productOptions.find(
-                          (product) => product.value === productIds
-                        )?.label
-                      : ""
-                  }
-                  placeholder="Search products..."
-                  className="h-9"
-                />
-                <CommandList>
-                  <CommandEmpty>No products found.</CommandEmpty>
-                  <CommandGroup>
-                    {productOptions.map((product) => (
-                      <CommandItem
-                        key={product.value}
-                        value={product.value}
-                        onSelect={(currentValue) => {
-                          const newProductIds =
-                            currentValue === productIds ? "" : currentValue;
-                          setProductIds(newProductIds);
-                          onFilterChange({
-                            status: leadStatus,
-                            productIds: newProductIds, // Ensure new productId is passed here
-                          });
-                          setOpenProductFilter(false); // Close the popover
-                        }}
-                      >
-                        {product.label}
-                        <Check
-                          className={cn(
-                            "ml-auto",
-                            productIds === product.value
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        </div> */}
 
         {/* Reset Filters Button */}
         <div className="mt-4">

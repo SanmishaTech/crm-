@@ -80,7 +80,8 @@ export default function TableDemo() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
+  const { searchTerm, setSearchTerm, setClient, client, toggle, isMinimized } =
+    useSidebar();
   const queryClient = useQueryClient();
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -107,13 +108,12 @@ export default function TableDemo() {
 
   // Fetch Contacts
   const { data: Sup } = useGetData({
-    endpoint: `/api/contacts?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
+    endpoint: `/api/contacts?search=${searchTerm}&page=${currentPage}&total=${totalPages}&client=${client}`,
     params: {
-      queryKey: ["contacts", searchTerm, currentPage],
+      queryKey: ["contacts", searchTerm, currentPage, client],
       retry: 1,
 
       onSuccess: (data) => {
-        console.log("test-test", data);
         queryClient.invalidateQueries({ queryKey: ["contacts"] });
 
         setContacts(data);
@@ -130,9 +130,15 @@ export default function TableDemo() {
     },
   });
 
+  const handleFilterChange = (filters: any) => {
+    if (filters.status !== undefined) {
+      setClient(filters.client_name);
+    }
+  };
+
   return (
     <div className="flex">
-      <Sidebar />
+      <Sidebar onFilterChange={handleFilterChange} />
       <div className="p-6 w-full bg-accent/50 ml-4 mr-8 rounded-lg shadow-lg">
         <div className="p-2">
           <div className="flex justify-between items-center">
@@ -140,7 +146,7 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex justify-between items-center py-1 space-x-3 ">
-          {/* <div className="ml-4 mt-2">
+          <div className="ml-4 mt-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -151,7 +157,7 @@ export default function TableDemo() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div> */}
+          </div>
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
@@ -195,8 +201,8 @@ export default function TableDemo() {
                 <TableRow key={contact.id}>
                   <TableCell>{contact.contact_person || "N/A"}</TableCell>
                   <TableCell>
-                    {contact?.client?.client?.charAt(0).toUpperCase() +
-                      contact?.client?.client?.slice(1) || "N/A"}
+                    {contact?.client_name?.charAt(0).toUpperCase() +
+                      contact?.client_name?.slice(1) || "N/A"}
                   </TableCell>
                   <TableCell>{contact.department || "N/A"}</TableCell>
                   <TableCell>{contact.designation || "N/A"}</TableCell>

@@ -12,7 +12,7 @@ class Contact extends Model
     {
         return $this->hasOne(Lead::class);  
     }
-    
+
 
     public function client()
     {

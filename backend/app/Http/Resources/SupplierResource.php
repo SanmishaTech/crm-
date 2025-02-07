@@ -18,7 +18,6 @@ class SupplierResource extends JsonResource
             'id' => $this->id,
             'supplier' => $this->supplier,
             'product_category' => $this->productCategory ? $this->productCategory->product_category : "" ,
-
             'product_category_id' => $this->product_category_id,
             'supplier_type' => $this->supplier_type,
             'street_address' => $this->street_address,
