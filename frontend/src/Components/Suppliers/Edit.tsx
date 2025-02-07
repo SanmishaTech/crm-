@@ -218,6 +218,7 @@ export default function EditSupplierPage() {
   }, [editData, form]);
 
   const [productCategories, setProductCategories] = useState([]);
+  console.log("productCategories", productCategories);
 
   const fetchProductCategories = () => {
     axios

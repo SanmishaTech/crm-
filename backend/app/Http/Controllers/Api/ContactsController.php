@@ -34,6 +34,17 @@ class ContactsController extends BaseController
                 $query->where('contact_person', 'like', '%' . $searchTerm . '%');
             });
         }
+
+        //filter client
+        if ($request->query('client')) {
+            // dd($request->query('client'));
+            $client = $request->query("client");
+        
+            $query->where(function ($query) use ($client) {
+                $query->where('lead_status', 'like', '%' . $client . '%');
+            });
+        }
+
         $contact = $query->paginate(9);
 
         return $this->sendResponse(["Contact"=>ContactResource::collection($contact),
