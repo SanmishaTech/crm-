@@ -1,40 +1,26 @@
-//@ts-nocheck
-import { useEffect, useState } from "react";
-import axios from "axios";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useGetData } from "@/lib/HTTP/GET";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Filter, MoreHorizontal } from "lucide-react";
+import Sidebar, { useSidebar } from "./Sidebar";
 import {
-  File,
-  PlusCircle,
-  Search,
-  Pencil,
-  Trash,
-  MoreHorizontal,
-  Filter,
-} from "lucide-react";
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { useGetData } from "@/lib/HTTP/GET";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -45,7 +31,6 @@ import {
   PaginationNext,
 } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import AlertDialogbox from "./AlertBox";
 
@@ -68,30 +53,31 @@ type PaginationData = {
   total: number;
 };
 
-// Form Validation Schema
-const formSchema = z.object({
-  contact_person: z.string().min(2).max(50),
-  client_id: z.any().optional(),
-  department: z.string().min(2).max(50),
-  designation: z.string().min(2).max(50),
-  email: z.string().min(2).max(50),
-});
+type ApiResponse<T> = {
+  data: T;
+  message: string;
+  success: boolean;
+};
+
+type ContactsData = {
+  Contact: Contact[];
+  pagination: PaginationData;
+};
 
 export default function TableDemo() {
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
-  const [client, setClient] = useState<string>(""); // Filter state for client
-  const [clientList, setClientList] = useState<string[]>([]); // List of unique client names
-
-  const queryClient = useQueryClient();
-  // Pagination states
+  const [contacts, setContacts] = useState<ApiResponse<ContactsData> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
-
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const totalPages = pagination?.last_page || 1;
+  const {
+    searchTerm,
+    setSearchTerm,
+    clientId,
+    setClientId,
+    toggle,
+    isMinimized,
+  } = useSidebar();
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -105,24 +91,18 @@ export default function TableDemo() {
     }
   };
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      supplier: "",
-    },
-  });
-
-  // Fetch Contacts with search and filter parameters
-  const { data: Sup } = useGetData({
-    endpoint: `/api/contacts?search=${searchTerm}&client=${client}&page=${currentPage}&total=${totalPages}`,
+  // Fetch Contacts with search parameters
+  useGetData({
+    endpoint: `/api/contacts?search=${searchTerm}&page=${currentPage.toString()}&total=${totalPages.toString()}${
+      clientId ? `&client_id=${clientId}` : ""
+    }`,
     params: {
-      queryKey: ["contacts", searchTerm, client, currentPage],
+      queryKey: ["contacts", searchTerm, currentPage.toString(), clientId],
       retry: 1,
-      onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["contacts"] });
+      onSuccess: (response: unknown) => {
+        const data = response as ApiResponse<ContactsData>;
         setContacts(data);
-        setPagination(data?.data?.pagination);
-        setLoading(false);
+        setPagination(data.data.pagination);
       },
       onError: (error) => {
         console.error("Failed to fetch contacts", error);
@@ -130,79 +110,50 @@ export default function TableDemo() {
     },
   });
 
-  // Extract unique client names from the contacts data
-  useEffect(() => {
-    if (contacts && contacts.data && contacts.data.Contact) {
-      const uniqueClients = Array.from(
-        new Set(
-          contacts.data.Contact.map((contact) => contact.client_name).filter(
-            Boolean
-          )
-        )
-      );
-      setClientList(uniqueClients);
-    }
-  }, [contacts]);
+  const handleFilterChange = (filters: { clientId: string }) => {
+    setClientId(filters.clientId);
+  };
 
   return (
     <div className="flex">
+      <Sidebar onFilterChange={handleFilterChange} />
       <div className="p-6 w-full bg-accent/50 ml-4 mr-8 rounded-lg shadow-lg">
         <div className="p-2">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold mx-auto">Contacts List</h3>
           </div>
         </div>
-        <div className="flex justify-between items-center py-1 space-x-3 ">
-          <div className="ml-4 mt-2"></div>
+        <div className="flex justify-between items-center py-1 space-x-3">
+          <div className="ml-1 mt-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Filter onClick={toggle} className="h-5" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Filter</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+
           <div className="flex-1 space-x-2">
-            <Input
-              placeholder="Search contacts..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            {isMinimized ? (
+              <Input
+                placeholder="Search contacts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-background text-foreground border-border"
+              />
+            ) : null}
           </div>
 
           <div className="flex space-x-2">
-            {/* Filter Button with Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  <Filter className="mr-2 h-4 w-4" />
-                  Filter
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="p-4">
-                <label className="block mb-2 text-sm font-medium text-gray-900">
-                  Filter by Client
-                </label>
-                <select
-                  value={client}
-                  onChange={(e) => setClient(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded"
-                >
-                  <option value="">All Clients</option>
-                  {clientList.map((clientName) => (
-                    <option key={clientName} value={clientName}>
-                      {clientName}
-                    </option>
-                  ))}
-                </select>
-                {/* Optionally, include an "Apply Filter" button if you want to add extra logic */}
-                <Button
-                  variant="outline"
-                  className="mt-2 w-full"
-                  onClick={() => {
-                    // The filter state is already updated.
-                    // Add additional logic here if needed.
-                  }}
-                >
-                  Apply Filter
-                </Button>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Add Contact Button */}
-            <Button variant="outline" onClick={() => navigate("/contacts/add")}>
+            <Button
+              variant="outline"
+              onClick={() => navigate("/contacts/add")}
+              className="bg-background text-foreground border-border"
+            >
               Add Contact
             </Button>
           </div>
@@ -214,23 +165,17 @@ export default function TableDemo() {
             <TableCaption>A list of your contacts.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-foreground">
-                  Contact person
-                </TableHead>
+                <TableHead className="text-foreground">Contact person</TableHead>
                 <TableHead className="text-foreground">Client</TableHead>
                 <TableHead className="text-foreground">Department</TableHead>
                 <TableHead className="text-foreground">Designation</TableHead>
                 <TableHead className="text-foreground">Email</TableHead>
-                <TableHead className="text-foreground">
-                  Primary Mobile
-                </TableHead>
-                <TableHead className="text-foreground text-right">
-                  Action
-                </TableHead>
+                <TableHead className="text-foreground">Primary Mobile</TableHead>
+                <TableHead className="text-foreground text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {contacts?.data?.Contact?.map((contact) => (
+              {contacts?.data?.Contact?.map((contact: Contact) => (
                 <TableRow key={contact.id}>
                   <TableCell>{contact.contact_person || "N/A"}</TableCell>
                   <TableCell>
@@ -258,9 +203,7 @@ export default function TableDemo() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() =>
-                            navigate(`/contacts/edit/${contact.id}`)
-                          }
+                          onClick={() => navigate(`/contacts/edit/${contact.id}`)}
                           className="w-full text-sm"
                         >
                           Edit
@@ -298,7 +241,6 @@ export default function TableDemo() {
                     : "cursor-pointer"
                 }`}
                 onClick={goToNextPage}
-                disabled={currentPage === totalPages}
               >
                 Next
               </PaginationNext>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,6 +43,16 @@ import { useNavigate } from "react-router-dom";
 import { useGetData } from "@/lib/HTTP/GET";
 import AlertDialogbox from "./Delete";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import axios from "axios";
 
 type Supplier = {
   id: string;
@@ -54,6 +64,11 @@ type Supplier = {
   pincode: string;
   country: string;
   gstin: string;
+};
+
+type ProductCategory = {
+  id: string;
+  product_category: string;
 };
 
 type PaginationData = {
@@ -78,10 +93,29 @@ export default function TableDemo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [categoryId, setCategoryId] = useState<string>("");
+  const [productCategories, setProductCategories] = useState<ProductCategory[]>([]);
   const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const totalPages = pagination?.last_page || 1;
+
+  // Fetch product categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('/api/all_product_categories', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        setProductCategories(response.data.data.ProductCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -101,9 +135,9 @@ export default function TableDemo() {
   });
 
   const { data: Sup } = useGetData({
-    endpoint: `/api/suppliers?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
+    endpoint: `/api/suppliers?search=${searchTerm}&page=${currentPage}&total=${totalPages}${categoryId && categoryId !== 'all' ? `&categoryId=${categoryId}` : ''}`,
     params: {
-      queryKey: ["supplier", searchTerm, currentPage],
+      queryKey: ["supplier", searchTerm, currentPage, categoryId],
       retry: 1,
 
       onSuccess: (data) => {
@@ -234,6 +268,25 @@ export default function TableDemo() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             ) : null}
+          </div>
+
+          <div className="w-64">
+            <Select
+              value={categoryId}
+              onValueChange={(value) => setCategoryId(value)}
+            >
+              <SelectTrigger className="bg-background text-foreground border-border">
+                <SelectValue placeholder="Filter by category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {productCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.product_category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex space-x-2">

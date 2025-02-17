@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import {
   Command,
   CommandEmpty,
@@ -19,6 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useGetData } from "@/lib/HTTP/GET";
 
 // Sidebar Store
 interface SidebarStore {
@@ -26,10 +26,8 @@ interface SidebarStore {
   toggle: () => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  client: string;
-  setClient: (client: string) => void;
-  productIds: string;
-  setProductIds: (productIds: string) => void;
+  clientId: string;
+  setClientId: (clientId: string) => void;
 }
 
 export const useSidebar = create<SidebarStore>((set) => ({
@@ -37,72 +35,58 @@ export const useSidebar = create<SidebarStore>((set) => ({
   toggle: () => set((state) => ({ isMinimized: !state.isMinimized })),
   searchTerm: "",
   setSearchTerm: (term: string) => set({ searchTerm: term }),
-  leadStatus: "",
-  setLeadStatus: (leadStatus: string) => set({ leadStatus }),
-  productIds: "",
-  setProductIds: (productIds: string) => set({ productIds }),
+  clientId: "",
+  setClientId: (clientId: string) => set({ clientId }),
 }));
 
-// Component Props
+// Sidebar Component
 type SidebarProps = {
   className?: string;
-  onFilterChange: (filters: { status: string; productIds: string }) => void;
+  onFilterChange: (filters: { clientId: string }) => void;
 };
 
 export default function Sidebar({ className, onFilterChange }: SidebarProps) {
   const {
     isMinimized,
+    toggle,
     searchTerm,
     setSearchTerm,
-    client,
-    setClient,
-    productIds,
+    clientId,
+    setClientId,
   } = useSidebar();
 
-  // State to control the dropdown and store fetched contacts
-  const [openDropdown, setOpenDropdown] = useState(false);
-  const [clientOptions, setClientOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
+  const [openClientSelect, setOpenClientSelect] = React.useState(false);
+  const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
   const queryClient = useQueryClient();
 
-  // Fetch contacts when the component mounts
-  useEffect(() => {
-    async function fetchContacts() {
-      try {
-        const response = await axios.get("/api/contacts", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        // Extract contacts from the nested response: response.data.data.Contact
-        const contacts = response.data.data.Contact;
-        console.log("Contacts fetched:", contacts);
-
-        // Map each contact's client_name into an option for the dropdown
-        const options = contacts.map((contact: any) => ({
-          value: contact.client_name,
-          label: contact.client_name,
-        }));
-        setClientOptions(options);
-      } catch (error) {
-        console.error("Error fetching contacts:", error);
-      }
-    }
-    fetchContacts();
-  }, []);
+  // Fetch clients
+  const { data: clientsData } = useGetData({
+    endpoint: `/api/all_clients`,
+    params: {
+      queryKey: ["clients"],
+      retry: 1,
+      onSuccess: (data) => {
+        if (data?.data?.Client) {
+          const formattedClients = data.data.Client.map((client: any) => ({
+            value: client.id.toString(),
+            label: client.client,
+          }));
+          setClients(formattedClients);
+        }
+      },
+    },
+  });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    const value = e.target.value;
+    setSearchTerm(value);
   };
 
   const handleReset = () => {
-    setClient("");
+    setClientId("");
     setSearchTerm("");
     onFilterChange({
-      status: "",
-      productIds: "",
+      clientId: "",
     });
   };
 
@@ -128,47 +112,45 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
             onChange={handleSearchChange}
           />
         </div>
-        {/* Contacts Dropdown */}
+        {/* Client Filter */}
         <div className="mt-2">
-          <Popover open={openDropdown} onOpenChange={setOpenDropdown}>
+          <Popover open={openClientSelect} onOpenChange={setOpenClientSelect}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 role="combobox"
-                aria-expanded={openDropdown ? "true" : "false"}
+                aria-expanded={openClientSelect ? "true" : "false"}
                 className="w-[200px] justify-between"
               >
-                {client
-                  ? clientOptions.find((option) => option.value === client)
-                      ?.label
-                  : "Select contact..."}
+                {clientId
+                  ? clients.find((client) => client.value === clientId)?.label
+                  : "Select client..."}
                 <ChevronsUpDown className="opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
               <Command>
-                <CommandInput placeholder="Search contact..." className="h-9" />
+                <CommandInput placeholder="Search client..." className="h-9" />
                 <CommandList>
-                  <CommandEmpty>No contacts found.</CommandEmpty>
+                  <CommandEmpty>No client found.</CommandEmpty>
                   <CommandGroup>
-                    {clientOptions.map((option) => (
+                    {clients.map((client) => (
                       <CommandItem
-                        key={option.value}
-                        value={option.value}
+                        key={client.value}
+                        value={client.value}
                         onSelect={(currentValue) => {
                           const newValue =
-                            currentValue === client ? "" : currentValue;
-                          setClient(newValue);
-                          // Here we use 'status' as the key; update the table's handleFilterChange accordingly.
-                          onFilterChange({ status: newValue, productIds });
-                          setOpenDropdown(false);
+                            currentValue === clientId ? "" : currentValue;
+                          setClientId(newValue);
+                          onFilterChange({ clientId: newValue });
+                          setOpenClientSelect(false);
                         }}
                       >
-                        {option.label}
+                        {client.label}
                         <Check
                           className={cn(
                             "ml-auto",
-                            client === option.value
+                            clientId === client.value
                               ? "opacity-100"
                               : "opacity-0"
                           )}
@@ -181,6 +163,7 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
             </PopoverContent>
           </Popover>
         </div>
+
         {/* Reset Filters Button */}
         <div className="mt-4">
           <button

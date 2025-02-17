@@ -31,6 +31,12 @@ class ProductsController extends BaseController
                 $query->where('product', 'like', '%' . $searchTerm . '%');
             });
         }
+
+        if ($request->query('categoryId')) {
+            $categoryId = $request->query('categoryId');
+            $query->where('product_category_id', $categoryId);
+        }
+
         $products = $query->orderBy('id', 'DESC')->paginate(9);
 
 

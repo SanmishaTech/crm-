@@ -63,6 +63,13 @@ import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/DELETE";
 import PaginationComponent from "../Departments/PaginationComponent";
 import AlertDialogbox from "./Delete";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Products type
 type Product = {
@@ -84,47 +91,69 @@ type PaginationData = {
   total: number;
 };
 
+type ProductCategory = {
+  id: string;
+  product_category: string;
+};
+
 export default function TableDemo() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
+  const [categoryId, setCategoryId] = useState<string>("");
+  const [productCategories, setProductCategories] = useState<ProductCategory[]>([]);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Search term state
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
 
-  // Fetch Products
-  const fetchProducts = () => {
-    axios
-      .get("/api/products", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        params: {
-          page: currentPage,
-          limit: itemsPerPage,
-          search: searchTerm,
-        },
-      })
-      .then((response) => {
-        setProducts(response.data.data.Products);
-        setPagination(response.data.data.Pagination);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError("Failed to load data");
-        setLoading(false);
-      });
+  // Fetch product categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('/api/all_product_categories', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        setProductCategories(response.data.data.ProductCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Fetch products with category filter
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `/api/products?page=${currentPage}&search=${searchTerm}${categoryId && categoryId !== 'all' ? `&categoryId=${categoryId}` : ''}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+      setProducts(response.data.data.Products);
+      setPagination(response.data.data.Pagination);
+      setError(null);
+    } catch (error) {
+      setError('Error fetching products');
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage, itemsPerPage, searchTerm]);
+  }, [currentPage, searchTerm, categoryId]);
 
   // Sorting function
   const handleSort = (key: keyof Product) => {
@@ -258,7 +287,24 @@ export default function TableDemo() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-
+          <div className="w-64">
+            <Select
+              value={categoryId}
+              onValueChange={(value) => setCategoryId(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {productCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.product_category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex space-x-2">
             <Button variant="outline" onClick={() => navigate("/products/add")}>
               Add Products

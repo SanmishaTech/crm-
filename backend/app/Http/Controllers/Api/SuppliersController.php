@@ -32,10 +32,12 @@ class SuppliersController extends BaseController
             });
         }
 
+        if ($request->query('categoryId')) {
+            $categoryId = $request->query('categoryId');
+            $query->where('product_category_id', $categoryId);
+        }
+
         $suppliers = $query->paginate(9);
-
-       
-
 
         return $this->sendResponse(["Suppliers"=>SupplierResource::collection($suppliers),
         'pagination' => [

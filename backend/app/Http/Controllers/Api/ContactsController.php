@@ -35,14 +35,9 @@ class ContactsController extends BaseController
             });
         }
 
-        //filter client
-        if ($request->query('client')) {
-            // dd($request->query('client'));
-            $client = $request->query("client");
-        
-            $query->where(function ($query) use ($client) {
-                $query->where('client', 'like', '%' . $client . '%');
-            });
+        if ($request->query('client_id')) {
+            $clientId = $request->query('client_id');
+            $query->where('client_id', $clientId);
         }
 
         $contact = $query->paginate(9);
@@ -53,7 +48,7 @@ class ContactsController extends BaseController
             'last_page' => $contact->lastPage(),
             'per_page' => $contact->perPage(),
             'total' => $contact->total(),
-        ]], "Contact retrived successfully");
+        ]], "Contact retrieved successfully");
         
     }
 
