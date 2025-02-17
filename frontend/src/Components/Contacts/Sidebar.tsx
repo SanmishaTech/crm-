@@ -159,6 +159,7 @@ export default function Sidebar({ className, onFilterChange }: SidebarProps) {
                           const newValue =
                             currentValue === client ? "" : currentValue;
                           setClient(newValue);
+                          // Here we use 'status' as the key; update the table's handleFilterChange accordingly.
                           onFilterChange({ status: newValue, productIds });
                           setOpenDropdown(false);
                         }}
