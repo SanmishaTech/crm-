@@ -57,14 +57,8 @@ const formSchema = z.object({
     })
     .nonempty({ message: "Contact Person field is required." }),
 
-  department: z
-    .string()
+  department: z.string().optional(),
 
-    .min(2, { message: "Department field must have at least 2 characters." })
-    .max(50, {
-      message: "Department field must have no more than 50 characters.",
-    })
-    .nonempty({ message: "Department field is required." }),
   designation: z.string().optional(),
   mobile_1: z.string().optional(),
 

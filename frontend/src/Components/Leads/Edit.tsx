@@ -439,18 +439,16 @@ export default function EditLeadPage() {
                             <SelectValue placeholder="Select Lead Source" />
                           </SelectTrigger>
                           <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
-                            <SelectItem value="advertisement">
-                              Advertisement
+                            <SelectItem value="Email">Email</SelectItem>
+                            <SelectItem value="Inbound Call">
+                              Inbound Call
                             </SelectItem>
-                            <SelectItem value="coldCall">Cold Call</SelectItem>
-                            <SelectItem value="email">Email</SelectItem>
-                            <SelectItem value="facebook">Facebook</SelectItem>
-                            <SelectItem value="google">Google</SelectItem>
-                            <SelectItem value="linkedin">LinkedIn</SelectItem>
-                            <SelectItem value="referral">Referral</SelectItem>
-                            <SelectItem value="search">Search</SelectItem>
-                            <SelectItem value="seminar">Seminar</SelectItem>
-                            <SelectItem value="social">Social</SelectItem>
+                            <SelectItem value="Outbound Call">
+                              Outbound Call
+                            </SelectItem>
+                            <SelectItem value="India Market">
+                              India Market
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
