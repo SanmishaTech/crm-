@@ -65,7 +65,9 @@ type ContactsData = {
 };
 
 export default function TableDemo() {
-  const [contacts, setContacts] = useState<ApiResponse<ContactsData> | null>(null);
+  const [contacts, setContacts] = useState<ApiResponse<ContactsData> | null>(
+    null
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const [pagination, setPagination] = useState<PaginationData | null>(null);
@@ -165,13 +167,19 @@ export default function TableDemo() {
             <TableCaption>A list of your contacts.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-foreground">Contact person</TableHead>
+                <TableHead className="text-foreground">
+                  Contact person
+                </TableHead>
                 <TableHead className="text-foreground">Client</TableHead>
                 <TableHead className="text-foreground">Department</TableHead>
                 <TableHead className="text-foreground">Designation</TableHead>
                 <TableHead className="text-foreground">Email</TableHead>
-                <TableHead className="text-foreground">Primary Mobile</TableHead>
-                <TableHead className="text-foreground text-right">Action</TableHead>
+                <TableHead className="text-foreground">
+                  Primary Mobile
+                </TableHead>
+                <TableHead className="text-foreground text-right">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -203,7 +211,9 @@ export default function TableDemo() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => navigate(`/contacts/edit/${contact.id}`)}
+                          onClick={() =>
+                            navigate(`/contacts/edit/${contact.id}`)
+                          }
                           className="w-full text-sm"
                         >
                           Edit

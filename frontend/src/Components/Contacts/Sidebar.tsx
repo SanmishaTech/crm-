@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { create } from "zustand";
 import { Input } from "@/components/ui/input";
@@ -46,35 +46,53 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ className, onFilterChange }: SidebarProps) {
-  const {
-    isMinimized,
-    toggle,
-    searchTerm,
-    setSearchTerm,
-    clientId,
-    setClientId,
-  } = useSidebar();
+  const { isMinimized, searchTerm, setSearchTerm, clientId, setClientId } =
+    useSidebar();
 
   const [openClientSelect, setOpenClientSelect] = React.useState(false);
-  const [clients, setClients] = useState<{ value: string; label: string }[]>([]);
+  const [clients, setClients] = useState<{ value: string; label: string }[]>(
+    []
+  );
   const queryClient = useQueryClient();
 
+  // Memoize the onSuccess callback
+  const onSuccess = useCallback((data) => {
+    if (data?.data?.Client) {
+      const formattedClients = data.data.Client.map((client: any) => ({
+        value: client.id.toString(),
+        label: client.client,
+      }));
+
+      setClients((prevClients) => {
+        // Compare lengths and each item’s value and label
+        if (
+          prevClients.length === formattedClients.length &&
+          prevClients.every(
+            (client, i) =>
+              client.value === formattedClients[i].value &&
+              client.label === formattedClients[i].label
+          )
+        ) {
+          return prevClients; // No change detected, so don't update state
+        }
+        return formattedClients;
+      });
+    }
+  }, []);
+
+  // Optionally, memoize the params object
+  const params = useMemo(
+    () => ({
+      queryKey: ["clients"],
+      retry: 1,
+      onSuccess,
+    }),
+    [onSuccess]
+  );
   // Fetch clients
   const { data: clientsData } = useGetData({
     endpoint: `/api/all_clients`,
-    params: {
-      queryKey: ["clients"],
-      retry: 1,
-      onSuccess: (data) => {
-        if (data?.data?.Client) {
-          const formattedClients = data.data.Client.map((client: any) => ({
-            value: client.id.toString(),
-            label: client.client,
-          }));
-          setClients(formattedClients);
-        }
-      },
-    },
+    params,
   });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
