@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useGetData } from "@/lib/HTTP/GET";
+import { useQueryClient } from "@tanstack/react-query";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -70,6 +72,8 @@ export default function TableDemo() {
   );
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const totalPages = pagination?.last_page || 1;
   const {
@@ -102,6 +106,8 @@ export default function TableDemo() {
       queryKey: ["contacts", searchTerm, currentPage.toString(), clientId],
       retry: 1,
       onSuccess: (response: unknown) => {
+        queryClient.invalidateQueries({ queryKey: ["contacts"] });
+
         const data = response as ApiResponse<ContactsData>;
         setContacts(data);
         setPagination(data.data.pagination);

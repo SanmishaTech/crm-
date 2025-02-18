@@ -317,8 +317,6 @@ export default function InputForm() {
                           {...field}
                           type="text"
                           inputMode="numeric"
-                          pattern="\d{10}"
-                          maxLength={10}
                         />
                       </FormControl>
                       <FormMessage />
@@ -338,8 +336,6 @@ export default function InputForm() {
                           {...field}
                           type="text"
                           inputMode="numeric"
-                          pattern="\d{10}"
-                          maxLength={10}
                         />
                       </FormControl>
                       <FormMessage />

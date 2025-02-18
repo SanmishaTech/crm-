@@ -588,8 +588,6 @@ export default function EditSupplierPage() {
                           {...field}
                           type="text"
                           inputMode="numeric"
-                          pattern="\d{10}"
-                          maxLength={10}
                           className="bg-background text-foreground border-input"
                         />
                       </FormControl>

@@ -12,6 +12,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { AxiosError } from "axios";
+import { Separator } from "@/components/ui/separator";
+
 import {
   Dialog,
   DialogContent,
@@ -232,6 +234,7 @@ const CalenderDay = () => {
               <span className="font-bold text-green-500">Later</span> Follow-ups
             </>
           )}
+          <Separator className="my-4" />
         </p>
       </div>
     </div>
@@ -243,49 +246,51 @@ const CalenderDay = () => {
         <CalendarDays className="h-4 w-4" style={{ strokeWidth: 1.5 }} />
       </DialogTrigger>
 
-      <DialogContent className="flex flex-col justify-center items-center  ">
+      <DialogContent className="flex flex-col justify-center items-center">
         <DialogHeader>
-          <DialogTitle className="text-center"> Follow-up Calendar</DialogTitle>
+          <DialogTitle className="text-center">Follow-up Calendar</DialogTitle>
           <DialogDescription>View and manage your follow-ups</DialogDescription>
         </DialogHeader>
 
-        <div className="">
-          <DayPicker
-            mode="single"
-            selected={date}
-            onSelect={setDate}
-            month={month}
-            modifiers={modifiers}
-            modifiersStyles={modifiersStyles}
-            showOutsideDays={true}
-            className="scale-5 origin-top sm:scale-3"
-            disabled={{ before: new Date(1970, 0) }}
-            onMonthChange={setMonth}
-            showWeekNumber={false}
-            classNames={{
-              caption: "flex items-center px-6 relative h-9",
-              caption_label: "text-lg flex-1 text-left mx-4 mt-3",
-              nav_button:
-                "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center absolute left-0",
-              table: "w-full border-collapse",
-              head_row: "flex",
-              head_cell:
-                "text-muted-foreground rounded-md w-8 font-normal text-sm",
-              row: "flex w-full mt-1",
-              cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent",
-              day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
-              day_range_end: "day-range-end",
-              day_selected:
-                "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-              day_today: "bg-accent text-accent-foreground",
-              day_outside: "text-white opacity-50",
-              day_disabled: "text-muted-foreground opacity-50",
-              day_range_middle:
-                "aria-selected:bg-accent aria-selected:text-accent-foreground",
-              day_hidden: "invisible",
-            }}
-            footer={footer}
-          />
+        <div className="flex w-full justify-between items-start gap-4">
+          <div>
+            <DayPicker
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              month={month}
+              modifiers={modifiers}
+              modifiersStyles={modifiersStyles}
+              showOutsideDays={true}
+              className="scale-5 origin-top sm:scale-3"
+              disabled={{ before: new Date(1970, 0) }}
+              onMonthChange={setMonth}
+              showWeekNumber={false}
+              classNames={{
+                caption: "flex items-center px-6 relative h-9",
+                caption_label: "text-lg flex-1 text-left mx-4 mt-3",
+                nav_button:
+                  "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 flex items-center justify-center absolute left-0",
+                table: "w-full border-collapse",
+                head_row: "flex",
+                head_cell:
+                  "text-muted-foreground rounded-md w-8 font-normal text-sm",
+                row: "flex w-full mt-1",
+                cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent",
+                day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
+                day_range_end: "day-range-end",
+                day_selected:
+                  "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                day_today: "bg-accent text-accent-foreground",
+                day_outside: "text-white opacity-50",
+                day_disabled: "text-muted-foreground opacity-50",
+                day_range_middle:
+                  "aria-selected:bg-accent aria-selected:text-accent-foreground",
+                day_hidden: "invisible",
+              }}
+            />
+          </div>
+          <div className="ml-auto">{footer}</div>
         </div>
       </DialogContent>
     </Dialog>
