@@ -13,6 +13,7 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { AxiosError } from "axios";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import {
   Dialog,
@@ -38,6 +39,8 @@ const CalenderDay = () => {
   const [calendarLeads, setCalendarLeads] = useState<Lead[]>([]);
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
+  const [currentPage, setCurrentPage] = useState(1);
+  const followUpsPerPage = 10;
 
   const handleOpenChange = (open: boolean) => {
     if (open) {
@@ -106,6 +109,10 @@ const CalenderDay = () => {
     checkUpcomingFollowUps();
   }, [calendarLeads]);
 
+  useEffect(() => {
+    setCurrentPage(1); // Reset to first page when date changes
+  }, [date]);
+
   const getFollowUpStatus = (day: Date) => {
     if (!day) return null;
 
@@ -173,9 +180,9 @@ const CalenderDay = () => {
   };
 
   const footer = (
-    <div className="w-full flex justify-end mt-2">
-      <div className="bg-background border p-4 rounded-lg shadow-md w-[320px] max-w-[350px] min-w-[300px]">
-        <p className="text-center text-sm text-muted-foreground ">
+    <div className="mt-2">
+      <div className="bg-background border p-4 rounded-lg shadow-md w-full sm:w-[500px]">
+        <p className="text-center text-sm text-muted-foreground">
           {date ? (
             getFollowUpStatus(date) ? (
               <>
@@ -198,8 +205,45 @@ const CalenderDay = () => {
                 <span className="block text-[11px] text-muted-foreground mt-1">
                   scheduled for this date:
                 </span>
-                {calendarLeads
-                  .filter((lead) => {
+                <ScrollArea className="h-[300px] w-full mt-2">
+                  {calendarLeads
+                    .filter((lead) => {
+                      if (!lead?.lead_follow_up_date) return false;
+                      const followUpDate = new Date(lead.lead_follow_up_date);
+                      const compareDate = new Date(date);
+                      return (
+                        followUpDate.getDate() === compareDate.getDate() &&
+                        followUpDate.getMonth() === compareDate.getMonth() &&
+                        followUpDate.getFullYear() === compareDate.getFullYear()
+                      );
+                    })
+                    .slice((currentPage - 1) * followUpsPerPage, currentPage * followUpsPerPage)
+                    .map((lead, index) => (
+                      <div
+                        className="py-4 px-3 border-b last:border-b-0 text-left hover:bg-muted/50 transition-colors"
+                        key={index}
+                      >
+                        <div className="font-semibold text-[14px] mb-2 text-foreground">
+                          {lead.follow_up_type}
+                        </div>
+                        <div 
+                          className="text-[13px] text-muted-foreground leading-relaxed"
+                          style={{
+                            whiteSpace: 'pre-line',  // Preserves line breaks and spaces
+                            wordBreak: 'break-word',  // Breaks long words
+                            maxWidth: '100%',         // Ensures text stays within container
+                            overflowWrap: 'break-word' // Additional word breaking support
+                          }}
+                        >
+                          {lead.follow_up_remark}
+                        </div>
+                      </div>
+                    ))}
+                </ScrollArea>
+                
+                {/* Pagination Controls */}
+                {(() => {
+                  const filteredLeads = calendarLeads.filter((lead) => {
                     if (!lead?.lead_follow_up_date) return false;
                     const followUpDate = new Date(lead.lead_follow_up_date);
                     const compareDate = new Date(date);
@@ -208,18 +252,32 @@ const CalenderDay = () => {
                       followUpDate.getMonth() === compareDate.getMonth() &&
                       followUpDate.getFullYear() === compareDate.getFullYear()
                     );
-                  })
-                  .map((lead, index) => (
-                    <div
-                      className="flex justify-center font-bold text-[12px] m-0 p-0"
-                      key={index}
-                    >
-                      <span style={{ fontWeight: "bold" }}>
-                        {lead.follow_up_type}
+                  });
+                  
+                  const totalPages = Math.ceil(filteredLeads.length / followUpsPerPage);
+                  
+                  return totalPages > 1 ? (
+                    <div className="flex justify-center items-center gap-2 mt-4">
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="px-2 py-1 text-sm rounded bg-muted hover:bg-muted/80 disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+                      <span className="text-sm">
+                        Page {currentPage} of {totalPages}
                       </span>
-                      <span className="mx-1">({lead.follow_up_remark})</span>
+                      <button
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-2 py-1 text-sm rounded bg-muted hover:bg-muted/80 disabled:opacity-50"
+                      >
+                        Next
+                      </button>
                     </div>
-                  ))}
+                  ) : null;
+                })()}
               </>
             ) : (
               "No follow-ups scheduled for this date"
@@ -246,14 +304,14 @@ const CalenderDay = () => {
         <CalendarDays className="h-4 w-4" style={{ strokeWidth: 1.5 }} />
       </DialogTrigger>
 
-      <DialogContent className="flex flex-col justify-center items-center">
+      <DialogContent className="sm:max-w-[900px] p-6">
         <DialogHeader>
           <DialogTitle className="text-center">Follow-up Calendar</DialogTitle>
           <DialogDescription>View and manage your follow-ups</DialogDescription>
         </DialogHeader>
 
-        <div className="flex w-full justify-between items-start gap-4">
-          <div>
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 w-full">
+          <div className="w-full sm:w-auto">
             <DayPicker
               mode="single"
               selected={date}
@@ -290,7 +348,9 @@ const CalenderDay = () => {
               }}
             />
           </div>
-          <div className="ml-auto">{footer}</div>
+          <div className="w-full sm:w-[500px]">
+            {footer}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
