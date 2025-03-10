@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\VendorController;
+use App\Http\Controllers\Api\ChallanController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\ReplaceController;
 use App\Http\Controllers\Api\ContactsController;
@@ -66,6 +67,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    Route::resource('replacements', ReplaceController::class);    
    Route::get('/all_replacements', [ReplaceController::class, 'allReplaces'])->name("replacements.all");
+
+   Route::resource('challans', ChallanController::class);    
+   Route::get('/all_challans', [ChallanController::class, 'allChallans'])->name("challans.all");
 
  
 
