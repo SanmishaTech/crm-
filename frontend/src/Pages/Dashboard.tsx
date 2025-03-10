@@ -39,6 +39,9 @@ import PurchaseView from "@/Components/Purchase/View";
 import Replacements from "@/Components/Replacement/Index";
 import ReplacementsADD from "@/Components/Replacement/Add";
 import ReplacementsEDIT from "@/Components/Replacement/Edit";
+import Challans from "@/Components/Challans/Index";
+import ChallansADD from "@/Components/Challans/Add";
+import ChallansEDIT from "@/Components/Challans/Edit";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -130,6 +133,11 @@ const Dashboard = () => {
         {location.pathname === "/replacements/add" && <ReplacementsADD />}
         {/\/replacements\/edit\/\d+/.test(location.pathname) && (
           <ReplacementsEDIT />
+        )}
+        {location.pathname === "/challans" && <Challans />}
+        {location.pathname === "/challans/add" && <ChallansADD />}
+        {/\/challans\/edit\/\d+/.test(location.pathname) && (
+          <ChallansEDIT />
         )}
       </main>
     </div>

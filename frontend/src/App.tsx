@@ -193,6 +193,9 @@ function App() {
         <Route path="/replacements" element={<Dashboard />} />
         <Route path="/replacements/add" element={<Dashboard />} />
         <Route path="/replacements/edit/:id" element={<Dashboard />} />
+        <Route path="/challans" element={<Dashboard />} />
+        <Route path="/challans/add" element={<Dashboard />} />
+        <Route path="/challans/edit/:id" element={<Dashboard />} />
       </Routes>
 
       {isVisible && (

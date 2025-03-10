@@ -241,6 +241,15 @@ const Navbar = () => {
                     >
                       Employees
                     </Button>
+                    <Separator className="w-full justify-center bg-border" />
+
+                    <Button
+                      onClick={() => navigate("/challans")}
+                      variant="ghost"
+                      className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                    >
+                      Challan
+                    </Button>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -488,6 +497,17 @@ const Navbar = () => {
                 className="w-full text-left justify-start"
               >
                 Employees
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate("/challans");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Challans
               </Button>
               <Button
                 onClick={() => {
