@@ -250,6 +250,13 @@ const Navbar = () => {
                     >
                       Challan
                     </Button>
+                    <Button
+                      onClick={() => navigate("/expense_heads")}
+                      variant="ghost"
+                      className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                    >
+                      Expense Head
+                    </Button>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
@@ -508,6 +515,17 @@ const Navbar = () => {
                 className="w-full text-left justify-start"
               >
                 Challans
+              </Button>
+              <Button
+                onClick={() => {
+                  navigate("/expense_heads");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
+                variant="ghost"
+                className="w-full text-left justify-start"
+              >
+                Expense Head
               </Button>
               <Button
                 onClick={() => {

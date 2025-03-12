@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\FollowUpsController;
 use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\ExpenseHeadController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 
 
@@ -70,6 +71,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    Route::resource('challans', ChallanController::class);    
    Route::get('/all_challans', [ChallanController::class, 'allChallans'])->name("challans.all");
+
+   Route::resource('expense_heads', ExpenseHeadController::class);    
+   Route::get('/all_expense_heads', [ExpenseHeadController::class, 'allExpenseHead'])->name("expense_heads.all");
 
  
 
