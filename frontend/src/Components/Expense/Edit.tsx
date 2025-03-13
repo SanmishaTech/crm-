@@ -133,7 +133,7 @@ export default function EditExpensePage() {
 const { data: editData } = useGetData({
   endpoint: `/api/expenses/${id}`,
   params: {
-    queryKey: ["editExpense", id],
+    queryKey: ["expenses", id],
     retry: 1,
     enabled: !!id,
   },
@@ -198,7 +198,7 @@ useEffect(() => {
 
       if (response.ok) {
         toast.success("Expense updated successfully");
-        queryClient.invalidateQueries({ queryKey: ["expense"] });
+        queryClient.invalidateQueries({ queryKey: ["expenses"] });
         navigate("/expense");
       } else {
         const errorData = await response.json();
@@ -249,10 +249,7 @@ useEffect(() => {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
-                
-                           
- 
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="voucher_number"

@@ -142,7 +142,7 @@ export default function InputForm() {
     endpoint: "/api/expenses",
     params: {
       onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["expense"] });
+        queryClient.invalidateQueries({ queryKey: ["expenses"] });
         navigate("/expense");
       },
       onError: (error: ServerError) => {
@@ -253,7 +253,7 @@ export default function InputForm() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
                 
                            
  
