@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('expenses', function (Blueprint $table) {
+        Schema::create('expense_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id'); 
-            $table->unsignedBigInteger('expense_heads_id'); 
-            $table->string("voucher_number")->nullable(); 
-            $table->string("voucher_date")->nullable(); 
-            $table->string("voucher_amount")->nullable(); 
-
-            
-
+            $table->unsignedBigInteger('expense_id'); 
+            $table->unsignedBigInteger('expense_heads_id');
+            $table->string("expense_amount")->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('expenses');
+        Schema::dropIfExists('expense_details');
     }
 };
