@@ -133,47 +133,58 @@ class ExpenseController extends BaseController
      * Update the specified expense in storage.
      */
     public function update(Request $request, string $id): JsonResponse
-    {
-      
-        $expenseDetails = $request->input('expense_details');
-        if(!$expenseDetails){
-            return $this->sendError("Expense details not found", ['error'=>['Expense details not found']]);
-        }
-        
-        $expense = Expenses::find($id);
-        if(!$expense){
-            return $this->sendError("Expense not found", ['error'=>['Expense not found']]);
-        }
-        
-        $expense->expense_heads_id = $request->input("expense_heads_id");
-        $expense->voucher_date = $request->input("voucher_date");
-        
-        // Calculate total expense amount from details
-        $totalAmount = 0;
-        foreach ($expenseDetails as $detail) {
-            $totalAmount += $detail['expense_amount'];
-        }
-        
-        $expense->voucher_amount = $totalAmount;
+{
+    $validator = Validator::make($request->all(), [
+        'voucher_date' => 'required|date',
+        'expense_details' => 'required|array|min:1',
+        'expense_details.*.expense_head_id' => 'required|exists:expense_heads,id',
+        'expense_details.*.amount' => 'required|numeric|min:0',
+    ]);
+
+    if ($validator->fails()) {
+        return $this->sendError('Validation Error.', $validator->errors());
+    }
+
+    $expense = Expenses::find($id);
+    if (!$expense) {
+        return $this->sendError("Expense not found", ['error' => ['Expense not found']]);
+    }
+
+    try {
+        DB::beginTransaction();
+
+        // Update main expense record
+        $expense->voucher_date = $request->input("voucher_date"); 
+        $expense->voucher_amount = $request->input("voucher_amount");
+        $expense->voucher_number = $request->input("voucher_number");
         $expense->save();
-        
+
         // Delete previous expense details
         ExpenseDetail::where("expense_id", $expense->id)->delete();
-        
+
         // Save new expense details
         $details = [];
-        foreach ($expenseDetails as $detail) {
+        foreach ($request->input('expense_details') as $detail) {
             $details[] = new ExpenseDetail([
                 'expense_id' => $expense->id,
-                'expense_head_id' => $detail['expense_heads_id'],
-                'amount' => $detail['expense_amount'],
+                'expense_head_id' => $detail['expense_head_id'],
+                'amount' => $detail['amount'],
             ]);
         }
-        
+
         $expense->expenseDetails()->saveMany($details);
-        
-        return $this->sendResponse(['Expense' => $expense], 'Expense updated successfully');
+
+        DB::commit();
+
+        $expense->load(['expenseDetails.expenseHead', 'employee']);
+
+        return $this->sendResponse(['Expense' => new ExpenseResource($expense)], 'Expense updated successfully');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Error updating expense: ' . $e->getMessage());
+        return $this->sendError('Error updating expense', ['error' => [$e->getMessage()]]);
     }
+}
 
     /**
      * Remove the specified expense from storage.

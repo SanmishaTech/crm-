@@ -84,18 +84,9 @@ interface ProductRow {
 }
 
 const formSchema = z.object({
-  contact_id: z.any().optional(),
-  lead_status: z.string().optional(),
-  lead_source: z.string().optional(),
-  lead_type: z.string().optional(),
-  tender_number: z.string().optional(),
-  bid_end_date: z.string().optional(),
-  portal: z.string().optional(),
-  tender_category: z.string().optional(),
-  emd: z.coerce.number().optional(),
-  lead_closing_reason: z.string().optional(),
-  deal_details: z.string().optional(),
-  tender_status: z.string().optional(),
+  voucher_number: z.string().optional(),
+  voucher_date: z.string(),
+  voucher_amount: z.string(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -138,38 +129,39 @@ export default function EditExpensePage() {
   });
 
   // Fetch expense details for editing
-  const { data: editData } = useGetData({
-    endpoint: `/api/expenses/${id}`,
-    params: {
-      queryKey: ["editExpense", id],
-      retry: 1,
-      onSuccess: (data) => {
-        if (data?.data?.Expense) {
-          const expense = data.data.Expense;
-          // Set form values
-          form.reset({
-            voucher_number: expense.voucher_number || "",
-            voucher_date: expense.voucher_date || "",
-            voucher_amount: expense.voucher_amount || "",
-          });
+ // Fetch expense details for editing
+const { data: editData } = useGetData({
+  endpoint: `/api/expenses/${id}`,
+  params: {
+    queryKey: ["editExpense", id],
+    retry: 1,
+    enabled: !!id,
+  },
+});
 
-          // Set expense details rows
-          if (expense.expense_details) {
-            const details = expense.expense_details.map((detail: any) => ({
-              expense_head_id: detail.expense_head_id,
-              amount: detail.amount,
-              isOpen: false
-            }));
-            setProductRows(details);
-          }
-        }
-      },
-      onError: (error) => {
-        toast.error("Failed to fetch expense data");
-      },
-      enabled: !!id,
-    },
-  });
+// Update form values and product rows when editData is available
+useEffect(() => {
+  if (editData?.data?.Expense) {
+    const expense = editData.data.Expense;
+    // Set form values
+    form.reset({
+      voucher_number: expense.voucher_number || "",
+      voucher_date: expense.voucher_date || "",
+      voucher_amount: expense.voucher_amount || "",
+    });
+
+    // Set expense details rows
+    if (expense.expense_details) {
+      const details = expense.expense_details.map((detail) => ({
+        expense_head_id: detail.expense_head_id,
+        amount: detail.amount,
+        isOpen: false,
+      }));
+      setProductRows(details);
+    }
+  }
+}, [editData]);
+
 
   // Update expense heads when data is loaded
   useEffect(() => {
@@ -195,7 +187,7 @@ export default function EditExpensePage() {
     };
 
     try {
-      const response = await fetch(`/api/expense/${id}`, {
+      const response = await fetch(`/api/expenses/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
