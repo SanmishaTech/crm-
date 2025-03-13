@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('expense_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('expense_id'); 
-            $table->unsignedBigInteger('expense_heads_id');
-            $table->string("expense_amount")->nullable();
+            $table->foreignId('expense_id')->constrained()->onDelete('cascade');
+            $table->foreignId('expense_head_id')->constrained('expense_heads')->onDelete('cascade');
+            $table->decimal('amount', 10, 2);
             $table->timestamps();
         });
     }

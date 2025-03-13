@@ -13,14 +13,10 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employee_id'); 
-            $table->unsignedBigInteger('expense_heads_id'); 
-            $table->string("voucher_number")->nullable(); 
-            $table->string("voucher_date")->nullable(); 
-            $table->string("voucher_amount")->nullable(); 
-
-            
-
+            $table->foreignId('employee_id');
+            $table->string('voucher_number');
+            $table->date('voucher_date');
+            $table->decimal('voucher_amount', 10, 2);
             $table->timestamps();
         });
     }

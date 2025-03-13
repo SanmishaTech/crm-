@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LeadsController;
 use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\ChallanController;
 use App\Http\Controllers\Api\ClientsController;
+use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\ReplaceController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\InvoicesController;
@@ -74,6 +75,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
 
    Route::resource('expense_heads', ExpenseHeadController::class);    
    Route::get('/all_expense_heads', [ExpenseHeadController::class, 'allExpenseHead'])->name("expense_heads.all");
+   Route::resource('expenses', ExpenseController::class);    
+   // Route::get('/all_expense_s', [ExpenseController::class, 'allExpenseHead'])->name("expense_heads.all");
 
  
 

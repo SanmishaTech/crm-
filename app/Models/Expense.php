@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Expenses extends Model
+class Expense extends Model
 {
     use HasFactory;
 
@@ -24,7 +24,7 @@ class Expenses extends Model
      */
     public function expenseDetails(): HasMany
     {
-        return $this->hasMany(ExpenseDetail::class, 'expense_id');
+        return $this->hasMany(ExpenseDetail::class);
     }
 
     /**
@@ -34,4 +34,4 @@ class Expenses extends Model
     {
         return $this->belongsTo(Employee::class);
     }
-}
+} 

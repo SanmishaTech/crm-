@@ -199,6 +199,9 @@ function App() {
         <Route path="/expense_heads" element={<Dashboard />} />
         <Route path="/expense_heads/add" element={<Dashboard />} />
         <Route path="/expense_heads/edit/:id" element={<Dashboard />} />
+        <Route path="/expense" element={<Dashboard />} />
+        <Route path="/expense/add" element={<Dashboard />} />
+        <Route path="/expense/edit/:id" element={<Dashboard />} />
       </Routes>
 
       {isVisible && (

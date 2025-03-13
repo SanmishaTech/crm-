@@ -45,6 +45,10 @@ import ChallansEDIT from "@/Components/Challans/Edit";
 import ExpenseHeads from "@/Components/ExpenseHead/Index";
 import ExpenseHeadsADD from "@/Components/ExpenseHead/AddDepartment";
 import ExpenseHeadsEDIT from "@/Components/ExpenseHead/DepartmentDialog";
+import Expense from "@/Components/Expense/Index";
+import ExpenseADD from "@/Components/Expense/Add";
+import ExpenseEDIT from "@/Components/Expense/Edit";
+
 
 const Dashboard = () => {
   const location = useLocation();
@@ -147,6 +151,9 @@ const Dashboard = () => {
         {/\/expense_heads\/edit\/\d+/.test(location.pathname) && (
           <ExpenseHeadsEDIT />
         )}
+        {location.pathname === "/expense" && <Expense />}
+        {location.pathname === "/expense/add" && <ExpenseADD />}
+        {/\/expense\/edit\/\d+/.test(location.pathname) && <ExpenseEDIT />}
       </main>
     </div>
   );
