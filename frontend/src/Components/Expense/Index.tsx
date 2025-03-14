@@ -248,7 +248,7 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex justify-between items-center space-x-2 py-1 w-full">
-          <div className="ml-1 mt-2">
+          {/* <div className="ml-1 mt-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -259,7 +259,7 @@ export default function TableDemo() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </div>
+          </div> */}
 
           <div className="flex-1 space-x-2">
             {isMinimized ? (
@@ -270,11 +270,11 @@ export default function TableDemo() {
               />
             ) : null}
           </div>
-          <div className="flex space-x-2">
+          {/* <div className="flex space-x-2">
             <Button variant="outline" type="button">
               <Report />
             </Button>
-          </div>
+          </div> */}
           <div className="flex space-x-2">
             <Button variant="outline" onClick={() => navigate("/expense/add")}>
               Add Expenses
