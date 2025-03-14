@@ -173,7 +173,7 @@ export default function TableDemo() {
           {/* Search Bar Starts */}
           <div className="flex-1 space-x-2 ">
             <Input
-              placeholder="Search departments..."
+              placeholder="Search Expense Head..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

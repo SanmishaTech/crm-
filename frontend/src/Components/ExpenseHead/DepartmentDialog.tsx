@@ -185,7 +185,7 @@ const DepartmentDialog = ({
       >
         <DialogTrigger asChild>
           <Button variant="outline" onClick={handleDialogOpen}>
-            Add Department
+            Add Expense Head
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
@@ -209,7 +209,7 @@ const DepartmentDialog = ({
                     <FormLabel className="w-40">Expense Head:</FormLabel>
                     <FormControl className="flex-1">
                       <Input 
-                        placeholder="Expense Head" 
+                        placeholder="Enter Expense Head...." 
                         {...field} 
                         onChange={(e) => {
                           field.onChange(e);
