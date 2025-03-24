@@ -217,7 +217,10 @@ const CalenderDay = () => {
                         followUpDate.getFullYear() === compareDate.getFullYear()
                       );
                     })
-                    .slice((currentPage - 1) * followUpsPerPage, currentPage * followUpsPerPage)
+                    .slice(
+                      (currentPage - 1) * followUpsPerPage,
+                      currentPage * followUpsPerPage
+                    )
                     .map((lead, index) => (
                       <div
                         className="py-4 px-3 border-b last:border-b-0 text-left hover:bg-muted/50 transition-colors"
@@ -226,13 +229,13 @@ const CalenderDay = () => {
                         <div className="font-semibold text-[14px] mb-2 text-foreground">
                           {lead.follow_up_type}
                         </div>
-                        <div 
+                        <div
                           className="text-[13px] text-muted-foreground leading-relaxed"
                           style={{
-                            whiteSpace: 'pre-line',  // Preserves line breaks and spaces
-                            wordBreak: 'break-word',  // Breaks long words
-                            maxWidth: '100%',         // Ensures text stays within container
-                            overflowWrap: 'break-word' // Additional word breaking support
+                            whiteSpace: "pre-line", // Preserves line breaks and spaces
+                            wordBreak: "break-word", // Breaks long words
+                            maxWidth: "100%", // Ensures text stays within container
+                            overflowWrap: "break-word", // Additional word breaking support
                           }}
                         >
                           {lead.follow_up_remark}
@@ -240,7 +243,7 @@ const CalenderDay = () => {
                       </div>
                     ))}
                 </ScrollArea>
-                
+
                 {/* Pagination Controls */}
                 {(() => {
                   const filteredLeads = calendarLeads.filter((lead) => {
@@ -253,13 +256,17 @@ const CalenderDay = () => {
                       followUpDate.getFullYear() === compareDate.getFullYear()
                     );
                   });
-                  
-                  const totalPages = Math.ceil(filteredLeads.length / followUpsPerPage);
-                  
+
+                  const totalPages = Math.ceil(
+                    filteredLeads.length / followUpsPerPage
+                  );
+
                   return totalPages > 1 ? (
                     <div className="flex justify-center items-center gap-2 mt-4">
                       <button
-                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(1, prev - 1))
+                        }
                         disabled={currentPage === 1}
                         className="px-2 py-1 text-sm rounded bg-muted hover:bg-muted/80 disabled:opacity-50"
                       >
@@ -269,7 +276,11 @@ const CalenderDay = () => {
                         Page {currentPage} of {totalPages}
                       </span>
                       <button
-                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(totalPages, prev + 1)
+                          )
+                        }
                         disabled={currentPage === totalPages}
                         className="px-2 py-1 text-sm rounded bg-muted hover:bg-muted/80 disabled:opacity-50"
                       >
@@ -307,7 +318,6 @@ const CalenderDay = () => {
       <DialogContent className="sm:max-w-[900px] p-6">
         <DialogHeader>
           <DialogTitle className="text-center">Follow-up Calendar</DialogTitle>
-          <DialogDescription>View and manage your follow-ups</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 w-full">
@@ -348,9 +358,7 @@ const CalenderDay = () => {
               }}
             />
           </div>
-          <div className="w-full sm:w-[500px]">
-            {footer}
-          </div>
+          <div className="w-full sm:w-[500px]">{footer}</div>
         </div>
       </DialogContent>
     </Dialog>
