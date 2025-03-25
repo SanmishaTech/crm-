@@ -155,7 +155,7 @@ export default function TableDemo() {
   };
 
   const { data: Sup } = useGetData({
-  endpoint: `/api/expenses?searchTerm=${encodeURIComponent(
+    endpoint: `/api/expenses?searchTerm=${encodeURIComponent(
       searchTerm || ""
     )}&page=${currentPage}&total=${totalPages}&leadStatus=${leadStatus}${
       sortField
@@ -164,7 +164,7 @@ export default function TableDemo() {
     }`,
     params: {
       queryKey: [
-        "lead",
+        "expense",
         searchTerm,
         currentPage,
         leadStatus,
@@ -174,7 +174,7 @@ export default function TableDemo() {
       ],
       retry: 1,
       onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["lead"] });
+        queryClient.invalidateQueries({ queryKey: ["expense"] });
         if (data?.data?.Expense) {
           setSuppliers(data.data.Expense);
           setPagination(data.data.pagination);
@@ -184,14 +184,13 @@ export default function TableDemo() {
         setLoading(false);
       },
       onError: (error) => {
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
+        if (error.message && error.message.includes("duplicate expense")) {
+          toast.error("Expense name is duplicated. Please use a unique name.");
         }
         setLoading(false);
       },
     },
   });
-  
 
   const handleGenerateQuotation = async ({ leadId, data }) => {
     try {
@@ -287,11 +286,15 @@ export default function TableDemo() {
             <TableCaption>A list of your expenses.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-foreground">Voucher Number</TableHead>
+                <TableHead className="text-foreground">
+                  Voucher Number
+                </TableHead>
                 <TableHead className="text-foreground">Voucher Date</TableHead>
                 <TableHead className="text-foreground">Expense Head</TableHead>
                 <TableHead className="text-foreground">Amount</TableHead>
-                <TableHead className="text-foreground text-right">Action</TableHead>
+                <TableHead className="text-foreground text-right">
+                  Action
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -305,7 +308,10 @@ export default function TableDemo() {
                         ? (() => {
                             const date = new Date(expense.voucher_date);
                             const day = String(date.getDate()).padStart(2, "0");
-                            const month = String(date.getMonth() + 1).padStart(2, "0");
+                            const month = String(date.getMonth() + 1).padStart(
+                              2,
+                              "0"
+                            );
                             const year = String(date.getFullYear());
                             return `${day}/${month}/${year}`;
                           })()
@@ -315,7 +321,9 @@ export default function TableDemo() {
                       {expense.expense_details?.map((detail, index) => (
                         <div key={detail.id}>
                           {detail.expense_head_name}
-                          {index < expense.expense_details.length - 1 ? ", " : ""}
+                          {index < expense.expense_details.length - 1
+                            ? ", "
+                            : ""}
                         </div>
                       ))}
                     </TableCell>
@@ -353,7 +361,9 @@ export default function TableDemo() {
             <PaginationContent className="flex items-center space-x-4">
               <PaginationPrevious
                 className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
-                  currentPage === 1 ? "cursor-default opacity-50" : "cursor-pointer"
+                  currentPage === 1
+                    ? "cursor-default opacity-50"
+                    : "cursor-pointer"
                 }`}
                 onClick={goToPreviousPage}
               >
@@ -365,7 +375,9 @@ export default function TableDemo() {
               </span>
               <PaginationNext
                 className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
-                  currentPage === totalPages ? "cursor-default opacity-50" : "cursor-pointer"
+                  currentPage === totalPages
+                    ? "cursor-default opacity-50"
+                    : "cursor-pointer"
                 }`}
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}

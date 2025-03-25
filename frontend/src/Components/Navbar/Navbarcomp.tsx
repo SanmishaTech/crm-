@@ -491,14 +491,22 @@ const Navbar = () => {
                 Products
               </Button>
               <Button
-                onClick={() => navigate("/replacements")}
+                onClick={() => {
+                  navigate("/replacements");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
                 variant="ghost"
                 className="w-full text-left justify-start"
               >
                 Replacements & Repair
               </Button>
               <Button
-                onClick={() => navigate("/purchase")}
+                onClick={() => {
+                  navigate("/purchase");
+                  setMobileMenuOpen(false);
+                  setIsSheetOpen(false);
+                }}
                 variant="ghost"
                 className="w-full text-left justify-start"
               >
