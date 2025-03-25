@@ -42,7 +42,6 @@ const FormSchema = z.object({
   challan_number: z.string().optional(),
   items: z.string().optional(),
   purpose: z.string().optional(),
-   
 });
 
 export default function InputForm() {
@@ -54,8 +53,6 @@ export default function InputForm() {
       challan_number: "",
       items: "",
       purpose: "",
-      
-     
     },
   });
   const queryClient = useQueryClient();
@@ -132,19 +129,16 @@ export default function InputForm() {
             <CardHeader className="justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold text-foreground flex justify-between items-center">
                 <span>Challan Information</span>
-              
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="grid grid-cols-2 gap-4 mb-5">
-              <FormField
+                <FormField
                   control={form.control}
                   name="date"
                   render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2">
-                      <FormLabel className="flex-shrink-0 mt-2">
-                        Date :
-                      </FormLabel>
+                    <FormItem>
+                      <FormLabel>Date</FormLabel>
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
@@ -176,9 +170,7 @@ export default function InputForm() {
                   name="items"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">
-                        Items
-                      </FormLabel>
+                      <FormLabel className="text-foreground">Items</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Enter Items"
@@ -190,15 +182,13 @@ export default function InputForm() {
                     </FormItem>
                   )}
                 />
-               
-                 <FormField
+
+                <FormField
                   control={form.control}
                   name="purpose"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">
-                        Purpose
-                      </FormLabel>
+                      <FormLabel className="text-foreground">Purpose</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Enter Purpose"
@@ -210,12 +200,9 @@ export default function InputForm() {
                     </FormItem>
                   )}
                 />
-                
               </div>
             </CardContent>
           </Card>
-
-       
 
           {error && <div className="text-destructive">{error}</div>}
 

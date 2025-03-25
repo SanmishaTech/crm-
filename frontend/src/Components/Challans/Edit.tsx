@@ -143,7 +143,6 @@ export default function EditSupplierPage() {
         challan_number: newData.challan_number || "",
         items: newData.items || "",
         purpose: newData.purpose || "",
-       
       });
     }
   }, [editData, form]);
@@ -171,9 +170,7 @@ export default function EditSupplierPage() {
           </div>
           <div className="flex-1 mr-9 text-center">
             <div className="-ml-4">
-              <h2 className="text-2xl font-semibold">
-                Challan Edit Form
-              </h2>
+              <h2 className="text-2xl font-semibold">Challan Edit Form</h2>
               <p className="text-xs mb-9 text-muted-foreground">
                 Edit/Update the Challan.
               </p>
@@ -296,20 +293,17 @@ export default function EditSupplierPage() {
           <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold text-foreground flex justify-between items-center">
-                <span>Customer Information</span>
-               
+                <span>Update/Edit Challan Information</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
               <div className="grid grid-cols-2 gap-4 mb-5">
-              <FormField
+                <FormField
                   control={form.control}
                   name="date"
                   render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2">
-                      <FormLabel className="flex-shrink-0 mt-2">
-                        Date :
-                      </FormLabel>
+                    <FormItem>
+                      <FormLabel>Date :</FormLabel>
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
@@ -343,11 +337,9 @@ export default function EditSupplierPage() {
                   name="items"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">
-                        items
-                      </FormLabel>
+                      <FormLabel className="text-foreground">Items</FormLabel>
                       <FormControl>
-                        <Input
+                        <Textarea
                           placeholder="Enter Items"
                           {...field}
                           className="bg-background text-foreground border-input"
@@ -362,14 +354,12 @@ export default function EditSupplierPage() {
                   name="purpose"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">
-                        Purpose
-                      </FormLabel>
+                      <FormLabel className="text-foreground">Purpose</FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Enter Purpose"
                           {...field}
-                          className="bg-background text-foreground border-input  resize-none px-3 py-2"
+                          className="bg-background text-foreground border-input px-3 py-2"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
