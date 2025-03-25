@@ -250,6 +250,8 @@ const Navbar = () => {
                     >
                       Challan
                     </Button>
+                    <Separator className="w-full justify-center bg-border" />
+
                     <Button
                       onClick={() => navigate("/expense_heads")}
                       variant="ghost"
@@ -257,6 +259,8 @@ const Navbar = () => {
                     >
                       Expense Head
                     </Button>
+                    <Separator className="w-full justify-center bg-border" />
+
                     <Button
                       onClick={() => navigate("/expense")}
                       variant="ghost"
