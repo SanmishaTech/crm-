@@ -204,6 +204,8 @@ function App() {
         <Route path="/expense/add" element={<Dashboard />} />
         <Route path="/expense/edit/:id" element={<Dashboard />} />
         <Route path="/notepad" element={<Dashboard />} />
+        <Route path="/notepad/add" element={<Dashboard />} />
+        <Route path="/notepad/edit/:id" element={<Dashboard />} />
       </Routes>
 
       {isVisible && (

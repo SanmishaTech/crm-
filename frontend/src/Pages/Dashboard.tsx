@@ -48,7 +48,9 @@ import ExpenseHeadsEDIT from "@/Components/ExpenseHead/DepartmentDialog";
 import Expense from "@/Components/Expense/Index";
 import ExpenseADD from "@/Components/Expense/Add";
 import ExpenseEDIT from "@/Components/Expense/Edit";
-import Notepad from "@/Components/Navbar/Notepad";
+import Notepad from "@/Components/Notepad/Index";
+import NotepadADD from "@/Components/Notepad/Add";
+import NotepadEDIT from "@/Components/Notepad/Edit";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -154,6 +156,8 @@ const Dashboard = () => {
         {/\/expense\/edit\/\d+/.test(location.pathname) && <ExpenseEDIT />}
 
         {location.pathname === "/notepad" && <Notepad />}
+        {location.pathname === "/notepad/add" && <NotepadADD />}
+        {/\/notepad\/edit\/\d+/.test(location.pathname) && <NotepadEDIT />}
       </main>
     </div>
   );
