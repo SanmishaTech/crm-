@@ -140,7 +140,7 @@ export default function InputForm() {
       onSuccess: (data) => {
         console.log("data", data);
         queryClient.invalidateQueries({ queryKey: ["lead"] });
-        queryClient.invalidateQueries({ queryKey: ["leads"] });
+        queryClient.invalidateQueries({ queryKey: ["lead"] });
         navigate("/leads");
       },
       onError: (error) => {

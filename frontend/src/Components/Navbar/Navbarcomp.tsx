@@ -4,6 +4,7 @@ import { useTheme } from "@/darktheme/CustomTheme";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CalenderDay from "./CalenderDay";
+import Notepad from "./Notepad";
 import {
   Menubar,
   MenubarContent,
@@ -33,6 +34,7 @@ import {
   ChevronDown,
   Sun,
   Moon,
+  Notebook,
 } from "lucide-react";
 import {
   NavigationMenu,
@@ -82,6 +84,10 @@ const Navbar = () => {
 
   const handleThemeToggle = () => {
     setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  const handleNavigation = () => {
+    navigate("/notepad"); // Navigate to the desired route
   };
 
   return (
@@ -312,6 +318,22 @@ const Navbar = () => {
               <ChartNoAxesGantt className="h-5" />
             </Button>
             <CalenderDay />
+            <div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    {/* Add onClick handler to the icon */}
+                    <Notebook
+                      className="h-4 relative top-[2px] cursor-pointer"
+                      onClick={handleNavigation}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>NotePad</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <div className="relative flex items-center">
               <button
                 onClick={handleThemeToggle}

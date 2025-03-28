@@ -20,6 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ChevronUp } from "lucide-react";
+import Notepad from "@/Components/Navbar/Notepad";
 
 import {
   Calculator,
@@ -202,6 +203,7 @@ function App() {
         <Route path="/expense" element={<Dashboard />} />
         <Route path="/expense/add" element={<Dashboard />} />
         <Route path="/expense/edit/:id" element={<Dashboard />} />
+        <Route path="/notepad" element={<Dashboard />} />
       </Routes>
 
       {isVisible && (

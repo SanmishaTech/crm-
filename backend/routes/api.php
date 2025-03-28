@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\ChallanController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\ExpenseController;
+use App\Http\Controllers\Api\NotepadController;
 use App\Http\Controllers\Api\ReplaceController;
 use App\Http\Controllers\Api\ContactsController;
 use App\Http\Controllers\Api\InvoicesController;
@@ -32,6 +33,8 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('vendors', VendorController::class);
    Route::resource('departments', DepartmentController::class);  
    Route::resource('employees', EmployeesController::class);  
+   Route::resource('notepads', NotepadController::class);
+
    Route::post('/follow_ups', [FollowUpsController::class, 'store'])->name("follow_ups.store");
    Route::get('/follow_ups/{id}', [FollowUpsController::class, 'show'])->name("follow_ups.show");
    Route::get('/follow_ups', [FollowUpsController::class, 'index'])->name("follow_ups.index");
