@@ -184,6 +184,7 @@ export default function TableDemo() {
         queryClient.invalidateQueries({ queryKey: ["notepad"] });
         queryClient.invalidateQueries({ queryKey: ["notepad", activeNote.id] });
         setActiveNote(null);
+        setIsCreatingNew(false);
         noteForm.reset({ note_title: "", note_content: "" });
       },
       onError: (error) => {
@@ -216,6 +217,7 @@ export default function TableDemo() {
         toast.success("Note saved successfully.");
         queryClient.invalidateQueries({ queryKey: ["notepad"] });
         setActiveNote(null);
+        setIsCreatingNew(false);
         noteForm.reset({ note_title: "", note_content: "" });
       },
       onError: (error) => {
@@ -365,6 +367,19 @@ export default function TableDemo() {
     noteForm.reset({ note_title: "", note_content: "" });
   };
 
+  // After the handleNewNoteClick function, add this new helper function
+  const handleNoteDelete = (noteId: string) => {
+    // If the deleted note is currently being viewed, clear it
+    if (activeNote?.id === noteId) {
+      setActiveNote(null);
+      setIsCreatingNew(false);
+      noteForm.reset({
+        note_title: "",
+        note_content: "",
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen w-full">
       <Sidebar className="md:sticky md:top-0 md:h-screen" />
@@ -443,7 +458,10 @@ export default function TableDemo() {
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <AlertDialogbox url={note.id} />
+                      <AlertDialogbox
+                        url={note.id}
+                        onDelete={() => handleNoteDelete(note.id)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -466,11 +484,11 @@ export default function TableDemo() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm text-foreground">
-                            Note Title
+                            Title
                           </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Enter note title"
+                              placeholder="Enter Note Title"
                               {...field}
                               className="bg-background text-foreground border-input"
                             />
@@ -486,11 +504,11 @@ export default function TableDemo() {
                       render={({ field }) => (
                         <FormItem className="flex-1">
                           <FormLabel className="text-sm text-foreground">
-                            Note Content
+                            Content
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Enter note content"
+                              placeholder="Enter Note Content"
                               {...field}
                               className="bg-background text-foreground border-input h-[calc(100vh-23rem)]"
                             />

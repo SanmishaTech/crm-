@@ -14,8 +14,14 @@ import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { Trash2 } from "lucide-react"; // Add this import
 
-export default function AlertDialogbox({ url }) {
+interface AlertDialogboxProps {
+  url: string;
+  onDelete?: (id: string) => void;
+}
+
+const AlertDialogbox: React.FC<AlertDialogboxProps> = ({ url, onDelete }) => {
   const queryClient = useQueryClient();
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -49,6 +55,8 @@ export default function AlertDialogbox({ url }) {
               queryClient.invalidateQueries({
                 queryKey: ["notepad", url],
               });
+              // Call the onDelete callback after successful deletion
+              onDelete?.(url);
             }}
           >
             Continue
@@ -57,4 +65,6 @@ export default function AlertDialogbox({ url }) {
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+};
+
+export default AlertDialogbox;
