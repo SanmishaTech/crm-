@@ -514,7 +514,7 @@ export default function TableDemo() {
                         }}
                         className="text-foreground hover:text-foreground/80 hover:bg-accent"
                       >
-                        Clear
+                        Cancel
                       </Button>
                       <Button
                         type="submit"
