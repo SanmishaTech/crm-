@@ -40,10 +40,8 @@ import {
 
 // Form validation schema
 const formSchema = z.object({
-  date: z.string().optional(),
-  challan_number: z.string().optional(),
-  items: z.string().optional(),
-  purpose: z.string().optional(),
+  note_title: z.string().optional(),
+  note_content: z.string().optional(),
 });
 
 // Move FormValues type definition outside the component
@@ -60,24 +58,22 @@ export default function EditSupplierPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      date: "",
-      challan_number: "",
-      items: "",
-      purpose: "",
+      note_title: "",
+      note_content: "",
     },
   });
 
   // Move the usePutData hook before any conditional returns
   const fetchData = usePutData({
-    endpoint: `/api/challans/${id}`,
+    endpoint: `/api/notepads/${id}`,
 
     params: {
       onSuccess: (data) => {
         console.log("editdata", data);
-        queryClient.invalidateQueries({ queryKey: ["challans"] });
-        queryClient.invalidateQueries({ queryKey: ["challans", id] });
-        toast.success("Challan updated successfully");
-        navigate("/challans");
+        queryClient.invalidateQueries({ queryKey: ["notepad"] });
+        queryClient.invalidateQueries({ queryKey: ["notepad", id] });
+        toast.success("Notepad updated successfully");
+        navigate("/notepad");
       },
       onError: (error) => {
         if (error.response && error.response.data.errors) {
@@ -86,17 +82,17 @@ export default function EditSupplierPage() {
           // Assuming the error is for the department_name field
           if (serverStatus === false) {
             if (serverErrors.supplier) {
-              form.setError("challans", {
+              form.setError("notepad", {
                 type: "manual",
-                message: serverErrors.challans[0], // The error message from the server
+                message: serverErrors.notepad[0], // The error message from the server
               });
-              toast.error("The challans has already been taken.");
+              toast.error("The notepad has already been taken.");
             }
           } else {
-            setError("Failed to add challans"); // For any other errors
+            setError("Failed to add notepad"); // For any other errors
           }
         } else {
-          setError("Failed to add challans");
+          setError("Failed to add notepad");
         }
       },
     },
@@ -107,20 +103,20 @@ export default function EditSupplierPage() {
     isLoading,
     isError,
   } = useGetData({
-    endpoint: `/api/challans/${id}`,
+    endpoint: `/api/notepads/${id}`,
     params: {
-      queryKey: ["challans", id],
+      queryKey: ["notepad", id],
       retry: 1,
 
       onSuccess: (data) => {
         console.log("GetData", data);
-        setData(data?.Challans);
+        setData(data?.Notepad);
         setLoading(false);
       },
       onError: (error) => {
-        if (error.message && error.message.includes("Duplicate Challan")) {
+        if (error.message && error.message.includes("Duplicate Notepad")) {
           toast.error(
-            "Challan number is duplicated. Please use a unique number."
+            "Notepad number is duplicated. Please use a unique number."
           );
         } else {
           toast.error("Failed to fetch supplier data. Please try again.");
@@ -135,22 +131,20 @@ export default function EditSupplierPage() {
   }, [editData]);
 
   useEffect(() => {
-    if (editData?.data.Challans) {
-      const newData = editData.data.Challans;
+    if (editData?.data.Notepad) {
+      const newData = editData.data.Notepad;
       console.log("newData", newData);
       form.reset({
-        date: newData.date || "",
-        challan_number: newData.challan_number || "",
-        items: newData.items || "",
-        purpose: newData.purpose || "",
+        note_title: newData.note_title || "",
+        note_content: newData.note_content || "",
       });
     }
   }, [editData, form]);
 
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
-    queryClient.invalidateQueries({ queryKey: ["challans"] });
-    queryClient.invalidateQueries({ queryKey: ["challans", id] });
+    queryClient.invalidateQueries({ queryKey: ["notepad"] });
+    queryClient.invalidateQueries({ queryKey: ["notepad", id] });
   };
 
   if (isLoading) {
@@ -159,7 +153,7 @@ export default function EditSupplierPage() {
         <div className="flex items-center justify-between w-full">
           <div className="mb-7">
             <Button
-              onClick={() => navigate("/challans")}
+              onClick={() => navigate("/notepad")}
               variant="ghost"
               className="mr-4"
               type="button"
@@ -170,9 +164,9 @@ export default function EditSupplierPage() {
           </div>
           <div className="flex-1 mr-9 text-center">
             <div className="-ml-4">
-              <h2 className="text-2xl font-semibold">Challan Edit Form</h2>
+              <h2 className="text-2xl font-semibold">Edit Note</h2>
               <p className="text-xs mb-9 text-muted-foreground">
-                Edit/Update the Challan.
+                Edit/Update the Note.
               </p>
             </div>
           </div>
@@ -267,7 +261,7 @@ export default function EditSupplierPage() {
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
-            onClick={() => navigate("/challan")}
+            onClick={() => navigate("/notepad")}
             variant="ghost"
             className="mr-4 text-foreground hover:text-foreground/80 hover:bg-accent"
             type="button"
@@ -279,10 +273,10 @@ export default function EditSupplierPage() {
         <div className="flex-1 mr-9 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold text-foreground">
-              Challan Edit Form
+              Edit Note
             </h2>
             <p className="text-xs mb-9 text-muted-foreground">
-              Update the Challans details.
+              Update the Note details.
             </p>
           </div>
         </div>
@@ -293,53 +287,21 @@ export default function EditSupplierPage() {
           <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold text-foreground flex justify-between items-center">
-                <span>Update/Edit Challan Information</span>
+                <span>Note Information</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="grid grid-cols-2 gap-4 mb-5">
+              <div className="grid grid-cols-1 gap-4 mb-5">
                 <FormField
                   control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date :</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="challan_number"
+                  name="note_title"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Challan Number
+                        Note Title
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter Challan Number"
-                          {...field}
-                          className="bg-background text-foreground border-input"
-                        />
-                      </FormControl>
-                      <FormMessage className="text-destructive" />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4 mb-5">
-                <FormField
-                  control={form.control}
-                  name="items"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-foreground">Items</FormLabel>
-                      <FormControl>
-                        <Textarea
                           placeholder="Enter Items"
                           {...field}
                           className="bg-background text-foreground border-input"
@@ -349,17 +311,20 @@ export default function EditSupplierPage() {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
-                  name="purpose"
+                  name="note_content"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Purpose</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Note Content
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Enter Purpose"
                           {...field}
-                          className="bg-background text-foreground border-input px-3 py-2"
+                          className="bg-background text-foreground border-input"
                         />
                       </FormControl>
                       <FormMessage className="text-destructive" />
@@ -374,7 +339,7 @@ export default function EditSupplierPage() {
 
           <div className="flex justify-end space-x-2">
             <Button
-              onClick={() => navigate("/challans")}
+              onClick={() => navigate("/notepad")}
               variant="outline"
               className="text-foreground hover:text-foreground/80 hover:bg-accent"
               type="button"

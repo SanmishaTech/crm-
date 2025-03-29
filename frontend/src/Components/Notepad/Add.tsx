@@ -38,10 +38,8 @@ import { useQueryClient } from "@tanstack/react-query";
 // Get QueryClient from the context
 // Form Schema
 const FormSchema = z.object({
-  date: z.string().optional(),
-  challan_number: z.string().optional(),
-  items: z.string().optional(),
-  purpose: z.string().optional(),
+  note_title: z.string().optional(),
+  note_content: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -49,10 +47,8 @@ export default function InputForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      date: new Date().toISOString().split("T")[0],
-      challan_number: "",
-      items: "",
-      purpose: "",
+      note_title: "",
+      note_content: "",
     },
   });
   const queryClient = useQueryClient();
@@ -61,12 +57,12 @@ export default function InputForm() {
 
   type FormValues = z.infer<typeof FormSchema>;
   const formData = usePostData({
-    endpoint: "/api/challans",
+    endpoint: "/api/notepads",
     params: {
       onSuccess: (data) => {
         console.log("data", data);
-        queryClient.invalidateQueries({ queryKey: ["challans"] });
-        navigate("/challans");
+        queryClient.invalidateQueries({ queryKey: ["notepad"] });
+        navigate("/notepad");
       },
       onError: (error) => {
         console.log("error", error);
@@ -77,17 +73,17 @@ export default function InputForm() {
           // Assuming the error is for the department_name field
           if (serverStatus === false) {
             if (serverErrors.replacements) {
-              form.setError("replacements", {
+              form.setError("notepad", {
                 type: "manual",
                 message: serverErrors.replacements[0],
               });
-              toast.error("The Customer  has already been taken.");
+              toast.error("The Note  has already been taken.");
             }
           } else {
-            setError("Failed to add Replacements");
+            setError("Failed to add Note");
           }
         } else {
-          setError("Failed to add Replacements");
+          setError("Failed to add Note");
         }
       },
     },
@@ -130,15 +126,17 @@ export default function InputForm() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="grid grid-cols-2 gap-4 mb-5">
+              <div className="grid grid-cols-1 gap-4 mb-5">
                 <FormField
                   control={form.control}
-                  name="items"
+                  name="note_title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Items</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Note Title
+                      </FormLabel>
                       <FormControl>
-                        <Textarea
+                        <Input
                           placeholder="Enter Items"
                           {...field}
                           className="bg-background text-foreground border-input"
@@ -151,10 +149,12 @@ export default function InputForm() {
 
                 <FormField
                   control={form.control}
-                  name="purpose"
+                  name="note_content"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-foreground">Purpose</FormLabel>
+                      <FormLabel className="text-foreground">
+                        Note Content
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Enter Purpose"

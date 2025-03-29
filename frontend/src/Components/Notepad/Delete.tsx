@@ -34,15 +34,15 @@ export default function AlertDialogbox({ url }) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={async () => {
-              await axios.delete(`/api/replacements/${url}`, {
+              await axios.delete(`/api/notepads/${url}`, {
                 headers: {
                   "Content-Type": "application/json",
                   Authorization: "Bearer " + localStorage.getItem("token"),
                 },
               });
-              queryClient.invalidateQueries({ queryKey: ["replacements"] });
+              queryClient.invalidateQueries({ queryKey: ["notepad"] });
               queryClient.invalidateQueries({
-                queryKey: ["replacements", url],
+                queryKey: ["notepad", url],
               });
             }}
           >

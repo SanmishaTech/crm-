@@ -103,7 +103,7 @@ export default function TableDemo() {
   const { data: Sup } = useGetData({
     endpoint: `/api/notepads?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
     params: {
-      queryKey: ["challans", searchTerm, currentPage],
+      queryKey: ["notepad", searchTerm, currentPage],
       retry: 1,
 
       onSuccess: (data) => {
@@ -210,26 +210,11 @@ export default function TableDemo() {
           </div>
         </div>
         <div className="flex flex-col md:flex-row justify-between items-center py-1 space-y-2 md:space-y-0 md:space-x-3 ">
-          {/* <div className="w-full md:w-auto flex items-center space-x-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Filter
-                    onClick={toggle}
-                    className="h-5 text-foreground hover:text-foreground/80"
-                  />
-                </TooltipTrigger>
-                <TooltipContent className="bg-popover text-popover-foreground">
-                  <p>Filter</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div> */}
           <div className="flex-1 space-x-2">
             {isMinimized ? (
               <Input
                 className="bg-background text-foreground border-border"
-                placeholder="Search Challans..."
+                placeholder="Search Notes..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -250,7 +235,7 @@ export default function TableDemo() {
         <div className="p-4 rounded-md bg-card">
           <Table>
             <TableCaption className="text-muted-foreground">
-              A list of your challans.
+              A list of your notes.
             </TableCaption>
             <TableHeader>
               <TableRow className="hover:bg-accent/50">
@@ -297,7 +282,7 @@ export default function TableDemo() {
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            navigate(`/challans/edit/${replacement.id}`);
+                            navigate(`/notepad/edit/${replacement.id}`);
                           }}
                           className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
                         >
