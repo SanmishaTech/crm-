@@ -289,16 +289,12 @@ export default function TableDemo() {
             ) : null}
           </div>
           <div className="flex space-x-2">
-            <Button className="bg-primary" variant="outline" type="button">
+            <Button variant="outline" type="button">
               <Report />
             </Button>
           </div>
           <div className="flex space-x-2">
-            <Button
-              className="bg-primary"
-              variant="outline"
-              onClick={() => navigate("/leads/add")}
-            >
+            <Button variant="outline" onClick={() => navigate("/leads/add")}>
               Add Leads
             </Button>
           </div>
