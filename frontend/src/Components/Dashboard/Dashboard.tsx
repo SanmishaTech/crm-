@@ -186,7 +186,7 @@ export default function ResponsiveLabDashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4 ">
           <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40">
             <CardHeader>
-              <CardTitle>My Open Tasks</CardTitle>
+              <CardTitle>My Open Leads</CardTitle>
             </CardHeader>
             <CardContent className="overflow-x-auto ">
               <Table>

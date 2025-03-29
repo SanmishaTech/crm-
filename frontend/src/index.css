@@ -6,6 +6,7 @@
   :root {
     --iconextremedark: 212 54% 46%; /* 3674B5 */
     --icondark: 210 53% 57%; /* 578FCA */
+    --cyan: 188 86% 53%; /* 22d3ee */
 
     /* Light mode colors */
     --background: 210 20% 98%; /* f9fafb */
@@ -17,7 +18,7 @@
     --popover: 210 20% 98%; /* f9fafb */
     --popover-foreground: 185 30% 30%;
 
-    --primary: 195 83% 90%; /* cffafe */
+    --primary: 188 86% 53%; /* Using the cyan color */
     --primary-foreground: 185 30% 30%;
 
     --secondary: 187 100% 96%; /* ecfeff */
