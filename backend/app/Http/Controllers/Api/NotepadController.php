@@ -25,16 +25,11 @@ class NotepadController extends BaseController
                 $query->where('note_title', 'like', '%' . $searchTerm . '%');
             });
         }
-        $notes = $query->orderBy("id", "DESC")->paginate(9);
+        $notes = $query->orderBy("id", "DESC")->get();
 
-        return $this->sendResponse(["Notepad"=>NotepadResource::collection($notes),
-        'Pagination' => [
-            'current_page' => $notes->currentPage(),
-            'last_page' => $notes->lastPage(),
-            'per_page' => $notes->perPage(),
-            'total' => $notes->total(),
-        ]], "Notepad retrieved successfully");
-        
+        return $this->sendResponse([
+            "Notepad" => NotepadResource::collection($notes)
+        ], "Notepad retrieved successfully");
     }
 
    

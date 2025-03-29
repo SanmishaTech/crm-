@@ -38,13 +38,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
-} from "@/components/ui/pagination";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useGetData } from "@/lib/HTTP/GET";
@@ -110,11 +103,8 @@ const editSchema = z.object({
 export default function TableDemo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
   const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
-  const [pagination, setPagination] = useState<PaginationData | null>(null);
-  const totalPages = pagination?.last_page || 1;
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedNote, setSelectedNote] = useState<any>(null);
   const queryClient = useQueryClient();
@@ -126,13 +116,12 @@ export default function TableDemo() {
 
   // Move data fetching before any data usage
   const { data: Sup } = useGetData({
-    endpoint: `/api/notepads?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
+    endpoint: `/api/notepads?search=${searchTerm}`,
     params: {
-      queryKey: ["notepad", searchTerm, currentPage],
+      queryKey: ["notepad", searchTerm],
       retry: 1,
 
       onSuccess: (data) => {
-        setPagination(data?.data?.pagination);
         setLoading(false);
       },
       onError: (error) => {
@@ -247,16 +236,6 @@ export default function TableDemo() {
     }
   };
 
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -356,14 +335,27 @@ export default function TableDemo() {
     });
   };
 
-  // Add handler for edit mode
+  // Modify handler for edit mode to toggle
   const handleEditClick = (note: any, e: React.MouseEvent) => {
     e.stopPropagation();
-    setActiveNote(note);
-    noteForm.reset({
-      note_title: note.note_title,
-      note_content: note.note_content,
-    });
+
+    // If the same note is clicked and it's in edit mode, close everything
+    if (activeNote?.id === note.id && activeNote?.editMode) {
+      setActiveNote(null);
+      setIsCreatingNew(false);
+      noteForm.reset({
+        note_title: "",
+        note_content: "",
+      });
+    } else {
+      // Open the note in edit mode
+      setIsCreatingNew(false);
+      setActiveNote({ ...note, editMode: true });
+      noteForm.reset({
+        note_title: note.note_title,
+        note_content: note.note_content,
+      });
+    }
   };
 
   // Modify the new note button click handler
@@ -384,7 +376,7 @@ export default function TableDemo() {
           </h1>
         </div>
         {/* Adjust the height calculation to prevent scrolling */}
-        <div className="flex h-[calc(100vh-6rem)] gap-4">
+        <div className="flex h-[calc(100vh-9rem)] gap-4 ">
           {/* Left Column - Notes List - Changed width from w-1/3 to w-1/4 */}
           <div className="w-1/4 bg-card rounded-lg p-4 overflow-y-auto">
             <div className="space-y-4">
@@ -423,10 +415,14 @@ export default function TableDemo() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="text-sm font-medium text-foreground">
-                        {note.note_title}
+                        {note.note_title.length > 15
+                          ? note.note_title.substring(0, 15) + "..."
+                          : note.note_title}
                       </h4>
                       <p className="text-xs text-muted-foreground truncate">
-                        {note.note_content}
+                        {note.note_content.length > 20
+                          ? note.note_content.substring(0, 20) + "..."
+                          : note.note_content}
                       </p>
                     </div>
                     <div
@@ -437,9 +433,13 @@ export default function TableDemo() {
                         variant="ghost"
                         size="icon"
                         onClick={(e) => {
-                          handleEditClick({ ...note, editMode: true }, e);
+                          handleEditClick(note, e);
                         }}
-                        className="h-8 w-8 p-0 hover:bg-blue-500/20 hover:text-blue-500 text-muted-foreground"
+                        className={`h-8 w-8 p-0 ${
+                          activeNote?.id === note.id && activeNote?.editMode
+                            ? "bg-blue-500/20 text-blue-500"
+                            : "hover:bg-blue-500/20 hover:text-blue-500 text-muted-foreground"
+                        }`}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -492,7 +492,7 @@ export default function TableDemo() {
                             <Textarea
                               placeholder="Enter note content"
                               {...field}
-                              className="bg-background text-foreground border-input h-[calc(100vh-20rem)]"
+                              className="bg-background text-foreground border-input h-[calc(100vh-23rem)]"
                             />
                           </FormControl>
                           <FormMessage className="text-destructive" />
