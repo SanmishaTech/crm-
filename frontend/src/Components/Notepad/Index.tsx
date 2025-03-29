@@ -18,6 +18,7 @@ import {
   Eye,
   Trash2,
   Plus,
+  X,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -328,31 +329,44 @@ export default function TableDemo() {
     return <div>{error}</div>;
   }
 
-  // Replace handleNoteClick with this simpler version
+  // Replace handleNoteClick with this updated version
   const handleNoteClick = (note: any) => {
-    setActiveNote(note);
-    noteForm.reset({
-      note_title: note.note_title,
-      note_content: note.note_content,
-    });
-  };
-
-  // Modify handler for edit mode to toggle
-  const handleEditClick = (note: any, e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    // If the same note is clicked and it's in edit mode, close everything
-    if (activeNote?.id === note.id && activeNote?.editMode) {
+    // If clicking the same note that's already active, deselect it
+    if (activeNote?.id === note.id && !activeNote?.editMode) {
       setActiveNote(null);
       setIsCreatingNew(false);
       noteForm.reset({
         note_title: "",
         note_content: "",
       });
+      return;
+    }
+
+    // If we're already editing this note, don't do anything
+    if (activeNote?.id === note.id && activeNote?.editMode) {
+      return;
+    }
+
+    // Set the note for viewing (not editing)
+    setActiveNote({ ...note, editMode: false });
+    setIsCreatingNew(false);
+    noteForm.reset({
+      note_title: note.note_title,
+      note_content: note.note_content,
+    });
+  };
+
+  // Update handleEditClick
+  const handleEditClick = (note: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (activeNote?.id === note.id && activeNote?.editMode) {
+      // If already editing, cancel edit mode
+      setActiveNote({ ...note, editMode: false });
     } else {
-      // Open the note in edit mode
-      setIsCreatingNew(false);
+      // Enter edit mode
       setActiveNote({ ...note, editMode: true });
+      setIsCreatingNew(false);
       noteForm.reset({
         note_title: note.note_title,
         note_content: note.note_content,
@@ -546,9 +560,26 @@ export default function TableDemo() {
               </div>
             ) : activeNote ? (
               <div>
-                <h2 className="text-lg font-semibold text-foreground mb-4 text-center underline">
-                  {activeNote.note_title}
-                </h2>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-semibold text-foreground text-center underline flex-1">
+                    {activeNote.note_title}
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setActiveNote(null);
+                      setIsCreatingNew(false);
+                      noteForm.reset({
+                        note_title: "",
+                        note_content: "",
+                      });
+                    }}
+                    className="h-8 w-8 p-0 hover:bg-destructive/20 hover:text-destructive text-muted-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
                 <div className="bg-background/50 rounded-lg p-4 h-[calc(100vh-20rem)]">
                   <div className="whitespace-pre-wrap text-sm text-foreground overflow-y-auto h-full">
                     {activeNote.note_content}

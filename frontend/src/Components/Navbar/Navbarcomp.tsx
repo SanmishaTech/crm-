@@ -329,7 +329,7 @@ const Navbar = () => {
                     />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>NotePad</p>
+                    <p>Notes</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
