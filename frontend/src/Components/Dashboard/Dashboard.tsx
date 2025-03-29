@@ -89,6 +89,7 @@ const testVolumeData = [
 
 export default function ResponsiveLabDashboard() {
   const [myLeads, setMyLeads] = useState(0);
+  const [openTasks, setOpenTasks] = useState([]);
   const user = localStorage.getItem("user");
   const User = JSON.parse(user);
   const navigate = useNavigate();
@@ -109,6 +110,7 @@ export default function ResponsiveLabDashboard() {
         const leads = response.data.data.Lead;
         setLeads(leads);
         const openLeads = leads.filter((lead) => lead.lead_status === "Open");
+        setOpenTasks(openLeads);
         setMyLeads(leads.length);
         setOpenLeadsCount(openLeads.length);
         const followUpLeads = leads.filter(
@@ -194,37 +196,23 @@ export default function ResponsiveLabDashboard() {
                     <TableHead>Contact Name</TableHead>
                     <TableHead>Follow-Up Remark</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Priority</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentTests.map((test) => (
-                    <TableRow key={test.id}>
-                      <TableCell className="font-medium">{test.id}</TableCell>
-                      <TableCell>{test.contact_person}</TableCell>
-                      <TableCell>{test.follow_up_remark}</TableCell>
+                  {openTasks.map((task) => (
+                    <TableRow key={task.id}>
+                      <TableCell className="font-medium">{task.id}</TableCell>
+                      <TableCell>{task.contact.contact_person}</TableCell>
+                      <TableCell>{task.follow_up_remark}</TableCell>
                       <TableCell>
                         <Badge
                           variant={
-                            test.status === "Completed"
+                            task.lead_status === "Open"
                               ? "default"
                               : "secondary"
                           }
                         >
-                          {test.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            test.follow_up_type === "Low"
-                              ? "success"
-                              : test.follow_up_type === "High"
-                              ? "destructive"
-                              : "outline"
-                          }
-                        >
-                          {test.follow_up_type}
+                          {task.lead_status}
                         </Badge>
                       </TableCell>
                     </TableRow>
