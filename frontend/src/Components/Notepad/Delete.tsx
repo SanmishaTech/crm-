@@ -12,14 +12,19 @@ import {
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { Trash2 } from "lucide-react"; // Add this import
 
 export default function AlertDialogbox({ url }) {
   const queryClient = useQueryClient();
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-full text-sm ">
-          Delete
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 p-0 hover:bg-destructive/20 text-destructive"
+        >
+          <Trash2 className="h-4 w-4" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

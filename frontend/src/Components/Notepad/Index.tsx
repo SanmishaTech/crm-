@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +11,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { MoreHorizontal, Filter } from "lucide-react";
+import {
+  MoreHorizontal,
+  Filter,
+  Pencil,
+  Eye,
+  Trash2,
+  Plus,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -43,6 +50,26 @@ import { useNavigate } from "react-router-dom";
 import { useGetData } from "@/lib/HTTP/GET";
 import AlertDialogbox from "./Delete";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { usePutData } from "@/lib/HTTP/PUT";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { usePostData } from "@/lib/HTTP/POST";
 
 type Replacement = {
   id: string;
@@ -74,6 +101,12 @@ const formSchema = z.object({
   gstin: z.string().min(2).max(50),
 });
 
+// Define schema for editing a note.
+const editSchema = z.object({
+  note_title: z.string().optional(),
+  note_content: z.string().optional(),
+});
+
 export default function TableDemo() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,24 +115,16 @@ export default function TableDemo() {
   const navigate = useNavigate();
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const totalPages = pagination?.last_page || 1;
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<any>(null);
+  const queryClient = useQueryClient();
+  const [activeNote, setActiveNote] = useState<any>(null);
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
 
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage((prevPage) => prevPage - 1);
-    }
-  };
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      supplier: "",
-    },
-  });
+  // Add local search state
+  const [localSearch, setLocalSearch] = useState("");
 
+  // Move data fetching before any data usage
   const { data: Sup } = useGetData({
     endpoint: `/api/notepads?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
     params: {
@@ -119,6 +144,130 @@ export default function TableDemo() {
       },
     },
   });
+
+  // Move filtered notes after Sup is defined
+  const filteredNotes = React.useMemo(() => {
+    return Sup?.data?.Notepad?.filter((note) =>
+      note.note_title.toLowerCase().includes(localSearch.toLowerCase())
+    );
+  }, [Sup?.data?.Notepad, localSearch]);
+
+  // Initialize the edit form.
+  const editForm = useForm<z.infer<typeof editSchema>>({
+    resolver: zodResolver(editSchema),
+    defaultValues: { note_title: "", note_content: "" },
+  });
+
+  const noteForm = useForm<z.infer<typeof editSchema>>({
+    resolver: zodResolver(editSchema),
+    defaultValues: {
+      note_title: "",
+      note_content: "",
+    },
+  });
+
+  // Reset form values when a note is selected.
+  useEffect(() => {
+    if (selectedNote) {
+      editForm.reset({
+        note_title: selectedNote.note_title || "",
+        note_content: selectedNote.note_content || "",
+      });
+    }
+  }, [selectedNote, editForm]);
+
+  // Reset form when selecting a note
+  useEffect(() => {
+    if (activeNote) {
+      noteForm.reset({
+        note_title: activeNote.note_title || "",
+        note_content: activeNote.note_content || "",
+      });
+    }
+  }, [activeNote]);
+
+  // Set up the update hook; endpoint will be set when selectedNote is present.
+  const updateNote = usePutData({
+    endpoint: activeNote ? `/api/notepads/${activeNote.id}` : "",
+    params: {
+      onSuccess: (data) => {
+        toast.success("Notepad updated successfully");
+        queryClient.invalidateQueries({ queryKey: ["notepad"] });
+        queryClient.invalidateQueries({ queryKey: ["notepad", activeNote.id] });
+        setActiveNote(null);
+        noteForm.reset({ note_title: "", note_content: "" });
+      },
+      onError: (error) => {
+        if (error.response && error.response.data.errors) {
+          const serverStatus = error.response.data.status;
+          const serverErrors = error.response.data.errors;
+          if (serverStatus === false) {
+            if (serverErrors.notepad) {
+              noteForm.setError("note_title", {
+                type: "manual",
+                message: serverErrors.notepad[0],
+              });
+              toast.error("The notepad has already been taken.");
+            }
+          } else {
+            setError("Failed to update notepad");
+          }
+        } else {
+          setError("Failed to update notepad");
+        }
+      },
+    },
+  });
+
+  // Add POST hook for new notes
+  const createNote = usePostData({
+    endpoint: "/api/notepads",
+    params: {
+      onSuccess: (data) => {
+        toast.success("Note saved successfully.");
+        queryClient.invalidateQueries({ queryKey: ["notepad"] });
+        setActiveNote(null);
+        noteForm.reset({ note_title: "", note_content: "" });
+      },
+      onError: (error) => {
+        toast.error("Failed to save note.");
+      },
+    },
+  });
+
+  // Modify handleEditSubmit to handle both new and existing notes
+  const handleEditSubmit = (data: z.infer<typeof editSchema>) => {
+    if (activeNote?.id) {
+      updateNote.mutate({
+        note_title: data.note_title,
+        note_content: data.note_content,
+      });
+    } else {
+      createNote.mutate(data);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prevPage) => prevPage - 1);
+    }
+  };
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      supplier: "",
+    },
+  });
+
+  // Add useEffect for page title
+  useEffect(() => {
+    document.title = "Notepad | CRM";
+  }, []);
 
   if (loading) {
     return (
@@ -198,134 +347,202 @@ export default function TableDemo() {
     return <div>{error}</div>;
   }
 
+  // Replace handleNoteClick with this simpler version
+  const handleNoteClick = (note: any) => {
+    setActiveNote(note);
+    noteForm.reset({
+      note_title: note.note_title,
+      note_content: note.note_content,
+    });
+  };
+
+  // Add handler for edit mode
+  const handleEditClick = (note: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveNote(note);
+    noteForm.reset({
+      note_title: note.note_title,
+      note_content: note.note_content,
+    });
+  };
+
+  // Modify the new note button click handler
+  const handleNewNoteClick = () => {
+    setIsCreatingNew(true);
+    setActiveNote(null);
+    noteForm.reset({ note_title: "", note_content: "" });
+  };
+
   return (
-    <div className="flex flex-col md:flex-row min-h-screen  w-full ">
+    <div className="flex flex-col md:flex-row min-h-screen w-full">
       <Sidebar className="md:sticky md:top-0 md:h-screen" />
-      <div className="flex-1 p-2 md:p-6 w-full bg-accent/60 md:ml-4 mr-8 rounded-lg shadow-lg">
-        <div className="p-2">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold mx-auto text-foreground">
-              Notes List
-            </h3>
-          </div>
+      <div className="flex-1 p-2 md:p-4 w-full bg-accent/60 md:ml-4 mr-8 rounded-lg shadow-lg">
+        {/* Reduce top margin */}
+        <div className="mb-2">
+          <h1 className="text-xl font-bold text-foreground text-center">
+            Notes
+          </h1>
         </div>
-        <div className="flex flex-col md:flex-row justify-between items-center py-1 space-y-2 md:space-y-0 md:space-x-3 ">
-          <div className="flex-1 space-x-2">
-            {isMinimized ? (
-              <Input
-                className="bg-background text-foreground border-border"
-                placeholder="Search Notes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            ) : null}
-          </div>
+        {/* Adjust the height calculation to prevent scrolling */}
+        <div className="flex h-[calc(100vh-6rem)] gap-4">
+          {/* Left Column - Notes List - Changed width from w-1/3 to w-1/4 */}
+          <div className="w-1/4 bg-card rounded-lg p-4 overflow-y-auto">
+            <div className="space-y-4">
+              <h3 className="text-base font-semibold text-foreground">
+                Saved Notes
+              </h3>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Search notes..."
+                  value={localSearch}
+                  onChange={(e) => setLocalSearch(e.target.value)}
+                  className="bg-background text-foreground border-input"
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={handleNewNoteClick}
+                  className="h-10 w-10 p-0 text-foreground hover:text-foreground/80 hover:bg-accent"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
 
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/notepad/add")}
-              className="text-foreground hover:text-foreground/80 hover:bg-accent"
-            >
-              Add Notes
-            </Button>
-          </div>
-        </div>
-
-        <div className="p-4 rounded-md bg-card">
-          <Table>
-            <TableCaption className="text-muted-foreground">
-              A list of your notes.
-            </TableCaption>
-            <TableHeader>
-              <TableRow className="hover:bg-accent/50">
-                <TableHead className="text-foreground">Note Title</TableHead>
-                <TableHead className="text-foreground">Note Content</TableHead>
-
-                <TableHead className="text-right text-foreground">
-                  Action
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableFooter className="bg-muted/50"></TableFooter>
-            <TableBody>
-              {Sup?.data?.Notepad?.map((replacement) => (
-                <TableRow key={replacement.id} className="hover:bg-accent/50">
-                  <TableCell className="text-foreground">
-                    {replacement.note_title}
-                  </TableCell>
-                  <TableCell className="text-foreground">
-                    {replacement.note_content.length > 10
-                      ? replacement.note_content.slice(0, 10) + "..."
-                      : replacement.note_content}
-                  </TableCell>
-
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="h-8 w-8 p-0 text-foreground hover:text-foreground/80 hover:bg-accent"
-                        >
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="w-full flex-col items-center flex justify-center bg-popover border-border"
+            <div className="space-y-2 mt-4">
+              {filteredNotes?.map((note) => (
+                <div
+                  key={note.id}
+                  onClick={() => handleNoteClick(note)}
+                  className={`p-3 rounded-lg cursor-pointer ${
+                    activeNote?.id === note.id
+                      ? "bg-accent"
+                      : "hover:bg-accent/50"
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="text-sm font-medium text-foreground">
+                        {note.note_title}
+                      </h4>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {note.note_content}
+                      </p>
+                    </div>
+                    <div
+                      className="flex gap-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          handleEditClick({ ...note, editMode: true }, e);
+                        }}
+                        className="h-8 w-8 p-0 hover:bg-blue-500/20 hover:text-blue-500 text-muted-foreground"
                       >
-                        <DropdownMenuLabel className="hover:cursor-default text-foreground">
-                          Actions
-                        </DropdownMenuLabel>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            navigate(`/notepad/edit/${replacement.id}`);
-                          }}
-                          className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                        >
-                          Edit
-                        </Button>
-                        <AlertDialogbox url={replacement.id} />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <AlertDialogbox url={note.id} />
+                    </div>
+                  </div>
+                </div>
               ))}
-            </TableBody>
-          </Table>
+            </div>
+          </div>
 
-          <Pagination>
-            <PaginationContent className="flex items-center space-x-4">
-              <PaginationPrevious
-                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
-                  currentPage === 1
-                    ? "cursor-default opacity-50"
-                    : "cursor-pointer"
-                }`}
-                onClick={goToPreviousPage}
-              >
-                Previous
-              </PaginationPrevious>
+          {/* Right Column - Note Editor - Changed width from w-2/3 to w-3/4 */}
+          <div className="w-3/4 bg-card rounded-lg p-4">
+            {activeNote?.editMode || isCreatingNew ? (
+              <div className="space-y-4">
+                <Form {...noteForm}>
+                  <form
+                    onSubmit={noteForm.handleSubmit(handleEditSubmit)}
+                    className="space-y-4 h-full"
+                  >
+                    <FormField
+                      control={noteForm.control}
+                      name="note_title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm text-foreground">
+                            Note Title
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter note title"
+                              {...field}
+                              className="bg-background text-foreground border-input"
+                            />
+                          </FormControl>
+                          <FormMessage className="text-destructive" />
+                        </FormItem>
+                      )}
+                    />
 
-              <span className="text-sm text-foreground">
-                Page {currentPage} of {totalPages}
-              </span>
-              <PaginationNext
-                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
-                  currentPage === totalPages
-                    ? "cursor-default opacity-50"
-                    : "cursor-pointer"
-                }`}
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </PaginationNext>
-            </PaginationContent>
-          </Pagination>
+                    <FormField
+                      control={noteForm.control}
+                      name="note_content"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel className="text-sm text-foreground">
+                            Note Content
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Enter note content"
+                              {...field}
+                              className="bg-background text-foreground border-input h-[calc(100vh-20rem)]"
+                            />
+                          </FormControl>
+                          <FormMessage className="text-destructive" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex justify-end space-x-2">
+                      <Button
+                        variant="outline"
+                        type="button"
+                        onClick={() => {
+                          setActiveNote(null);
+                          setIsCreatingNew(false);
+                          noteForm.reset({
+                            note_title: "",
+                            note_content: "",
+                          });
+                        }}
+                        className="text-foreground hover:text-foreground/80 hover:bg-accent"
+                      >
+                        Clear
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        {activeNote ? "Update Note" : "Save Note"}
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </div>
+            ) : activeNote ? (
+              <div>
+                <h2 className="text-lg font-semibold text-foreground mb-4 text-center underline">
+                  {activeNote.note_title}
+                </h2>
+                <div className="bg-background/50 rounded-lg p-4 h-[calc(100vh-20rem)]">
+                  <div className="whitespace-pre-wrap text-sm text-foreground overflow-y-auto h-full">
+                    {activeNote.note_content}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full text-sm text-muted-foreground">
+                <p>Select a note to view or click + to create a new one</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
