@@ -431,178 +431,180 @@ const Navbar = () => {
               <SheetDescription>Choose the module</SheetDescription>
             </SheetHeader>
 
-            <div className="space-y-0 ">
-              <Button
-                onClick={() => {
-                  navigate("/dashboard");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Dashboard
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/leads");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Leads
-              </Button>
+            <ScrollArea className="h-[calc(100vh-8rem)] pr-4">
+              <div className="space-y-0">
+                <Button
+                  onClick={() => {
+                    navigate("/dashboard");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Dashboard
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/leads");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Leads
+                </Button>
 
-              <Button
-                onClick={() => {
-                  navigate("/clients");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Clients
-              </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/clients");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Clients
+                </Button>
 
-              <Button
-                onClick={() => {
-                  navigate("/contacts");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Contacts
-              </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/contacts");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Contacts
+                </Button>
 
-              <Button
-                onClick={() => {
-                  navigate("/suppliers");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Suppliers
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/productCategories");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Product Categories
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/products");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Products
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/replacements");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Replacements & Repair
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/purchase");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Purchase
-              </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/suppliers");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Suppliers
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/productCategories");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Product Categories
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/products");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Products
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/replacements");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Replacements & Repair
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/purchase");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Purchase
+                </Button>
 
-              <Button
-                onClick={() => {
-                  navigate("/employees");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Employees
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/challans");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Challans
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/expense_heads");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Expense Head
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/expense");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Expense
-              </Button>
-              <Button
-                onClick={() => {
-                  navigate("/departments");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Departments
-              </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/employees");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Employees
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/challans");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Challans
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/expense_heads");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Expense Head
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/expense");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Expense
+                </Button>
+                <Button
+                  onClick={() => {
+                    navigate("/departments");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Departments
+                </Button>
 
-              <Button
-                onClick={() => {
-                  navigate("/invoices");
-                  setMobileMenuOpen(false);
-                  setIsSheetOpen(false);
-                }}
-                variant="ghost"
-                className="w-full text-left justify-start"
-              >
-                Invoices
-              </Button>
-            </div>
+                <Button
+                  onClick={() => {
+                    navigate("/invoices");
+                    setMobileMenuOpen(false);
+                    setIsSheetOpen(false);
+                  }}
+                  variant="ghost"
+                  className="w-full text-left justify-start"
+                >
+                  Invoices
+                </Button>
+              </div>
+            </ScrollArea>
           </SheetContent>
         </Sheet>
       </div>
