@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date("follow_up_date")->nullable();
             $table->date("next_follow_up_date")->nullable();
             $table->string("follow_up_type",100)->nullable();
-            $table->string("remarks")->nullable();
+            $table->longText("remarks")->nullable();
             $table->timestamps();
         });
     }
