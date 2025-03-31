@@ -138,7 +138,7 @@ export default function TableDemo() {
   // Move filtered notes after Sup is defined
   const filteredNotes = React.useMemo(() => {
     return Sup?.data?.Notepad?.filter((note) =>
-      note.note_title.toLowerCase().includes(localSearch.toLowerCase())
+      (note?.note_title || "").toLowerCase().includes(localSearch.toLowerCase())
     );
   }, [Sup?.data?.Notepad, localSearch]);
 
@@ -444,14 +444,14 @@ export default function TableDemo() {
                   <div className="flex justify-between items-start">
                     <div>
                       <h4 className="text-sm font-medium text-foreground">
-                        {note.note_title.length > 15
+                        {note?.note_title?.length > 15
                           ? note.note_title.substring(0, 15) + "..."
-                          : note.note_title}
+                          : note?.note_title || "Untitled"}
                       </h4>
                       <p className="text-xs text-muted-foreground truncate">
-                        {note.note_content.length > 20
+                        {note?.note_content?.length > 20
                           ? note.note_content.substring(0, 20) + "..."
-                          : note.note_content}
+                          : note?.note_content || "No content"}
                       </p>
                     </div>
                     <div
