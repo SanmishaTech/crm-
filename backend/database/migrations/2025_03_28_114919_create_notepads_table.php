@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('notepads', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('note_title')->nullable();
             $table->longText('note_content', 255)->nullable();
             $table->string('note_color')->nullable();

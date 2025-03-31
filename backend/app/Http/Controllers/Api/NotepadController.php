@@ -16,7 +16,7 @@ class NotepadController extends BaseController
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Notepad::query();
+        $query = Notepad::query()->where('user_id', auth()->id());
 
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
@@ -36,19 +36,22 @@ class NotepadController extends BaseController
     public function store(Request $request): JsonResponse
     {
         $notes = new Notepad();
+        $notes->user_id = auth()->id();
         $notes->note_title = $request->input("note_title");
         $notes->note_content = $request->input("note_content");
         $notes->note_color = $request->input("note_color");
+        
         if(!$notes->save()) {
-            dd($notes); exit;
+            return $this->sendError("Failed to save note", ['error'=>'Database error']);
         }
+        
         return $this->sendResponse(['Notepad'=> new NotepadResource($notes)], 'Notepad Created Successfully');
     }
 
     
     public function show(string $id): JsonResponse
     {
-        $notes = Notepad::find($id);
+        $notes = Notepad::where('user_id', auth()->id())->find($id);
 
         if(!$notes){
             return $this->sendError("Notepad not found", ['error'=>['Notepad not found']]);
@@ -60,14 +63,17 @@ class NotepadController extends BaseController
     
     public function update(Request $request, string $id): JsonResponse
     {
-        $notes = Notepad::find($id);
+        $notes = Notepad::where('user_id', auth()->id())->find($id);
+        
         if(!$notes){
             return $this->sendError("Notepad not found", ['error'=>['Notepad not found']]);
         }
+        
         $notes->note_title = $request->input("note_title");
         $notes->note_content = $request->input("note_content");
         $notes->note_color = $request->input("note_color");
         $notes->save();
+        
         return $this->sendResponse(["Notepad"=> new NotepadResource($notes)], "Notepad Updated successfully");
 
     }
@@ -77,7 +83,8 @@ class NotepadController extends BaseController
      */
     public function destroy(string $id): JsonResponse
     {
-        $notes = Notepad::find($id);
+        $notes = Notepad::where('user_id', auth()->id())->find($id);
+        
         if(!$notes){
             return $this->sendError("note not found", ['error'=>'Note not found']);
         }
@@ -92,7 +99,7 @@ class NotepadController extends BaseController
      */
     public function allNotes(): JsonResponse
     {
-        $notes = Notepad::all();
+        $notes = Notepad::where('user_id', auth()->id())->get();
 
         return $this->sendResponse(["Notepad"=>NotepadResource::collection($notes),
         ], "Notepad retrieved successfully");
