@@ -97,8 +97,8 @@ const formSchema = z.object({
 
 // Define schema for editing a note.
 const editSchema = z.object({
-  note_title: z.string().optional(),
-  note_content: z.string().optional(),
+  note_title: z.string(),
+  note_content: z.string(),
 });
 
 export default function TableDemo() {
@@ -229,13 +229,34 @@ export default function TableDemo() {
 
   // Modify handleEditSubmit to handle both new and existing notes
   const handleEditSubmit = (data: z.infer<typeof editSchema>) => {
+    // Trim whitespace from the input
+    const trimmedTitle = data.note_title.trim();
+    const trimmedContent = data.note_content.trim();
+
+    // Check if both fields are empty
+    if (!trimmedTitle && !trimmedContent) {
+      noteForm.setError("note_title", {
+        type: "manual",
+        message: "Title is required",
+      });
+      noteForm.setError("note_content", {
+        type: "manual",
+        message: "Content is required",
+      });
+      toast.error("Title or content must not be empty");
+      return;
+    }
+
     if (activeNote?.id) {
       updateNote.mutate({
-        note_title: data.note_title,
-        note_content: data.note_content,
+        note_title: trimmedTitle || "Untitled", // Fallback title if empty
+        note_content: trimmedContent || "", // Empty string if no content
       });
     } else {
-      createNote.mutate(data);
+      createNote.mutate({
+        note_title: trimmedTitle || "Untitled", // Fallback title if empty
+        note_content: trimmedContent || "", // Empty string if no content
+      });
     }
   };
 
