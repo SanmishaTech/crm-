@@ -391,15 +391,15 @@ const Navbar = () => {
                   <CircleUserRound className="h-5" />
                   <span>My Account</span>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
+                {/* <DropdownMenuSeparator className="bg-border" /> */}
+                {/* <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
                   <Settings className="h-4" />
                   <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
+                </DropdownMenuItem> */}
+                {/* <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
                   <Headset className="h-4" />
                   <span>Support</span>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuSeparator className="bg-border" />
                 <DropdownMenuItem
                   className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent"
