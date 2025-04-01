@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/table";
 import axios from "axios";
 import userAvatar from "@/images/Profile.jpg";
+import { useGetData } from "@/lib/HTTP/GET";
 
 // Updated data structure based on your requirements
 const recentTests = [
@@ -97,6 +98,14 @@ export default function ResponsiveLabDashboard() {
 
   const [openLeadsCount, setOpenLeadsCount] = useState(0);
   const [followUpLeadsCount, setFollowUpLeadsCount] = useState(0);
+
+  const { data: Sup } = useGetData({
+    endpoint: `/api/notepads`,
+    params: {
+      queryKey: ["notepad"],
+      retry: 1,
+    },
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -203,7 +212,11 @@ export default function ResponsiveLabDashboard() {
                     <TableRow key={task.id}>
                       <TableCell className="font-medium">{task.id}</TableCell>
                       <TableCell>{task.contact.contact_person}</TableCell>
-                      <TableCell>{task.follow_up_remark}</TableCell>
+                      <TableCell>
+                        {task.follow_up_remark.length > 15
+                          ? task.follow_up_remark.substring(0, 15) + "..."
+                          : task.follow_up_remark}
+                      </TableCell>
                       <TableCell>
                         <Badge
                           variant={
@@ -235,7 +248,9 @@ export default function ResponsiveLabDashboard() {
                         {test.contact.contact_person}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {test.follow_up_remark}
+                        {test.follow_up_remark.length > 15
+                          ? test.follow_up_remark.substring(0, 15) + "..."
+                          : test.follow_up_remark}
                       </p>
                     </div>
                     <div className="ml-auto font-medium">
@@ -283,69 +298,43 @@ export default function ResponsiveLabDashboard() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4">
-          <Card className="col-span-full lg:col-span-4 bg-accent/40">
+          <Card className="col-span-full bg-accent/40">
             <CardHeader>
-              <CardTitle>Volume Over Time</CardTitle>
+              <CardTitle>My Notes</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={testVolumeData}>
-                  <XAxis
-                    dataKey="name"
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke="#888888"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(value) => `${value}`}
-                  />
-                  <Bar dataKey="tests" fill="#adfa1d" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-          <Card className="col-span-full lg:col-span-3 bg-accent/40">
-            <CardHeader>
-              <CardTitle>Statistics</CardTitle>
-              <CardDescription>Key performance indicators</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8">
+            <CardContent className="h-[350px] overflow-y-auto">
               <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Accuracy</div>
-                    <div className="text-sm text-muted-foreground">98.2%</div>
-                  </div>
-                  <div>+0.2%</div>
-                </div>
-                <Progress value={98} className="h-2" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Turnaround Time</div>
-                    <div className="text-sm text-muted-foreground">
-                      24.5 hours
+                {Sup?.data?.Notepad?.slice(0, 6).map((note: any) => (
+                  <div
+                    key={note.id}
+                    className="p-3 rounded-lg bg-background/50 hover:bg-accent/50 cursor-pointer"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-sm font-medium text-foreground">
+                          {note?.note_title?.length > 15
+                            ? note.note_title.substring(0, 15) + "..."
+                            : note?.note_title || "Untitled"}
+                        </h4>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {note?.note_content?.length > 150
+                            ? note.note_content.substring(0, 150) + "..."
+                            : note?.note_content || "No content"}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <div>-1.5h</div>
-                </div>
-                <Progress value={82} className="h-2" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <div className="flex-1">
-                    <div className="text-sm font-medium">Utilization</div>
-                    <div className="text-sm text-muted-foreground">87.3%</div>
+                ))}
+                {Sup?.data?.Notepad?.length > 6 && (
+                  <div className="mt-4 text-right">
+                    <button
+                      onClick={() => navigate("/notepad")}
+                      className="text-xs hover:text-blue-500"
+                    >
+                      See More...
+                    </button>
                   </div>
-                  <div>+3.7%</div>
-                </div>
-                <Progress value={87} className="h-2" />
+                )}
               </div>
             </CardContent>
           </Card>
