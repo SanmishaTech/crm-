@@ -104,7 +104,9 @@ export default function EditExpensePage() {
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
-  const [expenseHeads, setExpenseHeads] = useState<Array<{value: number, label: string}>>([]);
+  const [expenseHeads, setExpenseHeads] = useState<
+    Array<{ value: number; label: string }>
+  >([]);
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -129,46 +131,45 @@ export default function EditExpensePage() {
   });
 
   // Fetch expense details for editing
- // Fetch expense details for editing
-const { data: editData } = useGetData({
-  endpoint: `/api/expenses/${id}`,
-  params: {
-    queryKey: ["expenses", id],
-    retry: 1,
-    enabled: !!id,
-  },
-});
+  // Fetch expense details for editing
+  const { data: editData } = useGetData({
+    endpoint: `/api/expenses/${id}`,
+    params: {
+      queryKey: ["expenses", id],
+      retry: 1,
+      enabled: !!id,
+    },
+  });
 
-// Update form values and product rows when editData is available
-useEffect(() => {
-  if (editData?.data?.Expense) {
-    const expense = editData.data.Expense;
-    // Set form values
-    form.reset({
-      voucher_number: expense.voucher_number || "",
-      voucher_date: expense.voucher_date || "",
-      voucher_amount: expense.voucher_amount || "",
-    });
+  // Update form values and product rows when editData is available
+  useEffect(() => {
+    if (editData?.data?.Expense) {
+      const expense = editData.data.Expense;
+      // Set form values
+      form.reset({
+        voucher_number: expense.voucher_number || "",
+        voucher_date: expense.voucher_date || "",
+        voucher_amount: expense.voucher_amount || "",
+      });
 
-    // Set expense details rows
-    if (expense.expense_details) {
-      const details = expense.expense_details.map((detail) => ({
-        expense_head_id: detail.expense_head_id,
-        amount: detail.amount,
-        isOpen: false,
-      }));
-      setProductRows(details);
+      // Set expense details rows
+      if (expense.expense_details) {
+        const details = expense.expense_details.map((detail) => ({
+          expense_head_id: detail.expense_head_id,
+          amount: detail.amount,
+          isOpen: false,
+        }));
+        setProductRows(details);
+      }
     }
-  }
-}, [editData]);
-
+  }, [editData]);
 
   // Update expense heads when data is loaded
   useEffect(() => {
     if (expenseHeadsData?.data?.ExpenseHead) {
       const mappedHeads = expenseHeadsData.data.ExpenseHead.map((head) => ({
         value: head.id,
-        label: head.expense_head
+        label: head.expense_head,
       }));
       setExpenseHeads(mappedHeads);
     }
@@ -180,20 +181,20 @@ useEffect(() => {
       ...data,
       expense_details: productRows
         .filter((row) => row.expense_head_id && row.amount)
-        .map(row => ({
+        .map((row) => ({
           expense_head_id: Number(row.expense_head_id),
-          amount: Number(row.amount)
-        }))
+          amount: Number(row.amount),
+        })),
     };
 
     try {
       const response = await fetch(`/api/expenses/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('token')
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -257,10 +258,7 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>Voucher Number</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter Voucher Number"
-                          {...field}
-                          />
+                        <Input placeholder="Enter Voucher Number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -277,7 +275,7 @@ useEffect(() => {
                           placeholder="Enter Voucher Date"
                           {...field}
                           type="date"
-                         />
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -291,9 +289,10 @@ useEffect(() => {
                       <FormLabel>Voucher Amount</FormLabel>
                       <FormControl>
                         <Input
+                          type="number"
                           placeholder="Enter Voucher Amount"
                           {...field}
-                         />
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -302,10 +301,12 @@ useEffect(() => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold">Expense Details</CardTitle>
+              <CardTitle className="text-xl font-semibold">
+                Expense Details
+              </CardTitle>
               <CardDescription>Add your Expense Details</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
@@ -316,7 +317,7 @@ useEffect(() => {
                   <TableRow>
                     <TableHead>Expense Head</TableHead>
                     <TableHead>Amount</TableHead>
-                     <TableHead className="text-right">Action</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -340,7 +341,8 @@ useEffect(() => {
                             >
                               {row.expense_head_id
                                 ? expenseHeads.find(
-                                    (head) => head.value === Number(row.expense_head_id)
+                                    (head) =>
+                                      head.value === Number(row.expense_head_id)
                                   )?.label
                                 : "Select expense head..."}
                               <ChevronsUpDown className="opacity-50" />
@@ -353,7 +355,9 @@ useEffect(() => {
                                 className="h-9"
                               />
                               <CommandList>
-                                <CommandEmpty>No expense heads found.</CommandEmpty>
+                                <CommandEmpty>
+                                  No expense heads found.
+                                </CommandEmpty>
                                 <CommandGroup>
                                   {expenseHeads.map((head) => (
                                     <CommandItem
@@ -361,7 +365,8 @@ useEffect(() => {
                                       value={head.value.toString()}
                                       onSelect={() => {
                                         const newRows = [...productRows];
-                                        newRows[index].expense_head_id = head.value;
+                                        newRows[index].expense_head_id =
+                                          head.value;
                                         newRows[index].isOpen = false;
                                         setProductRows(newRows);
                                       }}
@@ -400,7 +405,9 @@ useEffect(() => {
                           type="button"
                           variant="ghost"
                           onClick={() => {
-                            const newRows = productRows.filter((_, i) => i !== index);
+                            const newRows = productRows.filter(
+                              (_, i) => i !== index
+                            );
                             setProductRows(newRows);
                           }}
                         >

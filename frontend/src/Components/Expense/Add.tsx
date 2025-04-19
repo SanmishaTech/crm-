@@ -115,14 +115,15 @@ interface ProductRow {
 export default function InputForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [expenseHeads, setExpenseHeads] = useState<Array<{value: number, label: string}>>([]);
+  const [expenseHeads, setExpenseHeads] = useState<
+    Array<{ value: number; label: string }>
+  >([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       voucher_number: "",
       voucher_date: "",
       voucher_amount: "",
-       
     },
   });
   const queryClient = useQueryClient();
@@ -135,7 +136,6 @@ export default function InputForm() {
       { expense_head_id: "", amount: "", isOpen: false },
     ]);
   };
-  
 
   type FormValues = z.infer<typeof FormSchema>;
   const formData = usePostData<FormValues>({
@@ -151,7 +151,7 @@ export default function InputForm() {
         if (error.response?.data.errors) {
           const serverStatus = error.response.data.status;
           const serverErrors = error.response.data.errors;
-          
+
           if (serverStatus === false) {
             if (serverErrors.contact_id) {
               form.setError("voucher_number", {
@@ -187,7 +187,7 @@ export default function InputForm() {
     if (fetchExpenseHeads?.data?.ExpenseHead) {
       const mappedHeads = fetchExpenseHeads.data.ExpenseHead.map((head) => ({
         value: head.id,
-        label: head.expense_head
+        label: head.expense_head,
       }));
       setExpenseHeads(mappedHeads);
       setLoading(false);
@@ -196,13 +196,16 @@ export default function InputForm() {
 
   const onSubmit = async (data: FormValues) => {
     // Validate that we have at least one expense detail
-    if (productRows.length === 0 || !productRows.some(row => row.expense_head_id && row.amount)) {
+    if (
+      productRows.length === 0 ||
+      !productRows.some((row) => row.expense_head_id && row.amount)
+    ) {
       toast.error("Please add at least one expense detail");
       return;
     }
 
     // Log the data before submission to verify
-    console.log('Product Rows:', productRows);
+    console.log("Product Rows:", productRows);
 
     const payload = {
       voucher_number: data.voucher_number,
@@ -210,13 +213,13 @@ export default function InputForm() {
       voucher_amount: data.voucher_amount,
       expense_details: productRows
         .filter((row) => row.expense_head_id && row.amount)
-        .map(row => ({
+        .map((row) => ({
           expense_head_id: row.expense_head_id,
-          amount: row.amount
-        }))
+          amount: row.amount,
+        })),
     };
 
-    console.log('Submitting payload:', payload);
+    console.log("Submitting payload:", payload);
     formData.mutate(payload);
   };
 
@@ -254,9 +257,6 @@ export default function InputForm() {
             </CardHeader>
             <CardContent className="p-6">
               <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
-                
-                           
- 
                 <FormField
                   control={form.control}
                   name="voucher_number"
@@ -264,10 +264,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Voucher Number</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter Voucher Number"
-                          {...field}
-                          />
+                        <Input placeholder="Enter Voucher Number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -284,7 +281,7 @@ export default function InputForm() {
                           placeholder="Enter Voucher Date"
                           {...field}
                           type="date"
-                         />
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -298,9 +295,10 @@ export default function InputForm() {
                       <FormLabel>Voucher Amount</FormLabel>
                       <FormControl>
                         <Input
+                          type="number"
                           placeholder="Enter Voucher Amount"
                           {...field}
-                         />
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -309,10 +307,12 @@ export default function InputForm() {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold">Expense Details</CardTitle>
+              <CardTitle className="text-xl font-semibold">
+                Expense Details
+              </CardTitle>
               <CardDescription>Add your Expense Details</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
@@ -323,7 +323,7 @@ export default function InputForm() {
                   <TableRow>
                     <TableHead>Expense Head</TableHead>
                     <TableHead>Amount</TableHead>
-                     <TableHead className="text-right">Action</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -360,7 +360,9 @@ export default function InputForm() {
                                 className="h-9"
                               />
                               <CommandList>
-                                <CommandEmpty>No expense heads found.</CommandEmpty>
+                                <CommandEmpty>
+                                  No expense heads found.
+                                </CommandEmpty>
                                 <CommandGroup>
                                   {expenseHeads.map((head) => (
                                     <CommandItem
@@ -368,10 +370,11 @@ export default function InputForm() {
                                       value={head.value.toString()}
                                       onSelect={() => {
                                         const newRows = [...productRows];
-                                        newRows[index].expense_head_id = head.value;
+                                        newRows[index].expense_head_id =
+                                          head.value;
                                         newRows[index].isOpen = false;
                                         setProductRows(newRows);
-                                        console.log('Updated rows:', newRows);
+                                        console.log("Updated rows:", newRows);
                                       }}
                                     >
                                       {head.label}
@@ -408,7 +411,9 @@ export default function InputForm() {
                           type="button"
                           variant="ghost"
                           onClick={() => {
-                            const newRows = productRows.filter((_, i) => i !== index);
+                            const newRows = productRows.filter(
+                              (_, i) => i !== index
+                            );
                             setProductRows(newRows);
                           }}
                         >
