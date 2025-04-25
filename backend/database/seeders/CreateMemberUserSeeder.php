@@ -26,7 +26,7 @@ class CreateMemberUserSeeder extends Seeder
         );
     
          // Create or retrieve the admin role
-        $role = Role::firstOrCreate(['name' => 'member']);     
+        $role = Role::firstOrCreate(['name' => 'sales']);     
 
         // $permissions = [
           
