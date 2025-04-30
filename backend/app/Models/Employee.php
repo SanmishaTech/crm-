@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Lead;
 use App\Models\Department;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
@@ -22,6 +23,8 @@ class Employee extends Model
         return $this->belongsTo(Department::class, 'department_id');
     }
 
-    
-    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

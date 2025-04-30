@@ -18,14 +18,14 @@ class EmployeeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $user = new UserResource(User::find($this->user_id));
-        // $department = new DepartmentResource(Department::find($this->department_id));
+        $user = $this->user;
 
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
             'department_id' => $this->department_id,
             'employee_name' => $this->employee_name,
+            'role_name' => $user->roles->first()->name ?? 'No role',
             'designation' => $this->designation,
             'email' => $this->email,
             'mobile' => $this->mobile,

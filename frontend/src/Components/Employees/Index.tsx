@@ -64,6 +64,7 @@ type Employee = {
   email: string;
   department: string;
   mobile: string;
+  role: string;
 };
 
 type PaginationData = {
@@ -180,6 +181,12 @@ export default function TableDemo() {
                 </TableHead>
                 <TableHead
                   className="text-foreground"
+                  onClick={() => handleSort("role")}
+                >
+                  Role
+                </TableHead>
+                <TableHead
+                  className="text-foreground"
                   onClick={() => handleSort("email")}
                 >
                   Email
@@ -208,10 +215,9 @@ export default function TableDemo() {
                   <TableCell>{employee.employee_name}</TableCell>
                   <TableCell>{employee.designation || "N/A"}</TableCell>
                   <TableCell>
-                    {employee.department
-                      ? employee.department.department_name
-                      : "N/A"}
+                    {employee.department ? employee.department.department_name : "N/A"}
                   </TableCell>
+                  <TableCell>{employee.role_name}</TableCell>
                   <TableCell>{employee.email}</TableCell>
                   <TableCell>{employee.mobile || "N/A"}</TableCell>
                   <TableCell>
