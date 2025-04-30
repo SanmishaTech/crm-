@@ -50,7 +50,7 @@ const formSchema = z.object({
   department_id: z.coerce
     .number()
     .min(1, { message: "Department field is required." }),
-
+  role_name: z.string().min(1, "Role field is required"),
   email: z
     .string()
     .email("Please enter a valid email address.")
@@ -60,7 +60,6 @@ const formSchema = z.object({
     .min(6, { message: "Password field must have at least 6 characters." }),
   mobile: z.coerce.number().min(10, { message: "Mobile field is required." }),
   joining_date: z.string().optional(),
-  // resignation_date: z.string().optional(),
   designation: z
     .string()
     .min(2, "Designation field must have at least 2 characters"),
@@ -112,10 +111,10 @@ export default function EditEmployeePage() {
       mobile: null,
       department_id: "",
       joining_date: "",
-      // resignation_date: "",
       designation: "",
       password: "",
       active: null,
+      role_name: "",
     },
   });
 
@@ -200,10 +199,10 @@ export default function EditEmployeePage() {
         mobile: newData.mobile || "",
         designation: newData.designation || "",
         joining_date: newData.joining_date || "",
-        // resignation_date: newData.resignation_date || "",
         department_id: newData.department_id || "",
         password: password || "",
         active: activee,
+        role_name: newData.role_name || "",
       });
     }
   }, [editData, form]);
@@ -452,6 +451,33 @@ export default function EditEmployeePage() {
                           <SelectContent>
                             <SelectItem value={String(1)}>Active</SelectItem>
                             <SelectItem value={String(0)}>Inactive</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="role_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <FormControl>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="">
+                            <SelectValue placeholder="Select Role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Roles</SelectLabel>
+                              <SelectItem value="sales">Sales</SelectItem>
+                              <SelectItem value="accounts">Accounts</SelectItem>
+                            </SelectGroup>
                           </SelectContent>
                         </Select>
                       </FormControl>

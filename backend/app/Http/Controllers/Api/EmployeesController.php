@@ -59,33 +59,32 @@ class EmployeesController extends BaseController
      * @bodyParam mobile string The name of the Employee.
      * @bodyParam joining_date string The name of the Employee.
      */
-    public function store(StoreEmployeeRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        $active = 1;
-        $user = new User();
-        $user->name = $request->input('employee_name');
-        $user->email = $request->input('email');
-        $user->active = $active;
-        $user->password = Hash::make($request->input('password'));
-        $user->save();
-        
-        // $memberRole = $request->input("role");
-        $memberRole = Role::where("name","member")->first();
-       
-        $user->assignRole($memberRole);
-        
-        $employee = new Employee();
-        $employee->user_id = $user->id;
-        $employee->employee_name = $request->input('employee_name');
-        $employee->designation = $request->input('designation');
-        $employee->department_id = $request->input('department_id');
-        $employee->email = $request->input('email');
-        $employee->mobile = $request->input('mobile');
-        $employee->joining_date = $request->input('joining_date');
-        // $employee->resignation_date = $request->input('resignation_date');
-        $employee->save();
-       
-        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "Employees stored successfully");
+        // Create user
+        $user = User::create([
+            'name' => $request->input('employee_name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make('password'),
+        ]);
+
+        // Assign role (only sales or accounts)
+        if (in_array($request->input('role_name'), ['sales', 'accounts'])) {
+            $user->assignRole($request->input('role_name'));
+        }
+
+        // Create employee
+        $employee = Employee::create([
+            'user_id' => $user->id,
+            'employee_name' => $request->input('employee_name'),
+            'department_id' => $request->input('department_id'),
+            'designation' => $request->input('designation'),
+            'email' => $request->input('email'),
+            'mobile' => $request->input('mobile'),
+            'joining_date' => $request->input('joining_date'),
+        ]);
+
+        return $this->sendResponse(new EmployeeResource($employee), 'Employee created successfully.');
     }
 
     /**
@@ -125,23 +124,26 @@ class EmployeesController extends BaseController
         $user->email = $request->input('email');
         $user->active = $request->input('active');
         $user->password = Hash::make($request->input('password'));
+        
+        // Remove all roles first
+        $user->roles()->detach();
+        
+        // Assign new role (only sales or accounts)
+        if (in_array($request->input('role_name'), ['sales', 'accounts'])) {
+            $user->assignRole($request->input('role_name'));
+        }
+        
         $user->save();
 
-        // $memberRole = $request->input("role");
-        $memberRole = Role::where("name","member")->first();
-        $user->assignRole($memberRole);
-                       
         $employee->employee_name = $request->input('employee_name');
         $employee->designation = $request->input('designation');
         $employee->department_id = $request->input('department_id');
         $employee->email = $request->input('email');
         $employee->mobile = $request->input('mobile');
         $employee->joining_date = $request->input('joining_date');
-        // $employee->resignation_date = $request->input('resignation_date');
         $employee->save();
-       
-        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "Employees updated successfully");
 
+        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "Employees updated successfully");
     }
 
     /**

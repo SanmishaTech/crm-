@@ -10,6 +10,17 @@ use Illuminate\Database\Eloquent\Model;
 class Employee extends Model
 {
     
+    protected $fillable = [
+        'user_id',
+        'employee_name',
+        'department_id',
+        'designation',
+        'email',
+        'mobile',
+        'joining_date',
+        'resignation_date'
+    ];
+
     protected $casts = [
         'resignation_date' => 'date:Y-m-d',
         "joining_date" => "date:Y-m-d",

@@ -49,7 +49,7 @@ const FormSchema = z.object({
     })
     .nonempty({ message: "Name field is required." }),
   department_id: z.string().min(1, "Department field is required"),
-
+  role_name: z.string().min(1, "Role field is required"),
   email: z
     .string()
     .email("Please enter a valid email address.")
@@ -79,6 +79,7 @@ export default function InputForm() {
       joining_date: "",
       designation: "",
       password: "",
+      role_name: "",
     },
   });
   const queryClient = useQueryClient();
@@ -284,6 +285,32 @@ export default function InputForm() {
                       <FormLabel>Designation</FormLabel>
                       <FormControl>
                         <Input placeholder="Enter designation" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4 mb-5">
+                <FormField
+                  control={form.control}
+                  name="role_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Roles</SelectLabel>
+                              <SelectItem value="sales">Sales</SelectItem>
+                              <SelectItem value="accounts">Accounts</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
