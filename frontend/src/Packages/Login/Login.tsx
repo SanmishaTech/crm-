@@ -54,6 +54,8 @@ const Login = () => {
       if (response.data.data.token) {
         localStorage.setItem("token", response.data.data.token);
         localStorage.setItem("user", JSON.stringify(response.data.data.user));
+        const roleName = response.data.data.user?.role?.name || 'default_role';
+        localStorage.setItem("role", roleName);
         navigate("/dashboard");
         toast.success("Successfully Logged In");
       }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "@/Dashboard/Sidebar";
 import Dashboardcomponent from "@/Components/Dashboard/Dashboard";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -58,13 +58,63 @@ import Permissions from "@/Components/Permissions/index";
 const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState<string>("");
+
+  // Function to check if the current user role has access to a specific module
+  const hasAccess = (module: string) => {
+    // Define access permissions for each role
+    const accessMap: Record<string, string[]> = {
+      admin: ["dashboard", "leads", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "departments", "challans", "invoices", "roles", "permissions", "employees", "notepad"],
+      sales: ["dashboard", "leads", "clients", "contacts", "suppliers", "productCategories", "products", "replacements", "expense_heads", "expense", "notepad"],
+      accounts: ["dashboard", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "challans", "invoices", "notepad"]
+    };
+    
+    // If role doesn't exist or is not in the map, deny access
+    if (!userRole || !accessMap[userRole]) return false;
+    
+    // Check if the module is in the list of allowed modules for this role
+    return accessMap[userRole].includes(module);
+  };
+
+  // Function to check if current path is accessible
+  const checkPathAccess = () => {
+    const path = location.pathname;
+    
+    // Extract the base module from the path
+    let module = path.split('/')[1];
+    
+    // Handle special cases for edit routes
+    if (path.includes('/edit/') || path.includes('/view/') || 
+        path.includes('/add') || /\/roles\/\d+\/edit/.test(path) || 
+        /\/followUps\/\d+/.test(path) || /\/generateQuotation\/\d+/.test(path) || 
+        /\/generateInvoice\/\d+/.test(path)) {
+      module = path.split('/')[1]; // Get the base module
+    }
+    
+    // If the user doesn't have access to this module, redirect to dashboard
+    if (!hasAccess(module)) {
+      navigate('/dashboard');
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/");
+      return;
     }
+    
+    // Get user role from localStorage
+    const role = localStorage.getItem("role") || "";
+    setUserRole(role);
   }, [navigate]);
+
+  // Check path access whenever location or userRole changes
+  useEffect(() => {
+    if (userRole) {
+      checkPathAccess();
+    }
+  }, [location.pathname, userRole]);
 
   return (
     <div className="flex bg-background w-[100vw] h-full relative min-h-screen overflow-x-hidden">
@@ -73,27 +123,27 @@ const Dashboard = () => {
       </div>
       <main className="w-full flex-1 overflow-hidden pt-[5rem]  ">
         {<Navbar />}
-        {location.pathname === "/dashboard" && <Dashboardcomponent />}
-        {location.pathname === "/suppliers" && <Suppliers />}
-        {location.pathname === "/suppliers/add" && <SuppliersAdd />}
-        {/\/suppliers\/edit\/\d+/.test(location.pathname) && <SuppliersEdit />}
-        {location.pathname === "/contacts" && <Contacts />}
-        {location.pathname === "/contacts/add" && <ContactsAdd />}
-        {/\/contacts\/edit\/\d+/.test(location.pathname) && <ContactsEdit />}
+        {location.pathname === "/dashboard" && hasAccess("dashboard") && <Dashboardcomponent />}
+        {location.pathname === "/suppliers" && hasAccess("suppliers") && <Suppliers />}
+        {location.pathname === "/suppliers/add" && hasAccess("suppliers") && <SuppliersAdd />}
+        {/\/suppliers\/edit\/\d+/.test(location.pathname) && hasAccess("suppliers") && <SuppliersEdit />}
+        {location.pathname === "/contacts" && hasAccess("contacts") && <Contacts />}
+        {location.pathname === "/contacts/add" && hasAccess("contacts") && <ContactsAdd />}
+        {/\/contacts\/edit\/\d+/.test(location.pathname) && hasAccess("contacts") && <ContactsEdit />}
 
-        {location.pathname === "/clients" && <Clients />}
-        {location.pathname === "/clients/add" && <ClientsAdd />}
-        {/\/clients\/edit\/\d+/.test(location.pathname) && <ClientsEdit />}
+        {location.pathname === "/clients" && hasAccess("clients") && <Clients />}
+        {location.pathname === "/clients/add" && hasAccess("clients") && <ClientsAdd />}
+        {/\/clients\/edit\/\d+/.test(location.pathname) && hasAccess("clients") && <ClientsEdit />}
 
-        {location.pathname === "/leads" && <Leads />}
-        {location.pathname === "/leads/add" && <LeadsAdd />}
-        {/\/leads\/edit\/\d+/.test(location.pathname) && <LeadsEdit />}
-        {/\/followUps\/\d+/.test(location.pathname) && <FollowUps />}
-        {/\/generateQuotation\/\d+/.test(location.pathname) && <Leads />}
-        {/\/generateInvoice\/\d+/.test(location.pathname) && <Leads />}
+        {location.pathname === "/leads" && hasAccess("leads") && <Leads />}
+        {location.pathname === "/leads/add" && hasAccess("leads") && <LeadsAdd />}
+        {/\/leads\/edit\/\d+/.test(location.pathname) && hasAccess("leads") && <LeadsEdit />}
+        {/\/followUps\/\d+/.test(location.pathname) && hasAccess("leads") && <FollowUps />}
+        {/\/generateQuotation\/\d+/.test(location.pathname) && hasAccess("leads") && <Leads />}
+        {/\/generateInvoice\/\d+/.test(location.pathname) && hasAccess("leads") && <Leads />}
 
-        {location.pathname === "/departments" && <Departments />}
-        {location.pathname === "/departments/add" && (
+        {location.pathname === "/departments" && hasAccess("departments") && <Departments />}
+        {location.pathname === "/departments/add" && hasAccess("departments") && (
           <DepartmentsDialog
             loading={false}
             setLoading={() => {}}
@@ -107,8 +157,8 @@ const Dashboard = () => {
             handleInvalidateQuery={() => {}}
           />
         )}
-        {location.pathname === "/productCategories" && <ProductCategories />}
-        {location.pathname === "/productCategories/add" && (
+        {location.pathname === "/productCategories" && hasAccess("productCategories") && <ProductCategories />}
+        {location.pathname === "/productCategories/add" && hasAccess("productCategories") && (
           <ProductCategoryDialog
             open={true}
             form={{}}
@@ -121,50 +171,50 @@ const Dashboard = () => {
             handleProductCategoryInvalidateQuery={() => {}}
           />
         )}
-        {location.pathname === "/products" && <Products />}
-        {location.pathname === "/products/add" && <ProductsAdd />}
-        {/\/products\/edit\/\d+/.test(location.pathname) && <ProductsEdit />}
-        {location.pathname === "/invoices" && <InvoiceComponent />}
-        {/\/invoices\/edit\/\d+/.test(location.pathname) && <InvoicesEdit />}
-        {location.pathname === "/employees" && <Employees />}
-        {location.pathname === "/employees/add" && <EmployeesAdd />}
-        {/\/employees\/edit\/\d+/.test(location.pathname) && <EmployeesEdit />}
+        {location.pathname === "/products" && hasAccess("products") && <Products />}
+        {location.pathname === "/products/add" && hasAccess("products") && <ProductsAdd />}
+        {/\/products\/edit\/\d+/.test(location.pathname) && hasAccess("products") && <ProductsEdit />}
+        {location.pathname === "/invoices" && hasAccess("invoices") && <InvoiceComponent />}
+        {/\/invoices\/edit\/\d+/.test(location.pathname) && hasAccess("invoices") && <InvoicesEdit />}
+        {location.pathname === "/employees" && hasAccess("employees") && <Employees />}
+        {location.pathname === "/employees/add" && hasAccess("employees") && <EmployeesAdd />}
+        {/\/employees\/edit\/\d+/.test(location.pathname) && hasAccess("employees") && <EmployeesEdit />}
 
-        {location.pathname === "/inventory" && <Inventory />}
-        {location.pathname === "/inventory/add" && <InventoryAdd />}
+        {location.pathname === "/inventory" && hasAccess("inventory") && <Inventory />}
+        {location.pathname === "/inventory/add" && hasAccess("inventory") && <InventoryAdd />}
 
-        {location.pathname === "/vendors" && <Vendors />}
-        {location.pathname === "/vendors/add" && <VendorAdd />}
-        {/\/vendors\/edit\/\d+/.test(location.pathname) && <VendorEdit />}
+        {location.pathname === "/vendors" && hasAccess("vendors") && <Vendors />}
+        {location.pathname === "/vendors/add" && hasAccess("vendors") && <VendorAdd />}
+        {/\/vendors\/edit\/\d+/.test(location.pathname) && hasAccess("vendors") && <VendorEdit />}
 
-        {location.pathname === "/purchase" && <Purchase />}
-        {location.pathname === "/purchase/add" && <PurchaseAdd />}
-        {/\/purchase\/view\/\d+/.test(location.pathname) && <PurchaseView />}
+        {location.pathname === "/purchase" && hasAccess("purchase") && <Purchase />}
+        {location.pathname === "/purchase/add" && hasAccess("purchase") && <PurchaseAdd />}
+        {/\/purchase\/view\/\d+/.test(location.pathname) && hasAccess("purchase") && <PurchaseView />}
 
-        {location.pathname === "/replacements" && <Replacements />}
-        {location.pathname === "/replacements/add" && <ReplacementsADD />}
-        {/\/replacements\/edit\/\d+/.test(location.pathname) && (
+        {location.pathname === "/replacements" && hasAccess("replacements") && <Replacements />}
+        {location.pathname === "/replacements/add" && hasAccess("replacements") && <ReplacementsADD />}
+        {/\/replacements\/edit\/\d+/.test(location.pathname) && hasAccess("replacements") && (
           <ReplacementsEDIT />
         )}
-        {location.pathname === "/challans" && <Challans />}
-        {location.pathname === "/challans/add" && <ChallansADD />}
-        {/\/challans\/edit\/\d+/.test(location.pathname) && <ChallansEDIT />}
-        {location.pathname === "/expense_heads" && <ExpenseHeads />}
-        {location.pathname === "/expense_heads/add" && <ExpenseHeadsADD />}
-        {/\/expense_heads\/edit\/\d+/.test(location.pathname) && (
+        {location.pathname === "/challans" && hasAccess("challans") && <Challans />}
+        {location.pathname === "/challans/add" && hasAccess("challans") && <ChallansADD />}
+        {/\/challans\/edit\/\d+/.test(location.pathname) && hasAccess("challans") && <ChallansEDIT />}
+        {location.pathname === "/expense_heads" && hasAccess("expense_heads") && <ExpenseHeads />}
+        {location.pathname === "/expense_heads/add" && hasAccess("expense_heads") && <ExpenseHeadsADD />}
+        {/\/expense_heads\/edit\/\d+/.test(location.pathname) && hasAccess("expense_heads") && (
           <ExpenseHeadsEDIT />
         )}
-        {location.pathname === "/expense" && <Expense />}
-        {location.pathname === "/expense/add" && <ExpenseADD />}
-        {/\/expense\/edit\/\d+/.test(location.pathname) && <ExpenseEDIT />}
+        {location.pathname === "/expense" && hasAccess("expense") && <Expense />}
+        {location.pathname === "/expense/add" && hasAccess("expense") && <ExpenseADD />}
+        {/\/expense\/edit\/\d+/.test(location.pathname) && hasAccess("expense") && <ExpenseEDIT />}
 
-        {location.pathname === "/notepad" && <Notepad />}
-        {location.pathname === "/notepad/add" && <NotepadADD />}
-        {/\/notepad\/edit\/\d+/.test(location.pathname) && <NotepadEDIT />}
+        {location.pathname === "/notepad" && hasAccess("notepad") && <Notepad />}
+        {location.pathname === "/notepad/add" && hasAccess("notepad") && <NotepadADD />}
+        {/\/notepad\/edit\/\d+/.test(location.pathname) && hasAccess("notepad") && <NotepadEDIT />}
 
-        {location.pathname === "/roles" && <Roles />}
-        {/\/roles\/\d+\/edit/.test(location.pathname) && <RolesEDIT />}
-        {location.pathname === "/permissions" && <Permissions />}
+        {location.pathname === "/roles" && hasAccess("roles") && <Roles />}
+        {/\/roles\/\d+\/edit/.test(location.pathname) && hasAccess("roles") && <RolesEDIT />}
+        {location.pathname === "/permissions" && hasAccess("permissions") && <Permissions />}
         </main>
     </div>
   );
