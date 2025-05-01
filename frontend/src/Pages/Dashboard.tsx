@@ -51,6 +51,9 @@ import ExpenseEDIT from "@/Components/Expense/Edit";
 import Notepad from "@/Components/Notepad/Index";
 import NotepadADD from "@/Components/Notepad/Add";
 import NotepadEDIT from "@/Components/Notepad/Edit";
+import Roles from "@/Components/Roles/index";
+import RolesEDIT from "@/Components/Roles/Update";
+import Permissions from "@/Components/Permissions/index";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -158,7 +161,11 @@ const Dashboard = () => {
         {location.pathname === "/notepad" && <Notepad />}
         {location.pathname === "/notepad/add" && <NotepadADD />}
         {/\/notepad\/edit\/\d+/.test(location.pathname) && <NotepadEDIT />}
-      </main>
+
+        {location.pathname === "/roles" && <Roles />}
+        {/\/roles\/\d+\/edit/.test(location.pathname) && <RolesEDIT />}
+        {location.pathname === "/permissions" && <Permissions />}
+        </main>
     </div>
   );
 };

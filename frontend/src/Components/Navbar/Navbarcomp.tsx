@@ -241,6 +241,22 @@ const Navbar = () => {
                     </Button>
                     <Separator className="w-full justify-center bg-border" />
                     <Button
+                      onClick={() => navigate("/roles")}
+                      variant="ghost"
+                      className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                    >
+                      Roles
+                    </Button>
+                    <Separator className="w-full justify-center bg-border" />
+                    <Button
+                      onClick={() => navigate("/permissions")}
+                      variant="ghost"
+                      className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                    >
+                      Permissions
+                    </Button>
+                    <Separator className="w-full justify-center bg-border" />
+                    <Button
                       onClick={() => navigate("/employees")}
                       variant="ghost"
                       className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"

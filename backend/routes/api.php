@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\LeadsController;
+use App\Http\Controllers\Api\RolesController;
 use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\Api\ChallanController;
 use App\Http\Controllers\Api\ClientsController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\ExpenseHeadController;
+use App\Http\Controllers\Api\PermissionsController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 
 
@@ -81,7 +83,12 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::resource('expenses', ExpenseController::class);    
    // Route::get('/all_expense_s', [ExpenseController::class, 'allExpenseHead'])->name("expense_heads.all");
 
- 
+   Route::get('/roles', [RolesController::class, 'index'])->name("roles.index");
+   Route::get('/roles/{id}', [RolesController::class, 'show'])->name("roles.show");
+   Route::put('/roles/{id}', [RolesController::class, 'update'])->name("roles.update");
+  
+   Route::get('/permissions', [PermissionsController::class, 'index'])->name("permissions.index");
+   Route::get('/generate_permissions', [PermissionsController::class, 'generatePermissions'])->name("permissions.generate");
 
 
 });

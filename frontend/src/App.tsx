@@ -206,7 +206,10 @@ function App() {
         <Route path="/notepad" element={<Dashboard />} />
         <Route path="/notepad/add" element={<Dashboard />} />
         <Route path="/notepad/edit/:id" element={<Dashboard />} />
-      </Routes>
+        <Route path="/roles" element={<Dashboard />} />
+        <Route path="/roles/:id/edit" element={<Dashboard />} />
+        <Route path="/permissions" element={<Dashboard />} />
+       </Routes>
 
       {isVisible && (
         <Button
