@@ -127,7 +127,7 @@ const Index = () => {
           <Button
             onClick={() => onPermissionGenerate()}
             variant=""
-            className="text-sm dark:text-white shadow-xl bg-blue-600 hover:bg-blue-700"
+            className="text-sm text-white shadow-xl bg-blue-600 hover:bg-blue-700"
           >
             Generate Permissions
           </Button>

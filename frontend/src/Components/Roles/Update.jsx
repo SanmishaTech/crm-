@@ -185,7 +185,7 @@ const Update = () => {
           <div className="w-full gap-4 mt-4 flex justify-end items-center">
             <Button
               type="button"
-              className=" shadow-xl dark:text-white bg-red-600 hover:bg-red-700"
+              className=" shadow-xl text-white bg-red-600 hover:bg-red-700"
               onClick={() => navigate("/roles")}
             >
               Cancel
@@ -194,7 +194,7 @@ const Update = () => {
             <Button
               type="submit"
               disabled={isLoading}
-              className="shadow-xl dark:text-white bg-green-600 hover:bg-green-700"
+              className="shadow-xl text-white bg-green-600 hover:bg-green-700"
             >
               {isLoading ? (
                 <>
