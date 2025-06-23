@@ -18,10 +18,11 @@ class CreateAdminUserSeeder extends Seeder
     {
         // Create or retrieve the admin user
         $user = User::updateOrCreate(
-            ['email' => 'user1@gmail.com'], // Search for user by email
+            ['email' => 'admin@gmail.com'], // Search for user by email
             [
-                'name' => 'User 1',
-                'password' => Hash::make('abcd123') // Hash the password
+                'name' => 'Admin',
+                'password' => Hash::make('abcd123'), // Hash the password
+                'active' => 1
             ]
         );
 

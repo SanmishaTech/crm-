@@ -16,15 +16,6 @@ class CreateAccountsUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create or retrieve the accounts user
-        $user = User::updateOrCreate(
-            ['email' => 'user3@gmail.com'],
-            [
-                'name' => 'user 3',
-                'password' => Hash::make('abcd123')
-            ]
-        );
-
         // Create or retrieve the accounts role
         $role = Role::firstOrCreate(['name' => 'accounts']);
 
@@ -32,6 +23,12 @@ class CreateAccountsUserSeeder extends Seeder
         $permissions = Permission::pluck('id', 'id')->all();
         $role->syncPermissions($permissions);
 
+        $user = User::where('email', 'user3@gmail.com')->first();
+
+        if (!$user) {
+            return;
+        }
+        
         // Assign the role to the user
         $user->syncRoles([$role->id]);
 
