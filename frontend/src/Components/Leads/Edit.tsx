@@ -72,6 +72,7 @@ import {
 
 const formSchema = z.object({
   contact_id: z.any().optional(),
+  assigned_to: z.any().optional(),
   lead_status: z.string().optional(),
   lead_source: z.string().optional(),
   lead_type: z.string().optional(),
@@ -110,6 +111,7 @@ export default function EditLeadPage() {
   const [leads, setLeads] = useState<any>([]);
 
   const [contacts, setContacts] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [frameworks, setFrameworks] = useState<
@@ -193,6 +195,22 @@ export default function EditLeadPage() {
       setLoading(false);
     }
   }, [productsData]);
+  const { data: FetchEmployees } = useGetData({
+    endpoint: `/api/all_employees`,
+    params: {
+      queryKey: ["employees"],
+      retry: 1,
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["employees"] });
+        setEmployees(data.data);
+        setLoading(false);
+      },
+      onError: (error) => {
+        toast.error("Failed to fetch employees.");
+      },
+    },
+  });
+
   const { data: editData } = useGetData({
     endpoint: `/api/leads/${id}`,
     params: {
@@ -234,6 +252,7 @@ export default function EditLeadPage() {
       const newData = editData.data.Lead;
       form.reset({
         contact_id: newData?.contact_id || "",
+        assigned_to: newData?.assigned_to || "",
         lead_status: newData?.lead_status || "",
         lead_closing_reason: newData?.lead_closing_reason || "",
         lead_source: newData?.lead_source || "",
@@ -349,7 +368,7 @@ export default function EditLeadPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="flex justify-center space-x-6 grid grid-cols-2 gap-4">
+              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="contact_id"
@@ -418,6 +437,90 @@ export default function EditLeadPage() {
                           {leads}
                         </p>
                       </div>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+<FormField
+                  control={form.control}
+                  name="assigned_to"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel className=" relative top-[7px]">
+                        Assign To
+                      </FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-[390px] justify-between relative top-[10px]",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? employees.find(
+                                    (employee) => employee.id === field.value
+                                  )?.name || "No Employee Name"
+                                : "Select Employee"}
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[390px] max-h-[260px] overflow-y-auto p-0">
+                          <Command>
+                            <CommandInput
+                              placeholder="Search employee..."
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>No employee found.</CommandEmpty>
+                              <CommandGroup>
+                                {loading ? (
+                                  <CommandItem disabled>Loading...</CommandItem>
+                                ) : (employees || []).length > 0 ? (
+                                  employees.map((employee) => {
+                                    const employeeName =
+                                      employee.name ||
+                                      "No Employee Name";
+
+                                    return (
+                                      <CommandItem
+                                        key={employee.id}
+                                        value={employee.id}
+                                        onSelect={() => {
+                                          form.setValue(
+                                            "assigned_to",
+                                            employee.id
+                                          );
+                                        }}
+                                      >
+                                        {employeeName}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            employee.id === field.value
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    );
+                                  })
+                                ) : (
+                                  <CommandItem disabled>
+                                    No Employees available
+                                  </CommandItem>
+                                )}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
 
                       <FormMessage />
                     </FormItem>

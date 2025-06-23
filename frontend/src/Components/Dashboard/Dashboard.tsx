@@ -211,9 +211,9 @@ export default function ResponsiveLabDashboard() {
                   {openTasks.map((task) => (
                     <TableRow key={task.id}>
                       <TableCell className="font-medium">{task.id}</TableCell>
-                      <TableCell>{task.contact.contact_person}</TableCell>
+                      <TableCell>{task.contact?.contact_person}</TableCell>
                       <TableCell>
-                        {task.follow_up_remark.length > 15
+                        {(task.follow_up_remark || '').length > 15
                           ? task.follow_up_remark.substring(0, 15) + "..."
                           : task.follow_up_remark}
                       </TableCell>
@@ -245,10 +245,10 @@ export default function ResponsiveLabDashboard() {
                   <div key={test.id} className="flex items-center">
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {test.contact.contact_person}
+                        {test.contact?.contact_person}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {test.follow_up_remark.length > 15
+                        {(test.follow_up_remark || '').length > 15
                           ? test.follow_up_remark.substring(0, 15) + "..."
                           : test.follow_up_remark}
                       </p>

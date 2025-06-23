@@ -162,6 +162,17 @@ class EmployeesController extends BaseController
     }
 
     /**
+     * get all employees.
+     */
+    public function allEmployees(): JsonResponse
+    {
+        $users = \App\Models\User::all();
+        return $this->sendResponse(\App\Http\Resources\UserResource::collection($users), "employees retrieved successfully");
+    }
+
+
+
+    /**
      * resignation.
      */
     // public function resignation(Request $request, string $id): JsonResponse

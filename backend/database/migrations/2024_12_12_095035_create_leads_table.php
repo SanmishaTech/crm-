@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('employee_id'); 
+            $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
             $table->unsignedBigInteger('contact_id');
             $table->unsignedBigInteger('invoice_id')->nullable();
             $table->string("lead_number",20)->nullable(); 

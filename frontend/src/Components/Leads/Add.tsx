@@ -76,6 +76,7 @@ import {
 // Form Schema
 const FormSchema = z.object({
   contact_id: z.any().optional(),
+  assigned_to: z.any().optional(),
   lead_source: z.string().optional(),
   lead_status: z.string().optional(),
   lead_type: z.string().optional(),
@@ -95,10 +96,12 @@ export default function InputForm() {
   const [loading, setLoading] = useState(false);
   const [value, setValue] = React.useState("");
   const [contacts, setContacts] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       contact_id: "",
+      assigned_to: "",
       lead_source: "",
       lead_status: "Open",
       lead_type: "basic",
@@ -202,6 +205,22 @@ export default function InputForm() {
   //     .catch((err) => console.error("Failed to fetch contacts", err));
   // };
 
+  const { data: FetchEmployees } = useGetData({
+    endpoint: `/api/all_employees`,
+    params: {
+      queryKey: ["employees"],
+      retry: 1,
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["employees"] });
+        setEmployees(data.data);
+        setLoading(false);
+      },
+      onError: (error) => {
+        toast.error("Failed to fetch employees.");
+      },
+    },
+  });
+
   const { data: FetchContacts } = useGetData({
     endpoint: `/api/all_contacts`,
     params: {
@@ -300,7 +319,7 @@ export default function InputForm() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+              <div className="flex justify-center space-x-6 grid grid-cols-4 gap-4">
                 <FormField
                   control={form.control}
                   name="contact_id"
@@ -377,6 +396,90 @@ export default function InputForm() {
                               </CommandGroup>
                             </CommandList>
                             <AddContacts FetchContacts={FetchContacts} />
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="assigned_to"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel className=" relative top-[7px]">
+                        Assign To
+                      </FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-[390px] justify-between relative top-[10px]",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? employees.find(
+                                    (employee) => employee.id === field.value
+                                  )?.name || "No Employee Name"
+                                : "Select Employee"}
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[390px] max-h-[260px] overflow-y-auto p-0">
+                          <Command>
+                            <CommandInput
+                              placeholder="Search employee..."
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>No employee found.</CommandEmpty>
+                              <CommandGroup>
+                                {loading ? (
+                                  <CommandItem disabled>Loading...</CommandItem>
+                                ) : (employees || []).length > 0 ? (
+                                  employees.map((employee) => {
+                                    const employeeName =
+                                      employee.name ||
+                                      "No Employee Name";
+
+                                    return (
+                                      <CommandItem
+                                        key={employee.id}
+                                        value={employee.id}
+                                        onSelect={() => {
+                                          form.setValue(
+                                            "assigned_to",
+                                            employee.id
+                                          );
+                                        }}
+                                      >
+                                        {employeeName}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            employee.id === field.value
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    );
+                                  })
+                                ) : (
+                                  <CommandItem disabled>
+                                    No Employees available
+                                  </CommandItem>
+                                )}
+                              </CommandGroup>
+                            </CommandList>
                           </Command>
                         </PopoverContent>
                       </Popover>

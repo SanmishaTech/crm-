@@ -29,6 +29,7 @@ class LeadResource extends JsonResource
             'id' => $this->id,
             'employee_id' => $this->employee_id,
             'contact_id' => $this->contact_id,
+            'assigned_to' => $this->assigned_to,
             'product_names'=>$productNames,
             'lead_owner' => $this->lead_owner,
             'lead_number'=> $this->lead_number,
@@ -52,7 +53,8 @@ class LeadResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'employee' => new EmployeeResource($this->employee),
-            'contact' => new ContactResource($this->contact),  
+            'contact' => new ContactResource($this->contact),
+            'assigned_user' => $this->whenLoaded('assignedTo'),
             'products' => $this->leadProducts->map(function ($leadProduct) {
                 return [
                     'id' => $leadProduct->id,

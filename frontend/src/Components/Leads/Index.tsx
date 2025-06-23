@@ -307,6 +307,7 @@ export default function TableDemo() {
             <TableHeader>
               <TableRow>
                 <TableHead className="text-foreground">Contact</TableHead>
+                <TableHead className="text-foreground">Assigned To</TableHead>
                 {/* <TableHead onClick={() => handleSort("lead_source")}>
                   Lead Source
                 </TableHead> */}
@@ -339,6 +340,9 @@ export default function TableDemo() {
                               <TableRow>
                                 <TableCell>
                                   {lead?.contact?.contact_person}
+                                </TableCell>
+                                <TableCell>
+                                  {lead?.assigned_user?.name || "N/A"}
                                 </TableCell>
                                 {/* <TableCell>{lead.lead_source}</TableCell> */}
                                 <TableCell>

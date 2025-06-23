@@ -41,6 +41,7 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/follow_ups/{id}', [FollowUpsController::class, 'show'])->name("follow_ups.show");
    Route::get('/follow_ups', [FollowUpsController::class, 'index'])->name("follow_ups.index");
 
+   Route::get('/all_employees', [EmployeesController::class, 'allEmployees'])->name("employees.all");
    Route::put('/employee_resignation/{id}', [EmployeesController::class, 'resignation'])->name("employee.resignation");
    Route::resource('products', ProductsController::class);  
    Route::resource('product_categories', ProductCategoriesController::class);  

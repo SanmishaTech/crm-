@@ -114,7 +114,7 @@ class LeadsController extends BaseController
 
     public function index(Request $request): JsonResponse
     {
-        $query = Lead::with(['contact', 'employee', 'leadProducts']);
+        $query = Lead::with(['contact', 'employee', 'leadProducts', 'assignedTo']);
         if ($request->query('searchTerm')) {
             $searchTerm = $request->query('searchTerm');
         
@@ -190,6 +190,7 @@ class LeadsController extends BaseController
         $lead->bid_end_date = $request->input("bid_end_date");
         $lead->tender_status = $request->input("tender_status");
         $lead->lead_source = $request->input("lead_source");
+        $lead->assigned_to = $request->input("assigned_to");
           if(config("data.lead_status.Open") === $request->input("lead_status") || config("data.lead_status.In Progress") === $request->input("lead_status")){
         $lead->lead_status = $request->input("lead_status");
         }
@@ -289,6 +290,7 @@ class LeadsController extends BaseController
         $lead->lead_status = $request->input("lead_status");
         $lead->lead_closing_reason = $request->input("lead_closing_reason");
         $lead->deal_details = $request->input("deal_details");
+        $lead->assigned_to = $request->input("assigned_to");
 
         if($request->hasFile('lead_attachment')){
             $lead->lead_attachment = $quotationFileNameToStore;
