@@ -306,6 +306,7 @@ export default function InputForm() {
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>Roles</SelectLabel>
+                              <SelectItem value="admin">Admin</SelectItem>
                               <SelectItem value="sales">Sales</SelectItem>
                               <SelectItem value="accounts">Accounts</SelectItem>
                             </SelectGroup>

@@ -104,7 +104,7 @@ const Navbar = () => {
     
     // Define access permissions for each role
     const accessMap: Record<string, string[]> = {
-      admin: ["dashboard", "leads", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "departments", "challans", "invoices", "roles", "permissions"],
+      admin: ["dashboard", "leads", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "departments", "challans", "invoices", "roles", "permissions", "employees"],
       sales: ["dashboard", "leads", "clients", "contacts", "suppliers", "productCategories", "products", "replacements", "expense_heads", "expense"],
       accounts: ["dashboard", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "challans", "invoices"]
     };
@@ -329,6 +329,7 @@ const Navbar = () => {
                       <Separator className="w-full justify-center bg-border" />
                     )}
                     {hasAccess("permissions") && (
+                      
                       <Button
                         onClick={() => navigate("/permissions")}
                         variant="ghost"
