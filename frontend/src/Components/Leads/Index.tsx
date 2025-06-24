@@ -308,6 +308,9 @@ export default function TableDemo() {
               <TableRow>
                 <TableHead className="text-foreground">Contact</TableHead>
                 <TableHead className="text-foreground">Assigned To</TableHead>
+                <TableHead className="text-foreground">Lead Date</TableHead>
+                <TableHead className="text-foreground">Days Since Created</TableHead>
+
                 {/* <TableHead onClick={() => handleSort("lead_source")}>
                   Lead Source
                 </TableHead> */}
@@ -343,6 +346,25 @@ export default function TableDemo() {
                                 </TableCell>
                                 <TableCell>
                                   {lead?.assigned_user?.name || "N/A"}
+                                </TableCell>
+                                <TableCell>
+                                  {new Date(lead?.created_at).toLocaleDateString(
+                                    "en-GB",
+                                    {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    }
+                                  ).replace(/\//g, "-")}
+                                </TableCell>
+                                <TableCell>
+                                  {lead?.created_at
+                                    ? Math.floor(
+                                        (new Date(lead.created_at).getTime() -
+                                          new Date().getTime()) /
+                                          (1000 * 60 * 60 * 24)
+                                      )
+                                    : "-"}
                                 </TableCell>
                                 {/* <TableCell>{lead.lead_source}</TableCell> */}
                                 <TableCell>

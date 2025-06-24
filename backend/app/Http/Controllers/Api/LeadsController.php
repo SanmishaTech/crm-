@@ -545,6 +545,16 @@ class LeadsController extends BaseController
 
     }
 
+    public function getLeadSourceDistribution(Request $request): JsonResponse
+    {
+        $leadSources = Lead::query()
+            ->select('lead_source', DB::raw('count(*) as count'))
+            ->groupBy('lead_source')
+            ->get();
+
+        return $this->sendResponse(['lead_sources' => $leadSources], 'Lead source distribution retrieved successfully');
+    }
+
     public function generateInvoice(Request $request,string $id)
     {
         $leadStatus = config('data.lead_status.Deal');

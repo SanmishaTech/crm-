@@ -21,6 +21,7 @@ import { useGetData } from "@/lib/HTTP/GET";
 import { DoneDealsPieChart } from "./DoneDealsPieChart";
 import { OpenDealsPieChart } from "./OpenDealsPieChart";
 import { UntouchedDealsPieChart } from "./UntouchedDealsPieChart";
+import { LeadSourcePieChart } from "./LeadSourcePieChart";
 
 // Define interfaces for our data structures
 interface Lead {
@@ -88,11 +89,14 @@ export default function ResponsiveLabDashboard() {
           <h1 className="text-2xl md:text-3xl font-bold ">Welcome </h1>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <DoneDealsPieChart />
-          <OpenDealsPieChart />
-          <UntouchedDealsPieChart />
-        </div>
+        {localStorage.getItem("role") === 'admin' && (
+     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <DoneDealsPieChart />
+            <OpenDealsPieChart />
+            <UntouchedDealsPieChart />
+            <LeadSourcePieChart />
+          </div>
+   )}
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4 ">
           <Card className="col-span-full lg:col-span-3 overflow-x-auto bg-accent/40">
