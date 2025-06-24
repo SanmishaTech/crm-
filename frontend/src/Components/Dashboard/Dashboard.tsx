@@ -95,50 +95,6 @@ export default function ResponsiveLabDashboard() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4 ">
-          <div className="col-span-full lg:col-span-3">
-          </div>
-
-          <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40">
-            <CardHeader>
-              <CardTitle>My Open Leads</CardTitle>
-            </CardHeader>
-            <CardContent className="overflow-x-auto ">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Task ID</TableHead>
-                    <TableHead>Contact Name</TableHead>
-                    <TableHead>Follow-Up Remark</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {openTasks.map((task) => (
-                    <TableRow key={task.id}>
-                      <TableCell className="font-medium">{task.id}</TableCell>
-                      <TableCell>{task.contact?.contact_person}</TableCell>
-                      <TableCell>
-                        {(task.follow_up_remark || '').length > 15
-                          ? task.follow_up_remark.substring(0, 15) + "..."
-                          : task.follow_up_remark}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            task.lead_status === "Open"
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {task.lead_status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
           <Card className="col-span-full lg:col-span-3 overflow-x-auto bg-accent/40">
             <CardHeader>
               <CardTitle>My Meetings</CardTitle>
@@ -198,6 +154,47 @@ export default function ResponsiveLabDashboard() {
                   </div>
                 )}
               </div>
+            </CardContent>
+          </Card>
+          <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40">
+            <CardHeader>
+              <CardTitle>My Open Leads</CardTitle>
+            </CardHeader>
+            <CardContent className="overflow-x-auto ">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Task ID</TableHead>
+                    <TableHead>Contact Name</TableHead>
+                    <TableHead>Follow-Up Remark</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {openTasks.map((task) => (
+                    <TableRow key={task.id}>
+                      <TableCell className="font-medium">{task.id}</TableCell>
+                      <TableCell>{task.contact?.contact_person}</TableCell>
+                      <TableCell>
+                        {(task.follow_up_remark || '').length > 15
+                          ? task.follow_up_remark.substring(0, 15) + "..."
+                          : task.follow_up_remark}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            task.lead_status === "Open"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {task.lead_status}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>

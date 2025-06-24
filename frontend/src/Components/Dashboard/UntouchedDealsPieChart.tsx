@@ -13,7 +13,7 @@ import {
 } from "@/Components/ui/chart"
 import axios from "axios";
 
-const COLORS = ['#D32F2F', '#F44336', '#E57373', '#FFCDD2', '#FF8A80', '#FF5252'];
+const COLORS = ['#0D47A1', '#1976D2', '#2196F3', '#64B5F6', '#90CAF9', '#BBDEFB'];
 
 interface ChartData {
   name: string;
