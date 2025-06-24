@@ -24,6 +24,7 @@ use App\Http\Resources\ContactResource;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Http\Controllers\Api\BaseController;
+use Illuminate\Support\Facades\DB;
 
     /**
      * @group Lead Management
@@ -392,7 +393,50 @@ class LeadsController extends BaseController
         if(!$lead_status){
             return $this->sendError("Lead Status not found", ['error'=>'Lead Status not found']);
         }
-        return $this->sendResponse(["LeadStatus"=>$follolead_statusw_up_types], "Lead Status retrieved successfully");
+        return $this->sendResponse(["LeadStatus"=>$lead_status], "Lead Status retrieved successfully");
+    }
+
+    public function getOpenDealsByUser(Request $request): JsonResponse
+    {
+        $openDeals = Lead::where('lead_status', 'Open')
+            ->select('assigned_to', DB::raw('count(*) as deals'))
+            ->groupBy('assigned_to')
+            ->get();
+
+        $dealsByUser = [];
+        foreach ($openDeals as $deal) {
+            $user = \App\Models\Employee::find($deal->assigned_to);
+            $dealsByUser[] = [
+                'user' => $user ? $user->employee_name : 'Unassigned',
+                'deals' => $deal->deals,
+            ];
+        }
+
+        $totalOpenDeals = Lead::where('lead_status', 'Open')->count();
+
+        return $this->sendResponse(['dealsByUser' => $dealsByUser, 'totalOpenDeals' => $totalOpenDeals], 'Open deals by user retrieved successfully.');
+    }
+
+    public function getUntouchedDealsByUser(Request $request): JsonResponse
+    {
+        $untouchedDeals = Lead::where('lead_status', 'Open')
+        ->whereDoesntHave('followUps')
+            ->select('assigned_to', DB::raw('count(*) as deals'))
+            ->groupBy('assigned_to')
+            ->get();
+
+        $dealsByUser = [];
+        foreach ($untouchedDeals as $deal) {
+            $user = \App\Models\Employee::find($deal->assigned_to);
+            $dealsByUser[] = [
+                'user' => $user ? $user->employee_name : 'Unassigned',
+                'deals' => $deal->deals,
+            ];
+        }
+
+        $totalUntouchedDeals = Lead::where('lead_status', 'Open')->whereDoesntHave('followUps')->count();
+
+        return $this->sendResponse(['dealsByUser' => $dealsByUser, 'totalUntouchedDeals' => $totalUntouchedDeals], 'Untouched deals by user retrieved successfully.');
     }
 
      /**
@@ -858,8 +902,25 @@ class LeadsController extends BaseController
         \Log::error('Report Generation Error: ' . $e->getMessage());
         return $this->sendError("Error generating report", ['error' => $e->getMessage()]);
     }
-}
+    }
 
-   
-    
+    public function getDoneDealsByUser(Request $request): JsonResponse
+    {
+        $dealStatus = strtolower(config('data.lead_status.Deal'));
+
+        $dealsByUser = Lead::join('employees', 'leads.assigned_to', '=', 'employees.id')
+            ->whereRaw('LOWER(TRIM(leads.lead_status)) = ?', [$dealStatus])
+            ->select('employees.employee_name as user', DB::raw('count(leads.id) as deals'))
+            ->groupBy('employees.employee_name')
+            ->get();
+
+        $totalDoneDeals = Lead::whereRaw('LOWER(TRIM(lead_status)) = ?', [$dealStatus])->count();
+
+        $data = [
+            'totalDoneDeals' => $totalDoneDeals,
+            'dealsByUser' => $dealsByUser,
+        ];
+
+        return $this->sendResponse($data, "Done deals data retrieved successfully.");
+    }
 }

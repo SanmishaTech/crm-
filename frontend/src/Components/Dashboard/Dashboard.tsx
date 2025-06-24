@@ -1,32 +1,12 @@
 import { useState, useEffect } from "react";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import {
-  Bell,
-  FlaskConical,
-  LayoutDashboard,
-  Menu,
-  Settings,
-  Users,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/Components/ui/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+} from "@/Components/ui/card";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -35,71 +15,43 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/Components/ui/table";
 import axios from "axios";
-import userAvatar from "@/images/Profile.jpg";
 import { useGetData } from "@/lib/HTTP/GET";
+import { DoneDealsPieChart } from "./DoneDealsPieChart";
+import { OpenDealsPieChart } from "./OpenDealsPieChart";
+import { UntouchedDealsPieChart } from "./UntouchedDealsPieChart";
 
-// Updated data structure based on your requirements
-const recentTests = [
-  {
-    id: "T001",
-    contact_person: "John Doe",
-    follow_up_remark: "Blood Panel",
-    status: "Completed",
-    follow_up_type: "High",
-  },
-  {
-    id: "T002",
-    contact_person: "Jane Smith",
-    follow_up_remark: "Urinalysis",
-    status: "Completed",
-    follow_up_type: "Medium",
-  },
-  {
-    id: "T003",
-    contact_person: "Bob Johnson",
-    follow_up_remark: "Lipid Panel",
-    status: "In Progress",
-    follow_up_type: "Low",
-  },
-  {
-    id: "T004",
-    contact_person: "Alice Brown",
-    follow_up_remark: "Thyroid Function",
-    status: "Completed",
-    follow_up_type: "Medium",
-  },
-  {
-    id: "T005",
-    contact_person: "Charlie Davis",
-    follow_up_remark: "Liver Function",
-    status: "Completed",
-    follow_up_type: "High",
-  },
-];
+// Define interfaces for our data structures
+interface Lead {
+  id: number;
+  contact?: {
+    contact_person: string;
+  };
+  follow_up_remark: string;
+  lead_status: string;
+  follow_up_type: string;
+  lead_follow_up_date: string;
+}
 
-const testVolumeData = [
-  { name: "Jan", tests: 165 },
-  { name: "Feb", tests: 180 },
-  { name: "Mar", tests: 200 },
-  { name: "Apr", tests: 220 },
-  { name: "May", tests: 195 },
-  { name: "Jun", tests: 210 },
-];
+interface Note {
+  id: number;
+  note_title: string;
+  note_content: string;
+}
+
+interface NotepadData {
+  data?: {
+    Notepad?: Note[];
+  };
+}
 
 export default function ResponsiveLabDashboard() {
-  const [myLeads, setMyLeads] = useState(0);
-  const [openTasks, setOpenTasks] = useState([]);
-  const user = localStorage.getItem("user");
-  const User = JSON.parse(user);
   const navigate = useNavigate();
-  const [leads, setLeads] = useState([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [openTasks, setOpenTasks] = useState<Lead[]>([]);
 
-  const [openLeadsCount, setOpenLeadsCount] = useState(0);
-  const [followUpLeadsCount, setFollowUpLeadsCount] = useState(0);
-
-  const { data: Sup } = useGetData({
+  const { data: Sup } = useGetData<NotepadData>({
     endpoint: `/api/notepads`,
     params: {
       queryKey: ["notepad"],
@@ -116,18 +68,10 @@ export default function ResponsiveLabDashboard() {
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         });
-        const leads = response.data.data.Lead;
-        setLeads(leads);
-        const openLeads = leads.filter((lead) => lead.lead_status === "Open");
+        const leadsData = response.data.data.Lead as Lead[];
+        setLeads(leadsData);
+        const openLeads = leadsData.filter((lead) => lead.lead_status === "Open");
         setOpenTasks(openLeads);
-        setMyLeads(leads.length);
-        setOpenLeadsCount(openLeads.length);
-        const followUpLeads = leads.filter(
-          (lead) => lead.follow_up_type === "Call"
-        );
-        // console.log("followUpLeads", followUpLeads);
-
-        setFollowUpLeadsCount(followUpLeads.length);
       } catch (error) {
         console.error("Error fetching dashboard leads data:", error);
       }
@@ -138,61 +82,22 @@ export default function ResponsiveLabDashboard() {
 
   return (
     <div className="flex h-screen ">
-      {/* Sidebar for larger screens */}
-      {/* <Sidebar className="hidden md:block w-64 shadow-md" /> */}
-
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl md:text-3xl font-bold ">Welcome </h1>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="bg-accent/40">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                My Open Deals
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />{" "}
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{openLeadsCount}</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-accent/40">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                My Untouched Deals{" "}
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />{" "}
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{openLeadsCount}</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-accent/40">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                My Calls Today
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{followUpLeadsCount}</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-accent/40">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">My Leads</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{myLeads && myLeads}</div>
-            </CardContent>
-          </Card>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <DoneDealsPieChart />
+          <OpenDealsPieChart />
+          <UntouchedDealsPieChart />
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4 ">
+          <div className="col-span-full lg:col-span-3">
+          </div>
+
           <Card className="col-span-full lg:col-span-4 overflow-x-auto bg-accent/40">
             <CardHeader>
               <CardTitle>My Open Leads</CardTitle>
@@ -304,7 +209,7 @@ export default function ResponsiveLabDashboard() {
             </CardHeader>
             <CardContent className="h-[350px] overflow-y-auto">
               <div className="space-y-2">
-                {Sup?.data?.Notepad?.slice(0, 6).map((note: any) => (
+                {Sup?.data?.Notepad?.slice(0, 6).map((note) => (
                   <div
                     key={note.id}
                     className="p-3 rounded-lg bg-background/50 hover:bg-accent/50 cursor-pointer"
@@ -325,7 +230,7 @@ export default function ResponsiveLabDashboard() {
                     </div>
                   </div>
                 ))}
-                {Sup?.data?.Notepad?.length > 6 && (
+                {Sup?.data?.Notepad && Sup.data.Notepad.length > 6 && (
                   <div className="mt-4 text-right">
                     <button
                       onClick={() => navigate("/notepad")}
@@ -343,3 +248,4 @@ export default function ResponsiveLabDashboard() {
     </div>
   );
 }
+

@@ -90,6 +90,9 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
   
    Route::get('/permissions', [PermissionsController::class, 'index'])->name("permissions.index");
    Route::get('/generate_permissions', [PermissionsController::class, 'generatePermissions'])->name("permissions.generate");
+   Route::get('/done_deals_by_user', [LeadsController::class, 'getDoneDealsByUser'])->name("deals.by_user");
+   Route::get('/open_deals_by_user', [LeadsController::class, 'getOpenDealsByUser'])->name("deals.open_by_user");
+   Route::get('/untouched_deals_by_user', [LeadsController::class, 'getUntouchedDealsByUser'])->name("deals.untouched_by_user");
 
 
 });
