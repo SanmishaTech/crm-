@@ -14,6 +14,11 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Prefer the explicit role column; fallback to first Spatie role name
+        $roleColumn = $this->role;
+        $spatieRole = $this->resource->roles->first();
+        $roleName = $roleColumn ?? ($spatieRole?->name);
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -23,8 +28,7 @@ class UserResource extends JsonResource
             'active' => $this->active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            // 'role' => $this->resource->roles->pluck('name')->toArray(), //another way of getting roles
-             'role'=> $this->resource->roles->first(),
+            'role'=> $roleName,
         ]; 
 
 

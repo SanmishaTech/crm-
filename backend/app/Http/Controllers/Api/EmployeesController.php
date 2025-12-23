@@ -68,9 +68,13 @@ class EmployeesController extends BaseController
             'password' => Hash::make('password'),
         ]);
 
-        // Assign role (admin, sales, or accounts)
-        if (in_array($request->input('role_name'), ['admin', 'sales', 'accounts'])) {
-            $user->assignRole($request->input('role_name'));
+        $roleName = $request->input('role_name');
+
+        // Assign role (admin, sales, or accounts) and sync to column
+        if (in_array($roleName, ['admin', 'sales', 'accounts'])) {
+            $user->role = $roleName;
+            $user->save();
+            $user->assignRole($roleName);
         }
 
         // Create employee
@@ -128,9 +132,14 @@ class EmployeesController extends BaseController
         // Remove all roles first
         $user->roles()->detach();
         
-        // Assign new role (admin, sales, or accounts)
-        if (in_array($request->input('role_name'), ['admin', 'sales', 'accounts'])) {
-            $user->assignRole($request->input('role_name'));
+        $roleName = $request->input('role_name');
+
+        // Assign new role (admin, sales, or accounts) and sync to column
+        if (in_array($roleName, ['admin', 'sales', 'accounts'])) {
+            $user->role = $roleName;
+            $user->assignRole($roleName);
+        } else {
+            $user->role = null;
         }
         
         $user->save();

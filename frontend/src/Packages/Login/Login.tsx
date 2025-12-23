@@ -52,9 +52,17 @@ const Login = () => {
 
       console.log(response.data);
       if (response.data.data.token) {
+        const user = response.data.data.user;
         localStorage.setItem("token", response.data.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.data.user));
-        const roleName = response.data.data.user?.role?.name || 'default_role';
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Role can come as a string column (user.role) or as an object (user.role.name)
+        const roleField = user?.role;
+        const roleName =
+          typeof roleField === "string"
+            ? roleField
+            : roleField?.name || "default_role";
+
         localStorage.setItem("role", roleName);
         navigate("/dashboard");
         toast.success("Successfully Logged In");
