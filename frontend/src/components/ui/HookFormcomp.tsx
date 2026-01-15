@@ -82,12 +82,14 @@ const UseFormHook = <T extends z.ZodTypeAny>(schema: CustomSchema) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, touchedFields, isSubmitted },
     reset,
     control,
   } = useForm<T>({
     resolver: zodResolver(zodSchema),
     defaultValues: schema.defaultValues,
+    mode: "onSubmit",
+    reValidateMode: "onChange",
   });
   const onSubmit: SubmitHandler<T> = (data) => {
     console.log(data);
@@ -109,29 +111,38 @@ const UseFormHook = <T extends z.ZodTypeAny>(schema: CustomSchema) => {
               {capitalizeFirstLetter(key)}
             </label>
 
-            <Controller
-              name={key as any}
-              control={control}
-              render={({ field }) => (
-                <Input
-                  type={value.componentProps?.type}
-                  placeholder={value.componentProps?.placeholder}
-                  className={
-                    errors[`${key}`]?.message
-                      ? `border-red-500 border-2`
-                      : value.className
-                  }
-                  {...field}
-                  // {...value.componentProps}
-                />
-              )}
-            />
-            {console.log(errors[`${key}`]?.message)}
-            {errors[key] && (
-              <span className="text-red-500 text-xs mt-1 h-1">
-                {(errors[key] as any)?.message}
-              </span>
-            )}
+            {(() => {
+              const showError =
+                !!errors[key] &&
+                ((touchedFields as Record<string, boolean> | undefined)?.[key] ||
+                  isSubmitted);
+
+              return (
+                <>
+                  <Controller
+                    name={key as any}
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        type={value.componentProps?.type}
+                        placeholder={value.componentProps?.placeholder}
+                        className={
+                          showError ? `border-red-500 border-2` : value.className
+                        }
+                        {...field}
+                        // {...value.componentProps}
+                      />
+                    )}
+                  />
+                  {console.log(errors[`${key}`]?.message)}
+                  {showError && (
+                    <span className="text-red-500 text-xs mt-1">
+                      {(errors[key] as any)?.message}
+                    </span>
+                  )}
+                </>
+              );
+            })()}
           </div>
         ))}
       </div>

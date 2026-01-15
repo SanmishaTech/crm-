@@ -65,7 +65,7 @@ class ProductsController extends BaseController
         $product->product_category_id = $request->input("product_category_id");
         $product->supplier_id = $request->input("supplier_id");
         $product->product = $request->input("product");
-        $product->gst_rate = $request->input("gst_rate");
+        $product->gst_rate = $request->integer("gst_rate");
         $product->hsn_code = $request->input("hsn_code");
         $product->model = $request->input("model");
         $product->manufacturer = $request->input("manufacturer");
@@ -110,7 +110,7 @@ class ProductsController extends BaseController
         $product->product_category_id = $request->input("product_category_id");
         $product->supplier_id = $request->input("supplier_id");
         $product->product = $request->input("product");
-        $product->gst_rate = $request->input("gst_rate");
+        $product->gst_rate = $request->integer("gst_rate");
         $product->hsn_code = $request->input("hsn_code");
         $product->model = $request->input("model");
         $product->manufacturer = $request->input("manufacturer");

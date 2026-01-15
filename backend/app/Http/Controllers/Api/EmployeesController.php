@@ -175,7 +175,7 @@ class EmployeesController extends BaseController
      */
     public function allEmployees(): JsonResponse
     {
-        $users = \App\Models\User::all();
+        $users = \App\Models\User::with(['roles', 'employee'])->get();
         return $this->sendResponse(\App\Http\Resources\UserResource::collection($users), "employees retrieved successfully");
     }
 

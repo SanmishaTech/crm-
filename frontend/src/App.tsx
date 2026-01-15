@@ -44,7 +44,6 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { Icons } from "@/Dashboard/Icon";
-import { Editor } from "@/Components/Editor/Editor";
 // import Navbar from "@/Navbar/NewNavbar";
 import Navbar from "@/Components/Navbar/Navbarcomp";
 
@@ -170,6 +169,10 @@ function App() {
         <Route path="/leads/followUps/:id" element={<Dashboard />} />
         <Route path="/leads/generateQuotation/:id" element={<Dashboard />} />
         <Route path="/leads/generateInvoice/:id" element={<Dashboard />} />
+
+        <Route path="/events" element={<Dashboard />} />
+        <Route path="/events/add" element={<Dashboard />} />
+        <Route path="/events/edit/:id" element={<Dashboard />} />
         <Route path="/inventory" element={<Dashboard />} />
         <Route path="/inventory/add" element={<Dashboard />} />
 

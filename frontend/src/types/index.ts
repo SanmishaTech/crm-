@@ -1,21 +1,20 @@
-import { Icons } from '@/components/icons';
-
 export interface NavItem {
   title: string;
   href?: string;
   disabled?: boolean;
   external?: boolean;
-  icon?: keyof typeof Icons;
+  icon?: string;
   label?: string;
   description?: string;
+  children?: NavItem[];
 }
 
 export interface NavItemWithChildren extends NavItem {
-  items: NavItemWithChildren[];
+  children: NavItemWithChildren[];
 }
 
 export interface NavItemWithOptionalChildren extends NavItem {
-  items?: NavItemWithChildren[];
+  children?: NavItemWithChildren[];
 }
 
 export interface FooterItem {

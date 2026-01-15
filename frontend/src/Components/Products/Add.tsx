@@ -53,7 +53,14 @@ const FormSchema = z.object({
     .min(6, "HSN Code Minimum 6 digits")
     .max(8, "HSN Code Maximum 8 digits")
     .nonempty("HSN Code cannot be empty"),
-  gst_rate: z.string().nonempty("GST Rate cannot be empty"),
+  gst_rate: z
+    .string()
+    .nonempty("GST Rate cannot be empty")
+    .regex(/^\d+$/, "GST Rate must be a number")
+    .refine((val) => {
+      const n = Number(val);
+      return Number.isFinite(n) && n >= 0 && n <= 100;
+    }, "GST Rate must be between 0 and 100"),
   opening_qty: z.any().optional(),
   supplier_id: z.string().nonempty("Supplier cannot be empty"),
   closing_qty: z.any().optional(),
@@ -159,6 +166,18 @@ export default function InputForm() {
                 message: serverErrors.supplier_id[0], // The error message from the server
               });
             }
+            if (serverErrors.hsn_code) {
+              form.setError("hsn_code", {
+                type: "manual",
+                message: serverErrors.hsn_code[0],
+              });
+            }
+            if (serverErrors.gst_rate) {
+              form.setError("gst_rate", {
+                type: "manual",
+                message: serverErrors.gst_rate[0],
+              });
+            }
           } else {
             setError("Failed to add Product"); // For any other errors
           }
@@ -170,7 +189,7 @@ export default function InputForm() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    StoreProductData.mutate(data);
+    StoreProductData.mutate({ ...data, gst_rate: Number(data.gst_rate) });
   };
 
   return (
@@ -337,11 +356,12 @@ export default function InputForm() {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          type="text"
-                          maxLength={15}
+                          type="number"
+                          min={0}
+                          max={100}
+                          step={1}
                           {...field}
-                          style={{ textTransform: "uppercase" }}
-                          placeholder="Enter Gst Number"
+                          placeholder="Enter GST Rate"
                         />
                       </FormControl>
 

@@ -25,6 +25,9 @@ import Products from "@/Components/Products/Index";
 import ProductsAdd from "@/Components/Products/Add";
 import ProductsEdit from "@/Components/Products/Edit";
 import FollowUps from "@/Components/FollowUps/Add";
+import EventsAdd from "@/Components/Events/Add";
+import EventsEdit from "@/Components/Events/Edit";
+import Events from "@/Components/Events/Index";
 import InvoiceComponent from "@/Components/Invoices/Index";
 import InvoicesEdit from "@/Components/Invoices/Edit";
 import Inventory from "@/Components/Inventory/Index";
@@ -64,9 +67,9 @@ const Dashboard = () => {
   const hasAccess = (module: string) => {
     // Define access permissions for each role
     const accessMap: Record<string, string[]> = {
-      admin: ["dashboard", "leads", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "departments", "challans", "invoices", "roles", "permissions", "employees", "notepad"],
-      sales: ["dashboard", "leads", "clients", "contacts", "suppliers", "productCategories", "products", "replacements", "expense_heads", "expense", "notepad"],
-      accounts: ["dashboard", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "challans", "invoices", "notepad"]
+      admin: ["dashboard", "leads", "events", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "departments", "challans", "invoices", "roles", "permissions", "employees", "notepad"],
+      sales: ["dashboard", "leads", "events", "clients", "contacts", "suppliers", "productCategories", "products", "replacements", "expense_heads", "expense", "notepad"],
+      accounts: ["dashboard", "events", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "challans", "invoices", "notepad"]
     };
     
     // If role doesn't exist or is not in the map, deny access
@@ -139,6 +142,10 @@ const Dashboard = () => {
         {location.pathname === "/leads/add" && hasAccess("leads") && <LeadsAdd />}
         {/\/leads\/edit\/\d+/.test(location.pathname) && hasAccess("leads") && <LeadsEdit />}
         {/\/followUps\/\d+/.test(location.pathname) && hasAccess("leads") && <FollowUps />}
+
+        {location.pathname === "/events" && hasAccess("events") && <Events />}
+        {location.pathname === "/events/add" && hasAccess("events") && <EventsAdd />}
+        {/\/events\/edit\/\d+/.test(location.pathname) && hasAccess("events") && <EventsEdit />}
         {/\/generateQuotation\/\d+/.test(location.pathname) && hasAccess("leads") && <Leads />}
         {/\/generateInvoice\/\d+/.test(location.pathname) && hasAccess("leads") && <Leads />}
 

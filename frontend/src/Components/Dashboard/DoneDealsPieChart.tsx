@@ -8,10 +8,10 @@ import {
 
   CardHeader,
   CardTitle,
-} from "@/Components/ui/card"
+} from "@/components/ui/card"
 import {
   ChartContainer,
-} from "@/Components/ui/chart"
+} from "@/components/ui/chart"
 import axios from "axios";
 
 const COLORS = ['#00529B', '#0077CC', '#009CFF', '#4DB8FF', '#99D6FF', '#CCEFFF'];

@@ -6,23 +6,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import CalenderDay from "./CalenderDay";
 import Notepad from "./Notepad";
 import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
-import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetDescription,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
-import { Seperator } from "@/components/ui/separator";
 
 import {
   ChartNoAxesGantt,
@@ -77,7 +66,6 @@ import userAvatar from "@/images/Profile.jpg";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [open, setOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -100,13 +88,13 @@ const Navbar = () => {
 
   // Function to check if the current user role has access to a specific module
   const hasAccess = (module: string) => {
-    const role = localStorage.getItem("role");
+    const role = (localStorage.getItem("role") || "").trim().toLowerCase();
     
     // Define access permissions for each role
     const accessMap: Record<string, string[]> = {
-      admin: ["dashboard", "leads", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "departments", "challans", "invoices", "roles", "permissions", "employees"],
-      sales: ["dashboard", "leads", "clients", "contacts", "suppliers", "productCategories", "products", "replacements", "expense_heads", "expense"],
-      accounts: ["dashboard", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "challans", "invoices"]
+      admin: ["dashboard", "leads", "events", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "departments", "challans", "invoices", "roles", "permissions", "employees"],
+      sales: ["dashboard", "leads", "events", "clients", "contacts", "suppliers", "productCategories", "products", "replacements", "expense_heads", "expense"],
+      accounts: ["dashboard", "events", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "challans", "invoices"]
     };
     
     // If role doesn't exist or is not in the map, deny access
@@ -178,6 +166,16 @@ const Navbar = () => {
                 className="text-foreground hover:text-foreground/80 hover:bg-accent"
               >
                 Leads
+              </Button>
+            )}
+
+            {hasAccess("events") && (
+              <Button
+                onClick={() => navigate("/events")}
+                variant="ghost"
+                className="text-foreground hover:text-foreground/80 hover:bg-accent"
+              >
+                Events
               </Button>
             )}
 
@@ -531,7 +529,7 @@ const Navbar = () => {
       {/* Mobile Navigation Menu */}
       <div
         className={`lg:hidden bg-background ${
-          mobileMenuOpen ? "block" : "hidden"
+          isSheetOpen ? "block" : "hidden"
         } pt-2  pb-3 px-2`}
       >
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -771,8 +769,8 @@ const Navbar = () => {
                         <CommandItem
                           className="w-full flex items-center gap-2 text-foreground hover:text-foreground/80 hover:bg-accent"
                           onSelect={() => {
-                            navigate(child.href);
-                            setOpen(false);
+                            if (child.href) navigate(child.href);
+                            setIsSearchOpen(false);
                           }}
                         >
                           {Icon && <Icon className="ml-3 size-5 flex-none" />}

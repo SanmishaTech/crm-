@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Badge } from "@/Components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Components/ui/card";
+} from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import {
   Table,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/Components/ui/table";
+} from "@/components/ui/table";
 import axios from "axios";
 import { useGetData } from "@/lib/HTTP/GET";
 import { DoneDealsPieChart } from "./DoneDealsPieChart";

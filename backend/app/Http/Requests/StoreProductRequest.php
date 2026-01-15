@@ -26,7 +26,9 @@ class StoreProductRequest extends FormRequest
         return [
             "product" => ['required', 'unique:products,product'],
             'product_category_id' => ['required', 'exists:product_categories,id'],
-            'supplier_id' => ['required', 'exists:suppliers,id'],  
+            'supplier_id' => ['required', 'exists:suppliers,id'],
+            'hsn_code' => ['required', 'digits_between:6,8'],
+            'gst_rate' => ['required', 'integer', 'between:0,100'],
         ];
     }
 

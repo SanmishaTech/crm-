@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { useState, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -9,6 +9,7 @@ interface ParamsType {
   queryKeyId?: number | string | undefined;
   retry?: number;
   refetchOnWindowFocus?: boolean;
+  enabled?: boolean;
   onSuccess?: (data: Response) => void;
   onError?: (error: AxiosError) => void;
 }
@@ -33,23 +34,19 @@ const useGetData = ({
   endpoint: string;
   params: ParamsType;
 }): UseQueryResult<Response, AxiosError> => {
-  const [customParams, setCustomParams] = useState<ParamsType>({});
+  const onSuccessRef = useRef<ParamsType["onSuccess"]>(params.onSuccess);
+  const onErrorRef = useRef<ParamsType["onError"]>(params.onError);
 
   useEffect(() => {
-    const newCustomParams: ParamsType = {
-      queryKey: params.queryKey,
-      retry: params.retry ?? 1,
-      refetchOnWindowFocus: params.refetchOnWindowFocus ?? true,
-      enabled: params.enabled ?? true,
-    };
+    onSuccessRef.current = params.onSuccess;
+  }, [params.onSuccess]);
 
-    setCustomParams(newCustomParams);
-  }, [endpoint, JSON.stringify(params)]);
+  useEffect(() => {
+    onErrorRef.current = params.onError;
+  }, [params.onError]);
 
   const queryResult = useQuery<Response, AxiosError>({
-    queryKey: Array.isArray(customParams.queryKey)
-      ? customParams.queryKey
-      : [customParams.queryKey],
+    queryKey: Array.isArray(params.queryKey) ? params.queryKey : [params.queryKey],
     queryFn: () =>
       fetchData({
         endpoint,
@@ -58,19 +55,23 @@ const useGetData = ({
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       }),
-    retry: customParams.retry,
-    refetchOnWindowFocus: customParams.refetchOnWindowFocus,
+    retry: params.retry ?? 1,
+    refetchOnWindowFocus: params.refetchOnWindowFocus ?? true,
+    enabled: params.enabled ?? true,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   useEffect(() => {
-    if (queryResult.isSuccess && params.onSuccess) {
-      params.onSuccess(queryResult.data);
+    if (queryResult.isSuccess) {
+      onSuccessRef.current?.(queryResult.data);
     }
-    if (queryResult.isError && params.onError) {
-      params.onError(queryResult.error);
+  }, [queryResult.isSuccess, queryResult.data]);
+
+  useEffect(() => {
+    if (queryResult.isError) {
+      onErrorRef.current?.(queryResult.error);
     }
-  }, [queryResult, params]);
+  }, [queryResult.isError, queryResult.error]);
 
   return queryResult;
 };

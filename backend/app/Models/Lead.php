@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Employee;
 use App\Models\FollowUp;
+use App\Models\Event;
 use App\Models\LeadProduct;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
@@ -79,6 +80,11 @@ class Lead extends Model
    public function followUps()
    {
        return $this->hasMany(FollowUp::class, 'lead_id');
+   }
+
+   public function events()
+   {
+       return $this->hasMany(Event::class, 'lead_id');
    }
 
     public function leadProducts()

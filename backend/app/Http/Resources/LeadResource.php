@@ -74,6 +74,7 @@ class LeadResource extends JsonResource
             
             // 'products' => $this->leadProducts,  
             'follow_ups' => $this->followUps,
+            'events' => $this->events,
 
         ];
     }

@@ -359,10 +359,13 @@ export default function TableDemo() {
                                 </TableCell>
                                 <TableCell>
                                   {lead?.created_at
-                                    ? Math.floor(
-                                        (new Date(lead.created_at).getTime() -
-                                          new Date().getTime()) /
-                                          (1000 * 60 * 60 * 24)
+                                    ? Math.max(
+                                        0,
+                                        Math.floor(
+                                          (new Date().getTime() -
+                                            new Date(lead.created_at).getTime()) /
+                                            (1000 * 60 * 60 * 24)
+                                        )
                                       )
                                     : "-"}
                                 </TableCell>

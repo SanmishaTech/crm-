@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\InvoicesController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\EmployeesController;
 use App\Http\Controllers\Api\FollowUpsController;
+use App\Http\Controllers\Api\EventsController;
 use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\DepartmentController;
@@ -40,6 +41,12 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::post('/follow_ups', [FollowUpsController::class, 'store'])->name("follow_ups.store");
    Route::get('/follow_ups/{id}', [FollowUpsController::class, 'show'])->name("follow_ups.show");
    Route::get('/follow_ups', [FollowUpsController::class, 'index'])->name("follow_ups.index");
+
+   Route::post('/events', [EventsController::class, 'store'])->name("events.store");
+   Route::put('/events/{id}', [EventsController::class, 'update'])->name("events.update");
+   Route::delete('/events/{id}', [EventsController::class, 'destroy'])->name("events.destroy");
+   Route::get('/events/{id}', [EventsController::class, 'show'])->name("events.show");
+   Route::get('/events', [EventsController::class, 'index'])->name("events.index");
 
    Route::get('/all_employees', [EmployeesController::class, 'allEmployees'])->name("employees.all");
    Route::put('/employee_resignation/{id}', [EmployeesController::class, 'resignation'])->name("employee.resignation");

@@ -198,6 +198,18 @@ export default function EditProductPage() {
                 message: serverErrors.supplier_id[0], // The error message from the server
               });
             }
+            if (serverErrors.hsn_code) {
+              form.setError("hsn_code", {
+                type: "manual",
+                message: serverErrors.hsn_code[0],
+              });
+            }
+            if (serverErrors.gst_rate) {
+              form.setError("gst_rate", {
+                type: "manual",
+                message: serverErrors.gst_rate[0],
+              });
+            }
           } else {
             setError("Failed to add Product"); // For any other errors
           }
@@ -209,7 +221,7 @@ export default function EditProductPage() {
   });
 
   const onSubmit = (data: FormValues) => {
-    fetchData.mutate(data);
+    fetchData.mutate({ ...data, gst_rate: Number(data.gst_rate) });
   };
 
   return (
@@ -375,11 +387,12 @@ export default function EditProductPage() {
                       </FormLabel>
                       <FormControl>
                         <Input
-                          type="text"
-                          maxLength={15}
+                          type="number"
+                          min={0}
+                          max={100}
+                          step={1}
                           {...field}
-                          style={{ textTransform: "uppercase" }}
-                          placeholder="Enter Gst Number"
+                          placeholder="Enter GST Rate"
                         />
                       </FormControl>
 
