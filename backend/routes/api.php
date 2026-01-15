@@ -75,7 +75,6 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/all_departments', [DepartmentController::class, 'allDepartments'])->name("departments.all");
    Route::get('/all_contacts', [ContactsController::class, 'allContacts'])->name("contacts.all");
    Route::get('/all_leads', [LeadsController::class, 'allLeads'])->name("leads.all");
-   Route::get('/lead_attachments/{files}', [LeadsController::class, 'showLeadAttachment'])->name("leads.lead_attachment");
    Route::get('/invoices/{id}', [InvoicesController::class, 'show'])->name("invoices.show");
    Route::put('/invoices/{id}', [InvoicesController::class, 'update'])->name("invoices.update");
 
@@ -101,6 +100,12 @@ Route::group(['middleware'=>['auth:sanctum', 'permission','request.null']], func
    Route::get('/open_deals_by_user', [LeadsController::class, 'getOpenDealsByUser'])->name("deals.open_by_user");
    Route::get('/untouched_deals_by_user', [LeadsController::class, 'getUntouchedDealsByUser'])->name("deals.untouched_by_user");
    Route::get('/lead_source_distribution', [LeadsController::class, 'getLeadSourceDistribution'])->name("leads.source_distribution");
+});
 
-
+Route::group(['middleware'=>['auth:sanctum', 'request.null']], function(){
+   Route::get('/lead_attachments/{files}', [LeadsController::class, 'showLeadAttachment'])->name("leads.lead_attachment");
+   Route::get('/quotations/{files}', [LeadsController::class, 'showQuotation'])->name("leads.quotation");
+   Route::get('/sale_orders/{files}', [LeadsController::class, 'showSaleOrder'])->name("leads.sale_order");
+   Route::get('/audit_reports/{files}', [LeadsController::class, 'showAuditReport'])->name("leads.audit_report");
+   Route::get('/atr_reports/{files}', [LeadsController::class, 'showAtrReport'])->name("leads.atr_report");
 });

@@ -32,9 +32,12 @@ return new class extends Migration
             $table->string("tender_status")->nullable();
             $table->string("lead_source")->nullable();
             $table->string("lead_invoice")->nullable(); 
+            $table->string("lead_sale_order")->nullable(); 
             $table->string("lead_quotation")->nullable(); 
             $table->string("previous_lead_quotation")->nullable(); 
             $table->string("lead_attachment")->nullable(); 
+            $table->string("lead_audit_report")->nullable(); 
+            $table->string("lead_atr_report")->nullable(); 
             $table->string("lead_closing_reason")->nullable(); 
             $table->string("deal_details")->nullable(); 
             // 

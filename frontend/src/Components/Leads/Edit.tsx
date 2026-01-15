@@ -84,6 +84,10 @@ const formSchema = z.object({
   lead_closing_reason: z.string().optional(),
   deal_details: z.string().optional(),
   tender_status: z.string().optional(),
+  lead_attachment: z.any().optional(),
+  lead_sale_order: z.any().optional(),
+  lead_audit_report: z.any().optional(),
+  lead_atr_report: z.any().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -114,9 +118,69 @@ export default function EditLeadPage() {
   const [employees, setEmployees] = useState<any[]>([]);
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
   const [file, setFile] = useState<File | null>(null);
+  const [saleOrderFile, setSaleOrderFile] = useState<File | null>(null);
+  const [auditReportFile, setAuditReportFile] = useState<File | null>(null);
+  const [atrReportFile, setAtrReportFile] = useState<File | null>(null);
   const [frameworks, setFrameworks] = useState<
     { value: string; label: string }[]
   >([]);
+
+  const openPdfFromApi = async (title: string, apiUrl: string) => {
+    const popup = window.open("", "_blank");
+    if (!popup) {
+      toast.error("Popup blocked. Please allow popups.");
+      return;
+    }
+
+    try {
+      const response = await fetch(apiUrl, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+          Accept: "application/pdf, application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${title}`);
+      }
+
+      const contentType = response.headers.get("content-type") ?? "";
+      const blob = await response.blob();
+      const signature = await blob.slice(0, 5).text();
+      if (!signature.startsWith("%PDF-")) {
+        const text = await blob.text();
+        popup.document.open();
+        popup.document.write(text);
+        popup.document.close();
+        toast.error(
+          `${title} is not a PDF (content-type: ${contentType || "unknown"}).`
+        );
+        return;
+      }
+
+      const pdfBlob =
+        blob.type && blob.type !== "application/octet-stream"
+          ? blob
+          : new Blob([blob], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(pdfBlob);
+      popup.document.open();
+      popup.document.write(
+        `<html><head><title>${title}</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
+      );
+      popup.document.close();
+
+      const revokeWhenClosed = window.setInterval(() => {
+        if (popup.closed) {
+          window.clearInterval(revokeWhenClosed);
+          window.URL.revokeObjectURL(url);
+        }
+      }, 1000);
+    } catch {
+      popup.close();
+      toast.error(`Failed to open ${title}.`);
+    }
+  };
 
   const addRow = () => {
     setProductRows([
@@ -235,6 +299,11 @@ export default function EditLeadPage() {
     },
   });
 
+  const savedLeadStatus = (() => {
+    const raw = (editData?.data?.Lead?.lead_status ?? "").trim();
+    return raw === "Close" ? "Closed" : raw;
+  })();
+
   useEffect(() => {
     if (editData?.data?.Lead?.products) {
       const products = editData.data.Lead.products.map((product: any) => ({
@@ -250,10 +319,14 @@ export default function EditLeadPage() {
   useEffect(() => {
     if (editData?.data?.Lead) {
       const newData = editData.data.Lead;
+      const normalizedLeadStatus = (() => {
+        const raw = (newData?.lead_status ?? "").trim();
+        return raw === "Close" ? "Closed" : raw;
+      })();
       form.reset({
         contact_id: newData?.contact_id || "",
         assigned_to: newData?.assigned_to || "",
-        lead_status: newData?.lead_status || "",
+        lead_status: normalizedLeadStatus || "",
         lead_closing_reason: newData?.lead_closing_reason || "",
         lead_source: newData?.lead_source || "",
         lead_type: newData?.lead_type || "",
@@ -267,6 +340,10 @@ export default function EditLeadPage() {
         rate: newData?.rate || null,
         product_id: newData?.product_id || "",
         deal_details: newData?.deal_details || "",
+        lead_attachment: newData?.lead_attachment || "",
+        lead_sale_order: newData?.lead_sale_order || "",
+        lead_audit_report: newData?.lead_audit_report || "",
+        lead_atr_report: newData?.lead_atr_report || "",
       });
     }
   }, [editData]);
@@ -295,6 +372,9 @@ export default function EditLeadPage() {
     const submissionData = {
       ...data,
       lead_attachment: file,
+      lead_sale_order: saleOrderFile,
+      lead_audit_report: auditReportFile,
+      lead_atr_report: atrReportFile,
 
       products: productRows.map((row) => ({
         product_id: row.product_id,
@@ -431,9 +511,9 @@ export default function EditLeadPage() {
                           </Command>
                         </PopoverContent>
                       </Popover>
-                      <div class=" relative top-[10px] max-w-xs bg-gray-300 rounded-lg shadow-lg p-3 transform transition duration-300 hover:scale-105  hover:shadow-2xl hover:translate-z-10">
-                        <p class="text-gray-700">
-                          <strong class="text-black-500">Client Name:</strong>{" "}
+                      <div className=" relative top-[10px] max-w-xs bg-gray-300 rounded-lg shadow-lg p-3 transform transition duration-300 hover:scale-105  hover:shadow-2xl hover:translate-z-10">
+                        <p className="text-gray-700">
+                          <strong className="text-black-500">Client Name:</strong>{" "}
                           {leads}
                         </p>
                       </div>
@@ -567,6 +647,93 @@ export default function EditLeadPage() {
               <CardTitle className="text-xl font-semibold">
                 Lead Status
               </CardTitle>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {editData?.data?.Lead?.lead_quotation ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      openPdfFromApi(
+                        "Quotation",
+                        `/api/quotations/${encodeURIComponent(
+                          editData.data.Lead.lead_quotation
+                        )}`
+                      )
+                    }
+                  >
+                    View quotation
+                  </Button>
+                ) : null}
+                {editData?.data?.Lead?.lead_attachment ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      openPdfFromApi(
+                        "Lead Attachment",
+                        `/api/lead_attachments/${encodeURIComponent(
+                          editData.data.Lead.lead_attachment
+                        )}`
+                      )
+                    }
+                  >
+                    View attachment
+                  </Button>
+                ) : null}
+                {editData?.data?.Lead?.lead_sale_order ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      openPdfFromApi(
+                        "Sale Order",
+                        `/api/sale_orders/${encodeURIComponent(
+                          editData.data.Lead.lead_sale_order
+                        )}`
+                      )
+                    }
+                  >
+                    View sale order
+                  </Button>
+                ) : null}
+                {editData?.data?.Lead?.lead_audit_report ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      openPdfFromApi(
+                        "Audit Report",
+                        `/api/audit_reports/${encodeURIComponent(
+                          editData.data.Lead.lead_audit_report
+                        )}`
+                      )
+                    }
+                  >
+                    View audit report
+                  </Button>
+                ) : null}
+                {editData?.data?.Lead?.lead_atr_report ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      openPdfFromApi(
+                        "ATR Report",
+                        `/api/atr_reports/${encodeURIComponent(
+                          editData.data.Lead.lead_atr_report
+                        )}`
+                      )
+                    }
+                  >
+                    View ATR report
+                  </Button>
+                ) : null}
+              </div>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-x-6 ">
@@ -585,15 +752,14 @@ export default function EditLeadPage() {
                             <SelectValue placeholder="Select Lead Status" />
                           </SelectTrigger>
                           <SelectContent>
-                            {editData?.data?.Lead?.lead_status === "Open" ? (
+                            {savedLeadStatus === "Open" ? (
                               <>
                                 <SelectItem value="Open">Open</SelectItem>
                                 <SelectItem value="In Progress">
                                   In Progress
                                 </SelectItem>
                               </>
-                            ) : editData?.data?.Lead?.lead_status ===
-                              "In Progress" ? (
+                            ) : savedLeadStatus === "In Progress" ? (
                               <>
                                 <SelectItem value="In Progress">
                                   In Progress
@@ -601,26 +767,58 @@ export default function EditLeadPage() {
                                 <SelectItem value="Quotation">
                                   Quotation
                                 </SelectItem>
-                                <SelectItem value="Close">Close</SelectItem>
+                                <SelectItem value="Closed">Close</SelectItem>
                               </>
-                            ) : editData?.data?.Lead?.lead_status ===
-                              "Quotation" ? (
+                            ) : savedLeadStatus === "Quotation" ? (
                               <>
                                 <SelectItem value="Quotation">
                                   Quotation
                                 </SelectItem>
-                                <SelectItem value="Close">Close</SelectItem>
+                                <SelectItem value="Closed">Close</SelectItem>
+                                <SelectItem value="Deal">Deal</SelectItem>
+                                <SelectItem value="Purchase Order">
+                                  Purchase Order
+                                </SelectItem>
+                              </>
+                            ) : savedLeadStatus === "Purchase Order" ? (
+                              <>
+                                <SelectItem value="Purchase Order">
+                                  Purchase Order
+                                </SelectItem>
+                                <SelectItem value="Closed">Close</SelectItem>
+                                {editData?.data?.Lead?.lead_sale_order ? (
+                                  <SelectItem value="Audit">Audit</SelectItem>
+                                ) : null}
+                              </>
+                            ) : savedLeadStatus === "Audit" ? (
+                              <>
+                                <SelectItem value="Audit">Audit</SelectItem>
+                                <SelectItem value="Closed">Close</SelectItem>
+                                {editData?.data?.Lead?.lead_audit_report ? (
+                                  <SelectItem value="ATR Report">
+                                    ATR Report
+                                  </SelectItem>
+                                ) : null}
+                              </>
+                            ) : savedLeadStatus === "ATR Report" ? (
+                              <>
+                                <SelectItem
+                                  value="ATR Report"
+                                  disabled={!!editData?.data?.Lead?.lead_atr_report}
+                                >
+                                  ATR Report
+                                </SelectItem>
+                                <SelectItem value="Closed">Close</SelectItem>
+                              </>
+                            ) : savedLeadStatus === "Deal" ? (
+                              <>
+                                <SelectItem value="Closed">Close</SelectItem>
                                 <SelectItem value="Deal">Deal</SelectItem>
                               </>
-                            ) : editData?.data?.Lead?.lead_status === "Deal" ? (
+                            ) : (savedLeadStatus === "Close" ||
+                                savedLeadStatus === "Closed") ? (
                               <>
-                                <SelectItem value="Close">Close</SelectItem>
-                                <SelectItem value="Deal">Deal</SelectItem>
-                              </>
-                            ) : editData?.data?.Lead?.lead_status ===
-                              "Close" ? (
-                              <>
-                                <SelectItem value="Close">Close</SelectItem>
+                                <SelectItem value="Closed">Close</SelectItem>
                                 <SelectItem value="Open">Open</SelectItem>
                               </>
                             ) : (
@@ -631,7 +829,7 @@ export default function EditLeadPage() {
                       </FormControl>
 
                       <FormMessage />
-                      {field.value === "Close" && (
+                      {field.value === "Closed" && (
                         <FormField
                           control={form.control}
                           name="lead_closing_reason"
@@ -666,6 +864,378 @@ export default function EditLeadPage() {
                                 />
                               </FormControl>
 
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                      {field.value === "Quotation" && (
+                        <FormField
+                          control={form.control}
+                          name="lead_attachment"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Lead Attachment (PDF)</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="file"
+                                  accept="application/pdf"
+                                  onChange={(event) => {
+                                    const selectedFile = event.target.files?.[0] ?? null;
+                                    setFile(selectedFile);
+                                    field.onChange(selectedFile);
+                                  }}
+                                />
+                              </FormControl>
+                              {editData?.data?.Lead?.lead_attachment ? (
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  className="p-0 h-auto text-sm"
+                                  onClick={async () => {
+                                    const popup = window.open("", "_blank");
+                                    if (!popup) {
+                                      toast.error("Popup blocked. Please allow popups.");
+                                      return;
+                                    }
+                                    try {
+                                      const response = await fetch(
+                                        `/api/lead_attachments/${encodeURIComponent(
+                                          editData.data.Lead.lead_attachment
+                                        )}`,
+                                        {
+                                          headers: {
+                                            Authorization:
+                                              "Bearer " + localStorage.getItem("token"),
+                                            Accept: "application/pdf, application/json",
+                                            "X-Requested-With": "XMLHttpRequest",
+                                          },
+                                        }
+                                      );
+
+                                      if (!response.ok) {
+                                        throw new Error("Failed to fetch lead attachment");
+                                      }
+
+                                      const contentType =
+                                        response.headers.get("content-type") ?? "";
+                                      const blob = await response.blob();
+                                      const signature = await blob.slice(0, 5).text();
+                                      if (!signature.startsWith("%PDF-")) {
+                                        const text = await blob.text();
+                                        popup.document.open();
+                                        popup.document.write(text);
+                                        popup.document.close();
+                                        toast.error(
+                                          `Lead attachment is not a PDF (content-type: ${contentType || "unknown"}).`
+                                        );
+                                        return;
+                                      }
+
+                                      const pdfBlob =
+                                        blob.type && blob.type !== "application/octet-stream"
+                                          ? blob
+                                          : new Blob([blob], { type: "application/pdf" });
+                                      const url = window.URL.createObjectURL(pdfBlob);
+                                      popup.document.open();
+                                      popup.document.write(
+                                        `<html><head><title>Lead Attachment</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
+                                      );
+                                      popup.document.close();
+                                      const revokeWhenClosed = window.setInterval(() => {
+                                        if (popup.closed) {
+                                          window.clearInterval(revokeWhenClosed);
+                                          window.URL.revokeObjectURL(url);
+                                        }
+                                      }, 1000);
+                                    } catch {
+                                      popup.close();
+                                      toast.error("Failed to open lead attachment.");
+                                    }
+                                  }}
+                                >
+                                  View current attachment
+                                </Button>
+                              ) : null}
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                      {field.value === "Purchase Order" && (
+                        <FormField
+                          control={form.control}
+                          name="lead_sale_order"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Sale Order (PDF)</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="file"
+                                  accept="application/pdf"
+                                  onChange={(event) => {
+                                    const selectedFile = event.target.files?.[0] ?? null;
+                                    setSaleOrderFile(selectedFile);
+                                    field.onChange(selectedFile);
+                                  }}
+                                />
+                              </FormControl>
+                              {editData?.data?.Lead?.lead_sale_order ? (
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  className="p-0 h-auto text-sm"
+                                  onClick={async () => {
+                                    const popup = window.open("", "_blank");
+                                    if (!popup) {
+                                      toast.error("Popup blocked. Please allow popups.");
+                                      return;
+                                    }
+                                    try {
+                                      const response = await fetch(
+                                        `/api/sale_orders/${encodeURIComponent(
+                                          editData.data.Lead.lead_sale_order
+                                        )}`,
+                                        {
+                                          headers: {
+                                            Authorization:
+                                              "Bearer " + localStorage.getItem("token"),
+                                            Accept: "application/pdf, application/json",
+                                            "X-Requested-With": "XMLHttpRequest",
+                                          },
+                                        }
+                                      );
+
+                                      if (!response.ok) {
+                                        throw new Error("Failed to fetch sale order");
+                                      }
+
+                                      const contentType =
+                                        response.headers.get("content-type") ?? "";
+                                      const blob = await response.blob();
+                                      const signature = await blob.slice(0, 5).text();
+                                      if (!signature.startsWith("%PDF-")) {
+                                        const text = await blob.text();
+                                        popup.document.open();
+                                        popup.document.write(text);
+                                        popup.document.close();
+                                        toast.error(
+                                          `Sale order is not a PDF (content-type: ${contentType || "unknown"}).`
+                                        );
+                                        return;
+                                      }
+
+                                      const pdfBlob =
+                                        blob.type && blob.type !== "application/octet-stream"
+                                          ? blob
+                                          : new Blob([blob], { type: "application/pdf" });
+                                      const url = window.URL.createObjectURL(pdfBlob);
+                                      popup.document.open();
+                                      popup.document.write(
+                                        `<html><head><title>Sale Order</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
+                                      );
+                                      popup.document.close();
+                                      const revokeWhenClosed = window.setInterval(() => {
+                                        if (popup.closed) {
+                                          window.clearInterval(revokeWhenClosed);
+                                          window.URL.revokeObjectURL(url);
+                                        }
+                                      }, 1000);
+                                    } catch {
+                                      popup.close();
+                                      toast.error("Failed to open sale order.");
+                                    }
+                                  }}
+                                >
+                                  View current sale order
+                                </Button>
+                              ) : null}
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                      {field.value === "Audit" && (
+                        <FormField
+                          control={form.control}
+                          name="lead_audit_report"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Audit Report (PDF)</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="file"
+                                  accept="application/pdf"
+                                  onChange={(event) => {
+                                    const selectedFile = event.target.files?.[0] ?? null;
+                                    setAuditReportFile(selectedFile);
+                                    field.onChange(selectedFile);
+                                  }}
+                                />
+                              </FormControl>
+                              {editData?.data?.Lead?.lead_audit_report ? (
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  className="p-0 h-auto text-sm"
+                                  onClick={async () => {
+                                    const popup = window.open("", "_blank");
+                                    if (!popup) {
+                                      toast.error("Popup blocked. Please allow popups.");
+                                      return;
+                                    }
+                                    try {
+                                      const response = await fetch(
+                                        `/api/audit_reports/${encodeURIComponent(
+                                          editData.data.Lead.lead_audit_report
+                                        )}`,
+                                        {
+                                          headers: {
+                                            Authorization:
+                                              "Bearer " + localStorage.getItem("token"),
+                                            Accept: "application/pdf, application/json",
+                                            "X-Requested-With": "XMLHttpRequest",
+                                          },
+                                        }
+                                      );
+
+                                      if (!response.ok) {
+                                        throw new Error("Failed to fetch audit report");
+                                      }
+
+                                      const contentType =
+                                        response.headers.get("content-type") ?? "";
+                                      const blob = await response.blob();
+                                      const signature = await blob.slice(0, 5).text();
+                                      if (!signature.startsWith("%PDF-")) {
+                                        const text = await blob.text();
+                                        popup.document.open();
+                                        popup.document.write(text);
+                                        popup.document.close();
+                                        toast.error(
+                                          `Audit report is not a PDF (content-type: ${contentType || "unknown"}).`
+                                        );
+                                        return;
+                                      }
+
+                                      const pdfBlob =
+                                        blob.type && blob.type !== "application/octet-stream"
+                                          ? blob
+                                          : new Blob([blob], { type: "application/pdf" });
+                                      const url = window.URL.createObjectURL(pdfBlob);
+                                      popup.document.open();
+                                      popup.document.write(
+                                        `<html><head><title>Audit Report</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
+                                      );
+                                      popup.document.close();
+                                      const revokeWhenClosed = window.setInterval(() => {
+                                        if (popup.closed) {
+                                          window.clearInterval(revokeWhenClosed);
+                                          window.URL.revokeObjectURL(url);
+                                        }
+                                      }, 1000);
+                                    } catch {
+                                      popup.close();
+                                      toast.error("Failed to open audit report.");
+                                    }
+                                  }}
+                                >
+                                  View current audit report
+                                </Button>
+                              ) : null}
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                      {field.value === "ATR Report" && (
+                        <FormField
+                          control={form.control}
+                          name="lead_atr_report"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>ATR Report (PDF)</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="file"
+                                  accept="application/pdf"
+                                  onChange={(event) => {
+                                    const selectedFile = event.target.files?.[0] ?? null;
+                                    setAtrReportFile(selectedFile);
+                                    field.onChange(selectedFile);
+                                  }}
+                                />
+                              </FormControl>
+                              {editData?.data?.Lead?.lead_atr_report ? (
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  className="p-0 h-auto text-sm"
+                                  onClick={async () => {
+                                    const popup = window.open("", "_blank");
+                                    if (!popup) {
+                                      toast.error("Popup blocked. Please allow popups.");
+                                      return;
+                                    }
+                                    try {
+                                      const response = await fetch(
+                                        `/api/atr_reports/${encodeURIComponent(
+                                          editData.data.Lead.lead_atr_report
+                                        )}`,
+                                        {
+                                          headers: {
+                                            Authorization:
+                                              "Bearer " + localStorage.getItem("token"),
+                                            Accept: "application/pdf, application/json",
+                                            "X-Requested-With": "XMLHttpRequest",
+                                          },
+                                        }
+                                      );
+
+                                      if (!response.ok) {
+                                        throw new Error("Failed to fetch ATR report");
+                                      }
+
+                                      const contentType =
+                                        response.headers.get("content-type") ?? "";
+                                      const blob = await response.blob();
+                                      const signature = await blob.slice(0, 5).text();
+                                      if (!signature.startsWith("%PDF-")) {
+                                        const text = await blob.text();
+                                        popup.document.open();
+                                        popup.document.write(text);
+                                        popup.document.close();
+                                        toast.error(
+                                          `ATR report is not a PDF (content-type: ${contentType || "unknown"}).`
+                                        );
+                                        return;
+                                      }
+
+                                      const pdfBlob =
+                                        blob.type && blob.type !== "application/octet-stream"
+                                          ? blob
+                                          : new Blob([blob], { type: "application/pdf" });
+                                      const url = window.URL.createObjectURL(pdfBlob);
+                                      popup.document.open();
+                                      popup.document.write(
+                                        `<html><head><title>ATR Report</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
+                                      );
+                                      popup.document.close();
+                                      const revokeWhenClosed = window.setInterval(() => {
+                                        if (popup.closed) {
+                                          window.clearInterval(revokeWhenClosed);
+                                          window.URL.revokeObjectURL(url);
+                                        }
+                                      }, 1000);
+                                    } catch {
+                                      popup.close();
+                                      toast.error("Failed to open ATR report.");
+                                    }
+                                  }}
+                                >
+                                  View current ATR report
+                                </Button>
+                              ) : null}
                               <FormMessage />
                             </FormItem>
                           )}

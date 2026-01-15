@@ -12,6 +12,9 @@ return [
         'In Progress' => 'In Progress',
         'Deal' => 'Deal',
         'Quotation' => 'Quotation',
+        'Purchase Order' => 'Purchase Order',
+        'Audit' => 'Audit',
+        'ATR Report' => 'ATR Report',
     ],
     
 ];

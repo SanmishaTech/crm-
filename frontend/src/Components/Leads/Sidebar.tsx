@@ -53,8 +53,11 @@ const leadStatusOptions = [
   { value: "Open", label: "Open" },
   { value: "In Progress", label: "In Progress" },
   { value: "Quotation", label: "Quotation" },
+  { value: "Purchase Order", label: "Purchase Order" },
+  { value: "Audit", label: "Audit" },
+  { value: "ATR Report", label: "ATR Report" },
   { value: "Deal", label: "Deal" },
-  { value: "Close", label: "Close" },
+  { value: "Closed", label: "Close" },
 ];
 
 export default function Sidebar({ className, onFilterChange }: SidebarProps) {

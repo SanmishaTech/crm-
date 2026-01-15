@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use Log;
-use File;
-use Response;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Auth;
 use Mpdf\Mpdf;
 use Carbon\Carbon;
 use App\Models\Lead;
@@ -177,7 +178,7 @@ class LeadsController extends BaseController
             return $this->sendError("Products not found", ['error'=>['Products not found']]);
 
         }
-        $employee = auth()->user()->employee;
+        $employee = Auth::user()->employee;
         $lead = new Lead();
         $lead->employee_id = $employee->id;
         $lead->contact_id = $request->input("contact_id");
@@ -261,7 +262,7 @@ class LeadsController extends BaseController
 
         }
         
-        $employee = auth()->user()->employee;
+        $employee = Auth::user()->employee;
         $lead = Lead::find($id);
         //   $lead = Lead::with(['leadProducts', 'employee', 'followUp', 'contact'])->find($id);
         if(!$lead){
@@ -277,6 +278,39 @@ class LeadsController extends BaseController
             $fileExtention = $request->file('lead_attachment')->getClientOriginalExtension();
             $quotationFileNameToStore = $quotationFilename.'_'.time().'.'.$fileExtention;
             $quotationFilePath = $request->file('lead_attachment')->storeAs('public/Lead/lead_attachments', $quotationFileNameToStore);
+        }
+
+        if($request->hasFile('lead_sale_order')){
+            if(!empty($lead->lead_sale_order) && Storage::exists('public/Lead/sale_orders/'.$lead->lead_sale_order)) {
+                Storage::delete('public/Lead/sale_orders/'.$lead->lead_sale_order);
+            }
+            $saleOrderFileNameWithExtention = $request->file('lead_sale_order')->getClientOriginalName();
+            $saleOrderFilename = pathinfo($saleOrderFileNameWithExtention, PATHINFO_FILENAME);
+            $saleOrderFileExtention = $request->file('lead_sale_order')->getClientOriginalExtension();
+            $saleOrderFileNameToStore = $saleOrderFilename.'_'.time().'.'.$saleOrderFileExtention;
+            $saleOrderFilePath = $request->file('lead_sale_order')->storeAs('public/Lead/sale_orders', $saleOrderFileNameToStore);
+        }
+
+        if($request->hasFile('lead_audit_report')){
+            if(!empty($lead->lead_audit_report) && Storage::exists('public/Lead/audit_reports/'.$lead->lead_audit_report)) {
+                Storage::delete('public/Lead/audit_reports/'.$lead->lead_audit_report);
+            }
+            $auditReportFileNameWithExtention = $request->file('lead_audit_report')->getClientOriginalName();
+            $auditReportFilename = pathinfo($auditReportFileNameWithExtention, PATHINFO_FILENAME);
+            $auditReportFileExtention = $request->file('lead_audit_report')->getClientOriginalExtension();
+            $auditReportFileNameToStore = $auditReportFilename.'_'.time().'.'.$auditReportFileExtention;
+            $auditReportFilePath = $request->file('lead_audit_report')->storeAs('public/Lead/audit_reports', $auditReportFileNameToStore);
+        }
+
+        if($request->hasFile('lead_atr_report')){
+            if(!empty($lead->lead_atr_report) && Storage::exists('public/Lead/atr_reports/'.$lead->lead_atr_report)) {
+                Storage::delete('public/Lead/atr_reports/'.$lead->lead_atr_report);
+            }
+            $atrReportFileNameWithExtention = $request->file('lead_atr_report')->getClientOriginalName();
+            $atrReportFilename = pathinfo($atrReportFileNameWithExtention, PATHINFO_FILENAME);
+            $atrReportFileExtention = $request->file('lead_atr_report')->getClientOriginalExtension();
+            $atrReportFileNameToStore = $atrReportFilename.'_'.time().'.'.$atrReportFileExtention;
+            $atrReportFilePath = $request->file('lead_atr_report')->storeAs('public/Lead/atr_reports', $atrReportFileNameToStore);
         }
     
         $lead->contact_id = $request->input("contact_id");
@@ -296,6 +330,17 @@ class LeadsController extends BaseController
         if($request->hasFile('lead_attachment')){
             $lead->lead_attachment = $quotationFileNameToStore;
          } 
+        if($request->hasFile('lead_sale_order')){
+            $lead->lead_sale_order = $saleOrderFileNameToStore;
+        }
+
+        if($request->hasFile('lead_audit_report')){
+            $lead->lead_audit_report = $auditReportFileNameToStore;
+        }
+
+        if($request->hasFile('lead_atr_report')){
+            $lead->lead_atr_report = $atrReportFileNameToStore;
+        }
         $lead->save();
 
         $totalAmountWithoutGst = 0;
@@ -508,7 +553,7 @@ class LeadsController extends BaseController
         $leads->quotation_version = $leads->quotation_version + 1;
         $leads->save();
         // 
-        $user = auth()->user();
+        $user = Auth::user();
         $employee = $user->employee->first();
     
         if (!$employee) {
@@ -669,7 +714,7 @@ class LeadsController extends BaseController
         foreach ($leadProducts as $product) {
             StockLedger::calculateClosingQuantity($product['product_id']);
         }
-        $user = auth()->user();
+        $user = Auth::user();
         $employee = $user->employee->first();
     
         if (!$employee) {
@@ -725,13 +770,84 @@ class LeadsController extends BaseController
     
         // Get the file content and MIME type
         $fileContent = File::get($path);
-        $mimeType = \File::mimeType($path);
+        $mimeType = File::mimeType($path);
     
         // Create the response for the file download
         $response = Response::make($fileContent, 200);
         $response->header("Content-Type", $mimeType);
         $response->header('Content-Disposition', 'inline; filename="' . $files . '"'); // Set attachment to force download
      //to download the invoice change 'Content-Deposition to attachment from inline
+        return $response;
+    }
+
+    /**
+     * Show Lead Sale Order File.
+     */
+    public function showSaleOrder(string $files)
+    {
+        $path = storage_path('app/public/Lead/sale_orders/'.$files);
+
+        if (!file_exists($path)) {
+            return $this->sendError("Sale order file not found", ['error'=>['sale order file not found.']]);
+        }
+
+        $fileContent = File::get($path);
+        $mimeType = File::mimeType($path);
+
+        $response = Response::make($fileContent, 200);
+        $response->header("Content-Type", $mimeType);
+        $response->header('Content-Disposition', 'inline; filename="' . $files . '"');
+        return $response;
+    }
+
+    public function showQuotation(string $files)
+    {
+        $path = storage_path('app/public/Lead/generated_quotations/'.$files);
+
+        if (!file_exists($path)) {
+            return $this->sendError("Quotation file not found", ['error'=>['quotation file not found.']]);
+        }
+
+        $fileContent = File::get($path);
+        $mimeType = File::mimeType($path);
+
+        $response = Response::make($fileContent, 200);
+        $response->header("Content-Type", $mimeType);
+        $response->header('Content-Disposition', 'inline; filename="' . $files . '"');
+        return $response;
+    }
+
+    public function showAuditReport(string $files)
+    {
+        $path = storage_path('app/public/Lead/audit_reports/'.$files);
+
+        if (!file_exists($path)) {
+            return $this->sendError("Audit report file not found", ['error'=>['audit report file not found.']]);
+        }
+
+        $fileContent = File::get($path);
+        $mimeType = File::mimeType($path);
+
+        $response = Response::make($fileContent, 200);
+        $response->header("Content-Type", $mimeType);
+        $response->header('Content-Disposition', 'inline; filename="' . $files . '"');
+        return $response;
+    }
+
+    public function showAtrReport(string $files)
+    {
+        $path = storage_path('app/public/Lead/atr_reports/'.$files);
+
+        if (!file_exists($path)) {
+            return $this->sendError("ATR report file not found", ['error'=>['atr report file not found.']]);
+        }
+
+        $fileContent = File::get($path);
+        $mimeType = File::mimeType($path);
+
+        $response = Response::make($fileContent, 200);
+        $response->header("Content-Type", $mimeType);
+        $response->header('Content-Disposition', 'inline; filename="' . $files . '"');
         return $response;
     }
 
@@ -819,7 +935,7 @@ class LeadsController extends BaseController
 
         if ($type === 'pdf') {
             // Your existing PDF generation code
-            $user = auth()->user();
+            $user = Auth::user();
             $employee = $user->employee;
 
             if (!$employee) {
@@ -909,7 +1025,7 @@ class LeadsController extends BaseController
         //else end
 
     } catch (\Exception $e) {
-        \Log::error('Report Generation Error: ' . $e->getMessage());
+        Log::error('Report Generation Error: ' . $e->getMessage());
         return $this->sendError("Error generating report", ['error' => $e->getMessage()]);
     }
     }

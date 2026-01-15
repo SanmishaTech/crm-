@@ -25,6 +25,10 @@ class UpdateLeadRequest extends FormRequest
     {
         return [
             'contact_id' => ['required', 'exists:contacts,id'],
+            'lead_attachment' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'lead_sale_order' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'lead_audit_report' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'lead_atr_report' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
         ];
     }
 
