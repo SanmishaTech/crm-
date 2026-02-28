@@ -12,6 +12,7 @@ use Database\Seeders\CreateAdminUserSeeder;
 use Database\Seeders\ProductCategorySeeder;
 use Database\Seeders\CreateMemberUserSeeder;
 use Database\Seeders\CreateAccountsUserSeeder;
+use Database\Seeders\CreateAdditionalRolesSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,11 +28,10 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call(CreateAdminUserSeeder::class);
-        $this->call(CreateMemberUserSeeder::class);
-        $this->call(CreateAccountsUserSeeder::class);
         $this->call(SupplierSeeder::class);
         $this->call(ProductCategorySeeder::class);
- 
+        $this->call(CreateAdditionalRolesSeeder::class);
+
 
     }
 }

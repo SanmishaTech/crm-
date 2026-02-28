@@ -61,7 +61,6 @@ import { Icons } from "@/Dashboard/Icon";
 import { navItems } from "@/Config/data";
 
 import { Separator } from "@/components/ui/separator";
-import userAvatar from "@/images/Profile.jpg";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -70,6 +69,22 @@ const Navbar = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  const userStr = localStorage.getItem("user");
+  const user = userStr ? JSON.parse(userStr) : null;
+  const userName = user?.name || "User";
+  const userEmail = user?.email || "";
+  const roleName = localStorage.getItem("role") || "";
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .filter(Boolean)
+      .map((n) => n[0])
+      .join("")
+      .substring(0, 2)
+      .toUpperCase();
+  };
 
   const handleThemeToggle = () => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -89,19 +104,13 @@ const Navbar = () => {
   // Function to check if the current user role has access to a specific module
   const hasAccess = (module: string) => {
     const role = (localStorage.getItem("role") || "").trim().toLowerCase();
-    
-    // Define access permissions for each role
-    const accessMap: Record<string, string[]> = {
-      admin: ["dashboard", "leads", "events", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "departments", "challans", "invoices", "roles", "permissions", "employees"],
-      sales: ["dashboard", "leads", "events", "clients", "contacts", "suppliers", "productCategories", "products", "replacements", "expense_heads", "expense"],
-      accounts: ["dashboard", "events", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "challans", "invoices"]
-    };
-    
-    // If role doesn't exist or is not in the map, deny access
-    if (!role || !accessMap[role]) return false;
-    
-    // Check if the module is in the list of allowed modules for this role
-    return accessMap[role].includes(module);
+    const adminOnlyModules = ["roles", "permissions", "departments", "employees"];
+
+    if (adminOnlyModules.includes(module)) {
+      return role === "admin";
+    }
+
+    return true;
   };
 
   useEffect(() => {
@@ -327,7 +336,7 @@ const Navbar = () => {
                       <Separator className="w-full justify-center bg-border" />
                     )}
                     {hasAccess("permissions") && (
-                      
+
                       <Button
                         onClick={() => navigate("/permissions")}
                         variant="ghost"
@@ -484,34 +493,32 @@ const Navbar = () => {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="overflow-hidden rounded-full border-border"
+                  className="h-9 w-9 overflow-hidden rounded-full border-border bg-primary/10 text-primary font-semibold hover:bg-primary/20 flex items-center justify-center"
                 >
-                  <img
-                    src={userAvatar}
-                    width={36}
-                    height={36}
-                    alt="Avatar"
-                    className="overflow-hidden rounded-full"
-                  />
+                  {getInitials(userName)}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
-                className="bg-popover border-border"
+                className="bg-popover border-border w-56"
               >
-                <DropdownMenuLabel className="flex items-center space-x-2 text-foreground">
-                  <CircleUserRound className="h-5" />
-                  <span>My Account</span>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none capitalize">{userName} {roleName && `- ${roleName}`}</p>
+                    <p className="text-xs leading-none text-muted-foreground pt-1">
+                      {userEmail}
+                    </p>
+                  </div>
                 </DropdownMenuLabel>
-                {/* <DropdownMenuSeparator className="bg-border" /> */}
-                {/* <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
+                <DropdownMenuSeparator className="bg-border" />
+                <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
                   <Settings className="h-4" />
                   <span>Settings</span>
-                </DropdownMenuItem> */}
-                {/* <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
                   <Headset className="h-4" />
                   <span>Support</span>
-                </DropdownMenuItem> */}
+                </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-border" />
                 <DropdownMenuItem
                   className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent"
@@ -528,9 +535,8 @@ const Navbar = () => {
 
       {/* Mobile Navigation Menu */}
       <div
-        className={`lg:hidden bg-background ${
-          isSheetOpen ? "block" : "hidden"
-        } pt-2  pb-3 px-2`}
+        className={`lg:hidden bg-background ${isSheetOpen ? "block" : "hidden"
+          } pt-2  pb-3 px-2`}
       >
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetContent>

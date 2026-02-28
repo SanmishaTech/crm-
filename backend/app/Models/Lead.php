@@ -41,7 +41,6 @@ class Lead extends Model
         'lead_audit_report',
         'lead_atr_report',
         'lead_closing_reason',
-        'deal_details',
         'total_taxable',
         'total_gst',
         'total_amount_with_gst',
@@ -64,31 +63,31 @@ class Lead extends Model
         'bid_end_date' => 'date:Y-m-d',
         'lead_follow_up_date' => 'date:Y-m-d',
     ];
-    
-   public function contact()
-   {
-       return $this->belongsTo(Contact::class, 'contact_id');
-   }
 
-   public function employee()
-   {
-       return $this->belongsTo(Employee::class, 'employee_id');
-   }
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class , 'contact_id');
+    }
 
-   public function assignedTo()
-   {
-       return $this->belongsTo(User::class, 'assigned_to');
-   }
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class , 'employee_id');
+    }
 
-   public function followUps()
-   {
-       return $this->hasMany(FollowUp::class, 'lead_id');
-   }
+    public function assignedTo()
+    {
+        return $this->belongsTo(User::class , 'assigned_to');
+    }
 
-   public function events()
-   {
-       return $this->hasMany(Event::class, 'lead_id');
-   }
+    public function followUps()
+    {
+        return $this->hasMany(FollowUp::class , 'lead_id');
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class , 'lead_id');
+    }
 
     public function leadProducts()
     {
@@ -97,13 +96,14 @@ class Lead extends Model
 
     public function leadInvoice()
     {
-        return $this->belongsTo(Invoice::class, 'invoice_id');
+        return $this->belongsTo(Invoice::class , 'invoice_id');
     }
 
     public function updateLeadProducts()
     {
-        return $this->belongsToMany(Product::class, 'lead_products')
-        ->withPivot('id','lead_id',"product_id",'quantity','rate','gst_rate','gst_amount','total_amount','amount_without_gst');
+        return $this->belongsToMany(Product::class , 'lead_products')
+            ->withPivot('id', 'lead_id', "product_id", 'quantity', 'rate', 'gst_rate', 'gst_amount', 'total_amount', 'amount_without_gst');
     }
-   
+
+
 }

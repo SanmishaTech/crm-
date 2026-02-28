@@ -100,4 +100,10 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Remove default browser eye icon for password inputs */
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none;
+  }
 }

@@ -157,11 +157,10 @@ export default function TableDemo() {
   const { data: Sup } = useGetData({
     endpoint: `/api/leads?searchTerm=${encodeURIComponent(
       searchTerm || ""
-    )}&page=${currentPage}&total=${totalPages}&leadStatus=${leadStatus}${
-      sortField
+    )}&page=${currentPage}&total=${totalPages}&leadStatus=${leadStatus}${sortField
         ? `&sortField=${sortField}&sortOrder=${sortOrder}&productIds=${productIds}`
         : ""
-    }`,
+      }`,
     params: {
       queryKey: [
         "lead",
@@ -360,45 +359,45 @@ export default function TableDemo() {
                                 <TableCell>
                                   {lead?.created_at
                                     ? Math.max(
-                                        0,
-                                        Math.floor(
-                                          (new Date().getTime() -
-                                            new Date(lead.created_at).getTime()) /
-                                            (1000 * 60 * 60 * 24)
-                                        )
+                                      0,
+                                      Math.floor(
+                                        (new Date().getTime() -
+                                          new Date(lead.created_at).getTime()) /
+                                        (1000 * 60 * 60 * 24)
                                       )
+                                    )
                                     : "-"}
                                 </TableCell>
                                 {/* <TableCell>{lead.lead_source}</TableCell> */}
                                 <TableCell>
                                   {typeof lead.product_names === "string" ||
-                                  Array.isArray(lead.product_names)
+                                    Array.isArray(lead.product_names)
                                     ? Array.isArray(lead.product_names)
                                       ? lead.product_names.join(", ")
                                       : lead.product_names
-                                          .charAt(0)
-                                          .toUpperCase() +
-                                        lead.product_names.slice(1)
+                                        .charAt(0)
+                                        .toUpperCase() +
+                                      lead.product_names.slice(1)
                                     : "N/A"}
                                 </TableCell>
 
                                 <TableCell>
                                   {lead.lead_follow_up_date
                                     ? (() => {
-                                        const date = new Date(
-                                          lead.lead_follow_up_date
-                                        );
-                                        const day = String(
-                                          date.getDate()
-                                        ).padStart(2, "0");
-                                        const month = String(
-                                          date.getMonth() + 1
-                                        ).padStart(2, "0");
-                                        const year = String(
-                                          date.getFullYear()
-                                        ).padStart(4, "0");
-                                        return `${day}/${month}/${year}`;
-                                      })()
+                                      const date = new Date(
+                                        lead.lead_follow_up_date
+                                      );
+                                      const day = String(
+                                        date.getDate()
+                                      ).padStart(2, "0");
+                                      const month = String(
+                                        date.getMonth() + 1
+                                      ).padStart(2, "0");
+                                      const year = String(
+                                        date.getFullYear()
+                                      ).padStart(4, "0");
+                                      return `${day}/${month}/${year}`;
+                                    })()
                                     : "N/A"}
                                 </TableCell>
 
@@ -410,16 +409,16 @@ export default function TableDemo() {
                                 >
                                   {lead.follow_up_type
                                     ? lead.follow_up_type
-                                        .charAt(0)
-                                        .toUpperCase() +
-                                      lead.follow_up_type.slice(1)
+                                      .charAt(0)
+                                      .toUpperCase() +
+                                    lead.follow_up_type.slice(1)
                                     : "N/A"}
                                 </TableCell>
 
                                 <TableCell>
                                   {lead.lead_status
                                     ? lead.lead_status.charAt(0).toUpperCase() +
-                                      lead.lead_status.slice(1)
+                                    lead.lead_status.slice(1)
                                     : "N/A"}
                                 </TableCell>
 
@@ -467,12 +466,11 @@ export default function TableDemo() {
                                         Follow Up
                                       </Button>
 
-                                      {(lead.lead_status === "Quotation" ||
-                                        lead.lead_status === "Deal") && (
+                                      {lead.lead_status === "Quotation" && (
                                         <AlertQuotation leadId={lead.id} />
                                       )}
 
-                                      {lead.lead_status === "Deal" && (
+                                      {lead.lead_status === "Purchase Order" && (
                                         <AlertInvoice leadId={lead.id} />
                                       )}
                                     </DropdownMenuContent>
@@ -503,11 +501,10 @@ export default function TableDemo() {
           <Pagination>
             <PaginationContent className="flex items-center space-x-4">
               <PaginationPrevious
-                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
-                  currentPage === 1
+                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${currentPage === 1
                     ? "cursor-default opacity-50"
                     : "cursor-pointer"
-                }`}
+                  }`}
                 onClick={goToPreviousPage}
               >
                 Previous
@@ -517,11 +514,10 @@ export default function TableDemo() {
                 Page {currentPage} of {totalPages}
               </span>
               <PaginationNext
-                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
-                  currentPage === totalPages
+                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${currentPage === totalPages
                     ? "cursor-default opacity-50"
                     : "cursor-pointer"
-                }`}
+                  }`}
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
               >

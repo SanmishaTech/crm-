@@ -82,7 +82,7 @@ const formSchema = z.object({
   tender_category: z.string().optional(),
   emd: z.coerce.number().optional(),
   lead_closing_reason: z.string().optional(),
-  deal_details: z.string().optional(),
+
   tender_status: z.string().optional(),
   lead_attachment: z.any().optional(),
   lead_sale_order: z.any().optional(),
@@ -339,7 +339,6 @@ export default function EditLeadPage() {
         quantity: newData?.quantity || "",
         rate: newData?.rate || null,
         product_id: newData?.product_id || "",
-        deal_details: newData?.deal_details || "",
         lead_attachment: newData?.lead_attachment || "",
         lead_sale_order: newData?.lead_sale_order || "",
         lead_audit_report: newData?.lead_audit_report || "",
@@ -523,7 +522,7 @@ export default function EditLeadPage() {
                   )}
                 />
 
-<FormField
+                <FormField
                   control={form.control}
                   name="assigned_to"
                   render={({ field }) => (
@@ -544,8 +543,8 @@ export default function EditLeadPage() {
                             >
                               {field.value
                                 ? employees.find(
-                                    (employee) => employee.id === field.value
-                                  )?.name || "No Employee Name"
+                                  (employee) => employee.id === field.value
+                                )?.name || "No Employee Name"
                                 : "Select Employee"}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
@@ -775,7 +774,6 @@ export default function EditLeadPage() {
                                   Quotation
                                 </SelectItem>
                                 <SelectItem value="Closed">Close</SelectItem>
-                                <SelectItem value="Deal">Deal</SelectItem>
                                 <SelectItem value="Purchase Order">
                                   Purchase Order
                                 </SelectItem>
@@ -813,10 +811,9 @@ export default function EditLeadPage() {
                             ) : savedLeadStatus === "Deal" ? (
                               <>
                                 <SelectItem value="Closed">Close</SelectItem>
-                                <SelectItem value="Deal">Deal</SelectItem>
                               </>
                             ) : (savedLeadStatus === "Close" ||
-                                savedLeadStatus === "Closed") ? (
+                              savedLeadStatus === "Closed") ? (
                               <>
                                 <SelectItem value="Closed">Close</SelectItem>
                                 <SelectItem value="Open">Open</SelectItem>
@@ -849,26 +846,7 @@ export default function EditLeadPage() {
                           )}
                         />
                       )}
-                      {field.value === "Deal" && (
-                        <FormField
-                          control={form.control}
-                          name="deal_details"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="">Deal Details</FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  placeholder="Enter Deal Detail"
-                                  className="resize-none"
-                                  {...field}
-                                />
-                              </FormControl>
 
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
                       {field.value === "Quotation" && (
                         <FormField
                           control={form.control}
@@ -1492,9 +1470,9 @@ export default function EditLeadPage() {
                             >
                               {row.product_id
                                 ? frameworks.find(
-                                    (framework) =>
-                                      framework.value === row.product_id
-                                  )?.label || "Select products..."
+                                  (framework) =>
+                                    framework.value === row.product_id
+                                )?.label || "Select products..."
                                 : "Select products..."}
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>

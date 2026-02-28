@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Form,
@@ -57,7 +57,9 @@ const formSchema = z.object({
     .nonempty("Email is required."),
   password: z
     .string()
-    .min(6, { message: "Password field must have at least 6 characters." }),
+    .min(6, { message: "Password field must have at least 6 characters." })
+    .optional()
+    .or(z.literal("")),
   mobile: z.coerce.number().min(10, { message: "Mobile field is required." }),
   joining_date: z.string().optional(),
   designation: z
@@ -79,6 +81,7 @@ export default function EditEmployeePage() {
   const queryClient = useQueryClient();
   const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Fetch Products
   const fetchDepartments = () => {
@@ -200,7 +203,7 @@ export default function EditEmployeePage() {
         designation: newData.designation || "",
         joining_date: newData.joining_date || "",
         department_id: newData.department_id || "",
-        password: password || "",
+        password: "", // Keep password field blank initially
         active: activee,
         role_name: newData.role_name || "",
       });
@@ -211,7 +214,7 @@ export default function EditEmployeePage() {
     fetchData.mutate(data);
     queryClient.invalidateQueries({ queryKey: ["employees"] });
     queryClient.invalidateQueries({ queryKey: ["employees", id] });
-  };  
+  };
 
   if (isLoading || isDepartmentLoading) {
     return (
@@ -478,6 +481,11 @@ export default function EditEmployeePage() {
                               <SelectItem value="admin">Admin</SelectItem>
                               <SelectItem value="sales">Sales</SelectItem>
                               <SelectItem value="accounts">Accounts</SelectItem>
+                              <SelectItem value="Enquiry">Enquiry</SelectItem>
+                              <SelectItem value="Follow up">Follow up</SelectItem>
+                              <SelectItem value="Audit">Audit</SelectItem>
+                              <SelectItem value="ATR">ATR</SelectItem>
+                              <SelectItem value="Payment">Payment</SelectItem>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -522,11 +530,25 @@ export default function EditEmployeePage() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                          placeholder="Enter password"
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            {...field}
+                            placeholder="Enter password"
+                            className="pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

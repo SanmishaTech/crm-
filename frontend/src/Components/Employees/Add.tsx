@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Eye, EyeOff } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -67,6 +67,7 @@ const FormSchema = z.object({
 export default function InputForm() {
   const [error, setError] = useState<string | null>(null);
   const [isDepartmentLoading, setIsDepartmentLoading] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [departments, setDepartments] = useState([]);
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -309,6 +310,11 @@ export default function InputForm() {
                               <SelectItem value="admin">Admin</SelectItem>
                               <SelectItem value="sales">Sales</SelectItem>
                               <SelectItem value="accounts">Accounts</SelectItem>
+                              <SelectItem value="Enquiry">Enquiry</SelectItem>
+                              <SelectItem value="Follow up">Follow up</SelectItem>
+                              <SelectItem value="Audit">Audit</SelectItem>
+                              <SelectItem value="ATR">ATR</SelectItem>
+                              <SelectItem value="Payment">Payment</SelectItem>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -353,11 +359,25 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                          placeholder="Enter password"
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            {...field}
+                            placeholder="Enter password"
+                            className="pr-10"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

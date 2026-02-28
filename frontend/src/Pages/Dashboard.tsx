@@ -65,35 +65,31 @@ const Dashboard = () => {
 
   // Function to check if the current user role has access to a specific module
   const hasAccess = (module: string) => {
-    // Define access permissions for each role
-    const accessMap: Record<string, string[]> = {
-      admin: ["dashboard", "leads", "events", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "departments", "challans", "invoices", "roles", "permissions", "employees", "notepad"],
-      sales: ["dashboard", "leads", "events", "clients", "contacts", "suppliers", "productCategories", "products", "replacements", "expense_heads", "expense", "notepad"],
-      accounts: ["dashboard", "events", "clients", "contacts", "suppliers", "productCategories", "products", "purchase", "replacements", "expense_heads", "expense", "challans", "invoices", "notepad"]
-    };
-    
-    // If role doesn't exist or is not in the map, deny access
-    if (!userRole || !accessMap[userRole]) return false;
-    
-    // Check if the module is in the list of allowed modules for this role
-    return accessMap[userRole].includes(module);
+    const role = (localStorage.getItem("role") || "").trim().toLowerCase();
+    const adminOnlyModules = ["roles", "permissions", "departments", "employees"];
+
+    if (adminOnlyModules.includes(module)) {
+      return role === "admin";
+    }
+
+    return true;
   };
 
   // Function to check if current path is accessible
   const checkPathAccess = () => {
     const path = location.pathname;
-    
+
     // Extract the base module from the path
     let module = path.split('/')[1];
-    
+
     // Handle special cases for edit routes
-    if (path.includes('/edit/') || path.includes('/view/') || 
-        path.includes('/add') || /\/roles\/\d+\/edit/.test(path) || 
-        /\/followUps\/\d+/.test(path) || /\/generateQuotation\/\d+/.test(path) || 
-        /\/generateInvoice\/\d+/.test(path)) {
+    if (path.includes('/edit/') || path.includes('/view/') ||
+      path.includes('/add') || /\/roles\/\d+\/edit/.test(path) ||
+      /\/followUps\/\d+/.test(path) || /\/generateQuotation\/\d+/.test(path) ||
+      /\/generateInvoice\/\d+/.test(path)) {
       module = path.split('/')[1]; // Get the base module
     }
-    
+
     // If the user doesn't have access to this module, redirect to dashboard
     if (!hasAccess(module)) {
       navigate('/dashboard');
@@ -106,10 +102,10 @@ const Dashboard = () => {
       navigate("/");
       return;
     }
-    
+
     // Get user role from localStorage
     const role = localStorage.getItem("role") || "";
-    setUserRole(role);
+    setUserRole(role.toLowerCase());
   }, [navigate]);
 
   // Check path access whenever location or userRole changes
@@ -153,15 +149,15 @@ const Dashboard = () => {
         {location.pathname === "/departments/add" && hasAccess("departments") && (
           <DepartmentsDialog
             loading={false}
-            setLoading={() => {}}
+            setLoading={() => { }}
             open={true}
-            setOpen={() => {}}
+            setOpen={() => { }}
             form={{}}
             editDepartment={null}
-            setError={() => {}}
-            setEditDepartment={() => {}}
-            fetchDepartments={() => {}}
-            handleInvalidateQuery={() => {}}
+            setError={() => { }}
+            setEditDepartment={() => { }}
+            fetchDepartments={() => { }}
+            handleInvalidateQuery={() => { }}
           />
         )}
         {location.pathname === "/productCategories" && hasAccess("productCategories") && <ProductCategories />}
@@ -169,13 +165,13 @@ const Dashboard = () => {
           <ProductCategoryDialog
             open={true}
             form={{}}
-            setOpen={() => {}}
+            setOpen={() => { }}
             editProductCategory={null}
-            setError={() => {}}
-            setEditProductCategory={() => {}}
+            setError={() => { }}
+            setEditProductCategory={() => { }}
             loading={false}
-            setLoading={() => {}}
-            handleProductCategoryInvalidateQuery={() => {}}
+            setLoading={() => { }}
+            handleProductCategoryInvalidateQuery={() => { }}
           />
         )}
         {location.pathname === "/products" && hasAccess("products") && <Products />}
@@ -222,7 +218,7 @@ const Dashboard = () => {
         {location.pathname === "/roles" && hasAccess("roles") && <Roles />}
         {/\/roles\/\d+\/edit/.test(location.pathname) && hasAccess("roles") && <RolesEDIT />}
         {location.pathname === "/permissions" && hasAccess("permissions") && <Permissions />}
-        </main>
+      </main>
     </div>
   );
 };

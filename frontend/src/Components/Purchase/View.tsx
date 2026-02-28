@@ -81,7 +81,6 @@ const formSchema = z.object({
   tender_category: z.string().optional(),
   emd: z.coerce.number().optional(),
   lead_closing_reason: z.string().optional(),
-  deal_details: z.string().optional(),
   tender_status: z.string().optional(),
 });
 
@@ -413,8 +412,8 @@ export default function EditLeadPage() {
                     <div>
                       {form.watch("invoice_date")
                         ? new Date(
-                            form.watch("invoice_date")
-                          ).toLocaleDateString("en-GB")
+                          form.watch("invoice_date")
+                        ).toLocaleDateString("en-GB")
                         : ""}
                     </div>
                   </FormControl>

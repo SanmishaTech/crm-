@@ -19,26 +19,25 @@ class LeadResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $productNames = $this->updateLeadProducts->map(function($updateLeadProduct) {
+        $productNames = $this->updateLeadProducts->map(function ($updateLeadProduct) {
             return $updateLeadProduct->product;
         });
-      
 
-        
+
+
         return [
             'id' => $this->id,
             'employee_id' => $this->employee_id,
             'contact_id' => $this->contact_id,
             'assigned_to' => $this->assigned_to,
-            'product_names'=>$productNames,
+            'product_names' => $productNames,
             'lead_owner' => $this->lead_owner,
-            'lead_number'=> $this->lead_number,
+            'lead_number' => $this->lead_number,
             'lead_type' => $this->lead_type,
             'tender_number' => $this->tender_number,
             'portal' => $this->portal,
             'tender_category' => $this->tender_category,
             'lead_closing_reason' => $this->lead_closing_reason,
-            'deal_details' => $this->deal_details,
             'lead_attachment' => $this->lead_attachment,
             'lead_quotation' => $this->lead_quotation,
             'lead_invoice' => $this->lead_invoice,
@@ -59,7 +58,7 @@ class LeadResource extends JsonResource
             'contact' => new ContactResource($this->contact),
             'assigned_user' => $this->whenLoaded('assignedTo'),
             'products' => $this->leadProducts->map(function ($leadProduct) {
-                return [
+            return [
                     'id' => $leadProduct->id,
                     'lead_id' => $leadProduct->lead_id,
                     'product_id' => $leadProduct->product_id,
@@ -71,10 +70,10 @@ class LeadResource extends JsonResource
                     'total_amount' => $leadProduct->total_amount,
                     'created_at' => $leadProduct->created_at->toIso8601String(),
                     'updated_at' => $leadProduct->updated_at->toIso8601String(),
-                    'product' => new ProductResource($leadProduct->product), 
+                    'product' => new ProductResource($leadProduct->product),
                 ];
-            }),
-            
+        }),
+
             // 'products' => $this->leadProducts,  
             'follow_ups' => $this->followUps,
             'events' => $this->events,

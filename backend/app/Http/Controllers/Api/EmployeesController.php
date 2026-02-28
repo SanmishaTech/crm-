@@ -17,10 +17,11 @@ use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Requests\UpdateEmployeeRequest;
 
-   /**
-     * @group Employee Management
-     */
-    
+/**
+ * @group Employee Management
+ */
+
+
 class EmployeesController extends BaseController
 {
     /**
@@ -32,20 +33,20 @@ class EmployeesController extends BaseController
 
         if ($request->query('search')) {
             $searchTerm = $request->query('search');
-    
+
             $query->where(function ($query) use ($searchTerm) {
                 $query->where('employee_name', 'like', '%' . $searchTerm . '%');
             });
         }
         $employees = $query->paginate(9);
 
-        return $this->sendResponse(["Employees"=>EmployeeResource::collection($employees),
-        'pagination' => [
-            'current_page' => $employees->currentPage(),
-            'last_page' => $employees->lastPage(),
-            'per_page' => $employees->perPage(),
-            'total' => $employees->total(),
-        ]], "Employees retrieved successfully");
+        return $this->sendResponse(["Employees" => EmployeeResource::collection($employees),
+            'pagination' => [
+                'current_page' => $employees->currentPage(),
+                'last_page' => $employees->lastPage(),
+                'per_page' => $employees->perPage(),
+                'total' => $employees->total(),
+            ]], "Employees retrieved successfully");
     }
 
     /**
@@ -61,21 +62,21 @@ class EmployeesController extends BaseController
      */
     public function store(Request $request): JsonResponse
     {
-        // Create user
+        $roleName = $request->input('role_name');
+
+        // Ensure role exists before creating user
+        $finalRole = ($roleName && Role::where('name', $roleName)->exists()) ? $roleName : 'admin';
+
+        // Create user with mandatory role
         $user = User::create([
             'name' => $request->input('employee_name'),
             'email' => $request->input('email'),
             'password' => Hash::make('password'),
+            'role' => $finalRole,
         ]);
 
-        $roleName = $request->input('role_name');
-
-        // Assign role (admin, sales, or accounts) and sync to column
-        if (in_array($roleName, ['admin', 'sales', 'accounts'])) {
-            $user->role = $roleName;
-            $user->save();
-            $user->assignRole($roleName);
-        }
+        // Assign Spatie role
+        $user->assignRole($finalRole);
 
         // Create employee
         $employee = Employee::create([
@@ -98,11 +99,11 @@ class EmployeesController extends BaseController
     {
         $employee = Employee::find($id);
 
-        if(!$employee){
-            return $this->sendError("Employee not found", ['error'=>'Employee not found']);
+        if (!$employee) {
+            return $this->sendError("Employee not found", ['error' => 'Employee not found']);
         }
         $user = User::find($employee->user_id);
-        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "Employee retrived successfully");
+        return $this->sendResponse(['User' => new UserResource($user), 'Employee' => new EmployeeResource($employee)], "Employee retrived successfully");
     }
 
     /**
@@ -120,28 +121,29 @@ class EmployeesController extends BaseController
     {
         $employee = Employee::find($id);
 
-        if(!$employee){
-            return $this->sendError("Employee not found", ['error'=>'Employee not found']);
+        if (!$employee) {
+            return $this->sendError("Employee not found", ['error' => 'Employee not found']);
         }
         $user = User::find($employee->user_id);
         $user->name = $request->input('employee_name');
         $user->email = $request->input('email');
         $user->active = $request->input('active');
-        $user->password = Hash::make($request->input('password'));
-        
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->input('password'));
+        }
+
         // Remove all roles first
         $user->roles()->detach();
-        
+
         $roleName = $request->input('role_name');
 
-        // Assign new role (admin, sales, or accounts) and sync to column
-        if (in_array($roleName, ['admin', 'sales', 'accounts'])) {
+        // Assign new role and sync to column if the role exists
+        if ($roleName && Role::where('name', $roleName)->exists()) {
             $user->role = $roleName;
             $user->assignRole($roleName);
-        } else {
-            $user->role = null;
         }
-        
+
         $user->save();
 
         $employee->employee_name = $request->input('employee_name');
@@ -152,7 +154,7 @@ class EmployeesController extends BaseController
         $employee->joining_date = $request->input('joining_date');
         $employee->save();
 
-        return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "Employees updated successfully");
+        return $this->sendResponse(['User' => new UserResource($user), 'Employee' => new EmployeeResource($employee)], "Employees updated successfully");
     }
 
     /**
@@ -161,8 +163,8 @@ class EmployeesController extends BaseController
     public function destroy(string $id): JsonResponse
     {
         $employee = Employee::find($id);
-        if(!$employee){
-            return $this->sendError("employee not found", ['error'=> 'employee not found']);
+        if (!$employee) {
+            return $this->sendError("employee not found", ['error' => 'employee not found']);
         }
         $user = User::find($employee->user_id);
         $employee->delete();
@@ -192,7 +194,7 @@ class EmployeesController extends BaseController
     //     }
     //     $activeVal = 1;
     //     $inactiveVal = 0;
-        
+
     //     $user = User::find($employee->user_id);
     //     if(!empty($request->input('resignation_date'))){
     //         $employee->resignation_date = $request->input('resignation_date');
@@ -204,8 +206,8 @@ class EmployeesController extends BaseController
     //         $user->active = $inactiveVal;
     //         $user->save();
     //     }
-      
-       
+
+
     //     return $this->sendResponse(['User'=> new UserResource($user), 'Employee'=>new EmployeeResource($employee)], "employee data updated successfully");
     // }
     public function resignation(ResignationRequest $request, string $id): JsonResponse
@@ -214,41 +216,43 @@ class EmployeesController extends BaseController
         if (!$employee) {
             return $this->sendError("employee not found", ['error' => 'employee not found']);
         }
-    
+
         $activeVal = 1;
         $inactiveVal = 0;
-    
+
         $user = User::find($employee->user_id);
-    
+
         // Check if resignation_date is null or an empty string
         $resignationDate = $request->input('resignation_date');
         if ($resignationDate !== null && $resignationDate !== "") {
             $carbonDate = Carbon::parse($resignationDate);
             $today = Carbon::today();
-    
+
             // If the resignation date is in the future, return a validation error
             if ($carbonDate->gt($today)) {
                 return $this->sendError('Validation Error', ['error' => 'Resignation date cannot be in the future']);
             }
-            
+
             $employee->resignation_date = $resignationDate;
             $employee->save();
             $user->active = $inactiveVal;
             $user->save();
-            // dd("if working");
-        } else {
+        // dd("if working");
+        }
+        else {
             // If resignation_date is empty or null, set the user status to inactive
             $employee->resignation_date = $resignationDate;
             $employee->save();
             $user->active = $activeVal;
             $user->save();
-            // dd("else working");
+        // dd("else working");
         }
-    
+
         return $this->sendResponse(['User' => new UserResource($user), 'Employee' => new EmployeeResource($employee)], "employee data updated successfully");
     }
-    
-    
-     
-    
+
+
+
+
+
 }
