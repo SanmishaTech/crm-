@@ -5,7 +5,6 @@ import { Pie, PieChart, Tooltip, Cell } from "recharts"
 import {
   Card,
   CardContent,
-
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -14,16 +13,16 @@ import {
 } from "@/components/ui/chart"
 import axios from "axios";
 
-const COLORS = ['#00529B', '#0077CC', '#009CFF', '#4DB8FF', '#99D6FF', '#CCEFFF'];
+const COLORS = ['#0D47A1', '#1976D2', '#2196F3', '#64B5F6', '#90CAF9', '#BBDEFB'];
 
 interface ChartData {
   name: string;
   value: number;
 }
 
-interface LeadSourceData {
-  lead_source: string;
-  count: number;
+interface DealItem {
+  user: string;
+  deals: number;
 }
 
 interface Props {
@@ -31,25 +30,24 @@ interface Props {
   label?: string;
 }
 
-export function LeadSourcePieChart({ title = "Lead Sources", label = "Leads" }: Props) {
+export function WorkOrderPieChart({ title = "Work Order Received", label = "Leads" }: Props) {
   const [chartData, setChartData] = React.useState<ChartData[]>([]);
-  const [totalLeads, setTotalLeads] = React.useState(0);
-
+  const [totalDeals, setTotalDeals] = React.useState(0);
 
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/lead_source_distribution`, {
+        const response = await axios.get(`/api/work_orders_by_user`, {
           headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + localStorage.getItem("token"),
           },
         });
-        const { lead_sources }: { lead_sources: LeadSourceData[] } = response.data.data;
-        setChartData(lead_sources.map((item: LeadSourceData) => ({ name: item.lead_source, value: item.count })));
-        setTotalLeads(lead_sources.reduce((acc: number, item: LeadSourceData) => acc + item.count, 0));
+        const { dealsByUser, totalWorkOrders } = response.data.data;
+        setChartData(dealsByUser.map((item: DealItem) => ({ name: item.user, value: item.deals })));
+        setTotalDeals(totalWorkOrders);
       } catch (error) {
-        console.error("Error fetching lead source data:", error);
+        console.error("Error fetching work order data:", error);
       }
     };
 
@@ -66,13 +64,13 @@ export function LeadSourcePieChart({ title = "Lead Sources", label = "Leads" }: 
           <ChartContainer config={{}} className="mx-auto aspect-square h-full w-full">
             <PieChart>
               <Tooltip
-                wrapperStyle={{ zIndex: 1000 }}
                 cursor={false}
+                wrapperStyle={{ zIndex: 1000 }}
                 content={({ active, payload }: any) => {
                   if (active && payload && payload.length) {
                     return (
                       <div className="p-2 text-sm bg-background rounded-md shadow-lg">
-                        <p className="font-semibold">{payload[0].name}</p>
+                        <p className="font-semibold">{payload[0].name} ({payload[0].value})</p>
                       </div>
                     )
                   }
@@ -80,14 +78,14 @@ export function LeadSourcePieChart({ title = "Lead Sources", label = "Leads" }: 
                 }}
               />
               <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={45} outerRadius={90} fill="#8884d8" strokeWidth={2}>
-                {chartData.map((_, index) => (
+                {chartData.map((_entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} className="focus:outline-none ring-0 focus:ring-0" />
                 ))}
               </Pie>
             </PieChart>
           </ChartContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-2xl font-bold">{totalLeads}</span>
+            <span className="text-2xl font-bold">{totalDeals}</span>
             <span className="text-sm text-muted-foreground">{label}</span>
           </div>
         </div>

@@ -22,6 +22,7 @@ import { DoneDealsPieChart } from "./DoneDealsPieChart";
 import { OpenDealsPieChart } from "./OpenDealsPieChart";
 import { UntouchedDealsPieChart } from "./UntouchedDealsPieChart";
 import { LeadSourcePieChart } from "./LeadSourcePieChart";
+import { WorkOrderPieChart } from "./WorkOrderPieChart";
 
 // Define interfaces for our data structures
 interface Lead {
@@ -89,14 +90,32 @@ export default function ResponsiveLabDashboard() {
           <h1 className="text-2xl md:text-3xl font-bold ">Welcome </h1>
         </div>
 
+        {/* Render for Admin (All 4 charts, default names) */}
         {localStorage.getItem("role") === 'admin' && (
-     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <DoneDealsPieChart />
             <OpenDealsPieChart />
             <UntouchedDealsPieChart />
             <LeadSourcePieChart />
           </div>
-   )}
+        )}
+
+        {/* Render for Enquiry / Follow up (3 charts, custom names) */}
+        {(localStorage.getItem("role") === 'Enquiry' || localStorage.getItem("role") === 'Follow up') && (
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+            <OpenDealsPieChart title="Open Enquiry" label="Leads" />
+            <UntouchedDealsPieChart title="Untouched Enquiry" label="Leads" />
+            <LeadSourcePieChart title="Total Sources" label="Leads" />
+          </div>
+        )}
+
+        {/* Render for Audit / ATR (2 charts, custom names) */}
+        {(localStorage.getItem("role") === 'Audit' || localStorage.getItem("role") === 'ATR') && (
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+            <WorkOrderPieChart title="Work Order Received" label="Leads" />
+            <LeadSourcePieChart title="Total Sources" label="Leads" />
+          </div>
+        )}
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4 ">
           <Card className="col-span-full lg:col-span-3 overflow-x-auto bg-accent/40">
@@ -124,8 +143,8 @@ export default function ResponsiveLabDashboard() {
                           test.follow_up_type === "High"
                             ? "destructive"
                             : test.follow_up_type === "Medium"
-                            ? "default"
-                            : "secondary"
+                              ? "default"
+                              : "secondary"
                         }
                       >
                         {test.follow_up_type}
@@ -133,15 +152,15 @@ export default function ResponsiveLabDashboard() {
                       <p className="text-xs text-muted-foreground">
                         {test.lead_follow_up_date
                           ? `${new Date(test.lead_follow_up_date)
-                              .getDate()
-                              .toString()
-                              .padStart(2, "0")}/${(
+                            .getDate()
+                            .toString()
+                            .padStart(2, "0")}/${(
                               new Date(test.lead_follow_up_date).getMonth() + 1
                             )
                               .toString()
                               .padStart(2, "0")}/${new Date(
-                              test.lead_follow_up_date
-                            ).getFullYear()}`
+                                test.lead_follow_up_date
+                              ).getFullYear()}`
                           : "DD/MM/YYYY"}
                       </p>
                     </div>

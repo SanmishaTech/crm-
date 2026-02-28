@@ -105,5 +105,45 @@ class Lead extends Model
             ->withPivot('id', 'lead_id', "product_id", 'quantity', 'rate', 'gst_rate', 'gst_amount', 'total_amount', 'amount_without_gst');
     }
 
+    /**
+     * Scope a query to only include leads visible to the given user's role.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \App\Models\User|null  $user
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForUserRole($query, $user)
+    {
+        if (!$user) {
+            return $query;
+        }
+
+        $allowedStatuses = [];
+        $hasFullAccess = false;
+
+        if ($user->hasRole('admin') || $user->hasRole('Payment') || $user->hasRole('accounts') || $user->hasRole('sales')) {
+            $hasFullAccess = true;
+        }
+        else {
+            if ($user->hasRole('Enquiry') || $user->hasRole('Follow up')) {
+                $allowedStatuses = array_merge($allowedStatuses, ['Open', 'In Progress', 'Quotation']);
+            }
+
+            if ($user->hasRole('Audit') || $user->hasRole('ATR')) {
+                $allowedStatuses = array_merge($allowedStatuses, ['Purchase Order', 'Audit', 'ATR Report']);
+            }
+        }
+
+        if (!$hasFullAccess) {
+            if (!empty($allowedStatuses)) {
+                $query->whereIn('lead_status', array_unique($allowedStatuses));
+            }
+            else {
+                $query->where('lead_status', 'NONE_ALLOWED');
+            }
+        }
+
+        return $query;
+    }
 
 }

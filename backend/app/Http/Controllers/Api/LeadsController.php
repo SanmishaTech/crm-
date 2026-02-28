@@ -473,7 +473,8 @@ class LeadsController extends BaseController
 
     public function getOpenDealsByUser(Request $request): JsonResponse
     {
-        $openDeals = Lead::where('lead_status', 'Open')
+        $openDeals = Lead::forUserRole(auth()->user())
+            ->where('lead_status', 'Open')
             ->select('assigned_to', DB::raw('count(*) as deals'))
             ->groupBy('assigned_to')
             ->get();
@@ -487,14 +488,39 @@ class LeadsController extends BaseController
             ];
         }
 
-        $totalOpenDeals = Lead::where('lead_status', 'Open')->count();
+        $totalOpenDeals = Lead::forUserRole(auth()->user())->where('lead_status', 'Open')->count();
 
         return $this->sendResponse(['dealsByUser' => $dealsByUser, 'totalOpenDeals' => $totalOpenDeals], 'Open deals by user retrieved successfully.');
     }
 
+    public function getWorkOrdersByUser(Request $request): JsonResponse
+    {
+        // Work Order = leads belonging to the user's role that are basically in their scope
+        // ('Purchase Order', 'Audit', 'ATR Report') or ('Open', etc) depending on their role.
+        // We will just sum up leads visible to them by assigned_to.
+        $workOrders = Lead::forUserRole(auth()->user())
+            ->select('assigned_to', DB::raw('count(*) as deals'))
+            ->groupBy('assigned_to')
+            ->get();
+
+        $dealsByUser = [];
+        foreach ($workOrders as $deal) {
+            $user = \App\Models\Employee::find($deal->assigned_to);
+            $dealsByUser[] = [
+                'user' => $user ? $user->employee_name : 'Unassigned',
+                'deals' => $deal->deals,
+            ];
+        }
+
+        $totalWorkOrders = Lead::forUserRole(auth()->user())->count();
+
+        return $this->sendResponse(['dealsByUser' => $dealsByUser, 'totalWorkOrders' => $totalWorkOrders], 'Work orders by user retrieved successfully.');
+    }
+
     public function getUntouchedDealsByUser(Request $request): JsonResponse
     {
-        $untouchedDeals = Lead::where('lead_status', 'Open')
+        $untouchedDeals = Lead::forUserRole(auth()->user())
+            ->where('lead_status', 'Open')
             ->whereDoesntHave('followUps')
             ->select('assigned_to', DB::raw('count(*) as deals'))
             ->groupBy('assigned_to')
@@ -509,7 +535,7 @@ class LeadsController extends BaseController
             ];
         }
 
-        $totalUntouchedDeals = Lead::where('lead_status', 'Open')->whereDoesntHave('followUps')->count();
+        $totalUntouchedDeals = Lead::forUserRole(auth()->user())->where('lead_status', 'Open')->whereDoesntHave('followUps')->count();
 
         return $this->sendResponse(['dealsByUser' => $dealsByUser, 'totalUntouchedDeals' => $totalUntouchedDeals], 'Untouched deals by user retrieved successfully.');
     }
@@ -621,6 +647,7 @@ class LeadsController extends BaseController
     public function getLeadSourceDistribution(Request $request): JsonResponse
     {
         $leadSources = Lead::query()
+            ->forUserRole(auth()->user())
             ->select('lead_source', DB::raw('count(*) as count'))
             ->groupBy('lead_source')
             ->get();
@@ -882,7 +909,7 @@ class LeadsController extends BaseController
 
     public function allLeads(): JsonResponse
     {
-        $lead = Lead::all();
+        $lead = Lead::forUserRole(auth()->user())->get();
 
         return $this->sendResponse(["Lead" => LeadResource::collection($lead),
         ], "Lead retrieved successfully");
@@ -1064,12 +1091,13 @@ class LeadsController extends BaseController
         $dealStatus = strtolower(config('data.lead_status.Deal'));
 
         $dealsByUser = Lead::join('employees', 'leads.assigned_to', '=', 'employees.id')
+            ->forUserRole(auth()->user())
             ->whereRaw('LOWER(TRIM(leads.lead_status)) = ?', [$dealStatus])
             ->select('employees.employee_name as user', DB::raw('count(leads.id) as deals'))
             ->groupBy('employees.employee_name')
             ->get();
 
-        $totalDoneDeals = Lead::whereRaw('LOWER(TRIM(lead_status)) = ?', [$dealStatus])->count();
+        $totalDoneDeals = Lead::forUserRole(auth()->user())->whereRaw('LOWER(TRIM(lead_status)) = ?', [$dealStatus])->count();
 
         $data = [
             'totalDoneDeals' => $totalDoneDeals,

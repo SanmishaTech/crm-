@@ -25,10 +25,15 @@ interface DealItem {
   deals: number;
 }
 
-export function OpenDealsPieChart() {
+interface Props {
+  title?: string;
+  label?: string;
+}
+
+export function OpenDealsPieChart({ title = "Open Deals", label = "Deals" }: Props) {
   const [chartData, setChartData] = React.useState<ChartData[]>([]);
   const [totalDeals, setTotalDeals] = React.useState(0);
-  
+
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -53,7 +58,7 @@ export function OpenDealsPieChart() {
   return (
     <Card className="flex flex-col bg-accent/40 h-full">
       <CardHeader className="items-center pb-2">
-        <CardTitle>Open Deals</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col flex-1 p-4 pt-0">
         <div className="relative flex items-center justify-center w-full" style={{ height: '200px' }}>
@@ -80,12 +85,12 @@ export function OpenDealsPieChart() {
               </Pie>
             </PieChart>
           </ChartContainer>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
             <span className="text-2xl font-bold">{totalDeals}</span>
-            <span className="text-sm text-muted-foreground">Deals</span>
+            <span className="text-sm text-muted-foreground">{label}</span>
           </div>
         </div>
-         
+
       </CardContent>
     </Card>
   );
