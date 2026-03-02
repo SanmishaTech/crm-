@@ -308,8 +308,6 @@ export default function InputForm() {
                             <SelectGroup>
                               <SelectLabel>Roles</SelectLabel>
                               <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="sales">Sales</SelectItem>
-                              <SelectItem value="accounts">Accounts</SelectItem>
                               <SelectItem value="Enquiry">Enquiry</SelectItem>
                               <SelectItem value="Follow up">Follow up</SelectItem>
                               <SelectItem value="Audit">Audit</SelectItem>
