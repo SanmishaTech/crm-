@@ -471,26 +471,26 @@ class LeadsController extends BaseController
         return $this->sendResponse(["LeadStatus" => $lead_status], "Lead Status retrieved successfully");
     }
 
-    public function getOpenDealsByUser(Request $request): JsonResponse
+    public function getOpenLeadsByUser(Request $request): JsonResponse
     {
-        $openDeals = Lead::forUserRole(auth()->user())
+        $openLeads = Lead::forUserRole(auth()->user())
             ->where('lead_status', 'Open')
-            ->select('assigned_to', DB::raw('count(*) as deals'))
+            ->select('assigned_to', DB::raw('count(*) as leads'))
             ->groupBy('assigned_to')
             ->get();
 
-        $dealsByUser = [];
-        foreach ($openDeals as $deal) {
-            $user = \App\Models\Employee::find($deal->assigned_to);
-            $dealsByUser[] = [
+        $leadsByUser = [];
+        foreach ($openLeads as $lead) {
+            $user = \App\Models\Employee::find($lead->assigned_to);
+            $leadsByUser[] = [
                 'user' => $user ? $user->employee_name : 'Unassigned',
-                'deals' => $deal->deals,
+                'leads' => $lead->leads,
             ];
         }
 
-        $totalOpenDeals = Lead::forUserRole(auth()->user())->where('lead_status', 'Open')->count();
+        $totalOpenLeads = Lead::forUserRole(auth()->user())->where('lead_status', 'Open')->count();
 
-        return $this->sendResponse(['dealsByUser' => $dealsByUser, 'totalOpenDeals' => $totalOpenDeals], 'Open deals by user retrieved successfully.');
+        return $this->sendResponse(['leadsByUser' => $leadsByUser, 'totalOpenLeads' => $totalOpenLeads], 'Open leads by user retrieved successfully.');
     }
 
     public function getWorkOrdersByUser(Request $request): JsonResponse
@@ -499,45 +499,45 @@ class LeadsController extends BaseController
         // ('Purchase Order', 'Audit', 'ATR Report') or ('Open', etc) depending on their role.
         // We will just sum up leads visible to them by assigned_to.
         $workOrders = Lead::forUserRole(auth()->user())
-            ->select('assigned_to', DB::raw('count(*) as deals'))
+            ->select('assigned_to', DB::raw('count(*) as leads'))
             ->groupBy('assigned_to')
             ->get();
 
-        $dealsByUser = [];
-        foreach ($workOrders as $deal) {
-            $user = \App\Models\Employee::find($deal->assigned_to);
-            $dealsByUser[] = [
+        $leadsByUser = [];
+        foreach ($workOrders as $lead) {
+            $user = \App\Models\Employee::find($lead->assigned_to);
+            $leadsByUser[] = [
                 'user' => $user ? $user->employee_name : 'Unassigned',
-                'deals' => $deal->deals,
+                'leads' => $lead->leads,
             ];
         }
 
         $totalWorkOrders = Lead::forUserRole(auth()->user())->count();
 
-        return $this->sendResponse(['dealsByUser' => $dealsByUser, 'totalWorkOrders' => $totalWorkOrders], 'Work orders by user retrieved successfully.');
+        return $this->sendResponse(['leadsByUser' => $leadsByUser, 'totalWorkOrders' => $totalWorkOrders], 'Work orders by user retrieved successfully.');
     }
 
-    public function getUntouchedDealsByUser(Request $request): JsonResponse
+    public function getUntouchedLeadsByUser(Request $request): JsonResponse
     {
-        $untouchedDeals = Lead::forUserRole(auth()->user())
+        $untouchedLeads = Lead::forUserRole(auth()->user())
             ->where('lead_status', 'Open')
             ->whereDoesntHave('followUps')
-            ->select('assigned_to', DB::raw('count(*) as deals'))
+            ->select('assigned_to', DB::raw('count(*) as leads'))
             ->groupBy('assigned_to')
             ->get();
 
-        $dealsByUser = [];
-        foreach ($untouchedDeals as $deal) {
-            $user = \App\Models\Employee::find($deal->assigned_to);
-            $dealsByUser[] = [
+        $leadsByUser = [];
+        foreach ($untouchedLeads as $lead) {
+            $user = \App\Models\Employee::find($lead->assigned_to);
+            $leadsByUser[] = [
                 'user' => $user ? $user->employee_name : 'Unassigned',
-                'deals' => $deal->deals,
+                'leads' => $lead->leads,
             ];
         }
 
-        $totalUntouchedDeals = Lead::forUserRole(auth()->user())->where('lead_status', 'Open')->whereDoesntHave('followUps')->count();
+        $totalUntouchedLeads = Lead::forUserRole(auth()->user())->where('lead_status', 'Open')->whereDoesntHave('followUps')->count();
 
-        return $this->sendResponse(['dealsByUser' => $dealsByUser, 'totalUntouchedDeals' => $totalUntouchedDeals], 'Untouched deals by user retrieved successfully.');
+        return $this->sendResponse(['leadsByUser' => $leadsByUser, 'totalUntouchedLeads' => $totalUntouchedLeads], 'Untouched leads by user retrieved successfully.');
     }
 
     /**
@@ -665,7 +665,7 @@ class LeadsController extends BaseController
         }
 
         if ($leadStatus !== $leads->lead_status) {
-            return $this->sendError("Lead Status is not set to Purchase Order", ['error' => ['Lead Status is not set to Purchase Order']]);
+            return $this->sendError("Lead Status is not set to Purchase Order Received", ['error' => ['Lead Status is not set to Purchase Order Received']]);
         }
         if ($leads->total_amount_with_gst == 0) {
             return $this->sendError("Add the rates of Products", ['error' => ['Add the rates of Products to generate invoice']]);
@@ -1086,24 +1086,25 @@ class LeadsController extends BaseController
         }
     }
 
-    public function getDoneDealsByUser(Request $request): JsonResponse
+    public function getDoneOrdersByUser(Request $request): JsonResponse
     {
-        $dealStatus = strtolower(config('data.lead_status.Deal'));
-
-        $dealsByUser = Lead::join('employees', 'leads.assigned_to', '=', 'employees.id')
-            ->forUserRole(auth()->user())
-            ->whereRaw('LOWER(TRIM(leads.lead_status)) = ?', [$dealStatus])
-            ->select('employees.employee_name as user', DB::raw('count(leads.id) as deals'))
-            ->groupBy('employees.employee_name')
+        $doneOrders = Lead::forUserRole(auth()->user())
+            ->where('lead_status', 'Purchase Order')
+            ->select('assigned_to', DB::raw('count(*) as leads'))
+            ->groupBy('assigned_to')
             ->get();
 
-        $totalDoneDeals = Lead::forUserRole(auth()->user())->whereRaw('LOWER(TRIM(lead_status)) = ?', [$dealStatus])->count();
+        $ordersByUser = [];
+        foreach ($doneOrders as $lead) {
+            $user = \App\Models\Employee::find($lead->assigned_to);
+            $ordersByUser[] = [
+                'user' => $user ? $user->employee_name : 'Unassigned',
+                'leads' => $lead->leads,
+            ];
+        }
 
-        $data = [
-            'totalDoneDeals' => $totalDoneDeals,
-            'dealsByUser' => $dealsByUser,
-        ];
+        $totalDoneOrders = Lead::forUserRole(auth()->user())->where('lead_status', 'Purchase Order')->count();
 
-        return $this->sendResponse($data, "Done deals data retrieved successfully.");
+        return $this->sendResponse(['totalDoneOrders' => $totalDoneOrders, 'ordersByUser' => $ordersByUser], 'Done orders data retrieved successfully.');
     }
 }

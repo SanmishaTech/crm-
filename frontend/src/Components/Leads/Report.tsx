@@ -219,7 +219,13 @@ const Report = ({ leadId }: ReportProps) => {
                               In Progress
                             </SelectItem>
                             <SelectItem value="Quotation">Quotation</SelectItem>
-                            <SelectItem value="Deal">Deal</SelectItem>
+                            <SelectItem value="Purchase Order">
+                              Purchase Order Received
+                            </SelectItem>
+                            <SelectItem value="Audit">Audit</SelectItem>
+                            <SelectItem value="ATR Report">
+                              ATR Report
+                            </SelectItem>
                             <SelectItem value="Close">Close</SelectItem>
                           </SelectContent>
                         </Select>

@@ -416,10 +416,12 @@ export default function TableDemo() {
                                 </TableCell>
 
                                 <TableCell>
-                                  {lead.lead_status
-                                    ? lead.lead_status.charAt(0).toUpperCase() +
-                                    lead.lead_status.slice(1)
-                                    : "N/A"}
+                                  {lead.lead_status === "Purchase Order"
+                                    ? "Purchase Order Received"
+                                    : lead.lead_status
+                                      ? lead.lead_status.charAt(0).toUpperCase() +
+                                      lead.lead_status.slice(1)
+                                      : "N/A"}
                                 </TableCell>
 
                                 <TableCell className="text-right">

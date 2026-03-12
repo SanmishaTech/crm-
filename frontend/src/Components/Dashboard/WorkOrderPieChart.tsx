@@ -22,7 +22,7 @@ interface ChartData {
 
 interface DealItem {
   user: string;
-  deals: number;
+  leads: number;
 }
 
 interface Props {
@@ -43,8 +43,8 @@ export function WorkOrderPieChart({ title = "Work Order Received", label = "Lead
             "Authorization": "Bearer " + localStorage.getItem("token"),
           },
         });
-        const { dealsByUser, totalWorkOrders } = response.data.data;
-        setChartData(dealsByUser.map((item: DealItem) => ({ name: item.user, value: item.deals })));
+        const { leadsByUser, totalWorkOrders } = response.data.data;
+        setChartData(leadsByUser.map((item: DealItem) => ({ name: item.user, value: item.leads })));
         setTotalDeals(totalWorkOrders);
       } catch (error) {
         console.error("Error fetching work order data:", error);

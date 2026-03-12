@@ -96,9 +96,9 @@ Route::group(['middleware' => ['auth:sanctum', 'permission', 'request.null']], f
 
    Route::get('/permissions', [PermissionsController::class , 'index'])->name("permissions.index");
    Route::get('/generate_permissions', [PermissionsController::class , 'generatePermissions'])->name("permissions.generate");
-   Route::get('/done_deals_by_user', [LeadsController::class , 'getDoneDealsByUser'])->name("deals.by_user");
-   Route::get('/open_deals_by_user', [LeadsController::class , 'getOpenDealsByUser'])->name("deals.open_by_user");
-   Route::get('/untouched_deals_by_user', [LeadsController::class , 'getUntouchedDealsByUser'])->name("deals.untouched_by_user");
+   Route::get('/done_orders_by_user', [LeadsController::class , 'getDoneOrdersByUser'])->name("deals.by_user");
+   Route::get('/open_leads_by_user', [LeadsController::class , 'getOpenLeadsByUser'])->name("deals.open_by_user");
+   Route::get('/untouched_leads_by_user', [LeadsController::class , 'getUntouchedLeadsByUser'])->name("deals.untouched_by_user");
    Route::get('/work_orders_by_user', [LeadsController::class , 'getWorkOrdersByUser'])->name("deals.work_orders_by_user");
    Route::get('/lead_source_distribution', [LeadsController::class , 'getLeadSourceDistribution'])->name("leads.source_distribution");
 });

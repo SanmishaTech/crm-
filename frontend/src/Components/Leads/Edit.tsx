@@ -775,41 +775,30 @@ export default function EditLeadPage() {
                                 </SelectItem>
                                 <SelectItem value="Closed">Close</SelectItem>
                                 <SelectItem value="Purchase Order">
-                                  Purchase Order
+                                  Purchase Order Received
                                 </SelectItem>
                               </>
-                            ) : savedLeadStatus === "Purchase Order" ? (
+                            ) : (savedLeadStatus === "Purchase Order" || savedLeadStatus === "Deal") ? (
                               <>
                                 <SelectItem value="Purchase Order">
-                                  Purchase Order
+                                  Purchase Order Received
                                 </SelectItem>
                                 <SelectItem value="Closed">Close</SelectItem>
-                                {editData?.data?.Lead?.lead_sale_order ? (
-                                  <SelectItem value="Audit">Audit</SelectItem>
-                                ) : null}
+                                <SelectItem value="Audit">Audit</SelectItem>
                               </>
                             ) : savedLeadStatus === "Audit" ? (
                               <>
                                 <SelectItem value="Audit">Audit</SelectItem>
                                 <SelectItem value="Closed">Close</SelectItem>
-                                {editData?.data?.Lead?.lead_audit_report ? (
-                                  <SelectItem value="ATR Report">
-                                    ATR Report
-                                  </SelectItem>
-                                ) : null}
+                                <SelectItem value="ATR Report">
+                                  ATR Report
+                                </SelectItem>
                               </>
                             ) : savedLeadStatus === "ATR Report" ? (
                               <>
-                                <SelectItem
-                                  value="ATR Report"
-                                  disabled={!!editData?.data?.Lead?.lead_atr_report}
-                                >
+                                <SelectItem value="ATR Report">
                                   ATR Report
                                 </SelectItem>
-                                <SelectItem value="Closed">Close</SelectItem>
-                              </>
-                            ) : savedLeadStatus === "Deal" ? (
-                              <>
                                 <SelectItem value="Closed">Close</SelectItem>
                               </>
                             ) : (savedLeadStatus === "Close" ||

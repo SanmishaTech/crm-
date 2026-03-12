@@ -11,7 +11,7 @@ return [
         'Closed' => 'Closed',
         'In Progress' => 'In Progress',
         'Quotation' => 'Quotation',
-        'Purchase Order' => 'Purchase Order',
+        'Purchase Order' => 'Purchase Order Received',
         'Audit' => 'Audit',
         'ATR Report' => 'ATR Report',
     ],

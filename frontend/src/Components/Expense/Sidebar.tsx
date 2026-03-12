@@ -53,7 +53,9 @@ const leadStatusOptions = [
   { value: "Open", label: "Open" },
   { value: "In Progress", label: "In Progress" },
   { value: "Quotation", label: "Quotation" },
-  { value: "Deal", label: "Deal" },
+  { value: "Purchase Order", label: "Purchase Order Received" },
+  { value: "Audit", label: "Audit" },
+  { value: "ATR Report", label: "ATR Report" },
   { value: "Close", label: "Close" },
 ];
 

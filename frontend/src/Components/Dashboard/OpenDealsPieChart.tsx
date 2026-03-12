@@ -22,7 +22,7 @@ interface ChartData {
 
 interface DealItem {
   user: string;
-  deals: number;
+  leads: number;
 }
 
 interface Props {
@@ -30,7 +30,7 @@ interface Props {
   label?: string;
 }
 
-export function OpenDealsPieChart({ title = "Open Deals", label = "Deals" }: Props) {
+export function OpenDealsPieChart({ title = "Open Leads", label = "Leads" }: Props) {
   const [chartData, setChartData] = React.useState<ChartData[]>([]);
   const [totalDeals, setTotalDeals] = React.useState(0);
 
@@ -38,15 +38,15 @@ export function OpenDealsPieChart({ title = "Open Deals", label = "Deals" }: Pro
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/open_deals_by_user`, {
+        const response = await axios.get(`/api/open_leads_by_user`, {
           headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + localStorage.getItem("token"),
           },
         });
-        const { dealsByUser, totalOpenDeals } = response.data.data;
-        setChartData(dealsByUser.map((item: DealItem) => ({ name: item.user, value: item.deals })));
-        setTotalDeals(totalOpenDeals);
+        const { leadsByUser, totalOpenLeads } = response.data.data;
+        setChartData(leadsByUser.map((item: DealItem) => ({ name: item.user, value: item.leads })));
+        setTotalDeals(totalOpenLeads);
       } catch (error) {
         console.error("Error fetching open deals data:", error);
       }
