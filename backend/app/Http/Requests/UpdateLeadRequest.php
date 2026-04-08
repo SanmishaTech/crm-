@@ -29,6 +29,7 @@ class UpdateLeadRequest extends FormRequest
             'lead_sale_order' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'lead_audit_report' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'lead_atr_report' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'payment_received_remark' => ['nullable', 'string'],
         ];
     }
 

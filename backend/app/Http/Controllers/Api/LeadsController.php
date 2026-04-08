@@ -228,6 +228,7 @@ class LeadsController extends BaseController
         if (config("data.lead_status.Open") === $request->input("lead_status") || config("data.lead_status.In Progress") === $request->input("lead_status")) {
             $lead->lead_status = $request->input("lead_status");
         }
+        $lead->payment_received_remark = $request->input("payment_received_remark");
         $lead->save();
 
         $totalAmountWithoutGst = 0;
@@ -360,8 +361,8 @@ class LeadsController extends BaseController
         $lead->emd = $request->input("emd");
         $lead->lead_source = $request->input("lead_source");
         $lead->lead_status = $request->input("lead_status");
-        $lead->lead_closing_reason = $request->input("lead_closing_reason");
         $lead->assigned_to = $request->input("assigned_to");
+        $lead->payment_received_remark = $request->input("payment_received_remark");
 
         if ($request->hasFile('lead_attachment')) {
             $lead->lead_attachment = $quotationFileNameToStore;
@@ -762,6 +763,7 @@ class LeadsController extends BaseController
         $leads->buyer_order_no = $request->input("buyer_order_no");
         $leads->buyers_date = $request->input("buyers_date");
         $leads->invoice_terms = $request->input("invoice_terms");
+        $leads->payment_received_remark = $request->input("payment_received_remark");
         // if(!$leads->invoice_date){
         //     $leads->invoice_date = now()->format("d-m-Y");
         // }

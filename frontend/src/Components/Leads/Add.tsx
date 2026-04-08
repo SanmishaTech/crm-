@@ -87,8 +87,7 @@ const FormSchema = z.object({
   // emd: z.string().optional(),
   emd: z.coerce.number().optional(),
   tender_status: z.string().optional(),
-  // Remove the quantity field from here
-  // product_id: z.string().optional(),
+  payment_received_remark: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -114,6 +113,7 @@ export default function InputForm() {
       quantity: "",
       rate: "",
       product_id: "",
+      payment_received_remark: "",
     },
   });
   const queryClient = useQueryClient();

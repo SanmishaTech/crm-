@@ -38,6 +38,7 @@ const formSchema = z.object({
   buyer_order_no: z.string().optional(),
   buyers_date: z.string().optional(),
   invoice_terms: z.string().optional(),
+  payment_received_remark: z.string().optional(),
 });
 
 const AlertQuotation = ({ leadId }) => {
@@ -55,6 +56,7 @@ const AlertQuotation = ({ leadId }) => {
       buyer_order_no: "",
       buyers_date: "",
       invoice_terms: "",
+      payment_received_remark: "",
     },
   });
 
@@ -298,6 +300,24 @@ const AlertQuotation = ({ leadId }) => {
                         placeholder="Terms and Conditions of the Invoice"
                         className="resize-none w-full"
                         rows={7}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="payment_received_remark"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Payment Received remark</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter payment received remark"
+                        className="resize-none w-full"
+                        rows={3}
                         {...field}
                       />
                     </FormControl>

@@ -88,6 +88,7 @@ const formSchema = z.object({
   lead_sale_order: z.any().optional(),
   lead_audit_report: z.any().optional(),
   lead_atr_report: z.any().optional(),
+  payment_received_remark: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -343,6 +344,7 @@ export default function EditLeadPage() {
         lead_sale_order: newData?.lead_sale_order || "",
         lead_audit_report: newData?.lead_audit_report || "",
         lead_atr_report: newData?.lead_atr_report || "",
+        payment_received_remark: newData?.payment_received_remark || "",
       });
     }
   }, [editData]);
@@ -385,6 +387,7 @@ export default function EditLeadPage() {
       lead_sale_order: saleOrderFile,
       lead_audit_report: auditReportFile,
       lead_atr_report: atrReportFile,
+      payment_received_remark: data.payment_received_remark,
 
       products: productRows.map((row) => ({
         product_id: row.product_id,
@@ -1237,6 +1240,25 @@ export default function EditLeadPage() {
                                   View current ATR report
                                 </Button>
                               ) : null}
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                      {field.value === "Payment Received" && (
+                        <FormField
+                          control={form.control}
+                          name="payment_received_remark"
+                          render={({ field: innerField }) => (
+                            <FormItem className="mt-4">
+                              <FormLabel>Payment Received remark</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Enter payment received remark"
+                                  className="resize-none"
+                                  {...innerField}
+                                />
+                              </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
