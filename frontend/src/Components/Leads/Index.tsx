@@ -472,7 +472,7 @@ export default function TableDemo() {
                                         <AlertQuotation leadId={lead.id} />
                                       )}
 
-                                      {lead.lead_status === "Purchase Order" && (
+                                      {lead.lead_status === "Invoice Generated" && (
                                         <AlertInvoice leadId={lead.id} />
                                       )}
                                     </DropdownMenuContent>

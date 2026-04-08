@@ -368,6 +368,17 @@ export default function EditLeadPage() {
   });
 
   const onSubmit = (data: FormValues) => {
+    // Validation for ATR Report PDF
+    if (data.lead_status === "ATR Report" || 
+        data.lead_status === "Schedule III" || 
+        data.lead_status === "Invoice Generated" || 
+        data.lead_status === "Payment Received") {
+      if (!atrReportFile && !editData?.data?.Lead?.lead_atr_report) {
+         toast.error("Please upload the ATR Report PDF to proceed.");
+         return;
+      }
+    }
+
     const submissionData = {
       ...data,
       lead_attachment: file,
@@ -476,7 +487,7 @@ export default function EditLeadPage() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[350px] max-h-[260px] overflow-y-auto p-0">
+                        <PopoverContent className="w-[350px] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."
@@ -550,7 +561,7 @@ export default function EditLeadPage() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[390px] max-h-[260px] overflow-y-auto p-0">
+                        <PopoverContent className="w-[390px] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search employee..."
@@ -766,14 +777,12 @@ export default function EditLeadPage() {
                                 <SelectItem value="Quotation">
                                   Quotation
                                 </SelectItem>
-                                <SelectItem value="Closed">Close</SelectItem>
                               </>
                             ) : savedLeadStatus === "Quotation" ? (
                               <>
                                 <SelectItem value="Quotation">
                                   Quotation
                                 </SelectItem>
-                                <SelectItem value="Closed">Close</SelectItem>
                                 <SelectItem value="Purchase Order">
                                   Purchase Order Received
                                 </SelectItem>
@@ -783,13 +792,11 @@ export default function EditLeadPage() {
                                 <SelectItem value="Purchase Order">
                                   Purchase Order Received
                                 </SelectItem>
-                                <SelectItem value="Closed">Close</SelectItem>
                                 <SelectItem value="Audit">Audit</SelectItem>
                               </>
                             ) : savedLeadStatus === "Audit" ? (
                               <>
                                 <SelectItem value="Audit">Audit</SelectItem>
-                                <SelectItem value="Closed">Close</SelectItem>
                                 <SelectItem value="ATR Report">
                                   ATR Report
                                 </SelectItem>
@@ -798,6 +805,33 @@ export default function EditLeadPage() {
                               <>
                                 <SelectItem value="ATR Report">
                                   ATR Report
+                                </SelectItem>
+                                <SelectItem value="Schedule III">
+                                  Schedule III
+                                </SelectItem>
+                              </>
+                            ) : savedLeadStatus === "Schedule III" ? (
+                              <>
+                                <SelectItem value="Schedule III">
+                                  Schedule III
+                                </SelectItem>
+                                <SelectItem value="Invoice Generated">
+                                  Invoice Generated
+                                </SelectItem>
+                              </>
+                            ) : savedLeadStatus === "Invoice Generated" ? (
+                              <>
+                                <SelectItem value="Invoice Generated">
+                                  Invoice Generated
+                                </SelectItem>
+                                <SelectItem value="Payment Received">
+                                  Payment Received
+                                </SelectItem>
+                              </>
+                            ) : savedLeadStatus === "Payment Received" ? (
+                              <>
+                                <SelectItem value="Payment Received">
+                                  Payment Received
                                 </SelectItem>
                                 <SelectItem value="Closed">Close</SelectItem>
                               </>

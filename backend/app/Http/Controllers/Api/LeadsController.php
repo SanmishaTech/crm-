@@ -300,6 +300,12 @@ class LeadsController extends BaseController
             return $this->sendError("Lead not found", ['error' => ['lead not found']]);
         }
 
+        if ($request->input('lead_status') === 'ATR Report') {
+            if (!$request->hasFile('lead_atr_report') && empty($lead->lead_atr_report)) {
+                return $this->sendError("ATR Report is required", ['error' => ['Please upload the ATR Report PDF to proceed.']]);
+            }
+        }
+
         if ($request->hasFile('lead_attachment')) {
             if (!empty($lead->lead_attachment) && Storage::exists('public/Lead/lead_attachments/' . $lead->lead_attachment)) {
                 Storage::delete('public/Lead/lead_attachments/' . $lead->lead_attachment);

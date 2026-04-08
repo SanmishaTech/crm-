@@ -14,6 +14,9 @@ return [
         'Purchase Order' => 'Purchase Order Received',
         'Audit' => 'Audit',
         'ATR Report' => 'ATR Report',
+        'Schedule III' => 'Schedule III',
+        'Invoice Generated' => 'Invoice Generated',
+        'Payment Received' => 'Payment Received',
     ],
 
 

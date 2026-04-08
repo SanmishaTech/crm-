@@ -130,7 +130,7 @@ class Lead extends Model
             }
 
             if ($user->hasRole('Audit') || $user->hasRole('ATR')) {
-                $allowedStatuses = array_merge($allowedStatuses, ['Purchase Order', 'Audit', 'ATR Report']);
+                $allowedStatuses = array_merge($allowedStatuses, ['Purchase Order', 'Audit', 'ATR Report', 'Schedule III', 'Invoice Generated', 'Payment Received']);
             }
         }
 
