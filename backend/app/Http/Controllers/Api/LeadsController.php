@@ -478,6 +478,18 @@ class LeadsController extends BaseController
         return $this->sendResponse(["LeadStatus" => $lead_status], "Lead Status retrieved successfully");
     }
 
+    /**
+     * Lead Source.
+     */
+    public function leadSources(): JsonResponse
+    {
+        $lead_sources = config("data.lead_sources");
+        if (!$lead_sources) {
+            return $this->sendError("Lead Source not found", ['error' => 'Lead Source not found']);
+        }
+        return $this->sendResponse(["LeadSources" => $lead_sources], "Lead Source retrieved successfully");
+    }
+
     public function getOpenLeadsByUser(Request $request): JsonResponse
     {
         $openLeads = Lead::forUserRole(auth()->user())

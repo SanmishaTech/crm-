@@ -19,5 +19,13 @@ return [
         'Payment Received' => 'Payment Received',
     ],
 
+    'lead_sources' => [
+        'India Mart' => 'India Mart',
+        'Just Dial' => 'Just Dial',
+        'Trade India' => 'Trade India',
+        'Direct Inquiry' => 'Direct Inquiry',
+        'Contractor/Interior' => 'Contractor/Interior',
+    ],
+
 
 ];

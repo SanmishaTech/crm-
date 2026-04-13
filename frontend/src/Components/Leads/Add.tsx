@@ -96,6 +96,7 @@ export default function InputForm() {
   const [value, setValue] = React.useState("");
   const [contacts, setContacts] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
+  const [leadSources, setLeadSources] = useState<any[]>([]);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -204,6 +205,24 @@ export default function InputForm() {
   //     .then((response) => setContacts(response.data))
   //     .catch((err) => console.error("Failed to fetch contacts", err));
   // };
+
+
+  useEffect(() => {
+    const fetchLeadSources = async () => {
+      try {
+        const response = await axios.get("/api/lead_sources", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        setLeadSources(Object.values(response.data.data.LeadSources));
+      } catch (err) {
+        console.error("Error fetching lead sources:", err);
+      }
+    };
+    fetchLeadSources();
+  }, []);
 
   const { data: FetchEmployees } = useGetData({
     endpoint: `/api/all_employees`,
@@ -341,8 +360,8 @@ export default function InputForm() {
                             >
                               {field.value
                                 ? contacts.find(
-                                    (contact) => contact.id === field.value
-                                  )?.contact_person || "No Contact Person"
+                                  (contact) => contact.id === field.value
+                                )?.contact_person || "No Contact Person"
                                 : "Select Contact"}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
@@ -426,8 +445,8 @@ export default function InputForm() {
                             >
                               {field.value
                                 ? employees.find(
-                                    (employee) => employee.id === field.value
-                                  )?.name || "No Employee Name"
+                                  (employee) => employee.id === field.value
+                                )?.name || "No Employee Name"
                                 : "Select Employee"}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
@@ -504,16 +523,11 @@ export default function InputForm() {
                             <SelectValue placeholder="Select Lead Source" />
                           </SelectTrigger>
                           <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
-                            <SelectItem value="Email">Email</SelectItem>
-                            <SelectItem value="Inbound Call">
-                              Inbound Call
-                            </SelectItem>
-                            <SelectItem value="Outbound Call">
-                              Outbound Call
-                            </SelectItem>
-                            <SelectItem value="India Market">
-                              India Market
-                            </SelectItem>
+                            {leadSources.map((source) => (
+                              <SelectItem key={source} value={source}>
+                                {source}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -762,9 +776,9 @@ export default function InputForm() {
                             >
                               {row.product_id
                                 ? frameworks.find(
-                                    (framework) =>
-                                      framework.value === row.product_id
-                                  )?.label
+                                  (framework) =>
+                                    framework.value === row.product_id
+                                )?.label
                                 : "Select products..."}
                               <ChevronsUpDown className="opacity-50" />
                             </Button>

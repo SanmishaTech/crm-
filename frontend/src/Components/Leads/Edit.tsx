@@ -117,6 +117,7 @@ export default function EditLeadPage() {
 
   const [contacts, setContacts] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
+  const [leadSources, setLeadSources] = useState<any[]>([]);
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [saleOrderFile, setSaleOrderFile] = useState<File | null>(null);
@@ -237,6 +238,23 @@ export default function EditLeadPage() {
       },
     },
   });
+
+  useEffect(() => {
+    const fetchLeadSources = async () => {
+      try {
+        const response = await axios.get("/api/lead_sources", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        });
+        setLeadSources(Object.values(response.data.data.LeadSources));
+      } catch (err) {
+        console.error("Error fetching lead sources:", err);
+      }
+    };
+    fetchLeadSources();
+  }, []);
 
   const { data: productsData } = useGetData({
     endpoint: "/api/all_products",
@@ -635,16 +653,11 @@ export default function EditLeadPage() {
                             <SelectValue placeholder="Select Lead Source" />
                           </SelectTrigger>
                           <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
-                            <SelectItem value="Email">Email</SelectItem>
-                            <SelectItem value="Inbound Call">
-                              Inbound Call
-                            </SelectItem>
-                            <SelectItem value="Outbound Call">
-                              Outbound Call
-                            </SelectItem>
-                            <SelectItem value="India Market">
-                              India Market
-                            </SelectItem>
+                            {leadSources.map((source) => (
+                              <SelectItem key={source} value={source}>
+                                {source}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </FormControl>

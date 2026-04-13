@@ -255,7 +255,7 @@ export default function TableDemo() {
                           Edit
                         </Button>
                         <Resign employee={employee} id={employee.id} />
-                        {/* <AlertDialogbox url={employee.id} /> */}
+                        <AlertDialogbox url={employee.id} />
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
