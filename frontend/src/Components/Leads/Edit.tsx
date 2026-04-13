@@ -446,7 +446,7 @@ export default function EditLeadPage() {
   const contactsArray = Array.isArray(contacts) ? contacts : [];
 
   return (
-    <div className=" mx-auto p-6 ">
+    <div className="container mx-auto p-4 md:p-6 ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -459,7 +459,7 @@ export default function EditLeadPage() {
             Back
           </Button>
         </div>
-        <div className="flex-1 mr-9 text-center">
+        <div className="flex-1 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Lead Edit Form</h2>
             <p className="text-xs mb-9 text-muted-foreground">
@@ -478,8 +478,8 @@ export default function EditLeadPage() {
                 Lead Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+            <CardContent className="p-4 md:p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="contact_id"
@@ -495,7 +495,7 @@ export default function EditLeadPage() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[550px] lg:w-[350px] md:w-[250px] justify-between relative top-[10px]",
+                                "w-full justify-between relative top-[10px]",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -508,7 +508,7 @@ export default function EditLeadPage() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[350px] p-0">
+                        <PopoverContent className="w-full sm:w-[350px] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."
@@ -569,7 +569,7 @@ export default function EditLeadPage() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[390px] justify-between relative top-[10px]",
+                                "w-full justify-between relative top-[10px]",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -582,7 +582,7 @@ export default function EditLeadPage() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[390px] p-0">
+                        <PopoverContent className="w-full sm:w-[390px] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search employee..."
@@ -761,8 +761,8 @@ export default function EditLeadPage() {
                 ) : null}
               </div>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-x-6 ">
+            <CardContent className="p-4 md:p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="lead_status"

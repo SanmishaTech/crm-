@@ -306,7 +306,7 @@ export default function InputForm() {
   };
 
   return (
-    <div className=" mx-auto p-6 ">
+    <div className="container mx-auto p-4 md:p-6 ">
       <div className="flex items-center justify-between w-full">
         <div className="mb-7">
           <Button
@@ -319,7 +319,7 @@ export default function InputForm() {
             Back
           </Button>
         </div>
-        <div className="flex-1 mr-9 text-center">
+        <div className="flex-1 text-center">
           <div className="-ml-4">
             <h2 className="text-2xl font-semibold">Lead Form</h2>
             <p className="text-xs mb-9 text-muted-foreground">
@@ -337,8 +337,8 @@ export default function InputForm() {
                 Lead Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="flex justify-center space-x-6 grid grid-cols-4 gap-4">
+            <CardContent className="p-4 md:p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <FormField
                   control={form.control}
                   name="contact_id"
@@ -354,7 +354,7 @@ export default function InputForm() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[390px] justify-between relative top-[10px]",
+                                "w-full justify-between relative top-[10px]",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -367,7 +367,7 @@ export default function InputForm() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[390px] p-0">
+                        <PopoverContent className="w-full sm:w-[390px] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."
@@ -439,7 +439,7 @@ export default function InputForm() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                "w-[390px] justify-between relative top-[10px]",
+                                "w-full justify-between relative top-[10px]",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -452,7 +452,7 @@ export default function InputForm() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[390px] p-0">
+                        <PopoverContent className="w-full sm:w-[390px] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search employee..."
@@ -560,8 +560,8 @@ export default function InputForm() {
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold">Lead Type</CardTitle>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-x-6 ">
+            <CardContent className="p-4 md:p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="lead_type"
@@ -589,7 +589,7 @@ export default function InputForm() {
               </div>
               {form.watch("lead_type") === "tender" && (
                 <div className=" space-y-6">
-                  <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4 mt-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                     <FormField
                       control={form.control}
                       name="tender_number"
@@ -637,7 +637,7 @@ export default function InputForm() {
                     />
                   </div>
 
-                  <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
                       name="tender_category"
