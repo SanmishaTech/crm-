@@ -469,7 +469,7 @@ class LeadsController extends BaseController
     /**
      * Lead Status.
      */
-    public function leadStatus(string $id): JsonResponse
+    public function leadStatus(): JsonResponse
     {
         $lead_status = config("data.lead_status");
         if (!$lead_status) {

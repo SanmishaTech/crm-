@@ -239,22 +239,28 @@ export default function EditLeadPage() {
     },
   });
 
-  useEffect(() => {
-    const fetchLeadSources = async () => {
-      try {
-        const response = await axios.get("/api/lead_sources", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        setLeadSources(Object.values(response.data.data.LeadSources));
-      } catch (err) {
-        console.error("Error fetching lead sources:", err);
-      }
-    };
-    fetchLeadSources();
-  }, []);
+  const [leadStatuses, setLeadStatuses] = useState<any[]>([]);
+
+  useGetData({
+    endpoint: `/api/lead_sources`,
+    params: {
+      queryKey: ["lead_sources"],
+      onSuccess: (data) => {
+        setLeadSources(Object.values(data.data.LeadSources));
+      },
+    },
+  });
+
+  useGetData({
+    endpoint: `/api/lead_status`,
+    params: {
+      queryKey: ["lead_status"],
+      onSuccess: (data) => {
+        setLeadStatuses(Object.values(data.data.LeadStatus));
+      },
+    },
+  });
+
 
   const { data: productsData } = useGetData({
     endpoint: "/api/all_products",

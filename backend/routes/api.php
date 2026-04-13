@@ -62,9 +62,7 @@ Route::group(['middleware' => ['auth:sanctum', 'permission', 'request.null']], f
    Route::get('/all_suppliers', [SuppliersController::class , 'allSuppliers'])->name("suppliers.all");
    Route::get('/all_clients', [ClientsController::class , 'allClients'])->name("clients.all");
    Route::get('/all_products', [ProductsController::class , 'allProducts'])->name("products.all");
-   Route::get('/follow_up_types', [LeadsController::class , 'follow_up_types'])->name("follow_up_types.index");
-   Route::get('/lead_status', [LeadsController::class , 'leadStatus'])->name("lead_status.index");
-   Route::get('/lead_sources', [LeadsController::class , 'leadSources'])->name("lead_sources.index");
+
    Route::get('/close_lead/{id}', [LeadsController::class , 'closeLead'])->name("close_lead.update");
    Route::post('/generate_quotation/{id}', [LeadsController::class , 'generateQuotation'])->name("generate_quotation.generate");
    Route::post('/generate_lead_report/{id}', [LeadsController::class , 'generateReport'])->name("generate_report.generate");
@@ -110,4 +108,8 @@ Route::group(['middleware' => ['auth:sanctum', 'request.null']], function () {
    Route::get('/sale_orders/{files}', [LeadsController::class , 'showSaleOrder'])->name("leads.sale_order");
    Route::get('/audit_reports/{files}', [LeadsController::class , 'showAuditReport'])->name("leads.audit_report");
    Route::get('/atr_reports/{files}', [LeadsController::class , 'showAtrReport'])->name("leads.atr_report");
+
+   Route::get('/follow_up_types', [LeadsController::class , 'follow_up_types'])->name("follow_up_types.index");
+   Route::get('/lead_status', [LeadsController::class , 'leadStatus'])->name("lead_status.index");
+   Route::get('/lead_sources', [LeadsController::class , 'leadSources'])->name("lead_sources.index");
 });

@@ -1,4 +1,6 @@
+//@ts-nocheck
 import React, { useState, useEffect } from "react";
+
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -103,7 +105,8 @@ export default function InputForm() {
       contact_id: "",
       assigned_to: "",
       lead_source: "",
-      lead_status: "Open",
+      lead_status: "",
+
       lead_type: "basic",
       tender_number: "",
       bid_end_date: "",
@@ -207,22 +210,28 @@ export default function InputForm() {
   // };
 
 
-  useEffect(() => {
-    const fetchLeadSources = async () => {
-      try {
-        const response = await axios.get("/api/lead_sources", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        setLeadSources(Object.values(response.data.data.LeadSources));
-      } catch (err) {
-        console.error("Error fetching lead sources:", err);
-      }
-    };
-    fetchLeadSources();
-  }, []);
+  const [leadStatuses, setLeadStatuses] = useState<any[]>([]);
+
+  useGetData({
+    endpoint: `/api/lead_sources`,
+    params: {
+      queryKey: ["lead_sources"],
+      onSuccess: (data) => {
+        setLeadSources(Object.values(data.data.LeadSources));
+      },
+    },
+  });
+
+  useGetData({
+    endpoint: `/api/lead_status`,
+    params: {
+      queryKey: ["lead_status"],
+      onSuccess: (data) => {
+        setLeadStatuses(Object.values(data.data.LeadStatus));
+      },
+    },
+  });
+
 
   const { data: FetchEmployees } = useGetData({
     endpoint: `/api/all_employees`,
@@ -542,17 +551,27 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Lead Status</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter Lead Status"
-                          {...field}
-                          defaultValue="open"
-                          disabled
-                        />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => field.onChange(value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Lead Status" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
+                            {leadStatuses.map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {status}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
               </div>
             </CardContent>
           </Card>
