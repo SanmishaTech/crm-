@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { Pie, PieChart, Tooltip, Cell } from "recharts"
 import {
   Card,
@@ -12,15 +11,11 @@ import {
 import {
   ChartContainer,
 } from "@/components/ui/chart"
-import axios from "axios";
+import useFetchData from "@/lib/HTTP/useFetchData";
 
 const COLORS = ['#00529B', '#0077CC', '#009CFF', '#4DB8FF', '#99D6FF', '#CCEFFF'];
 
-interface ChartData {
-  name: string;
-  value: number;
-}
-
+// Removed unused ChartData
 interface LeadSourceData {
   lead_source: string;
   count: number;
@@ -32,29 +27,10 @@ interface Props {
 }
 
 export function LeadSourcePieChart({ title = "Lead Sources", label = "Leads" }: Props) {
-  const [chartData, setChartData] = React.useState<ChartData[]>([]);
-  const [totalLeads, setTotalLeads] = React.useState(0);
-
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`/api/lead_source_distribution`, {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        const { lead_sources }: { lead_sources: LeadSourceData[] } = response.data.data;
-        setChartData(lead_sources.map((item: LeadSourceData) => ({ name: item.lead_source, value: item.count })));
-        setTotalLeads(lead_sources.reduce((acc: number, item: LeadSourceData) => acc + item.count, 0));
-      } catch (error) {
-        console.error("Error fetching lead source data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const { data: response } = useFetchData("lead_source_distribution", null, { retry: 1 });
+  const leadSources: LeadSourceData[] = response?.data?.lead_sources || [];
+  const chartData = leadSources.map((item: LeadSourceData) => ({ name: item.lead_source, value: item.count }));
+  const totalLeads = leadSources.reduce((acc: number, item: LeadSourceData) => acc + item.count, 0);
 
   return (
     <Card className="flex flex-col bg-accent/40 h-full">

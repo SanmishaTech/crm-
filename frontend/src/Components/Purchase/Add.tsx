@@ -407,30 +407,18 @@ export default function InputForm() {
                           <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
                             <SelectItem value="pending">Pending</SelectItem>
                             <SelectItem value="paid">Paid</SelectItem>
-                            <SelectItem value="partially_paid">
-                              Partially Paid
-                            </SelectItem>
+                            <SelectItem value="partially_paid">Partially Paid</SelectItem>
                             <SelectItem value="overdue">Overdue</SelectItem>
                             <SelectItem value="cancelled">Cancelled</SelectItem>
                             <SelectItem value="failed">Failed</SelectItem>
                             <SelectItem value="refunded">Refunded</SelectItem>
                             <SelectItem value="on_hold">On Hold</SelectItem>
-                            <SelectItem value="awaiting_approval">
-                              Awaiting Approval
-                            </SelectItem>
-                            <SelectItem value="authorized">
-                              Authorized
-                            </SelectItem>
-                            <SelectItem value="processing">
-                              Processing
-                            </SelectItem>
-                            <SelectItem value="failed_verification">
-                              Failed Verification
-                            </SelectItem>
+                            <SelectItem value="awaiting_approval">Awaiting Approval</SelectItem>
+                            <SelectItem value="authorized">Authorized</SelectItem>
+                            <SelectItem value="processing">Processing</SelectItem>
+                            <SelectItem value="failed_verification">Failed Verification</SelectItem>
                             <SelectItem value="disputed">Disputed</SelectItem>
-                            <SelectItem value="pending_confirmation">
-                              Pending Confirmation
-                            </SelectItem>
+                            <SelectItem value="pending_confirmation">Pending Confirmation</SelectItem>
                             <SelectItem value="settled">Settled</SelectItem>
                           </SelectContent>
                         </Select>
@@ -621,7 +609,7 @@ export default function InputForm() {
                               variant="outline"
                               role="combobox"
                               aria-expanded={row.isOpen}
-                              className="w-[200px] justify-between"
+                              className="w-full justify-between"
                             >
                               {row.product_id
                                 ? frameworks.find(
@@ -632,7 +620,7 @@ export default function InputForm() {
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                             <Command>
                               <CommandInput
                                 placeholder="Search products..."

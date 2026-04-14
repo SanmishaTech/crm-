@@ -104,7 +104,7 @@ function App() {
         richColors
         className=""
         closeButton
-        position="top-right"
+        position="top-center"
         theme={theme === "dark" ? "dark" : "light"}
       />
 
@@ -227,8 +227,10 @@ function App() {
         >
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
-                <ChevronUp />
+              <TooltipTrigger asChild>
+                <span>
+                  <ChevronUp />
+                </span>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Scroll to top</p>

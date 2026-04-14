@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -59,15 +58,12 @@ type PaginationData = {
 };
 
 const DepartmentDialog = ({
-  loading,
-  setLoading,
   open,
   form,
   setOpen,
   editDepartment,
   setError,
   setEditDepartment,
-  fetchDepartments,
   handleInvalidateQuery,
 }) => {
   // Add Department mutation function
@@ -76,7 +72,6 @@ const DepartmentDialog = ({
     endpoint: "/api/departments",
     params: {
       onSuccess: (data) => {
-        console.log("department data", data);
         form.reset();
         handleInvalidateQuery();
         // fetchDepartments();
@@ -108,10 +103,8 @@ const DepartmentDialog = ({
       onSuccess: (data) => {
         setEditDepartment(null); // Reset edit mode
         form.reset();
-        // fetchDepartments();
         handleInvalidateQuery();
         handleDialogClose();
-        setLoading(false);
       },
       onError: (error) => {
         if (error.response && error.response.data.errors) {
@@ -123,12 +116,11 @@ const DepartmentDialog = ({
               message: serverErrors.department_name[0], // The error message from the server
             });
           } else {
-            setError("Failed to update department"); // For any other errors
+            setError("Failed to update department");
           }
         } else {
           setError("Failed to update department");
         }
-        setLoading(false);
       },
     },
   });
@@ -136,12 +128,13 @@ const DepartmentDialog = ({
   // onSubmit function
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     if (editDepartment) {
-      setLoading(true);
       updateDepartmentData.mutate(data);
     } else {
       storeDepartmentData.mutate(data);
     }
   };
+
+  const isPending = storeDepartmentData.isPending || updateDepartmentData.isPending;
 
   const handleDialogOpen = () => {
     setEditDepartment(null);
@@ -189,8 +182,8 @@ const DepartmentDialog = ({
               />
 
               <DialogFooter className="mt-5">
-                <Button type="submit">
-                  {loading ? "Loading..." : "Save Changes"}
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? "Loading..." : "Save Changes"}
                 </Button>
               </DialogFooter>
             </form>

@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -72,7 +71,11 @@ type Contacts = {
 const formSchema = z.object({
   contact_person: z.string().min(1, "Contact name is required").max(50),
   client: z.string().optional(),
-  mobile_1: z.string().optional(),
+  mobile_1: z
+    .string()
+    .regex(/^\d{10}$/, { message: "Mobile number must be exactly 10 digits" })
+    .optional()
+    .or(z.literal("")),
   email: z.string().optional(),
   client_id: z.string().optional(),
   street_address: z.string().optional(),
@@ -245,9 +248,11 @@ const AddContacts = ({ fetchContacts }) => {
                             placeholder="Enter Contact Number "
                             {...field}
                             type="text"
-                            inputMode="numeric"
-                            pattern="\d{10}"
                             maxLength={10}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/\D/g, "");
+                              field.onChange(value);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />

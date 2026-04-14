@@ -7,40 +7,49 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
-import { Button } from "@/components/ui/button";
+import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-export default function AlertDialogbox({ url, handleInvalidateQuery }) {
+export default function AlertDialogbox({
+  url,
+  open,
+  onOpenChange,
+}: {
+  url: string | number | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const queryClient = useQueryClient();
+  const endpoint = url === null ? "" : `/api/departments/${url}`;
+  const deleteData = useDeleteData({
+    endpoint,
+    params: {
+      onSuccess: () => {
+        toast.success("Deleted successfully");
+        queryClient.invalidateQueries({ queryKey: ["departments"] });
+        onOpenChange(false);
+      },
+    },
+  });
+
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-full text-sm ">
-          Delete
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            This action cannot be undone. This will permanently delete this record from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={async () => {
-              await axios.delete(`/api/departments/${url}`, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + localStorage.getItem("token"),
-                },
-              });
-              handleInvalidateQuery();
+            disabled={!url}
+            onClick={() => {
+              if (!url) return;
+              deleteData.mutate({});
             }}
           >
             Continue

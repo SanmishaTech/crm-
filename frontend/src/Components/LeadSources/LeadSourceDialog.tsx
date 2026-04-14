@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
 import { usePostData } from "@/lib/HTTP/POST";
 import { usePutData } from "@/lib/HTTP/PUT";

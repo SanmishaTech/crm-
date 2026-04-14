@@ -9,16 +9,27 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-export default function AlertDialogbox({ url }) {
+export default function AlertDialogbox({ url }: { url: string | number }) {
   const queryClient = useQueryClient();
+  const deleteData = useDeleteData({
+    endpoint: `/api/replacements/${url}`,
+    params: {
+      onSuccess: () => {
+        toast.success("Deleted successfully");
+        queryClient.invalidateQueries({ queryKey: ["replacements"] });
+      },
+    },
+  });
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="w-full text-sm ">
+        <Button variant="ghost" size="sm" className="w-full text-sm">
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -26,24 +37,14 @@ export default function AlertDialogbox({ url }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently remove your data
-            from our servers.
+            This action cannot be undone. This will permanently delete this record from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={async () => {
-              await axios.delete(`/api/replacements/${url}`, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + localStorage.getItem("token"),
-                },
-              });
-              queryClient.invalidateQueries({ queryKey: ["replacements"] });
-              queryClient.invalidateQueries({
-                queryKey: ["replacements", url],
-              });
+            onClick={() => {
+              deleteData.mutate({});
             }}
           >
             Continue

@@ -1,23 +1,14 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useQueryClient } from "@tanstack/react-query";
-import { X, Check, ChevronsUpDown, ChevronUp } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
-import AddContacts from "./AddContacts";
 import { cn } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
+
+import { X, Check, ChevronsUpDown, ChevronLeft } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
@@ -25,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -36,7 +26,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -45,7 +34,6 @@ import {
 import { z } from "zod";
 import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
-import { usePostData } from "@/lib/HTTP/POST";
 import {
   Command,
   CommandEmpty,
@@ -89,8 +77,6 @@ const formSchema = z.object({
   voucher_amount: z.string(),
 });
 
-type FormValues = z.infer<typeof formSchema>;
-
 interface Product {
   id: number;
   product: string;
@@ -98,12 +84,11 @@ interface Product {
   rate?: string;
 }
 
+
 export default function EditExpensePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const [loading, setLoading] = useState(false);
   const [expenseHeads, setExpenseHeads] = useState<
     Array<{ value: number; label: string }>
   >([]);
@@ -154,7 +139,7 @@ export default function EditExpensePage() {
 
       // Set expense details rows
       if (expense.expense_details) {
-        const details = expense.expense_details.map((detail) => ({
+        const details = expense.expense_details.map((detail: any) => ({
           expense_head_id: detail.expense_head_id,
           amount: detail.amount,
           isOpen: false,
@@ -167,7 +152,7 @@ export default function EditExpensePage() {
   // Update expense heads when data is loaded
   useEffect(() => {
     if (expenseHeadsData?.data?.ExpenseHead) {
-      const mappedHeads = expenseHeadsData.data.ExpenseHead.map((head) => ({
+      const mappedHeads = expenseHeadsData.data.ExpenseHead.map((head: any) => ({
         value: head.id,
         label: head.expense_head,
       }));
@@ -348,7 +333,7 @@ export default function EditExpensePage() {
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                             <Command>
                               <CommandInput
                                 placeholder="Search expense heads..."

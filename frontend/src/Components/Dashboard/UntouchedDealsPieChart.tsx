@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { Pie, PieChart, Tooltip, Cell } from "recharts"
 import {
   Card,
@@ -11,15 +10,11 @@ import {
 import {
   ChartContainer,
 } from "@/components/ui/chart"
-import axios from "axios";
+import useFetchData from "@/lib/HTTP/useFetchData";
 
 const COLORS = ['#0D47A1', '#1976D2', '#2196F3', '#64B5F6', '#90CAF9', '#BBDEFB'];
 
-interface ChartData {
-  name: string;
-  value: number;
-}
-
+// Removed unused ChartData
 interface DealItem {
   user: string;
   leads: number;
@@ -31,29 +26,9 @@ interface Props {
 }
 
 export function UntouchedDealsPieChart({ title = "Untouched Leads", label = "Leads" }: Props) {
-  const [chartData, setChartData] = React.useState<ChartData[]>([]);
-  const [totalDeals, setTotalDeals] = React.useState(0);
-
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`/api/untouched_leads_by_user`, {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        const { leadsByUser, totalUntouchedLeads } = response.data.data;
-        setChartData(leadsByUser.map((item: DealItem) => ({ name: item.user, value: item.leads })));
-        setTotalDeals(totalUntouchedLeads);
-      } catch (error) {
-        console.error("Error fetching untouched deals data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const { data: response } = useFetchData("untouched_leads_by_user", null, { retry: 1 });
+  const chartData = response?.data?.leadsByUser?.map((item: DealItem) => ({ name: item.user, value: item.leads })) || [];
+  const totalDeals = response?.data?.totalUntouchedLeads || 0;
 
   return (
     <Card className="flex flex-col bg-accent/40 h-full">

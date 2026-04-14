@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -40,7 +39,11 @@ const FormSchema = z.object({
   pincode: z.string().min(3, "Pincode cannot be empty").optional(),
   country: z.string().min(3, "Country cannot be empty").optional(),
   gstin: z.any().optional(),
-  contact_no: z.string().optional(),
+  contact_no: z
+    .string()
+    .regex(/^\d{10}$/, { message: "Contact number must be exactly 10 digits" })
+    .optional()
+    .or(z.literal("")),
 
   email: z.string().optional(),
   shipping_street: z.string().optional(),
@@ -176,9 +179,11 @@ export default function InputForm() {
                           placeholder="Enter Contact"
                           {...field}
                           type="text"
-                          inputMode="numeric"
                           maxLength={10}
-                          value={field.value}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(value);
+                          }}
                         />
                       </FormControl>
 

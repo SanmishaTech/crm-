@@ -1,22 +1,14 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,15 +18,11 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
+import { Check, ChevronsUpDown, ChevronLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import AddProductCategory from "../ProductCategories/AddProductCategory";
 
 type ProductCategory = {
@@ -72,9 +60,11 @@ export default function InputForm() {
   const [productCategories, setProductCategories] = useState<ProductCategory[]>(
     []
   );
-  const [loading, setLoading] = useState(false); // To handle loading state
 
-  const [suppliers, setSuppliers] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [supplierOpen, setSupplierOpen] = useState(false);
+
+  const [suppliers, setSuppliers] = useState<any[]>([]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -84,9 +74,9 @@ export default function InputForm() {
       manufacturer: "",
       gst_rate: "",
       hsn_code: "",
-      opening_qty: null,
-      // closing_qty: null,
-      last_traded_price: null,
+      opening_qty: "",
+      closing_qty: "",
+      last_traded_price: "",
       product_category_id: "",
       supplier_id: "",
     },
@@ -137,12 +127,13 @@ export default function InputForm() {
   const StoreProductData = usePostData({
     endpoint: "/api/products",
     params: {
-      onSuccess: (data) => {
-        console.log("data", data);
+      onSuccess: () => {
+
+        toast.success("Product added successfully");
         navigate("/products");
       },
-      onError: (error) => {
-        if (error.response && error.response.data.errors) {
+      onError: (error: any) => {
+        if (error.response?.data?.errors) {
           const serverStatus = error.response.data.status;
           const serverErrors = error.response.data.errors;
           // Assuming the error is for the department_name field
@@ -244,37 +235,63 @@ export default function InputForm() {
                   control={form.control}
                   name="product_category_id"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col">
                       <FormLabel>Product Category</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={String(field.value)}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="">
-                            <SelectValue placeholder="Select Product Category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {loading ? (
-                              <SelectItem disabled>Loading...</SelectItem>
-                            ) : (
-                              productCategories.map((ProductCategory) => (
-                                <SelectItem
-                                  key={ProductCategory.id}
-                                  value={String(ProductCategory.id)}
-                                >
-                                  {ProductCategory.product_category}
-                                </SelectItem>
-                              ))
-                            )}
-                            <div className="px-5 py-1">
-                              <AddProductCategory
-                                fetchProductCategories={fetchProductCategories}
-                              />
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className={cn(
+                                "w-full justify-between font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? productCategories.find(
+                                    (category) => String(category.id) === String(field.value)
+                                  )?.product_category || "Select Product Category"
+                                : "Select Product Category"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                          <Command>
+                            <CommandInput placeholder="Search product category..." />
+                            <CommandList>
+                              <CommandEmpty>No category found.</CommandEmpty>
+                              <CommandGroup>
+                                {productCategories.map((category) => (
+                                  <CommandItem
+                                    key={category.id}
+                                    value={category.product_category}
+                                    onSelect={() => {
+                                      form.setValue("product_category_id", String(category.id));
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        String(category.id) === String(field.value)
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {category.product_category}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                            <div className="border-t p-2">
+                              <AddProductCategory fetchProductCategories={fetchProductCategories} />
                             </div>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -337,8 +354,9 @@ export default function InputForm() {
                           maxLength={8}
                           minLength={6}
                           onInput={(e) => {
-                            const value = e.target.value.slice(0, 8);
-                            e.target.value = value;
+                            const target = e.target as HTMLInputElement;
+                            const value = target.value.slice(0, 8);
+                            target.value = value;
                           }}
                         />
                       </FormControl>
@@ -454,34 +472,62 @@ export default function InputForm() {
                 control={form.control}
                 name="supplier_id"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>
                       Supplier <span style={{ color: "red" }}>*</span>
                     </FormLabel>
-                    <FormControl>
-                      <Select
-                        value={String(field.value)}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="">
-                          <SelectValue placeholder="Select Supplier" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {loading ? (
-                            <SelectItem disabled>Loading...</SelectItem>
-                          ) : (
-                            suppliers.map((supplier) => (
-                              <SelectItem
-                                key={supplier.id}
-                                value={String(supplier.id)}
-                              >
-                                {supplier.supplier}
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
+                    <Popover open={supplierOpen} onOpenChange={setSupplierOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={supplierOpen}
+                            className={cn(
+                              "w-full justify-between font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value
+                              ? suppliers.find(
+                                  (supplier) => String(supplier.id) === String(field.value)
+                                )?.supplier || "Select Supplier"
+                              : "Select Supplier"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                        <Command>
+                          <CommandInput placeholder="Search supplier..." />
+                          <CommandList>
+                            <CommandEmpty>No supplier found.</CommandEmpty>
+                            <CommandGroup>
+                              {suppliers.map((supplier) => (
+                                <CommandItem
+                                  key={supplier.id}
+                                  value={supplier.supplier}
+                                  onSelect={() => {
+                                    form.setValue("supplier_id", String(supplier.id));
+                                    setSupplierOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      String(supplier.id) === String(field.value)
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {supplier.supplier}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}

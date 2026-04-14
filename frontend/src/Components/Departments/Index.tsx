@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -21,6 +20,8 @@ import {
   Search,
   Pencil,
   Trash,
+  Loader2,
+  X,
   MoreHorizontal,
   ListFilter,
 } from "lucide-react";
@@ -80,11 +81,10 @@ const formSchema = z.object({
 });
 
 export default function TableDemo() {
-  const [departments, setDepartments] = useState<Department[]>([]);
   const [open, setOpen] = useState(false); // Manage the dialog state
-  const [loading, setLoading] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | number | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
   const [editDepartment, setEditDepartment] = useState<Department | null>(null); // To hold department to edit
   const queryClient = useQueryClient();
@@ -120,26 +120,20 @@ export default function TableDemo() {
     data: departmentData,
     isLoading: isDepartmentLoading,
     error: isDepartmentError,
-    isSuccess: isDepartmentSuccess,
   } = useFetchData("departments", null, options, params);
 
+  const departments = departmentData?.data?.Departments || [];
+  const pagination = departmentData?.data?.Pagination || null;
+
   const handleInvalidateQuery = () => {
-    // Invalidate the 'departments' query to trigger a refetch
-    queryClient.invalidateQueries(["departments", null, params]);
+    queryClient.invalidateQueries(["departments"]);
   };
 
   useEffect(() => {
-    if (isDepartmentSuccess) {
-      setDepartments(departmentData.data.Departments);
-      setPagination(departmentData.data.Pagination);
-      setLoading(false);
-    }
     if (isDepartmentError) {
-      console.log("Error", isDepartmentError.message);
+      // Error logging can be added here if needed in a non-console way
     }
-
-    handleInvalidateQuery();
-  }, [departmentData, params]);
+  }, [isDepartmentError]);
 
   // component end
 
@@ -154,10 +148,6 @@ export default function TableDemo() {
     setOpen(true);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   if (error) {
     return <div>{error}</div>;
   }
@@ -165,6 +155,16 @@ export default function TableDemo() {
   return (
     <div className="flex h-full">
       <div className="p-6 w-full h-full bg-accent/60 mr-5 ml-5 rounded-lg shadow-lg  ">
+        {(deleteOpen || deleteId !== null) && (
+          <AlertDialogbox
+            url={deleteId}
+            open={deleteOpen}
+            onOpenChange={(nextOpen) => {
+              setDeleteOpen(nextOpen);
+              if (!nextOpen) setDeleteId(null);
+            }}
+          />
+        )}
         <div className="flex justify-center items-center p-3 space-x-2">
           <h3 className="text-lg font-semibold">Departments List</h3>
         </div>
@@ -172,18 +172,39 @@ export default function TableDemo() {
         <div className="flex justify-between items-center py-1 space-x-2 w-full ">
           {/* Search Bar Starts */}
           <div className="flex-1 space-x-2 ">
-            <Input
-              placeholder="Search departments..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <div className="relative">
+              <Input
+                className="pr-12"
+                placeholder="Search departments..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                {isDepartmentLoading && (
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                )}
+                {searchTerm && (
+                  <button
+                    type="button"
+                    className="text-muted-foreground hover:text-foreground"
+                    onClick={() => {
+                      setSearchTerm("");
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
           {/* Search Bar Ends */}
           <div className="flex space-x-2">
             {/* Add(Dialog) Starts */}
             <DepartmentDialog
-              loading={loading}
-              setLoading={setLoading}
               setOpen={setOpen}
               open={open}
               editDepartment={editDepartment}
@@ -191,7 +212,6 @@ export default function TableDemo() {
               setError={setError}
               form={form}
               handleInvalidateQuery={handleInvalidateQuery}
-              // fetchDepartments={fetchDepartments}
             />
             {/* Add(Dialog) Ends */}
           </div>
@@ -205,7 +225,6 @@ export default function TableDemo() {
               <TableRow>
                 <TableHead
                   className="text-foreground"
-                  onClick={() => handleSort("department")}
                 >
                   Departments
                 </TableHead>
@@ -221,17 +240,6 @@ export default function TableDemo() {
                   <TableRow key={department.id}>
                     <TableCell>{department.department_name}</TableCell>
                     <TableCell className="text-right">
-                      {/* <button
-                      onClick={() => handleEdit(department)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      Edit
-                    </button>
-                    <AlertDialogbox
-                      handleInvalidateQuery={handleInvalidateQuery}
-                      url={department.id}
-                    /> */}
-                      {/*  */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -240,25 +248,32 @@ export default function TableDemo() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent
-                          align="center"
-                          className="w-full flex-col items-center flex justify-center"
+                          align="end"
+                          className="w-48"
                         >
-                          <DropdownMenuLabel className="hover:cursor-default text-foreground">
+                          <DropdownMenuLabel>
                             Actions
                           </DropdownMenuLabel>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(department)}
-                            className="w-full text-sm"
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              setTimeout(() => handleEdit(department), 0);
+                            }}
                           >
+                            <Pencil className="mr-2 h-4 w-4" />
                             Edit
-                          </Button>
-                          {/* <DropdownMenuSeparator /> */}
-                          <AlertDialogbox
-                            handleInvalidateQuery={handleInvalidateQuery}
-                            url={department.id}
-                          />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              setTimeout(() => {
+                                setDeleteId(department.id);
+                                setDeleteOpen(true);
+                              }, 0);
+                            }}
+                          >
+                            <Trash className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

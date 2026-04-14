@@ -9,13 +9,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDeleteData } from "@/lib/HTTP/DELETE";
 
-
-export default function AlertDialogbox({ url }) {
+export default function AlertDialogbox({ url }: { url: string | number }) {
   const queryClient = useQueryClient();
+  const deleteData = useDeleteData({
+    endpoint: `/api/leads/${url}`,
+    params: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["lead"] });
+        queryClient.invalidateQueries({ queryKey: ["lead", url] });
+      },
+    },
+  });
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -34,15 +43,8 @@ export default function AlertDialogbox({ url }) {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={async () => {
-              await axios.delete(`/api/leads/${url}`, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + localStorage.getItem("token"),
-                },
-              });
-              queryClient.invalidateQueries({ queryKey: ["lead"] });
-              queryClient.invalidateQueries({ queryKey: ["lead", url] });
+            onClick={() => {
+              deleteData.mutate({});
             }}
           >
             Continue

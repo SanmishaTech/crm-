@@ -3,39 +3,39 @@ import { useEffect, useRef } from "react";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-interface ParamsType {
-  queryKey?: string | string[];
+interface ParamsType<T = any> {
+  queryKey?: any[];
   headers?: Record<string, string>;
   queryKeyId?: number | string | undefined;
   retry?: number;
   refetchOnWindowFocus?: boolean;
   enabled?: boolean;
-  onSuccess?: (data: Response) => void;
+  onSuccess?: (data: T) => void;
   onError?: (error: AxiosError) => void;
 }
 
-const fetchData = async ({
+const fetchData = async <T = any>({
   endpoint,
   headers,
 }: {
   endpoint: string;
   headers?: Record<string, string>;
-}): Promise<Response> => {
+}): Promise<T> => {
   const config = headers ? { headers } : {};
-  const response = await axios.get<Response>(endpoint, config);
+  const response = await axios.get<T>(endpoint, config);
   return response.data;
 };
 
 // Custom hook to fetch data
-const useGetData = ({
+export const useGetData = <T = any>({
   endpoint,
   params,
 }: {
   endpoint: string;
-  params: ParamsType;
-}): UseQueryResult<Response, AxiosError> => {
-  const onSuccessRef = useRef<ParamsType["onSuccess"]>(params.onSuccess);
-  const onErrorRef = useRef<ParamsType["onError"]>(params.onError);
+  params: ParamsType<T>;
+}): UseQueryResult<T, AxiosError> => {
+  const onSuccessRef = useRef<ParamsType<T>["onSuccess"]>(params.onSuccess);
+  const onErrorRef = useRef<ParamsType<T>["onError"]>(params.onError);
 
   useEffect(() => {
     onSuccessRef.current = params.onSuccess;
@@ -45,10 +45,10 @@ const useGetData = ({
     onErrorRef.current = params.onError;
   }, [params.onError]);
 
-  const queryResult = useQuery<Response, AxiosError>({
+  const queryResult = useQuery<T, AxiosError>({
     queryKey: Array.isArray(params.queryKey) ? params.queryKey : [params.queryKey],
     queryFn: () =>
-      fetchData({
+      fetchData<T>({
         endpoint,
         headers: params.headers ?? {
           "Content-Type": "application/json",
@@ -62,7 +62,7 @@ const useGetData = ({
   });
 
   useEffect(() => {
-    if (queryResult.isSuccess) {
+    if (queryResult.isSuccess && queryResult.data !== undefined) {
       onSuccessRef.current?.(queryResult.data);
     }
   }, [queryResult.isSuccess, queryResult.data]);
@@ -75,5 +75,3 @@ const useGetData = ({
 
   return queryResult;
 };
-
-export { useGetData };

@@ -10,21 +10,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { z } from "zod";
 import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
@@ -33,7 +24,6 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -54,8 +44,6 @@ export default function EditSupplierPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const [data, setData] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -72,8 +60,7 @@ export default function EditSupplierPage() {
     endpoint: `/api/challans/${id}`,
 
     params: {
-      onSuccess: (data) => {
-        console.log("editdata", data);
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["challans"] });
         queryClient.invalidateQueries({ queryKey: ["challans", id] });
         toast.success("Challan updated successfully");
@@ -112,10 +99,7 @@ export default function EditSupplierPage() {
       queryKey: ["challans", id],
       retry: 1,
 
-      onSuccess: (data) => {
-        console.log("GetData", data);
-        setData(data?.Challans);
-        setLoading(false);
+      onSuccess: () => {
       },
       onError: (error) => {
         if (error.message && error.message.includes("Duplicate Challan")) {
@@ -130,14 +114,11 @@ export default function EditSupplierPage() {
     },
   });
 
-  useEffect(() => {
-    console.log("data", editData);
-  }, [editData]);
+
 
   useEffect(() => {
     if (editData?.data.Challans) {
       const newData = editData.data.Challans;
-      console.log("newData", newData);
       form.reset({
         date: newData.date || "",
         challan_number: newData.challan_number || "",

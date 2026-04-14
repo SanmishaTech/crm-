@@ -6,11 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Replace extends Model
 {
-    
-    
-    
-    
-
-
-    
+    protected $guarded = [];
 }

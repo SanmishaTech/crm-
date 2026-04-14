@@ -9,12 +9,24 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDeleteData } from "@/lib/HTTP/DELETE";
+import { toast } from "sonner";
 
-export default function AlertDialogbox({ url, fetchProducts }) {
+export default function AlertDialogbox({ url }: { url: string | number }) {
   const queryClient = useQueryClient();
+  const deleteData = useDeleteData({
+    endpoint: `/api/products/${url}`,
+    params: {
+      onSuccess: () => {
+        toast.success("Product deleted successfully");
+        queryClient.invalidateQueries({ queryKey: ["products"] });
+        queryClient.invalidateQueries({ queryKey: ["products", url] });
+      },
+    },
+  });
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -33,16 +45,8 @@ export default function AlertDialogbox({ url, fetchProducts }) {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={async () => {
-              await axios.delete(`/api/products/${url}`, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + localStorage.getItem("token"),
-                },
-              });
-              fetchProducts();
-              queryClient.invalidateQueries({ queryKey: ["products"] });
-              queryClient.invalidateQueries({ queryKey: ["products", url] });
+            onClick={() => {
+              deleteData.mutate({});
             }}
           >
             Continue

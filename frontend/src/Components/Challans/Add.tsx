@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -64,12 +63,10 @@ export default function InputForm() {
     endpoint: "/api/challans",
     params: {
       onSuccess: (data) => {
-        console.log("data", data);
         queryClient.invalidateQueries({ queryKey: ["challans"] });
         navigate("/challans");
       },
       onError: (error) => {
-        console.log("error", error);
 
         if (error.response && error.response.data.errors) {
           const serverStatus = error.response.data.status;

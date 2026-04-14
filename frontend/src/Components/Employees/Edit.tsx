@@ -10,7 +10,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,7 +22,6 @@ import { usePutData } from "@/lib/HTTP/PUT";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -37,6 +35,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
+
+interface Department {
+  id: number;
+  department_name: string;
+}
 
 // Form validation schema
 const formSchema = z.object({
@@ -60,7 +63,10 @@ const formSchema = z.object({
     .min(6, { message: "Password field must have at least 6 characters." })
     .optional()
     .or(z.literal("")),
-  mobile: z.coerce.number().min(10, { message: "Mobile field is required." }),
+  mobile: z
+    .string()
+    .regex(/^\d{10}$/, { message: "Mobile number must be exactly 10 digits" })
+    .nonempty({ message: "Mobile number field is required." }),
   joining_date: z.string().optional(),
   designation: z
     .string()
@@ -73,15 +79,11 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function EditEmployeePage() {
   const { id } = useParams();
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [isDepartmentLoading, setIsDepartmentLoading] = useState(true);
-
-  const [departments, setDepartments] = useState([]);
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const [data, setData] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
   // Fetch Products
   const fetchDepartments = () => {
@@ -111,12 +113,12 @@ export default function EditEmployeePage() {
     defaultValues: {
       employee_name: "",
       email: "",
-      mobile: null,
-      department_id: "",
+      mobile: "",
+      department_id: 0,
       joining_date: "",
       designation: "",
       password: "",
-      active: null,
+      active: 1,
       role_name: "",
     },
   });
@@ -132,7 +134,7 @@ export default function EditEmployeePage() {
         toast.success("Employee updated successfully");
         navigate("/employees");
       },
-      onError: (error) => {
+      onError: (error: any) => {
         if (error.response && error.response.data.errors) {
           const serverStatus = error.response.data.status;
           const serverErrors = error.response.data.errors;
@@ -151,10 +153,10 @@ export default function EditEmployeePage() {
               });
             }
           } else {
-            setError("Failed to add employee"); // For any other errors
+            setError("Failed to update employee"); // For any other errors
           }
         } else {
-          setError("Failed to add employee");
+          setError("Failed to update employee");
         }
       },
     },
@@ -169,13 +171,10 @@ export default function EditEmployeePage() {
     params: {
       queryKey: ["editemployee", id],
       retry: 1,
-
       onSuccess: (data) => {
-        console.log("GetData", data);
-        setData(data?.Employee);
-        setLoading(false);
+        console.log("data", data);
       },
-      onError: (error) => {
+      onError: (error: any) => {
         if (error.message && error.message.includes("duplicate supplier")) {
           toast.error("Supplier name is duplicated. Please use a unique name.");
         } else {
@@ -187,15 +186,12 @@ export default function EditEmployeePage() {
   });
 
   useEffect(() => {
-    console.log("data", editData);
   }, [editData]);
 
   useEffect(() => {
     if (editData?.data.Employee) {
       const newData = editData.data.Employee;
-      const password = editData.data.User.password;
       const activee = editData.data.User.active;
-      console.log("newData", newData);
       form.reset({
         employee_name: newData.employee_name || "",
         email: newData.email || "",
@@ -353,22 +349,14 @@ export default function EditEmployeePage() {
                           </SelectTrigger>
                           <SelectContent>
                             {isDepartmentLoading ? (
-                              <SelectItem disabled>Loading...</SelectItem>
+                              <SelectItem key="loading" value="loading" disabled>Loading...</SelectItem>
                             ) : (
                               departments.map((department) => (
-                                <SelectItem
-                                  key={department.id}
-                                  value={String(department.id)}
-                                >
+                                <SelectItem key={department.id} value={String(department.id)}>
                                   {department.department_name}
                                 </SelectItem>
                               ))
                             )}
-                            <div className="px-5 py-1">
-                              {/* <AddProductCategory
-                              fetchProductCategories={fetchProductCategories}
-                            /> */}
-                            </div>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -388,10 +376,12 @@ export default function EditEmployeePage() {
                         <Input
                           placeholder="Enter mobile number"
                           {...field}
-                          type="number"
-                          inputMode="numeric"
-                          pattern="\d{10}"
+                          type="text"
                           maxLength={10}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(value);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -446,14 +436,14 @@ export default function EditEmployeePage() {
                       <FormControl>
                         <Select
                           value={field.value}
-                          onValueChange={field.onChange}
+                          onValueChange={(val) => field.onChange(val)}
                         >
                           <SelectTrigger className="">
                             <SelectValue placeholder="Select Status" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value={String(1)}>Active</SelectItem>
-                            <SelectItem value={String(0)}>Inactive</SelectItem>
+                            <SelectItem key="active" value="1">Active</SelectItem>
+                            <SelectItem key="inactive" value="0">Inactive</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -477,13 +467,13 @@ export default function EditEmployeePage() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>Roles</SelectLabel>
-                              <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="Enquiry">Enquiry</SelectItem>
-                              <SelectItem value="Follow up">Follow up</SelectItem>
-                              <SelectItem value="Audit">Audit</SelectItem>
-                              <SelectItem value="ATR">ATR</SelectItem>
-                              <SelectItem value="Payment">Payment</SelectItem>
+                              <SelectLabel key="roles-label">Roles</SelectLabel>
+                              <SelectItem key="admin" value="admin">Admin</SelectItem>
+                              <SelectItem key="enquiry" value="Enquiry">Enquiry</SelectItem>
+                              <SelectItem key="follow-up" value="Follow up">Follow up</SelectItem>
+                              <SelectItem key="audit" value="Audit">Audit</SelectItem>
+                              <SelectItem key="atr" value="ATR">ATR</SelectItem>
+                              <SelectItem key="payment" value="Payment">Payment</SelectItem>
                             </SelectGroup>
                           </SelectContent>
                         </Select>

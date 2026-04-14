@@ -5,27 +5,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft } from "lucide-react";
+import { Check, ChevronsUpDown, ChevronLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import axios from "axios";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { z } from "zod";
 import { toast } from "sonner";
 import { useGetData } from "@/lib/HTTP/GET";
@@ -33,7 +27,6 @@ import { usePutData } from "@/lib/HTTP/PUT";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -83,30 +76,44 @@ const formSchema = z.object({
   location: z.string().optional(),
   mobile_1: z
     .string()
-    .regex(/^(\+?\d{1,3}[-.\s]?)?(\(?\d{1,4}\)?[-.\s]?)?[\d\s.-]{5,20}$/, {
-      message: "Invalid mobile number format",
+    .regex(/^\d{10}$/, {
+      message: "Mobile number must be exactly 10 digits",
     })
     .nonempty({ message: "Mobile number field is required." }),
-  mobile_2: z.any().optional(),
+  mobile_2: z
+    .string()
+    .regex(/^\d{10}$/, {
+      message: "Mobile number must be exactly 10 digits",
+    })
+    .optional()
+    .or(z.literal("")),
   email: z
     .string()
     .email("Please enter a valid email address.")
     .nonempty("Email is required."),
-  alternate_email: z.any().optional(),
+  alternate_email: z
+    .string()
+    .email("Please enter a valid email address.")
+    .optional()
+    .or(z.literal("")),
   supplier_type: z.any().optional(),
   product_category_id: z.any().optional(),
 });
 
 // Move FormValues type definition outside the component
 type FormValues = z.infer<typeof formSchema>;
+interface ProductCategory {
+  id: string | number;
+  product_category: string;
+}
 
 export default function EditSupplierPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const [data, setData] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
+  const [productCategories, setProductCategories] = useState<ProductCategory[]>([]);
+  const [open, setOpen] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -131,95 +138,7 @@ export default function EditSupplierPage() {
     },
   });
 
-  // Move the usePutData hook before any conditional returns
-  const fetchData = usePutData({
-    endpoint: `/api/suppliers/${id}`,
-
-    params: {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: ["editsupplier"] });
-        queryClient.invalidateQueries({ queryKey: ["editsupplier", id] });
-        toast.success("Supplier updated successfully");
-        navigate("/suppliers");
-      },
-      onError: (error) => {
-        if (error.response && error.response.data.errors) {
-          const serverStatus = error.response.data.status;
-          const serverErrors = error.response.data.errors;
-          // Assuming the error is for the department_name field
-          if (serverStatus === false) {
-            if (serverErrors.supplier) {
-              form.setError("supplier", {
-                type: "manual",
-                message: serverErrors.supplier[0], // The error message from the server
-              });
-              toast.error("The supplier has already been taken.");
-            }
-          } else {
-            setError("Failed to add Supplier"); // For any other errors
-          }
-        } else {
-          setError("Failed to add Supplier");
-        }
-      },
-    },
-  });
-
-  const {
-    data: editData,
-    isLoading,
-    isError,
-  } = useGetData({
-    endpoint: `/api/suppliers/${id}`,
-    params: {
-      queryKey: ["editsupplier", id],
-      retry: 1,
-
-      onSuccess: (data) => {
-        setData(data?.Supplier);
-        setLoading(false);
-      },
-      onError: (error) => {
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to fetch supplier data. Please try again.");
-        }
-      },
-      enabled: !!id,
-    },
-  });
-
-  useEffect(() => {}, [editData]);
-
-  useEffect(() => {
-    if (editData?.data.Supplier) {
-      const newData = editData.data.Supplier;
-      form.reset({
-        supplier: newData.supplier || "",
-        supplier_type: newData.supplier_type || "",
-        product_category_id: newData.product_category_id || "",
-        street_address: newData.street_address || "",
-        area: newData.area || "",
-        city: newData.city || "",
-        state: newData.state || "",
-        pincode: newData.pincode || "",
-        country: newData.country || "India",
-        gstin: newData.gstin || "",
-        contact_name: newData.contact_name || "",
-        department: newData.department || "",
-        location: newData.location || "",
-        mobile_1: newData.mobile_1 || "",
-        mobile_2: newData.mobile_2 || "",
-        email: newData.email || "",
-        alternate_email: newData.alternate_email || "",
-      });
-    }
-  }, [editData, form]);
-
-  const [productCategories, setProductCategories] = useState([]);
-  console.log("productCategories", productCategories);
-
+  // Fetch product categories
   const fetchProductCategories = () => {
     axios
       .get("/api/all_product_categories", {
@@ -229,10 +148,8 @@ export default function EditSupplierPage() {
         },
       })
       .then((response) => {
-        // setProductCategories(response.data.data.ProductCategories);
         const category = response.data.data.ProductCategories;
         setProductCategories(category);
-        console.log("callled");
       })
       .catch(() => {
         setError("Failed to load Product categories");
@@ -243,10 +160,78 @@ export default function EditSupplierPage() {
     fetchProductCategories();
   }, []);
 
+  // Fetch supplier data
+  const {
+    data: getResponse,
+    isLoading,
+    isError,
+  } = useGetData({
+    endpoint: `/api/suppliers/${id}`,
+    params: {
+      queryKey: ["editsupplier", id],
+      retry: 1,
+      enabled: !!id,
+    },
+  });
+
+  useEffect(() => {
+    if (getResponse?.data?.Supplier) {
+      const editData = getResponse.data.Supplier;
+      form.reset({
+        supplier: editData.supplier || "",
+        supplier_type: String(editData.supplier_type) || "",
+        street_address: editData.street_address || "",
+        area: editData.area || "",
+        city: editData.city || "",
+        state: editData.state || "",
+        pincode: editData.pincode || "",
+        country: editData.country || "",
+        gstin: editData.gstin || "",
+        contact_name: editData.contact_name || "",
+        department: editData.department || "",
+        location: editData.location || "",
+        mobile_1: editData.mobile_1 || "",
+        mobile_2: editData.mobile_2 || "",
+        email: editData.email || "",
+        alternate_email: editData.alternate_email || "",
+        product_category_id: String(editData.product_category_id) || "",
+      });
+    }
+  }, [getResponse, form]);
+
+  const fetchData = usePutData({
+    endpoint: `/api/suppliers/${id}`,
+    params: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["editsupplier"] });
+        queryClient.invalidateQueries({ queryKey: ["editsupplier", id] });
+        toast.success("Supplier updated successfully");
+        navigate("/suppliers");
+      },
+      onError: (error: any) => {
+        if (error.response && error.response.data && error.response.data.errors) {
+          const serverStatus = error.response.data.status;
+          const serverErrors = error.response.data.errors;
+          if (serverStatus === false) {
+            if (serverErrors.supplier) {
+              form.setError("supplier", {
+                type: "manual",
+                message: serverErrors.supplier[0],
+              });
+              toast.error("The supplier has already been taken.");
+            }
+          } else {
+            setError("Failed to update Supplier");
+          }
+        } else {
+          setError("Failed to update Supplier");
+        }
+      },
+    },
+  });
+
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
-    queryClient.invalidateQueries({ queryKey: ["supplier"] });
-    queryClient.invalidateQueries({ queryKey: ["supplier", id] });
   };
 
   if (isLoading) {
@@ -255,7 +240,7 @@ export default function EditSupplierPage() {
         <div className="flex items-center justify-between w-full">
           <div className="mb-7">
             <Button
-              onClick={() => navigate("/employees")}
+              onClick={() => navigate("/suppliers")}
               variant="ghost"
               className="mr-4"
               type="button"
@@ -388,8 +373,10 @@ export default function EditSupplierPage() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold text-foreground flex justify-between items-center">
+              <CardTitle className="text-xl font-semibold text-foreground">
                 Supplier Information
+              </CardTitle>
+              <div className="mt-2">
                 <FormField
                   control={form.control}
                   name="supplier_type"
@@ -428,7 +415,7 @@ export default function EditSupplierPage() {
                     </FormItem>
                   )}
                 />
-              </CardTitle>
+              </div>
             </CardHeader>
             <CardContent className="p-6">
               <FormField
@@ -450,46 +437,71 @@ export default function EditSupplierPage() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="product_category_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Product Category</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={String(field.value)}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="">
-                          <SelectValue placeholder="Select Product Category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {loading ? (
-                            <SelectItem disabled>Loading...</SelectItem>
-                          ) : (
-                            productCategories.map((ProductCategory) => (
-                              <SelectItem
-                                key={ProductCategory.id}
-                                value={String(ProductCategory.id)}
-                              >
-                                {ProductCategory.product_category}
-                              </SelectItem>
-                            ))
-                          )}
-                          <div className="px-5 py-1">
-                            <AddProductCategory
-                              fetchProductCategories={fetchProductCategories}
-                            />
-                          </div>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="product_category_id"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Product Category</FormLabel>
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className={cn(
+                                "w-full justify-between font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? productCategories.find(
+                                    (category) => String(category.id) === String(field.value)
+                                  )?.product_category || "Select Product Category"
+                                : "Select Product Category"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                          <Command>
+                            <CommandInput placeholder="Search product category..." />
+                            <CommandList>
+                              <CommandEmpty>No category found.</CommandEmpty>
+                              <CommandGroup>
+                                {productCategories.map((category) => (
+                                  <CommandItem
+                                    key={category.id}
+                                    value={category.product_category}
+                                    onSelect={() => {
+                                      form.setValue("product_category_id", String(category.id));
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        String(category.id) === String(field.value)
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {category.product_category}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                            <div className="border-t p-2">
+                              <AddProductCategory fetchProductCategories={fetchProductCategories} />
+                            </div>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
             </CardContent>
           </Card>
 
@@ -587,7 +599,11 @@ export default function EditSupplierPage() {
                           placeholder="Enter Mobile"
                           {...field}
                           type="text"
-                          inputMode="numeric"
+                          maxLength={10}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(value);
+                          }}
                           className="bg-background text-foreground border-input"
                         />
                       </FormControl>
@@ -609,9 +625,11 @@ export default function EditSupplierPage() {
                           placeholder="Enter Mobile"
                           {...field}
                           type="text"
-                          inputMode="numeric"
-                          // pattern="\d{10}"
-                          // maxLength={10}
+                          maxLength={10}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(value);
+                          }}
                           className="bg-background text-foreground border-input"
                         />
                       </FormControl>
@@ -668,8 +686,7 @@ export default function EditSupplierPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Alternate Email{" "}
-                      <span className="text-destructive">*</span>
+                      Alternate Email
                     </FormLabel>
                     <FormControl>
                       <Input

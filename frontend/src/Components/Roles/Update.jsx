@@ -8,7 +8,8 @@ import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useFetchData from "@/lib/HTTP/useFetchData";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -34,26 +35,12 @@ const Update = () => {
   } = useForm({ resolver: zodResolver(formSchema), defaultValues: { name: "" } });
 
   const {
-    data: editRole,
+    data: responseData,
     isLoading: isEditRoleDataLoading,
-    isError: isEditRoleDataError,
-  } = useQuery({
-    queryKey: ["editRole", id],
-    queryFn: async () => {
-      try {
-        const response = await axios.get(`/api/roles/${id}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return response.data?.data;
-      } catch (error) {
-        throw new Error(error.message);
-      }
-    },
-    keepPreviousData: true,
-  });
+    error: isEditRoleDataError,
+  } = useFetchData("roles", id, { keepPreviousData: true });
+  
+  const editRole = responseData?.data;
 
   useEffect(() => {
     if (editRole) {

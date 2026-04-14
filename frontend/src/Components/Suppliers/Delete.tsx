@@ -9,12 +9,26 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDeleteData } from "@/lib/HTTP/DELETE";
+import { toast } from "sonner";
 
-export default function AlertDialogbox({ url }) {
+export default function AlertDialogbox({ url }: { url: string | number }) {
   const queryClient = useQueryClient();
+  const deleteData = useDeleteData({
+    endpoint: `/api/suppliers/${url}`,
+    params: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["supplier"] });
+        toast.success("Supplier deleted successfully");
+      },
+      onError: () => {
+        toast.error("Failed to delete supplier");
+      },
+    },
+  });
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -33,15 +47,8 @@ export default function AlertDialogbox({ url }) {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={async () => {
-              await axios.delete(`/api/suppliers/${url}`, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + localStorage.getItem("token"),
-                },
-              });
-              queryClient.invalidateQueries({ queryKey: ["supplier"] });
-              queryClient.invalidateQueries({ queryKey: ["supplier", url] });
+            onClick={() => {
+              deleteData.mutate({});
             }}
           >
             Continue

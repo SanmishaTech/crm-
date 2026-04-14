@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "@/darktheme/CustomTheme";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CalenderDay from "./CalenderDay";
-import Notepad from "./Notepad";
+
 import {
   Sheet,
   SheetContent,
@@ -16,10 +16,7 @@ import {
 import {
   ChartNoAxesGantt,
   Search,
-  Settings,
-  Headset,
   LogOut,
-  CircleUserRound,
   ChevronDown,
   Sun,
   Moon,
@@ -64,8 +61,6 @@ import { Separator } from "@/components/ui/separator";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -132,8 +127,8 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-4    ">
-      <div className="flex items-center border shadow-lg gap-4 p-4 min-w-[73%] max-w-[20rem] mx-auto rounded-xl h-[3rem] justify-between bg-background    ">
+    <nav className="bg-transparent fixed top-0 left-0 right-0 z-10 mt-4 px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center border shadow-xl gap-2 lg:gap-4 p-2 sm:p-4 w-full max-w-7xl mx-auto rounded-2xl h-[3rem] justify-between bg-background/90 backdrop-blur-md">
         <div className="flex items-center space-x-3">
           <Link
             to="/dashboard"
@@ -154,11 +149,8 @@ const Navbar = () => {
             <span className="text-lg font-semibold">CRM</span>
           </Link>
 
-          {/* Mobile menu button */}
-
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-2">
-            {/* Existing navigation items */}
+          <div className="hidden xl:flex items-center space-x-1 2xl:space-x-2">
             {hasAccess("dashboard") && (
               <Button
                 onClick={() => navigate("/dashboard")}
@@ -336,7 +328,6 @@ const Navbar = () => {
                       <Separator className="w-full justify-center bg-border" />
                     )}
                     {hasAccess("permissions") && (
-
                       <Button
                         onClick={() => navigate("/permissions")}
                         variant="ghost"
@@ -421,7 +412,6 @@ const Navbar = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    // onClick={() => setOpen(true)}
                     onClick={() => setIsSearchOpen(true)}
                     className="text-foreground hover:text-foreground/80 hover:bg-accent"
                   >
@@ -433,20 +423,21 @@ const Navbar = () => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+
             <Button
               variant="ghost"
               size="icon"
-              className="ml-2 lg:hidden p-0 hover:bg-transparent hover:opacity-100 focus:outline-none focus:ring-0"
+              className="ml-2 xl:hidden p-0 hover:bg-transparent hover:opacity-100 focus:outline-none focus:ring-0"
               onClick={() => setIsSheetOpen(!isSheetOpen)}
             >
               <ChartNoAxesGantt className="h-5" />
             </Button>
+
             <CalenderDay />
             <div>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    {/* Add onClick handler to the icon */}
                     <Notebook
                       className="h-4 relative top-[2px] cursor-pointer"
                       onClick={handleNavigation}
@@ -468,7 +459,7 @@ const Navbar = () => {
               >
                 <span
                   className={cn(
-                    "absolute text-[10px] top-1.5 font-medium",
+                    "absolute text-[10px] top-1.5 font-medium hidden sm:block",
                     theme === "light" ? "right-1.5" : "left-1.5"
                   )}
                 >
@@ -514,15 +505,6 @@ const Navbar = () => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
-                  <Settings className="h-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent">
-                  <Headset className="h-4" />
-                  <span>Support</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-border" />
                 <DropdownMenuItem
                   className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent"
                   onClick={handleLogout}
@@ -536,11 +518,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
-      <div
-        className={`lg:hidden bg-background ${isSheetOpen ? "block" : "hidden"
-          } pt-2  pb-3 px-2`}
-      >
+      <div className={`xl:hidden bg-background ${isSheetOpen ? "block" : "hidden"} pt-2 pb-3 px-2`}>
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetContent>
             <SheetHeader>
@@ -554,7 +532,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/dashboard");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -567,7 +544,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/leads");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -576,12 +552,22 @@ const Navbar = () => {
                     Leads
                   </Button>
                 )}
-
+                {hasAccess("events") && (
+                  <Button
+                    onClick={() => {
+                      navigate("/events");
+                      setIsSheetOpen(false);
+                    }}
+                    variant="ghost"
+                    className="w-full text-left justify-start"
+                  >
+                    Events
+                  </Button>
+                )}
                 {hasAccess("clients") && (
                   <Button
                     onClick={() => {
                       navigate("/clients");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -590,12 +576,10 @@ const Navbar = () => {
                     Clients
                   </Button>
                 )}
-
                 {hasAccess("contacts") && (
                   <Button
                     onClick={() => {
                       navigate("/contacts");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -604,12 +588,10 @@ const Navbar = () => {
                     Contacts
                   </Button>
                 )}
-
                 {hasAccess("suppliers") && (
                   <Button
                     onClick={() => {
                       navigate("/suppliers");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -622,7 +604,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/productCategories");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -635,7 +616,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/products");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -648,7 +628,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/replacements");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -661,7 +640,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/purchase");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -670,12 +648,10 @@ const Navbar = () => {
                     Purchase
                   </Button>
                 )}
-
                 {hasAccess("employees") && (
                   <Button
                     onClick={() => {
                       navigate("/employees");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -688,7 +664,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/challans");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -701,7 +676,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/expense_heads");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -714,7 +688,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/expense");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -727,7 +700,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/departments");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -740,7 +712,6 @@ const Navbar = () => {
                   <Button
                     onClick={() => {
                       navigate("/leadSources");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -749,12 +720,10 @@ const Navbar = () => {
                     Lead Sources
                   </Button>
                 )}
-
                 {hasAccess("invoices") && (
                   <Button
                     onClick={() => {
                       navigate("/invoices");
-                      setMobileMenuOpen(false);
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
@@ -782,7 +751,6 @@ const Navbar = () => {
                 <CommandGroup heading={item.title} key={item.title}>
                   {item.children?.map((child) => {
                     const Icon = Icons[child.icon || "arrowRight675"];
-                    const isActive = location.pathname === child.href;
                     return (
                       <div
                         className="flex items-center gap-2 w-full"

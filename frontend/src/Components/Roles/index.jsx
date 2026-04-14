@@ -38,13 +38,12 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import { useQuery } from "@tanstack/react-query";
 import { TbH1 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
+import useFetchData from "@/lib/HTTP/useFetchData";
 const index = () => {
   // Get token directly from localStorage as it's stored in Login.tsx
   const token = localStorage.getItem("token");
-  console.log("Token being used:", token);
   // User data is still needed for other purposes
   const user = JSON.parse(localStorage.getItem("user"));
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,32 +52,12 @@ const index = () => {
   const navigate = useNavigate();
 
   const {
-    data: RolesData,
+    data: responseData,
     isLoading: isRolesDataLoading,
-    isError: isRolesDataError,
-  } = useQuery({
-    queryKey: ["roles", currentPage, search], // This is the query key
-    queryFn: async () => {
-      // The query function to fetch roles data
-      try {
-        const response = await axios.get("/api/roles", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            page: currentPage,
-            search: search, // Send the current page number in the request
-          },
-        });
-        return response.data?.data; // Return the fetched data
-      } catch (error) {
-        throw new Error(error.message); // Throw error if fetch fails
-      }
-    },
-  });
+    error: isRolesDataError,
+  } = useFetchData("roles", null, { keepPreviousData: true }, { page: currentPage, search: search });
 
-  const { Roles, pagination } = RolesData || {}; // Destructure Profiles and pagination from UsersData
+  const { Roles, pagination } = responseData?.data || {}; // Destructure Roles and pagination from responseData
   const { current_page, last_page, total, per_page } = pagination || {}; // Destructure pagination data
 
   if (isRolesDataError) {

@@ -9,7 +9,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,7 +22,6 @@ import { ChevronLeft } from "lucide-react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -41,7 +39,11 @@ const formSchema = z.object({
   pincode: z.string().min(3, "Pincode cannot be empty").optional(),
   country: z.string().min(3, "Country cannot be empty").optional(),
   gstin: z.any().optional(),
-  contact_no: z.string().optional(),
+  contact_no: z
+    .string()
+    .regex(/^\d{10}$/, { message: "Contact number must be exactly 10 digits" })
+    .optional()
+    .or(z.literal("")),
 
   email: z.string().optional(),
 
@@ -61,8 +63,6 @@ export default function EditClientPage() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const [data, setData] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -91,17 +91,16 @@ export default function EditClientPage() {
   // Move the usePutData hook before any conditional returns
   const fetchData = usePutData({
     endpoint: `/api/clients/${id}`,
-    queryKey: ["editclient", id],
-
     params: {
-      onSuccess: (data) => {
+      queryKey: ["editclient", id],
+      onSuccess: (data: any) => {
         console.log("editdata", data);
         queryClient.invalidateQueries({ queryKey: ["editclient"] });
         queryClient.invalidateQueries({ queryKey: ["editclient", id] });
         toast.success("Client updated successfully");
         navigate("/clients");
       },
-      onError: (error) => {
+      onError: (error: any) => {
         if (error.response && error.response.data.errors) {
           const serverStatus = error.response.data.status;
           const serverErrors = error.response.data.errors;
@@ -115,10 +114,10 @@ export default function EditClientPage() {
               toast.error("The Client has already been taken.");
             }
           } else {
-            setError("Failed to add Product"); // For any other errors
+            setError("Failed to update client"); // For any other errors
           }
         } else {
-          setError("Failed to add Product");
+          setError("Failed to update client");
         }
       },
     },
@@ -136,8 +135,6 @@ export default function EditClientPage() {
 
       onSuccess: (data) => {
         console.log("data", data);
-        setData(data.Client);
-        setLoading(false);
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate client")) {
@@ -250,9 +247,11 @@ export default function EditClientPage() {
                           placeholder="Enter Contact"
                           {...field}
                           type="text"
-                          inputMode="numeric"
                           maxLength={10}
-                          value={field.value}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(value);
+                          }}
                         />
                       </FormControl>
 

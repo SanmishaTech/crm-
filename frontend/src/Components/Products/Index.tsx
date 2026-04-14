@@ -1,6 +1,5 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
-import axios from "axios";
+import useFetchData from "@/lib/HTTP/useFetchData";
 import {
   Table,
   TableBody,
@@ -97,13 +96,8 @@ type ProductCategory = {
 };
 
 export default function TableDemo() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationData | null>(null);
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
   const [categoryId, setCategoryId] = useState<string>("");
-  const [productCategories, setProductCategories] = useState<ProductCategory[]>([]);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -111,49 +105,23 @@ export default function TableDemo() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const navigate = useNavigate();
 
-  // Fetch product categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get('/api/all_product_categories', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setProductCategories(response.data.data.ProductCategories);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const { data: categoriesData } = useFetchData("all_product_categories", null, { retry: 1 });
+  const productCategories: ProductCategory[] = categoriesData?.data?.ProductCategories || [];
 
-  // Fetch products with category filter
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get(
-        `/api/products?page=${currentPage}&search=${searchTerm}${categoryId && categoryId !== 'all' ? `&categoryId=${categoryId}` : ''}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-      setProducts(response.data.data.Products);
-      setPagination(response.data.data.Pagination);
-      setError(null);
-    } catch (error) {
-      setError('Error fetching products');
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
+  const { data: productsData, isLoading: loading, error: fetchError } = useFetchData(
+    "products",
+    null,
+    { retry: 1 },
+    {
+      page: currentPage,
+      search: searchTerm,
+      categoryId: categoryId !== "all" ? categoryId : undefined,
     }
-  };
+  );
 
-  useEffect(() => {
-    fetchProducts();
-  }, [currentPage, searchTerm, categoryId]);
+  const products: Product[] = productsData?.data?.Products || [];
+  const pagination: PaginationData | null = productsData?.data?.Pagination || null;
+  const error = fetchError ? "Error fetching products" : null;
 
   // Sorting function
   const handleSort = (key: keyof Product) => {
@@ -380,7 +348,6 @@ export default function TableDemo() {
                         </Button>
                         {/* <DropdownMenuSeparator /> */}
                         <AlertDialogbox
-                          fetchProducts={fetchProducts}
                           url={product.id}
                         />
                       </DropdownMenuContent>

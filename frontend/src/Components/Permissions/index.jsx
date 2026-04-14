@@ -46,14 +46,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import useFetchData from "@/lib/HTTP/useFetchData";
 // import Delete from "./Delete";
 
 const Index = () => {
   // Get token directly from localStorage as it's stored in Login.tsx
   const token = localStorage.getItem("token");
-  console.log("Token being used:", token);
   // User data is still needed for other purposes
   const user = JSON.parse(localStorage.getItem("user"));
   const [search, setSearch] = useState("");
@@ -65,32 +65,13 @@ const Index = () => {
   const {
     data: PermissionsData,
     isLoading: isPermissionsDataLoading,
-    isError: isPermissionsDataError,
-  } = useQuery({
-    queryKey: ["permissions", currentPage, search], // This is the query key
-    queryFn: async () => {
-      try {
-        const response = await axios.get("/api/permissions", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            page: currentPage,
-            search: search,
-          },
-        });
-        return response.data?.data; // Return the fetched data
-      } catch (error) {
-        throw new Error(error.message);
-      }
-    },
-    keepPreviousData: true, // Keep previous data until the new data is available
-  });
+    error: isPermissionsDataError,
+  } = useFetchData("permissions", null, { keepPreviousData: true }, { page: currentPage, search: search });
 
   // pagination start
-  const { Permissions, pagination } = PermissionsData || {};
-  const { current_page, last_page, total, per_page } = pagination || {}; // Destructure pagination data
+  const Permissions = PermissionsData?.data?.Permissions || [];
+  const pagination = PermissionsData?.data?.pagination || {};
+  const { current_page, last_page, total, per_page } = pagination; // Destructure pagination data
 
   // pagination end
 

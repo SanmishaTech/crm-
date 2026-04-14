@@ -28,7 +28,7 @@ class BaseController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendError($error, $errorMessages = [], $code = 401)
+    public function sendError($error, $errorMessages = [], $code = 400)
     {
         $response = [
             'status' => false,

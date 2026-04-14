@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { Pie, PieChart, Tooltip, Cell } from "recharts"
 import {
   Card,
@@ -12,39 +11,16 @@ import {
 import {
   ChartContainer,
 } from "@/components/ui/chart"
-import axios from "axios";
+import useFetchData from "@/lib/HTTP/useFetchData";
 
 const COLORS = ['#00529B', '#0077CC', '#009CFF', '#4DB8FF', '#99D6FF', '#CCEFFF'];
 
-interface ChartData {
-  name: string;
-  value: number;
-}
-
+// Removed unused ChartData
 export function DoneDealsPieChart() {
-  const [chartData, setChartData] = React.useState<ChartData[]>([]);
-  const [totalOrders, setTotalOrders] = React.useState(0);
+  const { data: response } = useFetchData("done_orders_by_user", null, { retry: 1 });
   
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`/api/done_orders_by_user`, {
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        const { ordersByUser, totalDoneOrders } = response.data.data;
-        setChartData(ordersByUser.map((item: any) => ({ name: item.user, value: item.leads })));
-        setTotalOrders(totalDoneOrders);
-      } catch (error) {
-        console.error("Error fetching done deals data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const chartData = response?.data?.ordersByUser?.map((item: any) => ({ name: item.user, value: item.leads })) || [];
+  const totalOrders = response?.data?.totalDoneOrders || 0;
 
       return (
     <Card className="flex flex-col bg-accent/40 h-full">

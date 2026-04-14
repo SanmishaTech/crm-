@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -16,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import axios from "axios";
 import { useGetData } from "@/lib/HTTP/GET";
 import { DoneDealsPieChart } from "./DoneDealsPieChart";
 import { OpenDealsPieChart } from "./OpenDealsPieChart";
@@ -50,8 +48,6 @@ interface NotepadData {
 
 export default function ResponsiveLabDashboard() {
   const navigate = useNavigate();
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [openTasks, setOpenTasks] = useState<Lead[]>([]);
 
   const { data: Sup } = useGetData<NotepadData>({
     endpoint: `/api/notepads`,
@@ -61,26 +57,16 @@ export default function ResponsiveLabDashboard() {
     },
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`/api/all_leads`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        const leadsData = response.data.data.Lead as Lead[];
-        setLeads(leadsData);
-        const openLeads = leadsData.filter((lead) => lead.lead_status === "Open");
-        setOpenTasks(openLeads);
-      } catch (error) {
-        console.error("Error fetching dashboard leads data:", error);
-      }
-    };
+  const { data: leadsDataResp } = useGetData<any>({
+    endpoint: `/api/all_leads`,
+    params: {
+      queryKey: ["all_leads"],
+      retry: 1,
+    },
+  });
 
-    fetchData();
-  }, []);
+  const leads: Lead[] = leadsDataResp?.data?.Lead || [];
+  const openTasks: Lead[] = leads.filter((lead) => lead.lead_status === "Open");
 
   return (
     <div className="flex h-screen ">

@@ -1,7 +1,4 @@
-//@ts-nocheck
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
@@ -30,43 +27,28 @@ const formSchema = z.object({
   expense_head: z.string().min(1, "Expense Head is required").max(50),
 });
 
-// Define form values type correctly
-type FormValues = z.infer<typeof formSchema>;
-
 const DepartmentDialog = ({
-  loading,
-  setLoading,
   open,
   form,
   setOpen,
   editDepartment,
   setEditDepartment,
-  fetchDepartments,
   handleInvalidateQuery,
 }) => {
   // Add Department mutation function
   const storeDepartmentData = usePostData({
     endpoint: "/api/expense_heads",
     params: {
-      onSuccess: (data) => {
-        console.log("Success:", data);
+      onSuccess: () => {
         form.reset();
         handleInvalidateQuery();
         handleDialogClose();
         toast.success("Expense Head added successfully");
       },
       onError: (error) => {
-        console.log("Error details:", {
-          response: error.response,
-          data: error.response?.data,
-          status: error.response?.status
-        });
-        
-        setLoading(false);
         if (error.response?.data?.errors) {
           const serverErrors = error.response.data.errors;
           
-          // Handle field-specific errors
           if (serverErrors.expense_head) {
             const errorMessage = Array.isArray(serverErrors.expense_head) 
               ? serverErrors.expense_head[0] 
@@ -94,16 +76,14 @@ const DepartmentDialog = ({
   const updateDepartmentData = usePutData({
     endpoint: `/api/expense_heads/${editDepartment?.id}`,
     params: {
-      onSuccess: (data) => {
+      onSuccess: () => {
         setEditDepartment(null);
         form.reset();
         handleInvalidateQuery();
         handleDialogClose();
-        setLoading(false);
         toast.success("Expense Head updated successfully");
       },
       onError: (error) => {
-        setLoading(false);
         if (error.response?.data?.errors) {
           const serverErrors = error.response.data.errors;
           
@@ -132,12 +112,8 @@ const DepartmentDialog = ({
 
   // onSubmit function
   const onSubmit = (data) => {
-    console.log("Form data submitted:", data);
-    console.log("Form state:", form.formState);
-    
     // Client-side validation
     if (!data.expense_head || data.expense_head.trim() === '') {
-      console.log("Validation failed - Expense Head is required");
       form.setError('expense_head', {
         type: 'manual',
         message: 'Expense Head is required'
@@ -150,26 +126,18 @@ const DepartmentDialog = ({
       expense_head: data.expense_head.trim()
     };
     
-    console.log("Sending data to API:", trimmedData);
-    
     if (editDepartment) {
-      setLoading(true);
       updateDepartmentData.mutate(trimmedData);
     } else {
-      setLoading(true);
       storeDepartmentData.mutate(trimmedData);
     }
-  };
-
-  const handleDialogOpen = () => {
-    setEditDepartment(null);
-    form.reset();
-    setOpen(true);
   };
 
   const handleDialogClose = () => {
     setOpen(false);
   };
+
+  const isPending = storeDepartmentData.isPending || updateDepartmentData.isPending;
 
   return (
     <>
@@ -177,14 +145,14 @@ const DepartmentDialog = ({
         open={open} 
         onOpenChange={(isOpen) => {
           if (!isOpen) {
-            // Reset form and errors when dialog closes
             form.reset();
+            setEditDepartment(null);
           }
           setOpen(isOpen);
         }}
       >
         <DialogTrigger asChild>
-          <Button variant="outline" onClick={handleDialogOpen}>
+          <Button variant="outline">
             Add Expense Head
           </Button>
         </DialogTrigger>
@@ -215,6 +183,7 @@ const DepartmentDialog = ({
                           field.onChange(e);
                           form.clearErrors('expense_head');
                         }}
+                        disabled={isPending}
                         required
                       />
                     </FormControl>
@@ -224,8 +193,8 @@ const DepartmentDialog = ({
               />
 
               <DialogFooter className="mt-5">
-                <Button type="submit" disabled={loading}>
-                  {loading ? (
+                <Button type="submit" disabled={isPending}>
+                  {isPending ? (
                     <>
                       <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></div>
                       {editDepartment ? "Updating..." : "Saving..."}

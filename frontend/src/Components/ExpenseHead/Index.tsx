@@ -1,6 +1,4 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Table,
   TableBody,
@@ -11,45 +9,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
-  File,
-  PlusCircle,
-  Search,
-  Pencil,
-  Trash,
   MoreHorizontal,
-  ListFilter,
 } from "lucide-react";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Input } from "@/components/ui/input";
@@ -57,7 +29,6 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import DepartmentDialog from "./DepartmentDialog";
 import PaginationComponent from "./PaginationComponent";
-import AddProductCategory from "../ProductCategories/AddProductCategory";
 import useFetchData from "@/lib/HTTP/useFetchData";
 import AlertDialogbox from "./Delete";
 
@@ -82,10 +53,8 @@ const formSchema = z.object({
 export default function TableDemo() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [open, setOpen] = useState(false); // Manage the dialog state
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationData | null>(null);
-  const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
   const [editDepartment, setEditDepartment] = useState<Department | null>(null); // To hold department to edit
   const queryClient = useQueryClient();
 
@@ -125,21 +94,15 @@ export default function TableDemo() {
 
   const handleInvalidateQuery = () => {
     // Invalidate the 'departments' query to trigger a refetch
-    queryClient.invalidateQueries(["expense_heads", null, params]);
+    queryClient.invalidateQueries(["expense_heads"]);
   };
 
   useEffect(() => {
-    if (isDepartmentSuccess) {
-      setDepartments(departmentData.data.ExpenseHead);
-      setPagination(departmentData.data.Pagination);
-      setLoading(false);
+    if (isDepartmentSuccess && departmentData?.data) {
+      setDepartments(departmentData.data.ExpenseHead || []);
+      setPagination(departmentData.data.Pagination || null);
     }
-    if (isDepartmentError) {
-      console.log("Error", isDepartmentError.message);
-    }
-
-    handleInvalidateQuery();
-  }, [departmentData, params]);
+  }, [departmentData, isDepartmentSuccess]);
 
   // component end
 
@@ -147,19 +110,16 @@ export default function TableDemo() {
   const handleEdit = (department: Department) => {
     setEditDepartment(department);
     form.setValue("expense_head", department.expense_head); // Populate form with existing data
-    handleEditDialogOpen();
-  };
-
-  const handleEditDialogOpen = () => {
     setOpen(true);
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   if (error) {
     return <div>{error}</div>;
+  }
+
+  // Non-destructive loading state: Only show loading if we have NO data yet.
+  if (isDepartmentLoading && departments.length === 0) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -182,16 +142,12 @@ export default function TableDemo() {
           <div className="flex space-x-2">
             {/* Add(Dialog) Starts */}
             <DepartmentDialog
-              loading={loading}
-              setLoading={setLoading}
               setOpen={setOpen}
               open={open}
               editDepartment={editDepartment}
               setEditDepartment={setEditDepartment}
-              setError={setError}
               form={form}
               handleInvalidateQuery={handleInvalidateQuery}
-              // fetchDepartments={fetchDepartments}
             />
             {/* Add(Dialog) Ends */}
           </div>
@@ -203,10 +159,7 @@ export default function TableDemo() {
             <TableCaption>A list of your expense heads.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead
-                  className="text-foreground"
-                    onClick={() => handleSort("expense_head")}
-                >
+                <TableHead className="text-foreground">
                   Expense Head
                 </TableHead>
                 <TableHead className="text-foreground text-right">
@@ -221,17 +174,6 @@ export default function TableDemo() {
                   <TableRow key={department.id}>
                     <TableCell>{department.expense_head}</TableCell>
                     <TableCell className="text-right">
-                      {/* <button
-                      onClick={() => handleEdit(department)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      Edit
-                    </button>
-                    <AlertDialogbox
-                      handleInvalidateQuery={handleInvalidateQuery}
-                      url={department.id}
-                    /> */}
-                      {/*  */}
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -246,15 +188,15 @@ export default function TableDemo() {
                           <DropdownMenuLabel className="hover:cursor-default text-foreground">
                             Actions
                           </DropdownMenuLabel>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(department)}
-                            className="w-full text-sm"
+                          <DropdownMenuItem
+                            onSelect={(e) => {
+                              e.preventDefault();
+                              setTimeout(() => handleEdit(department), 0);
+                            }}
+                            className="w-full text-sm cursor-pointer justify-center"
                           >
                             Edit
-                          </Button>
-                          {/* <DropdownMenuSeparator /> */}
+                          </DropdownMenuItem>
                           <AlertDialogbox
                             handleInvalidateQuery={handleInvalidateQuery}
                             url={department.id}

@@ -2,7 +2,6 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import {
   useMutation,
   UseMutationResult,
-  MutationFunction,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -57,7 +56,7 @@ const usePostData = ({
       params.onError ??
       ((error: AxiosError) => {
         if (error.response) {
-          const { message, errors } = error.response.data;
+          const { message, errors } = error.response.data as any;
 
           if (message && errors?.error) {
             const errorMessage = errors.error.join(", ") || message;
@@ -72,9 +71,6 @@ const usePostData = ({
       }),
 
     retry: params.retry ?? 0,
-    onSettled: (data) => {
-      console.log(data);
-    },
   });
 };
 

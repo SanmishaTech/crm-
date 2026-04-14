@@ -9,54 +9,42 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useQueryClient } from "@tanstack/react-query";
-import { Trash2 } from "lucide-react"; // Add this import
+import { toast } from "sonner";
 
-interface AlertDialogboxProps {
-  url: string;
-  onDelete?: (id: string) => void;
-}
-
-const AlertDialogbox: React.FC<AlertDialogboxProps> = ({ url, onDelete }) => {
+export default function AlertDialogbox({ url }: { url: string | number }) {
   const queryClient = useQueryClient();
+  const deleteData = useDeleteData({
+    endpoint: `/api/notepads/${url}`,
+    params: {
+      onSuccess: () => {
+        toast.success("Deleted successfully");
+        queryClient.invalidateQueries({ queryKey: ["notepad"] });
+      },
+    },
+  });
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 p-0 hover:bg-destructive/20 text-destructive"
-        >
-          <Trash2 className="h-4 w-4" />
+        <Button variant="ghost" size="sm" className="w-full text-sm">
+          Delete
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently remove your data
-            from our servers.
+            This action cannot be undone. This will permanently delete this record from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={async () => {
-              await axios.delete(`/api/notepads/${url}`, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: "Bearer " + localStorage.getItem("token"),
-                },
-              });
-              queryClient.invalidateQueries({ queryKey: ["notepad"] });
-              queryClient.invalidateQueries({
-                queryKey: ["notepad", url],
-              });
-              // Call the onDelete callback after successful deletion
-              onDelete?.(url);
+            onClick={() => {
+              deleteData.mutate({});
             }}
           >
             Continue
@@ -65,6 +53,4 @@ const AlertDialogbox: React.FC<AlertDialogboxProps> = ({ url, onDelete }) => {
       </AlertDialogContent>
     </AlertDialog>
   );
-};
-
-export default AlertDialogbox;
+}

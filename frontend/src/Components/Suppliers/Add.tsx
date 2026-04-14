@@ -1,31 +1,17 @@
-//@ts-nocheck
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check, ChevronsUpDown, ChevronLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -37,6 +23,12 @@ import { usePostData } from "@/lib/HTTP/POST";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import AddProductCategory from "../ProductCategories/AddProductCategory";
+
+interface ProductCategory {
+  id: number;
+  product_category: string;
+}
+
 
 // Get QueryClient from the context
 // Form Schema
@@ -88,16 +80,26 @@ const FormSchema = z.object({
   location: z.string().optional(),
   mobile_1: z
     .string()
-    .regex(/^(\+?\d{1,3}[-.\s]?)?(\(?\d{1,4}\)?[-.\s]?)?[\d\s.-]{5,20}$/, {
-      message: "Invalid mobile number format",
+    .regex(/^\d{10}$/, {
+      message: "Mobile number must be exactly 10 digits",
     })
     .nonempty({ message: "Mobile number field is required." }),
-  mobile_2: z.any().optional(),
+  mobile_2: z
+    .string()
+    .regex(/^\d{10}$/, {
+      message: "Mobile number must be exactly 10 digits",
+    })
+    .optional()
+    .or(z.literal("")),
   email: z
     .string()
     .email("Please enter a valid email address.")
     .nonempty("Email is required."),
-  alternate_email: z.any().optional(),
+  alternate_email: z
+    .string()
+    .email("Please enter a valid email address.")
+    .optional()
+    .or(z.literal("")),
   product_category_id: z.any().optional(),
 });
 
@@ -122,11 +124,11 @@ export default function InputForm() {
       mobile_2: "",
       email: "",
       alternate_email: "",
-      product_category_id: "1",
+      product_category_id: "",
     },
   });
   const queryClient = useQueryClient();
-  const [loading, setLoading] = useState(false); // To handle loading state
+  const [open, setOpen] = useState(false);
   const [productCategories, setProductCategories] = useState<ProductCategory[]>(
     []
   );
@@ -136,7 +138,7 @@ export default function InputForm() {
   const formData = usePostData({
     endpoint: "/api/suppliers",
     params: {
-      onSuccess: (data) => {
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["supplier"] });
         navigate("/suppliers");
       },
@@ -217,8 +219,10 @@ export default function InputForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card className="bg-accent/40 border border-border">
             <CardHeader className="justify-between space-y-0 pb-2">
-              <CardTitle className="text-xl font-semibold text-foreground flex justify-between items-center">
+              <CardTitle className="text-xl font-semibold text-foreground">
                 Supplier Information
+              </CardTitle>
+              <div className="mt-2">
                 <FormField
                   control={form.control}
                   name="supplier_type"
@@ -257,7 +261,7 @@ export default function InputForm() {
                     </FormItem>
                   )}
                 />
-              </CardTitle>
+              </div>
             </CardHeader>
             <CardContent className="p-6 space-y-3">
               <FormField
@@ -279,45 +283,71 @@ export default function InputForm() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="product_category_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Product Category</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={String(field.value)}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="">
-                          <SelectValue placeholder="Select Product Category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {loading ? (
-                            <SelectItem disabled>Loading...</SelectItem>
-                          ) : (
-                            productCategories.map((ProductCategory) => (
-                              <SelectItem
-                                key={ProductCategory.id}
-                                value={String(ProductCategory.id)}
-                              >
-                                {ProductCategory.product_category}
-                              </SelectItem>
-                            ))
-                          )}
-                          <div className="px-5 py-1">
-                            <AddProductCategory
-                              fetchProductCategories={fetchProductCategories}
-                            />
-                          </div>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="product_category_id"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Product Category</FormLabel>
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className={cn(
+                                "w-full justify-between font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? productCategories.find(
+                                    (category) => String(category.id) === String(field.value)
+                                  )?.product_category || "Select Product Category"
+                                : "Select Product Category"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                          <Command>
+                            <CommandInput placeholder="Search product category..." />
+                            <CommandList>
+                              <CommandEmpty>No category found.</CommandEmpty>
+                              <CommandGroup>
+                                {productCategories.map((category) => (
+                                  <CommandItem
+                                    key={category.id}
+                                    value={category.product_category}
+                                    onSelect={() => {
+                                      form.setValue("product_category_id", String(category.id));
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        String(category.id) === String(field.value)
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {category.product_category}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                            <div className="border-t p-2">
+                              <AddProductCategory fetchProductCategories={fetchProductCategories} />
+                            </div>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
             </CardContent>
           </Card>
 
@@ -414,7 +444,11 @@ export default function InputForm() {
                           placeholder="Enter Mobile"
                           {...field}
                           type="text"
-                          inputMode="numeric"
+                          maxLength={10}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(value);
+                          }}
                           className="bg-background text-foreground border-input"
                         />
                       </FormControl>
@@ -436,9 +470,11 @@ export default function InputForm() {
                           placeholder="Enter Mobile"
                           {...field}
                           type="text"
-                          inputMode="numeric"
-                          // pattern="\d{10}"
-                          // maxLength={10}
+                          maxLength={10}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(value);
+                          }}
                           className="bg-background text-foreground border-input"
                         />
                       </FormControl>
@@ -494,8 +530,7 @@ export default function InputForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Alternate Email{" "}
-                      <span className="text-destructive">*</span>
+                      Alternate Email
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -656,7 +691,7 @@ export default function InputForm() {
             </Button>
             <Button
               type="submit"
-              varient="outline"
+              variant="outline"
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               Submit

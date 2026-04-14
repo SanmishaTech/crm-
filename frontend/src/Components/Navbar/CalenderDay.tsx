@@ -60,6 +60,7 @@ const CalenderDay = () => {
     endpoint: "/api/all_leads",
     params: {
       queryKey: ["calendar_leads"],
+      enabled: open,
       onSuccess: (response: any) => {
         queryClient.invalidateQueries({ queryKey: ["calendar_leads"] });
         try {
@@ -67,11 +68,9 @@ const CalenderDay = () => {
           if (leads && Array.isArray(leads)) {
             setCalendarLeads(leads);
           } else {
-            console.error("Invalid leads data received:", response);
             setCalendarLeads([]);
           }
         } catch (err) {
-          console.error("Error processing leads data:", err);
           setCalendarLeads([]);
         }
       },
@@ -182,7 +181,7 @@ const CalenderDay = () => {
   const footer = (
     <div className="mt-2">
       <div className="bg-background border p-4 rounded-lg shadow-md w-full sm:w-[500px]">
-        <p className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-muted-foreground">
           {date ? (
             getFollowUpStatus(date) ? (
               <>
@@ -304,7 +303,7 @@ const CalenderDay = () => {
             </>
           )}
           <Separator className="my-4" />
-        </p>
+        </div>
       </div>
     </div>
   );
@@ -318,6 +317,7 @@ const CalenderDay = () => {
       <DialogContent className="sm:max-w-[900px] p-6">
         <DialogHeader>
           <DialogTitle className="text-center">Follow-up Calendar</DialogTitle>
+          <DialogDescription className="text-center">View and manage your follow-up schedule.</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4 w-full">

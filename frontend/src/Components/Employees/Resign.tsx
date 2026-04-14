@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -111,7 +110,7 @@ const Resign = ({ id, employee }) => {
     endpoint: `/api/employee_resignation/${id}`,
     params: {
       onSuccess: (data) => {
-        console.log("working");
+        
         queryClient.invalidateQueries("employees");
         setEditEmployee(null); // Reset edit mode
         form.reset();

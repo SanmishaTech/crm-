@@ -9,22 +9,27 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
+import { useDeleteData } from "@/lib/HTTP/DELETE";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export default function AlertDialogbox({ url }: { url: number | string }) {
+export default function AlertDialogbox({ url }: { url: string | number }) {
   const queryClient = useQueryClient();
+  const deleteData = useDeleteData({
+    endpoint: `/api/events/${url}`,
+    params: {
+      onSuccess: () => {
+        toast.success("Deleted successfully");
+        queryClient.invalidateQueries({ queryKey: ["events"] });
+      },
+    },
+  });
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full text-sm"
-        >
+        <Button variant="ghost" size="sm" className="w-full text-sm">
           Delete
         </Button>
       </AlertDialogTrigger>
@@ -32,27 +37,14 @@ export default function AlertDialogbox({ url }: { url: number | string }) {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete this event.
+            This action cannot be undone. This will permanently delete this record from our servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={async (event) => {
-              try {
-                await axios.delete(`/api/events/${url}`, {
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + localStorage.getItem("token"),
-                  },
-                });
-                queryClient.invalidateQueries({ queryKey: ["events"] });
-                queryClient.invalidateQueries({ queryKey: ["events", url] });
-                queryClient.invalidateQueries({ queryKey: ["leads"] });
-                toast.success("Event deleted successfully.");
-              } catch {
-                toast.error("Failed to delete event.");
-              }
+            onClick={() => {
+              deleteData.mutate({});
             }}
           >
             Continue

@@ -122,7 +122,7 @@ export default function TableDemo() {
     },
   });
 
-  if (loading) {
+  if (loading && !Sup?.data?.Replacements) {
     return (
       <div className="flex">
         <Sidebar className="" />

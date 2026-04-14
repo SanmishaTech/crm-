@@ -52,7 +52,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import axios from "axios";
+import useFetchData from "@/lib/HTTP/useFetchData";
 
 type Supplier = {
   id: string;
@@ -64,6 +64,9 @@ type Supplier = {
   pincode: string;
   country: string;
   gstin: string;
+  product_category: string;
+  email: string;
+  mobile_1: string;
 };
 
 type ProductCategory = {
@@ -94,28 +97,14 @@ export default function TableDemo() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [categoryId, setCategoryId] = useState<string>("");
-  const [productCategories, setProductCategories] = useState<ProductCategory[]>([]);
   const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
   const navigate = useNavigate();
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const totalPages = pagination?.last_page || 1;
 
   // Fetch product categories
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get('/api/all_product_categories', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        setProductCategories(response.data.data.ProductCategories);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-    fetchCategories();
-  }, []);
+  const { data: categoriesResponse } = useFetchData("all_product_categories", null, { retry: 1 });
+  const productCategories = categoriesResponse?.data?.ProductCategories || [];
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -280,7 +269,7 @@ export default function TableDemo() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {productCategories.map((category) => (
+                {productCategories.map((category: ProductCategory) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.product_category}
                   </SelectItem>
@@ -321,7 +310,7 @@ export default function TableDemo() {
             </TableHeader>
             <TableFooter className="bg-muted/50"></TableFooter>
             <TableBody>
-              {Sup?.data?.Suppliers?.map((supplier) => (
+              {Sup?.data?.Suppliers?.map((supplier: Supplier) => (
                 <TableRow key={supplier.id} className="hover:bg-accent/50">
                   <TableCell className="text-foreground">
                     {supplier.supplier}
@@ -398,7 +387,6 @@ export default function TableDemo() {
                     : "cursor-pointer"
                 }`}
                 onClick={goToNextPage}
-                disabled={currentPage === totalPages}
               >
                 Next
               </PaginationNext>

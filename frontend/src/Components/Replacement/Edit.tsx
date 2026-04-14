@@ -94,7 +94,6 @@ export default function EditSupplierPage() {
 
     params: {
       onSuccess: (data) => {
-        console.log("editdata", data);
         queryClient.invalidateQueries({ queryKey: ["replacements"] });
         queryClient.invalidateQueries({ queryKey: ["replacements", id] });
         toast.success("Supplier updated successfully");
@@ -134,7 +133,6 @@ export default function EditSupplierPage() {
       retry: 1,
 
       onSuccess: (data) => {
-        console.log("GetData", data);
         setData(data?.Replaces);
         setLoading(false);
       },
@@ -152,13 +150,11 @@ export default function EditSupplierPage() {
   });
 
   useEffect(() => {
-    console.log("data", editData);
   }, [editData]);
 
   useEffect(() => {
     if (editData?.data.Replaces) {
       const newData = editData.data.Replaces;
-      console.log("newData", newData);
       form.reset({
         date: newData.date || "",
         customer_name: newData.customer_name || "",

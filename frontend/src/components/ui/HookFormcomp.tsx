@@ -62,7 +62,6 @@ const buildZodSchema = (schema: CustomSchema) => {
       } else {
         zodType = zodTypeMapping[value.type];
       }
-      console.log(value.message);
       schemaObject[key] = value.required
         ? zodType().min(1, value.message ?? "This field is required")
         : zodType().optional();
@@ -77,7 +76,6 @@ const buildZodSchema = (schema: CustomSchema) => {
 // Main component
 const UseFormHook = <T extends z.ZodTypeAny>(schema: CustomSchema) => {
   const zodSchema = buildZodSchema(schema.schema);
-  console.log("This is the default values", schema.defaultValues);
 
   const {
     register,
@@ -134,7 +132,6 @@ const UseFormHook = <T extends z.ZodTypeAny>(schema: CustomSchema) => {
                       />
                     )}
                   />
-                  {console.log(errors[`${key}`]?.message)}
                   {showError && (
                     <span className="text-red-500 text-xs mt-1">
                       {(errors[key] as any)?.message}

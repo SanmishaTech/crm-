@@ -5,36 +5,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check, ChevronsUpDown, ChevronLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import axios from "axios";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { z } from "zod";
 import { toast } from "sonner";
-import { useGetData } from "@/lib/HTTP/GET";
 import { usePutData } from "@/lib/HTTP/PUT";
 import AddProductCategory from "../ProductCategories/AddProductCategory";
 import useFetchData from "@/lib/HTTP/useFetchData";
@@ -54,28 +41,39 @@ const formSchema = z.object({
   last_traded_price: z.any().optional(),
 });
 
+interface ProductCategory {
+  id: string | number;
+  product_category: string;
+}
+interface Supplier {
+  id: string | number;
+  supplier: string;
+}
+
 export default function EditProductPage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false); // To handle loading state
-  const [productCategories, setProductCategories] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
+
+  const [open, setOpen] = useState(false);
+  const [supplierOpen, setSupplierOpen] = useState(false);
+  const [productCategories, setProductCategories] = useState<ProductCategory[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       product: "",
       gst_rate: "",
-      hsn_code: null,
+      hsn_code: "",
       product_category_id: "",
       supplier_id: "",
       model: "",
       manufacturer: "",
-      opening_qty: null,
-      closing_qty: null,
-      last_traded_price: null,
+      opening_qty: "",
+      closing_qty: "",
+      last_traded_price: "",
     },
   });
 
@@ -92,7 +90,7 @@ export default function EditProductPage() {
         // setProductCategories(response.data.data.ProductCategories);
         const category = response.data.data.ProductCategories;
         setProductCategories(category);
-        console.log("callled");
+
       })
       .catch(() => {
         setError("Failed to load Product categories");
@@ -129,19 +127,17 @@ export default function EditProductPage() {
 
   const {
     data,
-    isLoading: isProductLoading,
-    error: isProductrror,
     isSuccess: isProductSuccess,
-  } = useFetchData("products", id, options, null);
+  } = useFetchData("products", id as any, options, {});
 
   const handleInvalidateQuery = () => {
     // Invalidate the 'departments' query to trigger a refetch
-    queryClient.invalidateQueries(["product", id]);
+    queryClient.invalidateQueries({ queryKey: ["product", id] });
   };
 
   useEffect(() => {
     if (isProductSuccess) {
-      console.log("Product data");
+
       const newData = data.data.Product;
       form.reset({
         product: newData.product || "",
@@ -152,9 +148,9 @@ export default function EditProductPage() {
         product_category_id: newData.product_category_id || "",
         model: newData.model || "",
         manufacturer: newData.manufacturer || "",
-        opening_qty: newData.opening_qty || "",
-        closing_qty: newData.closing_qty || "",
-        last_traded_price: newData.last_traded_price || "",
+        opening_qty: newData.opening_qty ?? "",
+        closing_qty: newData.closing_qty ?? "",
+        last_traded_price: newData.last_traded_price ?? "",
       });
     }
     handleInvalidateQuery();
@@ -164,19 +160,19 @@ export default function EditProductPage() {
   const fetchData = usePutData({
     endpoint: `/api/products/${id}`,
     params: {
-      onSuccess: (data) => {
-        console.log("data", data);
-        navigate("/products");
+      onSuccess: () => {
+
+        toast.success("Product updated successfully");
         // queryClient.invalidateQueries({ queryKey: ["product", id] });
         handleInvalidateQuery();
         navigate("/products");
       },
       onError: (error) => {
-        console.log("error", error);
 
-        if (error.response && error.response.data.errors) {
-          const serverStatus = error.response.data.status;
-          const serverErrors = error.response.data.errors;
+
+        if ((error as any).response && (error as any).response.data.errors) {
+          const serverStatus = (error as any).response.data.status;
+          const serverErrors = (error as any).response.data.errors;
           // Assuming the error is for the department_name field
           if (serverStatus === false) {
             if (serverErrors.product) {
@@ -274,38 +270,63 @@ export default function EditProductPage() {
                   control={form.control}
                   name="product_category_id"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="flex flex-col">
                       <FormLabel>Product Category</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={String(field.value)}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger className="">
-                            <SelectValue placeholder="Select Product Category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {loading ? (
-                              <SelectItem disabled>Loading...</SelectItem>
-                            ) : (
-                              productCategories.map((ProductCategory) => (
-                                <SelectItem
-                                  key={ProductCategory.id}
-                                  value={String(ProductCategory.id)}
-                                >
-                                  {ProductCategory.product_category}
-                                </SelectItem>
-                              ))
-                            )}
-                            <div className="px-5 py-1">
-                              <AddProductCategory
-                                fetchProductCategories={fetchProductCategories}
-                              />
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className={cn(
+                                "w-full justify-between font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value
+                                ? productCategories.find(
+                                    (category) => String(category.id) === String(field.value)
+                                  )?.product_category || "Select Product Category"
+                                : "Select Product Category"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                          <Command>
+                            <CommandInput placeholder="Search product category..." />
+                            <CommandList>
+                              <CommandEmpty>No category found.</CommandEmpty>
+                              <CommandGroup>
+                                {productCategories.map((category) => (
+                                  <CommandItem
+                                    key={category.id}
+                                    value={category.product_category}
+                                    onSelect={() => {
+                                      form.setValue("product_category_id", String(category.id));
+                                      setOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        String(category.id) === String(field.value)
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {category.product_category}
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                            <div className="border-t p-2">
+                              <AddProductCategory fetchProductCategories={fetchProductCategories} />
                             </div>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -368,8 +389,9 @@ export default function EditProductPage() {
                           maxLength={8}
                           minLength={6}
                           onInput={(e) => {
-                            const value = e.target.value.slice(0, 8);
-                            e.target.value = value;
+                            const target = e.target as HTMLInputElement;
+                            const value = target.value.slice(0, 8);
+                            target.value = value;
                           }}
                         />
                       </FormControl>
@@ -485,34 +507,62 @@ export default function EditProductPage() {
                 control={form.control}
                 name="supplier_id"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>
                       Supplier <span style={{ color: "red" }}>*</span>
                     </FormLabel>
-                    <FormControl>
-                      <Select
-                        value={String(field.value)}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="">
-                          <SelectValue placeholder="Select Supplier" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {loading ? (
-                            <SelectItem disabled>Loading...</SelectItem>
-                          ) : (
-                            suppliers.map((supplier) => (
-                              <SelectItem
-                                key={supplier.id}
-                                value={String(supplier.id)}
-                              >
-                                {supplier.supplier}
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
+                    <Popover open={supplierOpen} onOpenChange={setSupplierOpen}>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={supplierOpen}
+                            className={cn(
+                              "w-full justify-between font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value
+                              ? suppliers.find(
+                                  (supplier) => String(supplier.id) === String(field.value)
+                                )?.supplier || "Select Supplier"
+                              : "Select Supplier"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                        <Command>
+                          <CommandInput placeholder="Search supplier..." />
+                          <CommandList>
+                            <CommandEmpty>No supplier found.</CommandEmpty>
+                            <CommandGroup>
+                              {suppliers.map((supplier) => (
+                                <CommandItem
+                                  key={supplier.id}
+                                  value={supplier.supplier}
+                                  onSelect={() => {
+                                    form.setValue("supplier_id", String(supplier.id));
+                                    setSupplierOpen(false);
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      String(supplier.id) === String(field.value)
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {supplier.supplier}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}

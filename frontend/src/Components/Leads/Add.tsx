@@ -1,4 +1,3 @@
-//@ts-nocheck
 import React, { useState, useEffect } from "react";
 
 import axios from "axios";
@@ -6,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { X, Check, ChevronsUpDown, ChevronLeft } from "lucide-react";
 import AddContacts from "./AddContacts";
 
 import {
@@ -19,7 +18,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -38,18 +36,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
-import { X, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -89,13 +75,16 @@ const FormSchema = z.object({
   // emd: z.string().optional(),
   emd: z.coerce.number().optional(),
   tender_status: z.string().optional(),
+  quantity: z.string().optional(),
+  rate: z.string().optional(),
+  product_id: z.string().optional(),
   payment_received_remark: z.string().optional(),
 });
 
 export default function InputForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = React.useState("");
+
   const [contacts, setContacts] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [leadSources, setLeadSources] = useState<any[]>([]);
@@ -113,7 +102,7 @@ export default function InputForm() {
       bid_end_date: "",
       portal: "",
       tender_category: "",
-      emd: "",
+      emd: 0,
       tender_status: "",
       quantity: "",
       rate: "",
@@ -132,20 +121,14 @@ export default function InputForm() {
       { product_id: "", quantity: "", rate: "", isOpen: false },
     ]);
   };
-  const invoices = [
-    {
-      invoice: "1",
-      paymentStatus: "Paid",
-      paymentMethod: "Credit Card",
-    },
-  ];
+
 
   type FormValues = z.infer<typeof FormSchema>;
   const formData = usePostData({
     endpoint: "/api/leads",
-    queryKey: ["lead"],
     params: {
-      onSuccess: (data) => {
+      retry: 1,
+      onSuccess: (data: any) => {
         console.log("data", data);
         queryClient.invalidateQueries({ queryKey: ["lead"] });
         queryClient.invalidateQueries({ queryKey: ["lead"] });
@@ -154,9 +137,9 @@ export default function InputForm() {
       onError: (error) => {
         console.log("error", error);
 
-        if (error.response && error.response.data.errors) {
-          const serverStatus = error.response.data.status;
-          const serverErrors = error.response.data.errors;
+        if ((error as any).response && (error as any).response.data.errors) {
+          const serverStatus = (error as any).response.data.status;
+          const serverErrors = (error as any).response.data.errors;
           // Assuming the error is for the department_name field
           if (serverStatus === false) {
             if (serverErrors.contact_id) {
@@ -234,7 +217,7 @@ export default function InputForm() {
   });
 
 
-  const { data: FetchEmployees } = useGetData({
+  useGetData({
     endpoint: `/api/all_employees`,
     params: {
       queryKey: ["employees"],
@@ -377,7 +360,7 @@ export default function InputForm() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full sm:w-[390px] p-0">
+                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."
@@ -424,7 +407,7 @@ export default function InputForm() {
                                 )}
                               </CommandGroup>
                             </CommandList>
-                            <AddContacts FetchContacts={FetchContacts} />
+                            <AddContacts fetchContacts={FetchContacts} />
                           </Command>
                         </PopoverContent>
                       </Popover>
@@ -462,7 +445,7 @@ export default function InputForm() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full sm:w-[390px] p-0">
+                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search employee..."
@@ -494,7 +477,7 @@ export default function InputForm() {
                                         <Check
                                           className={cn(
                                             "ml-auto",
-                                            employee.id === field.value
+                                            String(employee.id) === String(field.value)
                                               ? "opacity-100"
                                               : "opacity-0"
                                           )}
@@ -722,7 +705,7 @@ export default function InputForm() {
                                   id="emd"
                                   {...field}
                                   value="0"
-                                  checked={field.value === "0"}
+                                  checked={String(field.value) === "0"}
                                   className="h-4 w-4"
                                 />
                                 <label htmlFor="emd-paid">Paid</label>
@@ -733,7 +716,7 @@ export default function InputForm() {
                                   id="emd"
                                   {...field}
                                   value="1"
-                                  checked={field.value === "1"}
+                                  checked={String(field.value) === "1"}
                                   className="h-4 w-4"
                                 />
                                 <label htmlFor="emd-pending">Pending</label>

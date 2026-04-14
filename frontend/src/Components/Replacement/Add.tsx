@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -83,14 +82,11 @@ export default function InputForm() {
   type FormValues = z.infer<typeof FormSchema>;
   const formData = usePostData({
     endpoint: "/api/replacements",
-    params: {
-      onSuccess: (data) => {
-        console.log("data", data);
+    params: {      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["replacements"] });
         navigate("/replacements");
       },
       onError: (error) => {
-        console.log("error", error);
 
         if (error.response && error.response.data.errors) {
           const serverStatus = error.response.data.status;

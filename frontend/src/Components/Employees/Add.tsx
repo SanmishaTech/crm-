@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -57,7 +56,10 @@ const FormSchema = z.object({
   password: z
     .string()
     .min(6, { message: "Password field must have at least 6 characters." }),
-  mobile: z.coerce.number().min(10, { message: "Mobile field is required." }),
+  mobile: z
+    .string()
+    .regex(/^\d{10}$/, { message: "Mobile number must be exactly 10 digits" })
+    .nonempty({ message: "Mobile number field is required." }),
   joining_date: z.string().optional(),
   designation: z
     .string()
@@ -75,7 +77,7 @@ export default function InputForm() {
     defaultValues: {
       employee_name: "",
       email: "",
-      mobile: null,
+      mobile: "",
       department_id: "",
       joining_date: "",
       designation: "",
@@ -218,22 +220,14 @@ export default function InputForm() {
                           </SelectTrigger>
                           <SelectContent>
                             {isDepartmentLoading ? (
-                              <SelectItem disabled>Loading...</SelectItem>
+                              <SelectItem key="loading" value="loading" disabled>Loading...</SelectItem>
                             ) : (
                               departments.map((department) => (
-                                <SelectItem
-                                  key={department.id}
-                                  value={String(department.id)}
-                                >
+                                <SelectItem key={department.id} value={String(department.id)}>
                                   {department.department_name}
                                 </SelectItem>
                               ))
                             )}
-                            <div className="px-5 py-1">
-                              {/* <AddProductCategory
-                                fetchProductCategories={fetchProductCategories}
-                              /> */}
-                            </div>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -253,10 +247,12 @@ export default function InputForm() {
                         <Input
                           placeholder="Enter mobile number"
                           {...field}
-                          type="number"
-                          inputMode="numeric"
-                          pattern="\d{10}"
+                          type="text"
                           maxLength={10}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "");
+                            field.onChange(value);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -307,12 +303,12 @@ export default function InputForm() {
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>Roles</SelectLabel>
-                              <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="Enquiry">Enquiry</SelectItem>
-                              <SelectItem value="Follow up">Follow up</SelectItem>
-                              <SelectItem value="Audit">Audit</SelectItem>
-                              <SelectItem value="ATR">ATR</SelectItem>
-                              <SelectItem value="Payment">Payment</SelectItem>
+                              <SelectItem key="admin" value="admin">Admin</SelectItem>
+                              <SelectItem key="enquiry" value="Enquiry">Enquiry</SelectItem>
+                              <SelectItem key="follow-up" value="Follow up">Follow up</SelectItem>
+                              <SelectItem key="audit" value="Audit">Audit</SelectItem>
+                              <SelectItem key="atr" value="ATR">ATR</SelectItem>
+                              <SelectItem key="payment" value="Payment">Payment</SelectItem>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
