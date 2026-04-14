@@ -39,7 +39,7 @@ type FormData = {
 
 // Add type for props
 interface ReportProps {
-  leadId: string;
+  leadId?: string;
 }
 
 const Report = ({ leadId }: ReportProps) => {
@@ -75,7 +75,9 @@ const Report = ({ leadId }: ReportProps) => {
       });
 
       const response = await fetch(
-        `/api/generate_purchase_report/${leadId}?${params}`,
+        leadId 
+          ? `/api/generate_purchase_report/${leadId}?${params}`
+          : `/api/generate_purchase_report?${params}`,
         {
           method: "POST",
           headers: {
@@ -132,7 +134,7 @@ const Report = ({ leadId }: ReportProps) => {
     <div className="space-y-4">
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="ghost" className="w-full text-sm">
+          <Button variant="outline" className="w-full text-sm">
             Report
           </Button>
         </AlertDialogTrigger>

@@ -225,9 +225,7 @@ export default function TableDemo() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button variant="outline" type="button">
-            <Report />
-          </Button>
+          <Report />
           <div className="flex space-x-2">
             <Button variant="outline" onClick={() => navigate("/purchase/add")}>
               Add Purchase
