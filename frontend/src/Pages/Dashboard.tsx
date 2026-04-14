@@ -57,6 +57,7 @@ import NotepadEDIT from "@/Components/Notepad/Edit";
 import Roles from "@/Components/Roles/index";
 import RolesEDIT from "@/Components/Roles/Update";
 import Permissions from "@/Components/Permissions/index";
+import LeadSourcesIndex from "@/Components/LeadSources/Index";
 
 const Dashboard = () => {
   const location = useLocation();
@@ -66,7 +67,7 @@ const Dashboard = () => {
   // Function to check if the current user role has access to a specific module
   const hasAccess = (module: string) => {
     const role = (localStorage.getItem("role") || "").trim().toLowerCase();
-    const adminOnlyModules = ["roles", "permissions", "departments", "employees"];
+    const adminOnlyModules = ["roles", "permissions", "departments", "employees", "leadSources"];
 
     if (adminOnlyModules.includes(module)) {
       return role === "admin";
@@ -218,6 +219,7 @@ const Dashboard = () => {
         {location.pathname === "/roles" && hasAccess("roles") && <Roles />}
         {/\/roles\/\d+\/edit/.test(location.pathname) && hasAccess("roles") && <RolesEDIT />}
         {location.pathname === "/permissions" && hasAccess("permissions") && <Permissions />}
+        {location.pathname === "/leadSources" && hasAccess("leadSources") && <LeadSourcesIndex />}
       </main>
     </div>
   );

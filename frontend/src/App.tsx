@@ -180,6 +180,7 @@ function App() {
         <Route path="/departments/add" element={<Dashboard />} />
         <Route path="/productCategories" element={<Dashboard />} />
         <Route path="/productCategories/add" element={<Dashboard />} />
+        <Route path="/leadSources" element={<Dashboard />} />
         <Route path="/products" element={<Dashboard />} />
         <Route path="/products/add" element={<Dashboard />} />
         <Route path="/products/edit/:id" element={<Dashboard />} />

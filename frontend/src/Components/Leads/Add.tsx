@@ -99,6 +99,7 @@ export default function InputForm() {
   const [contacts, setContacts] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [leadSources, setLeadSources] = useState<any[]>([]);
+  const [selectedTitle, setSelectedTitle] = useState<string>("");
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -213,11 +214,11 @@ export default function InputForm() {
   const [leadStatuses, setLeadStatuses] = useState<any[]>([]);
 
   useGetData({
-    endpoint: `/api/lead_sources`,
+    endpoint: `/api/all_lead_sources`,
     params: {
-      queryKey: ["lead_sources"],
+      queryKey: ["lead_sources_all"],
       onSuccess: (data) => {
-        setLeadSources(Object.values(data.data.LeadSources));
+        setLeadSources(data.data.LeadSources);
       },
     },
   });
@@ -517,26 +518,51 @@ export default function InputForm() {
                   )}
                 />
 
+                <FormItem>
+                  <FormLabel>Lead Source Title</FormLabel>
+                  <Select
+                    value={selectedTitle}
+                    onValueChange={(value) => {
+                      setSelectedTitle(value);
+                      form.setValue("lead_source", ""); // Reset name selection
+                    }}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Source Title" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Array.from(new Set(leadSources.map(s => s.source_title))).map(title => (
+                        <SelectItem key={title} value={title}>{title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+
                 <FormField
                   control={form.control}
                   name="lead_source"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Lead Source</FormLabel>
+                      <FormLabel>Lead Source Name</FormLabel>
                       <FormControl>
                         <Select
                           value={field.value}
                           onValueChange={(value) => field.onChange(value)}
+                          disabled={!selectedTitle}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Lead Source" />
+                            <SelectValue placeholder={selectedTitle ? "Select Source Name" : "First select title"} />
                           </SelectTrigger>
                           <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
-                            {leadSources.map((source) => (
-                              <SelectItem key={source} value={source}>
-                                {source}
-                              </SelectItem>
-                            ))}
+                            {leadSources
+                              .filter(source => source.source_title === selectedTitle)
+                              .map((source) => (
+                                <SelectItem key={source.id} value={`(${source.source_title}) ${source.source_name}`}>
+                                  {source.source_name}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                       </FormControl>

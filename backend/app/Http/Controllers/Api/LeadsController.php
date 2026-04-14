@@ -483,11 +483,10 @@ class LeadsController extends BaseController
      */
     public function leadSources(): JsonResponse
     {
-        $lead_sources = config("data.lead_sources");
-        if (!$lead_sources) {
-            return $this->sendError("Lead Source not found", ['error' => 'Lead Source not found']);
-        }
-        return $this->sendResponse(["LeadSources" => $lead_sources], "Lead Source retrieved successfully");
+        $lead_sources = \App\Models\LeadSource::all();
+        return $this->sendResponse([
+            "LeadSources" => \App\Http\Resources\LeadSourceResource::collection($lead_sources)
+        ], "Lead Source retrieved successfully");
     }
 
     public function getOpenLeadsByUser(Request $request): JsonResponse

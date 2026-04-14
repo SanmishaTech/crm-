@@ -86,8 +86,6 @@ const formSchema = z.object({
   tender_status: z.string().optional(),
   lead_attachment: z.any().optional(),
   lead_sale_order: z.any().optional(),
-  lead_audit_report: z.any().optional(),
-  lead_atr_report: z.any().optional(),
   payment_received_remark: z.string().optional(),
 });
 
@@ -118,11 +116,10 @@ export default function EditLeadPage() {
   const [contacts, setContacts] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [leadSources, setLeadSources] = useState<any[]>([]);
+  const [selectedTitle, setSelectedTitle] = useState<string>("");
   const [productRows, setProductRows] = useState<ProductRow[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [saleOrderFile, setSaleOrderFile] = useState<File | null>(null);
-  const [auditReportFile, setAuditReportFile] = useState<File | null>(null);
-  const [atrReportFile, setAtrReportFile] = useState<File | null>(null);
   const [frameworks, setFrameworks] = useState<
     { value: string; label: string }[]
   >([]);
@@ -242,11 +239,11 @@ export default function EditLeadPage() {
   const [leadStatuses, setLeadStatuses] = useState<any[]>([]);
 
   useGetData({
-    endpoint: `/api/lead_sources`,
+    endpoint: `/api/all_lead_sources`,
     params: {
-      queryKey: ["lead_sources"],
+      queryKey: ["all_lead_sources"],
       onSuccess: (data) => {
-        setLeadSources(Object.values(data.data.LeadSources));
+        setLeadSources(data.data.LeadSources);
       },
     },
   });
@@ -348,6 +345,14 @@ export default function EditLeadPage() {
         const raw = (newData?.lead_status ?? "").trim();
         return raw === "Close" ? "Closed" : raw;
       })();
+      // Extract title from existing lead_source (e.g., "(India Mart) 11")
+      if (newData?.lead_source) {
+        const match = newData.lead_source.match(/\((.*?)\)/);
+        if (match && match[1]) {
+          setSelectedTitle(match[1]);
+        }
+      }
+
       form.reset({
         contact_id: newData?.contact_id || "",
         assigned_to: newData?.assigned_to || "",
@@ -366,8 +371,6 @@ export default function EditLeadPage() {
         product_id: newData?.product_id || "",
         lead_attachment: newData?.lead_attachment || "",
         lead_sale_order: newData?.lead_sale_order || "",
-        lead_audit_report: newData?.lead_audit_report || "",
-        lead_atr_report: newData?.lead_atr_report || "",
         payment_received_remark: newData?.payment_received_remark || "",
       });
     }
@@ -394,23 +397,16 @@ export default function EditLeadPage() {
   });
 
   const onSubmit = (data: FormValues) => {
-    // Validation for ATR Report PDF
-    if (data.lead_status === "ATR Report" || 
-        data.lead_status === "Schedule III" || 
-        data.lead_status === "Invoice Generated" || 
+    // Validation for reports
+    if (data.lead_status === "Invoice Generated" || 
         data.lead_status === "Payment Received") {
-      if (!atrReportFile && !editData?.data?.Lead?.lead_atr_report) {
-         toast.error("Please upload the ATR Report PDF to proceed.");
-         return;
-      }
+      // Add any specific invoice validation here if needed
     }
 
     const submissionData = {
       ...data,
       lead_attachment: file,
       lead_sale_order: saleOrderFile,
-      lead_audit_report: auditReportFile,
-      lead_atr_report: atrReportFile,
       payment_received_remark: data.payment_received_remark,
 
       products: productRows.map((row) => ({
@@ -644,26 +640,51 @@ export default function EditLeadPage() {
                   )}
                 />
 
+                <FormItem>
+                  <FormLabel>Lead Source Title</FormLabel>
+                  <Select
+                    value={selectedTitle}
+                    onValueChange={(value) => {
+                      setSelectedTitle(value);
+                      form.setValue("lead_source", ""); // Reset name selection
+                    }}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Source Title" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Array.from(new Set(leadSources.map(s => s.source_title))).map(title => (
+                        <SelectItem key={title} value={title}>{title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+
                 <FormField
                   control={form.control}
                   name="lead_source"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Lead Source</FormLabel>
+                      <FormLabel>Lead Source Name</FormLabel>
                       <FormControl>
                         <Select
                           value={field.value}
                           onValueChange={(value) => field.onChange(value)}
+                          disabled={!selectedTitle}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select Lead Source" />
+                            <SelectValue placeholder={selectedTitle ? "Select Source Name" : "First select title"} />
                           </SelectTrigger>
                           <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
-                            {leadSources.map((source) => (
-                              <SelectItem key={source} value={source}>
-                                {source}
-                              </SelectItem>
-                            ))}
+                            {leadSources
+                              .filter(source => source.source_title === selectedTitle)
+                              .map((source) => (
+                                <SelectItem key={source.id} value={`(${source.source_title}) ${source.source_name}`}>
+                                  {source.source_name}
+                                </SelectItem>
+                              ))}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -731,40 +752,6 @@ export default function EditLeadPage() {
                     View sale order
                   </Button>
                 ) : null}
-                {editData?.data?.Lead?.lead_audit_report ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      openPdfFromApi(
-                        "Audit Report",
-                        `/api/audit_reports/${encodeURIComponent(
-                          editData.data.Lead.lead_audit_report
-                        )}`
-                      )
-                    }
-                  >
-                    View audit report
-                  </Button>
-                ) : null}
-                {editData?.data?.Lead?.lead_atr_report ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      openPdfFromApi(
-                        "ATR Report",
-                        `/api/atr_reports/${encodeURIComponent(
-                          editData.data.Lead.lead_atr_report
-                        )}`
-                      )
-                    }
-                  >
-                    View ATR report
-                  </Button>
-                ) : null}
               </div>
             </CardHeader>
             <CardContent className="p-4 md:p-6">
@@ -813,29 +800,6 @@ export default function EditLeadPage() {
                               <>
                                 <SelectItem value="Purchase Order">
                                   Purchase Order Received
-                                </SelectItem>
-                                <SelectItem value="Audit">Audit</SelectItem>
-                              </>
-                            ) : savedLeadStatus === "Audit" ? (
-                              <>
-                                <SelectItem value="Audit">Audit</SelectItem>
-                                <SelectItem value="ATR Report">
-                                  ATR Report
-                                </SelectItem>
-                              </>
-                            ) : savedLeadStatus === "ATR Report" ? (
-                              <>
-                                <SelectItem value="ATR Report">
-                                  ATR Report
-                                </SelectItem>
-                                <SelectItem value="Schedule III">
-                                  Schedule III
-                                </SelectItem>
-                              </>
-                            ) : savedLeadStatus === "Schedule III" ? (
-                              <>
-                                <SelectItem value="Schedule III">
-                                  Schedule III
                                 </SelectItem>
                                 <SelectItem value="Invoice Generated">
                                   Invoice Generated
@@ -1071,192 +1035,6 @@ export default function EditLeadPage() {
                                   }}
                                 >
                                   View current sale order
-                                </Button>
-                              ) : null}
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                      {field.value === "Audit" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_audit_report"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Audit Report (PDF)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="file"
-                                  accept="application/pdf"
-                                  onChange={(event) => {
-                                    const selectedFile = event.target.files?.[0] ?? null;
-                                    setAuditReportFile(selectedFile);
-                                    field.onChange(selectedFile);
-                                  }}
-                                />
-                              </FormControl>
-                              {editData?.data?.Lead?.lead_audit_report ? (
-                                <Button
-                                  type="button"
-                                  variant="link"
-                                  className="p-0 h-auto text-sm"
-                                  onClick={async () => {
-                                    const popup = window.open("", "_blank");
-                                    if (!popup) {
-                                      toast.error("Popup blocked. Please allow popups.");
-                                      return;
-                                    }
-                                    try {
-                                      const response = await fetch(
-                                        `/api/audit_reports/${encodeURIComponent(
-                                          editData.data.Lead.lead_audit_report
-                                        )}`,
-                                        {
-                                          headers: {
-                                            Authorization:
-                                              "Bearer " + localStorage.getItem("token"),
-                                            Accept: "application/pdf, application/json",
-                                            "X-Requested-With": "XMLHttpRequest",
-                                          },
-                                        }
-                                      );
-
-                                      if (!response.ok) {
-                                        throw new Error("Failed to fetch audit report");
-                                      }
-
-                                      const contentType =
-                                        response.headers.get("content-type") ?? "";
-                                      const blob = await response.blob();
-                                      const signature = await blob.slice(0, 5).text();
-                                      if (!signature.startsWith("%PDF-")) {
-                                        const text = await blob.text();
-                                        popup.document.open();
-                                        popup.document.write(text);
-                                        popup.document.close();
-                                        toast.error(
-                                          `Audit report is not a PDF (content-type: ${contentType || "unknown"}).`
-                                        );
-                                        return;
-                                      }
-
-                                      const pdfBlob =
-                                        blob.type && blob.type !== "application/octet-stream"
-                                          ? blob
-                                          : new Blob([blob], { type: "application/pdf" });
-                                      const url = window.URL.createObjectURL(pdfBlob);
-                                      popup.document.open();
-                                      popup.document.write(
-                                        `<html><head><title>Audit Report</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
-                                      );
-                                      popup.document.close();
-                                      const revokeWhenClosed = window.setInterval(() => {
-                                        if (popup.closed) {
-                                          window.clearInterval(revokeWhenClosed);
-                                          window.URL.revokeObjectURL(url);
-                                        }
-                                      }, 1000);
-                                    } catch {
-                                      popup.close();
-                                      toast.error("Failed to open audit report.");
-                                    }
-                                  }}
-                                >
-                                  View current audit report
-                                </Button>
-                              ) : null}
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                      {field.value === "ATR Report" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_atr_report"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>ATR Report (PDF)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="file"
-                                  accept="application/pdf"
-                                  onChange={(event) => {
-                                    const selectedFile = event.target.files?.[0] ?? null;
-                                    setAtrReportFile(selectedFile);
-                                    field.onChange(selectedFile);
-                                  }}
-                                />
-                              </FormControl>
-                              {editData?.data?.Lead?.lead_atr_report ? (
-                                <Button
-                                  type="button"
-                                  variant="link"
-                                  className="p-0 h-auto text-sm"
-                                  onClick={async () => {
-                                    const popup = window.open("", "_blank");
-                                    if (!popup) {
-                                      toast.error("Popup blocked. Please allow popups.");
-                                      return;
-                                    }
-                                    try {
-                                      const response = await fetch(
-                                        `/api/atr_reports/${encodeURIComponent(
-                                          editData.data.Lead.lead_atr_report
-                                        )}`,
-                                        {
-                                          headers: {
-                                            Authorization:
-                                              "Bearer " + localStorage.getItem("token"),
-                                            Accept: "application/pdf, application/json",
-                                            "X-Requested-With": "XMLHttpRequest",
-                                          },
-                                        }
-                                      );
-
-                                      if (!response.ok) {
-                                        throw new Error("Failed to fetch ATR report");
-                                      }
-
-                                      const contentType =
-                                        response.headers.get("content-type") ?? "";
-                                      const blob = await response.blob();
-                                      const signature = await blob.slice(0, 5).text();
-                                      if (!signature.startsWith("%PDF-")) {
-                                        const text = await blob.text();
-                                        popup.document.open();
-                                        popup.document.write(text);
-                                        popup.document.close();
-                                        toast.error(
-                                          `ATR report is not a PDF (content-type: ${contentType || "unknown"}).`
-                                        );
-                                        return;
-                                      }
-
-                                      const pdfBlob =
-                                        blob.type && blob.type !== "application/octet-stream"
-                                          ? blob
-                                          : new Blob([blob], { type: "application/pdf" });
-                                      const url = window.URL.createObjectURL(pdfBlob);
-                                      popup.document.open();
-                                      popup.document.write(
-                                        `<html><head><title>ATR Report</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
-                                      );
-                                      popup.document.close();
-                                      const revokeWhenClosed = window.setInterval(() => {
-                                        if (popup.closed) {
-                                          window.clearInterval(revokeWhenClosed);
-                                          window.URL.revokeObjectURL(url);
-                                        }
-                                      }, 1000);
-                                    } catch {
-                                      popup.close();
-                                      toast.error("Failed to open ATR report.");
-                                    }
-                                  }}
-                                >
-                                  View current ATR report
                                 </Button>
                               ) : null}
                               <FormMessage />

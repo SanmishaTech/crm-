@@ -104,7 +104,7 @@ const Navbar = () => {
   // Function to check if the current user role has access to a specific module
   const hasAccess = (module: string) => {
     const role = (localStorage.getItem("role") || "").trim().toLowerCase();
-    const adminOnlyModules = ["roles", "permissions", "departments", "employees"];
+    const adminOnlyModules = ["roles", "permissions", "departments", "employees", "leadSources"];
 
     if (adminOnlyModules.includes(module)) {
       return role === "admin";
@@ -384,13 +384,16 @@ const Navbar = () => {
                     {hasAccess("expense_heads") && hasAccess("expense") && (
                       <Separator className="w-full justify-center bg-border" />
                     )}
-                    {hasAccess("expense") && (
+                    {hasAccess("expense") && hasAccess("leadSources") && (
+                      <Separator className="w-full justify-center bg-border" />
+                    )}
+                    {hasAccess("leadSources") && (
                       <Button
-                        onClick={() => navigate("/expense")}
+                        onClick={() => navigate("/leadSources")}
                         variant="ghost"
                         className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
                       >
-                        Expense
+                        Lead Sources
                       </Button>
                     )}
                   </NavigationMenuContent>
@@ -731,6 +734,19 @@ const Navbar = () => {
                     className="w-full text-left justify-start"
                   >
                     Departments
+                  </Button>
+                )}
+                {hasAccess("leadSources") && (
+                  <Button
+                    onClick={() => {
+                      navigate("/leadSources");
+                      setMobileMenuOpen(false);
+                      setIsSheetOpen(false);
+                    }}
+                    variant="ghost"
+                    className="w-full text-left justify-start"
+                  >
+                    Lead Sources
                   </Button>
                 )}
 

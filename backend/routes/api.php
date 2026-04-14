@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\PurchasesController;
 use App\Http\Controllers\Api\SuppliersController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\ExpenseHeadController;
+use App\Http\Controllers\Api\LeadSourceController;
 use App\Http\Controllers\Api\PermissionsController;
 use App\Http\Controllers\Api\ProductCategoriesController;
 
@@ -37,6 +38,7 @@ Route::group(['middleware' => ['auth:sanctum', 'permission', 'request.null']], f
    Route::resource('departments', DepartmentController::class);
    Route::resource('employees', EmployeesController::class);
    Route::resource('notepads', NotepadController::class);
+   Route::resource('lead_sources', LeadSourceController::class);
 
    Route::post('/follow_ups', [FollowUpsController::class , 'store'])->name("follow_ups.store");
    Route::get('/follow_ups/{id}', [FollowUpsController::class , 'show'])->name("follow_ups.show");
@@ -87,6 +89,7 @@ Route::group(['middleware' => ['auth:sanctum', 'permission', 'request.null']], f
    Route::resource('expense_heads', ExpenseHeadController::class);
    Route::get('/all_expense_heads', [ExpenseHeadController::class , 'allExpenseHead'])->name("expense_heads.all");
    Route::resource('expenses', ExpenseController::class);
+   Route::get('/all_lead_sources', [LeadSourceController::class, 'allLeadSources'])->name("lead_sources.all");
    // Route::get('/all_expense_s', [ExpenseController::class, 'allExpenseHead'])->name("expense_heads.all");
 
    Route::get('/roles', [RolesController::class , 'index'])->name("roles.index");
@@ -111,5 +114,4 @@ Route::group(['middleware' => ['auth:sanctum', 'request.null']], function () {
 
    Route::get('/follow_up_types', [LeadsController::class , 'follow_up_types'])->name("follow_up_types.index");
    Route::get('/lead_status', [LeadsController::class , 'leadStatus'])->name("lead_status.index");
-   Route::get('/lead_sources', [LeadsController::class , 'leadSources'])->name("lead_sources.index");
 });
