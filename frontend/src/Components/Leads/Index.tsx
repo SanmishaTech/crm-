@@ -287,9 +287,7 @@ export default function TableDemo() {
             ) : null}
           </div>
           <div className="flex space-x-2">
-            <Button variant="outline" type="button">
-              <Report />
-            </Button>
+            <Report />
           </div>
           <div className="flex space-x-2">
             <Button variant="outline" onClick={() => navigate("/leads/add")}>
@@ -328,16 +326,10 @@ export default function TableDemo() {
               </TableRow>
             </TableHeader>
             <TableFooter></TableFooter>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
                   <TableBody>
                     {Sup?.data?.Lead &&
                       Array.isArray(Sup.data.Lead) &&
                       Sup.data.Lead.map((lead) => (
-                        <TooltipProvider key={lead.id}>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
                               <TableRow>
                                 <TableCell>
                                   {lead?.contact?.contact_person}
@@ -478,38 +470,22 @@ export default function TableDemo() {
                                   </DropdownMenu>
                                 </TableCell>
                               </TableRow>
-                            </TooltipTrigger>
-
-                            <TooltipContent>
-                              <p>
-                                <strong>Remarks:</strong>{" "}
-                                {(lead.follow_up_remark || "N/A")
-                                  .charAt(0)
-                                  .toUpperCase() +
-                                  (lead.follow_up_remark || "N/A").slice(1)}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
                       ))}
                   </TableBody>
-                </TooltipTrigger>
-              </Tooltip>
-            </TooltipProvider>
-          </Table>
-          {/* Table End */}
-          {/* Pagination Start */}
-          <Pagination>
-            <PaginationContent className="flex items-center space-x-4">
-              <PaginationPrevious
-                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${currentPage === 1
-                    ? "cursor-default opacity-50"
-                    : "cursor-pointer"
-                  }`}
-                onClick={goToPreviousPage}
-              >
-                Previous
-              </PaginationPrevious>
+                </Table>
+                {/* Table End */}
+                {/* Pagination Start */}
+                <Pagination>
+                  <PaginationContent className="flex items-center space-x-4">
+                    <PaginationPrevious
+                      className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${currentPage === 1
+                          ? "cursor-default opacity-50"
+                          : "cursor-pointer"
+                        }`}
+                      onClick={goToPreviousPage}
+                    >
+                      Previous
+                    </PaginationPrevious>
 
               <span className="text-sm text-foreground">
                 Page {currentPage} of {totalPages}

@@ -303,7 +303,6 @@ export default function EditLeadPage() {
       onSuccess: (data) => {
         setData(data?.Lead);
         setLeads(data.data.Lead?.contact?.client?.client);
-        setContacts(data?.data?.Lead?.contact_id);
         setLoading(false);
         queryClient.invalidateQueries({ queryKey: ["editlead"] });
         queryClient.invalidateQueries({ queryKey: ["editlead", id] });
@@ -336,21 +335,24 @@ export default function EditLeadPage() {
     }
   }, [editData]);
 
+  // Separate effect to extract and set title when both editData and leadSources are available
   useEffect(() => {
-    if (editData?.data?.Lead) {
+    if (editData?.data?.Lead?.lead_source && leadSources.length > 0) {
+      const leadSource = editData.data.Lead.lead_source;
+      const match = leadSource.match(/\((.*?)\)/);
+      if (match && match[1]) {
+        setSelectedTitle(match[1]);
+      }
+    }
+  }, [editData, leadSources]);
+
+  useEffect(() => {
+    if (editData?.data?.Lead && leadSources.length > 0) {
       const newData = editData.data.Lead;
       const normalizedLeadStatus = (() => {
         const raw = (newData?.lead_status ?? "").trim();
         return raw === "Close" ? "Closed" : raw;
       })();
-      // Extract title from existing lead_source (e.g., "(India Mart) 11")
-      if (newData?.lead_source) {
-        const match = newData.lead_source.match(/\((.*?)\)/);
-        if (match && match[1]) {
-          setSelectedTitle(match[1]);
-        }
-      }
-
       form.reset({
         contact_id: newData?.contact_id || "",
         assigned_to: newData?.assigned_to || "",
@@ -372,7 +374,7 @@ export default function EditLeadPage() {
         payment_received_remark: newData?.payment_received_remark || "",
       });
     }
-  }, [editData]);
+  }, [editData, leadSources]);
 
   const FetchContacts = useGetData({
     endpoint: `/api/all_contacts`,
