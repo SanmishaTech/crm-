@@ -39,8 +39,16 @@ import { useQueryClient } from "@tanstack/react-query";
 const FormSchema = z.object({
   date: z.string().optional(),
   customer_name: z.string().optional(),
-  customer_mobile: z.string().optional(),
-  customer_email: z.string().optional(),
+  customer_mobile: z
+    .string()
+    .regex(/^[0-9]*$/, "Mobile number must contain only numbers")
+    .max(10, "Mobile number must be at most 10 digits")
+    .optional(),
+  customer_email: z
+    .string()
+    .email("Invalid email address")
+    .optional()
+    .or(z.literal("")),
   customer_address: z.string().optional(),
   instrument: z.string().optional(),
   instrument_number: z.string().optional(),
@@ -194,8 +202,16 @@ export default function InputForm() {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          type="number"
                           placeholder="Enter Customer Mobile"
                           {...field}
+                          maxLength={10}
+                          onInput={(e) => {
+                            const value = e.currentTarget.value;
+                            if (value.length > 10) {
+                              e.currentTarget.value = value.slice(0, 10);
+                            }
+                          }}
                           className="bg-background text-foreground border-input"
                         />
                       </FormControl>

@@ -203,7 +203,6 @@ export default function EditLeadPage() {
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
       onSuccess: () => {
-        console.log("success");
         navigate("/leads");
         queryClient.invalidateQueries({ queryKey: ["editlead"] });
         queryClient.invalidateQueries({ queryKey: ["editlead", id] });
@@ -1355,6 +1354,7 @@ export default function EditLeadPage() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="Enter Quantity"
                           name="quantity"
                           value={row.quantity}
@@ -1367,6 +1367,7 @@ export default function EditLeadPage() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="Rate"
                           name="rate"
                           value={row.rate}

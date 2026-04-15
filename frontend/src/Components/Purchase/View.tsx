@@ -229,8 +229,6 @@ export default function EditLeadPage() {
   useEffect(() => {
     if (editData?.data?.Purchase) {
       const newData = editData.data.Purchase;
-      console.log("Products:", newData?.Products);
-
       const productFields = newData?.Products.map((product) => ({
         product_id: product?.product_id || "",
         quantity: product?.quantity || "",

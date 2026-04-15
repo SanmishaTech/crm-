@@ -70,10 +70,18 @@ const FormSchema = z.object({
     })
     .nonempty({ message: "Department field is required." }),
   designation: z.string().optional(),
-  mobile_1: z.string().optional(),
+  mobile_1: z
+    .string()
+    .regex(/^[0-9]*$/, "Mobile number must contain only numbers")
+    .max(10, "Mobile number must be at most 10 digits")
+    .optional(),
 
   mobile_2: z.any().optional(),
-  email: z.string().optional(),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .optional()
+    .or(z.literal("")),
 });
 
 export default function InputForm() {
@@ -103,12 +111,9 @@ export default function InputForm() {
     endpoint: "/api/contacts",
     params: {
       onSuccess: (data) => {
-        console.log("data", data);
         navigate("/contacts");
       },
       onError: (error) => {
-        console.log("error", error);
-
         if (error.response && error.response.data.errors) {
           const serverStatus = error.response.data.status;
           const serverErrors = error.response.data.errors;
@@ -314,8 +319,14 @@ export default function InputForm() {
                         <Input
                           placeholder="Enter Mobile"
                           {...field}
-                          type="text"
-                          inputMode="numeric"
+                          type="number"
+                          maxLength={10}
+                          onInput={(e) => {
+                            const value = e.currentTarget.value;
+                            if (value.length > 10) {
+                              e.currentTarget.value = value.slice(0, 10);
+                            }
+                          }}
                         />
                       </FormControl>
                       <FormMessage />

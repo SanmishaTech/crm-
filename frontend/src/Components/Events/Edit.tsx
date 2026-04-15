@@ -423,6 +423,7 @@ export default function EventsEdit() {
                         <TableCell>
                           <div className="space-y-1">
                             <Input
+                              placeholder="Enter Company Name"
                               value={p.company_name || ""}
                               onChange={(e) =>
                                 updateParticipant(index, "company_name", e.target.value)
@@ -438,6 +439,7 @@ export default function EventsEdit() {
                         <TableCell>
                           <div className="space-y-1">
                             <Input
+                              placeholder="Enter Participant Name"
                               value={p.participant_name || ""}
                               onChange={(e) =>
                                 updateParticipant(index, "participant_name", e.target.value)
@@ -453,7 +455,16 @@ export default function EventsEdit() {
                         <TableCell>
                           <div className="space-y-1">
                             <Input
+                              type="number"
+                              placeholder="Enter Contact Number"
                               value={p.contact_number || ""}
+                              maxLength={10}
+                              onInput={(e) => {
+                                const value = e.currentTarget.value;
+                                if (value.length > 10) {
+                                  e.currentTarget.value = value.slice(0, 10);
+                                }
+                              }}
                               onChange={(e) =>
                                 updateParticipant(index, "contact_number", e.target.value)
                               }
@@ -468,6 +479,7 @@ export default function EventsEdit() {
                         <TableCell>
                           <div className="space-y-1">
                             <Input
+                              placeholder="Enter Email"
                               value={p.email_id || ""}
                               onChange={(e) =>
                                 updateParticipant(index, "email_id", e.target.value)

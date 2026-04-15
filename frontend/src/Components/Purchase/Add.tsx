@@ -288,7 +288,7 @@ export default function InputForm() {
                               variant="outline"
                               role="combobox"
                               className={cn(
-                                " justify-between relative top-[10px]",
+                                "w-full justify-between relative top-[10px]",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
@@ -301,7 +301,7 @@ export default function InputForm() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className=" max-h-[260px] overflow-y-auto p-0 md:min-w-[700px] lg:min-w-[1000px]">
+                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] max-h-[260px] overflow-y-auto p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search Supplier..."
@@ -507,7 +507,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total CGST.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Total CGST" {...field} />
+                        <Input type="number" placeholder="Total CGST" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -520,7 +520,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total SGST.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Total SGST" {...field} />
+                        <Input type="number" placeholder="Total SGST" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -533,7 +533,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total IGST.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Total IGST" {...field} />
+                        <Input type="number" placeholder="Total IGST" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -546,7 +546,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total Tax Amount.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Total Tax Amount" {...field} />
+                        <Input type="number" placeholder="Total Tax Amount" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -559,7 +559,7 @@ export default function InputForm() {
                     <FormItem>
                       <FormLabel>Total Amount.</FormLabel>
                       <FormControl>
-                        <Input placeholder="Total Amount" {...field} />
+                        <Input type="number" placeholder="Total Amount" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -660,6 +660,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="Enter Quantity"
                           name="quantity"
                           value={row.quantity}
@@ -672,6 +673,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="Rate"
                           name="rate"
                           value={row.rate}
@@ -684,6 +686,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="CGST"
                           name="cgst"
                           value={row.cgst}
@@ -696,6 +699,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="SGST"
                           name="sgst"
                           value={row.sgst}
@@ -708,6 +712,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="IGST"
                           name="igst"
                           value={row.igst}
@@ -720,6 +725,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="Pre-Tax Amount"
                           name="pre_tax_amount"
                           value={row.pre_tax_amount}
@@ -732,6 +738,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="Post-Tax Amount"
                           name="post_tax_amount"
                           value={row.post_tax_amount}

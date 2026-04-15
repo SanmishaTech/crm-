@@ -42,8 +42,16 @@ import {
 const formSchema = z.object({
   date: z.string().optional(),
   customer_name: z.string().optional(),
-  customer_mobile: z.string().optional(),
-  customer_email: z.string().optional(),
+  customer_mobile: z
+    .string()
+    .regex(/^[0-9]*$/, "Mobile number must contain only numbers")
+    .max(10, "Mobile number must be at most 10 digits")
+    .optional(),
+  customer_email: z
+    .string()
+    .email("Invalid email address")
+    .optional()
+    .or(z.literal("")),
   customer_address: z.string().optional(),
   instrument: z.string().optional(),
   instrument_number: z.string().optional(),
@@ -96,7 +104,7 @@ export default function EditSupplierPage() {
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["replacements"] });
         queryClient.invalidateQueries({ queryKey: ["replacements", id] });
-        toast.success("Supplier updated successfully");
+        toast.success("Replacement updated successfully");
         navigate("/replacements");
       },
       onError: (error) => {
@@ -110,13 +118,13 @@ export default function EditSupplierPage() {
                 type: "manual",
                 message: serverErrors.supplier[0], // The error message from the server
               });
-              toast.error("The supplier has already been taken.");
+              toast.error("The replacement has already been taken.");
             }
           } else {
-            setError("Failed to add Supplier"); // For any other errors
+            setError("Failed to update Replacement"); // For any other errors
           }
         } else {
-          setError("Failed to add Supplier");
+          setError("Failed to update Replacement");
         }
       },
     },
@@ -142,7 +150,7 @@ export default function EditSupplierPage() {
             "Replacement name is duplicated. Please use a unique name."
           );
         } else {
-          toast.error("Failed to fetch supplier data. Please try again.");
+          toast.error("Failed to fetch replacement data. Please try again.");
         }
       },
       enabled: !!id,
@@ -371,8 +379,16 @@ export default function EditSupplierPage() {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          type="number"
                           placeholder="Enter Customer Mobile"
                           {...field}
+                          maxLength={10}
+                          onInput={(e) => {
+                            const value = e.currentTarget.value;
+                            if (value.length > 10) {
+                              e.currentTarget.value = value.slice(0, 10);
+                            }
+                          }}
                           className="bg-background text-foreground border-input"
                         />
                       </FormControl>

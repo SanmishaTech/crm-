@@ -94,7 +94,6 @@ export default function EditClientPage() {
     params: {
       queryKey: ["editclient", id],
       onSuccess: (data: any) => {
-        console.log("editdata", data);
         queryClient.invalidateQueries({ queryKey: ["editclient"] });
         queryClient.invalidateQueries({ queryKey: ["editclient", id] });
         toast.success("Client updated successfully");
@@ -134,7 +133,6 @@ export default function EditClientPage() {
       retry: 1,
 
       onSuccess: (data) => {
-        console.log("data", data);
       },
       onError: (error) => {
         if (error.message && error.message.includes("duplicate client")) {
@@ -148,7 +146,6 @@ export default function EditClientPage() {
   });
 
   useEffect(() => {
-    console.log("data", editData);
   }, [editData]);
 
   useEffect(() => {

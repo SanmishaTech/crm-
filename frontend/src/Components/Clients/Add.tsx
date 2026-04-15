@@ -87,12 +87,9 @@ export default function InputForm() {
     endpoint: "/api/clients",
     params: {
       onSuccess: (data) => {
-        console.log("data", data);
         navigate("/clients");
       },
       onError: (error) => {
-        console.log("error", error);
-
         // Check for the 'client' duplicate error
         if (error.response && error.response.data.errors) {
           const serverStatus = error.response.data.status;

@@ -94,7 +94,6 @@ const AlertQuotation = ({ leadId }) => {
           },
         });
         const leadData = await response.json();
-        console.log("Lead Data:", leadData);
         setPreviousPdfUrl(leadData?.lead_invoice || null);
       } catch (error) {
         console.error("Error fetching lead details:", error);

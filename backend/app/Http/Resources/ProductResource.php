@@ -10,10 +10,14 @@ class ProductResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @return array<string, mixed>|null
      */
-    public function toArray(Request $request): array
+    public function toArray(Request $request): ?array
     {
+        if (!$this->resource) {
+            return null;
+        }
+
         return [
             'id' => $this->id,
             'product_category_id' => $this->product_category_id,

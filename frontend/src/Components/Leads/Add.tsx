@@ -128,15 +128,12 @@ export default function InputForm() {
     endpoint: "/api/leads",
     params: {
       retry: 1,
-      onSuccess: (data: any) => {
-        console.log("data", data);
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["lead"] });
         queryClient.invalidateQueries({ queryKey: ["lead"] });
         navigate("/leads");
       },
       onError: (error) => {
-        console.log("error", error);
-
         if ((error as any).response && (error as any).response.data.errors) {
           const serverStatus = (error as any).response.data.status;
           const serverErrors = (error as any).response.data.errors;
@@ -239,7 +236,6 @@ export default function InputForm() {
       queryKey: ["contacts"],
       retry: 1,
       onSuccess: (data) => {
-        console.log("data", data);
         queryClient.invalidateQueries({ queryKey: ["contacts"] });
         setContacts(data.data.Contacts);
         setLoading(false);
@@ -851,6 +847,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="Enter Quantity"
                           name="quantity"
                           value={row.quantity}
@@ -863,6 +860,7 @@ export default function InputForm() {
                       </TableCell>
                       <TableCell>
                         <Input
+                          type="number"
                           placeholder="Rate"
                           name="rate"
                           value={row.rate}

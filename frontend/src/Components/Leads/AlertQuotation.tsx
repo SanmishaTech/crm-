@@ -82,7 +82,6 @@ const AlertQuotation = ({ leadId }) => {
           },
         });
         const leadData = await response.json();
-        console.log("Lead Data:", leadData);
         setPreviousPdfUrl(leadData?.lead_quotation || null);
       } catch (error) {
         console.error("Error fetching lead details:", error);
@@ -135,7 +134,6 @@ const AlertQuotation = ({ leadId }) => {
   };
 
   const onSubmit = async (data) => {
-    console.log("Form Data:", data);
     await handleGenerateQuotation(data);
   };
 

@@ -60,10 +60,18 @@ const formSchema = z.object({
   department: z.string().optional(),
 
   designation: z.string().optional(),
-  mobile_1: z.string().optional(),
+  mobile_1: z
+    .string()
+    .regex(/^[0-9]*$/, "Mobile number must contain only numbers")
+    .max(10, "Mobile number must be at most 10 digits")
+    .optional(),
 
   mobile_2: z.any().optional(),
-  email: z.string().optional(),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .optional()
+    .or(z.literal("")),
 });
 
 // Move FormValues type definition outside the component
@@ -100,7 +108,6 @@ export default function EditSupplierPage() {
 
     params: {
       onSuccess: (data) => {
-        console.log("editdata", data);
         queryClient.invalidateQueries({ queryKey: ["editsupplier"] });
         queryClient.invalidateQueries({ queryKey: ["editsupplier", id] });
         toast.success("Contact updated successfully");
@@ -140,7 +147,6 @@ export default function EditSupplierPage() {
       retry: 1,
 
       onSuccess: (data) => {
-        console.log("data", data);
         setData(data.Contact);
         setLoading(false);
       },
@@ -156,7 +162,6 @@ export default function EditSupplierPage() {
   });
 
   useEffect(() => {
-    console.log("data", editData);
   }, [editData]);
 
   useEffect(() => {
@@ -215,7 +220,6 @@ export default function EditSupplierPage() {
 
   const onSubmit = (data: FormValues) => {
     fetchData.mutate(data);
-    getData.mutate();
     queryClient.invalidateQueries({ queryKey: ["client"] });
     queryClient.invalidateQueries({ queryKey: ["client", id] });
   };
@@ -390,10 +394,14 @@ export default function EditSupplierPage() {
                         <Input
                           placeholder="Enter Mobile"
                           {...field}
-                          type="text"
-                          inputMode="numeric"
-                          pattern="\d{10}"
+                          type="number"
                           maxLength={10}
+                          onInput={(e) => {
+                            const value = e.currentTarget.value;
+                            if (value.length > 10) {
+                              e.currentTarget.value = value.slice(0, 10);
+                            }
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
