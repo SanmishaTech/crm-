@@ -18,8 +18,6 @@ class CreateAdditionalRolesSeeder extends Seeder
         $newRoles = [
             'Enquiry',
             'Follow up',
-            'Audit',
-            'ATR',
             'Payment'
         ];
 

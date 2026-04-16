@@ -306,8 +306,6 @@ export default function InputForm() {
                               <SelectItem key="admin" value="admin">Admin</SelectItem>
                               <SelectItem key="enquiry" value="Enquiry">Enquiry</SelectItem>
                               <SelectItem key="follow-up" value="Follow up">Follow up</SelectItem>
-                              <SelectItem key="audit" value="Audit">Audit</SelectItem>
-                              <SelectItem key="atr" value="ATR">ATR</SelectItem>
                               <SelectItem key="payment" value="Payment">Payment</SelectItem>
                             </SelectGroup>
                           </SelectContent>

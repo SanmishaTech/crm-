@@ -109,8 +109,6 @@ Route::group(['middleware' => ['auth:sanctum', 'request.null']], function () {
    Route::get('/lead_attachments/{files}', [LeadsController::class , 'showLeadAttachment'])->name("leads.lead_attachment");
    Route::get('/quotations/{files}', [LeadsController::class , 'showQuotation'])->name("leads.quotation");
    Route::get('/sale_orders/{files}', [LeadsController::class , 'showSaleOrder'])->name("leads.sale_order");
-   Route::get('/audit_reports/{files}', [LeadsController::class , 'showAuditReport'])->name("leads.audit_report");
-   Route::get('/atr_reports/{files}', [LeadsController::class , 'showAtrReport'])->name("leads.atr_report");
 
    Route::get('/follow_up_types', [LeadsController::class , 'follow_up_types'])->name("follow_up_types.index");
    Route::get('/lead_status', [LeadsController::class , 'leadStatus'])->name("lead_status.index");

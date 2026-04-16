@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -224,7 +224,7 @@ export default function InputForm() {
         setEmployees(data.data);
         setLoading(false);
       },
-      onError: (error) => {
+      onError: () => {
         toast.error("Failed to fetch employees.");
       },
     },
@@ -286,8 +286,12 @@ export default function InputForm() {
   }, []);
 
   const onSubmit = async (data: FormValues) => {
+    // Re-combine lead_source into (Title) Name format for backend
+    const finalLeadSource = selectedTitle ? `(${selectedTitle}) ${data.lead_source}` : data.lead_source;
+
     const payload = {
       ...data,
+      lead_source: finalLeadSource,
       products: productRows.filter((row) => row.product_id && row.quantity), // Only send rows with all values
     };
 
@@ -327,7 +331,7 @@ export default function InputForm() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 md:p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="contact_id"
@@ -503,7 +507,7 @@ export default function InputForm() {
                     value={selectedTitle}
                     onValueChange={(value) => {
                       setSelectedTitle(value);
-                      form.setValue("lead_source", ""); // Reset name selection
+                      // form.setValue("lead_source", ""); // Reset name selection
                     }}
                   >
                     <FormControl>
@@ -512,7 +516,7 @@ export default function InputForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Array.from(new Set(leadSources.map(s => s.source_title))).map(title => (
+                      {Array.from(new Set(leadSources.map(s => String(s.source_title).trim()))).map(title => (
                         <SelectItem key={title} value={title}>{title}</SelectItem>
                       ))}
                     </SelectContent>
@@ -536,9 +540,9 @@ export default function InputForm() {
                           </SelectTrigger>
                           <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
                             {leadSources
-                              .filter(source => source.source_title === selectedTitle)
+                              .filter(source => String(source.source_title).trim() === (selectedTitle ? String(selectedTitle).trim() : ""))
                               .map((source) => (
-                                <SelectItem key={source.id} value={`(${source.source_title}) ${source.source_name}`}>
+                                <SelectItem key={source.id} value={String(source.source_name).trim()}>
                                   {source.source_name}
                                 </SelectItem>
                               ))}
@@ -613,7 +617,7 @@ export default function InputForm() {
               </div>
               {form.watch("lead_type") === "tender" && (
                 <div className=" space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <FormField
                       control={form.control}
                       name="tender_number"
@@ -661,7 +665,7 @@ export default function InputForm() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="tender_category"
@@ -769,7 +773,8 @@ export default function InputForm() {
             </CardHeader>
             <CardContent className="p-6">
               {/* Table Start */}
-              <Table>
+              <div className="rounded-md border overflow-x-auto overflow-y-visible">
+                <Table className="min-w-[600px] md:min-w-full">
                 <TableCaption>A list of your products.</TableCaption>
                 <TableHeader>
                   <TableRow>
@@ -796,7 +801,7 @@ export default function InputForm() {
                               variant="outline"
                               role="combobox"
                               aria-expanded={row.isOpen}
-                              className="w-[200px] justify-between"
+                              className="w-full justify-between"
                             >
                               {row.product_id
                                 ? frameworks.find(
@@ -807,7 +812,7 @@ export default function InputForm() {
                               <ChevronsUpDown className="opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                             <Command>
                               <CommandInput
                                 placeholder="Search products..."
@@ -893,6 +898,7 @@ export default function InputForm() {
                   <TableRow></TableRow>
                 </TableFooter>
               </Table>
+              </div>
               <Button
                 type="button"
                 onClick={addRow}

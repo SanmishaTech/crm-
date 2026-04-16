@@ -38,8 +38,6 @@ class Lead extends Model
         'previous_lead_quotation',
         'lead_attachment',
         'lead_sale_order',
-        'lead_audit_report',
-        'lead_atr_report',
         'lead_closing_reason',
         'total_taxable',
         'total_gst',
@@ -130,9 +128,7 @@ class Lead extends Model
                 $allowedStatuses = array_merge($allowedStatuses, ['Open', 'In Progress', 'Quotation']);
             }
 
-            if ($user->hasRole('Audit') || $user->hasRole('ATR')) {
-                $allowedStatuses = array_merge($allowedStatuses, ['Purchase Order', 'Audit', 'ATR Report', 'Schedule III', 'Invoice Generated', 'Payment Received']);
-            }
+            // Audit/ATR role logic removed.
         }
 
         if (!$hasFullAccess) {

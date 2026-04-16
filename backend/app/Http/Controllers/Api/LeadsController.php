@@ -164,20 +164,13 @@ class LeadsController extends BaseController
                 if ($user->hasRole('Enquiry') || $user->hasRole('Follow up')) {
                     $allowedStatuses = array_merge($allowedStatuses, ['Open', 'In Progress', 'Quotation']);
                 }
-
-                if ($user->hasRole('Audit') || $user->hasRole('ATR')) {
-                    $allowedStatuses = array_merge($allowedStatuses, ['Purchase Order', 'Audit', 'ATR Report']);
-                }
             }
 
             if (!$hasFullAccess) {
                 if (!empty($allowedStatuses)) {
-                    // Only fetch leads matching these statuses
                     $query->whereIn('lead_status', array_unique($allowedStatuses));
                 }
                 else {
-                    // If they have no recognized roles, return nothing or handle appropriately
-                    // We'll restrict it to return 0 results by passing an invalid status.
                     $query->where('lead_status', 'NONE_ALLOWED');
                 }
             }
@@ -236,19 +229,14 @@ class LeadsController extends BaseController
         $totalAmountWithGst = 0;
 
 
-        // Prepare the product details for insertion
         $productDetails = [];
         foreach ($products as $product) {
             $PRODUCT = Product::find($product['product_id']);
-            // if ($product['quantity'] > $PRODUCT->opening_quantity) {
-            //     return $this->sendError("Insufficient stock for product: ", ['error'=>['Insufficient stock for product ']]);
-            // }
             if ($PRODUCT) {
                 $gstRate = $PRODUCT->gst_rate;
                 $amountWithoutGst = $product['quantity'] * $product['rate'];
                 $gstAmount = ($amountWithoutGst * $gstRate) / 100;
                 $totalAmount = $amountWithoutGst + $gstAmount;
-                // 
                 $totalAmountWithoutGst += $amountWithoutGst;
                 $totalGstAmount += $gstAmount;
                 $totalAmountWithGst += $totalAmount;
@@ -266,7 +254,6 @@ class LeadsController extends BaseController
                 return $this->sendError("Product not found", ['error' => ['Product not found']]);
             }
         }
-        //one to many relatonship for stroing products and for fetching
         $lead->leadProducts()->saveMany($productDetails);
 
         $lead->total_taxable = $totalAmountWithoutGst;
@@ -296,16 +283,11 @@ class LeadsController extends BaseController
 
         $employee = Auth::user()->employee;
         $lead = Lead::find($id);
-        //   $lead = Lead::with(['leadProducts', 'employee', 'followUp', 'contact'])->find($id);
         if (!$lead) {
             return $this->sendError("Lead not found", ['error' => ['lead not found']]);
         }
 
-        if ($request->input('lead_status') === 'ATR Report') {
-            if (!$request->hasFile('lead_atr_report') && empty($lead->lead_atr_report)) {
-                return $this->sendError("ATR Report is required", ['error' => ['Please upload the ATR Report PDF to proceed.']]);
-            }
-        }
+
 
         if ($request->hasFile('lead_attachment')) {
             if (!empty($lead->lead_attachment) && Storage::exists('public/Lead/lead_attachments/' . $lead->lead_attachment)) {
@@ -329,27 +311,7 @@ class LeadsController extends BaseController
             $saleOrderFilePath = $request->file('lead_sale_order')->storeAs('public/Lead/sale_orders', $saleOrderFileNameToStore);
         }
 
-        if ($request->hasFile('lead_audit_report')) {
-            if (!empty($lead->lead_audit_report) && Storage::exists('public/Lead/audit_reports/' . $lead->lead_audit_report)) {
-                Storage::delete('public/Lead/audit_reports/' . $lead->lead_audit_report);
-            }
-            $auditReportFileNameWithExtention = $request->file('lead_audit_report')->getClientOriginalName();
-            $auditReportFilename = pathinfo($auditReportFileNameWithExtention, PATHINFO_FILENAME);
-            $auditReportFileExtention = $request->file('lead_audit_report')->getClientOriginalExtension();
-            $auditReportFileNameToStore = $auditReportFilename . '_' . time() . '.' . $auditReportFileExtention;
-            $auditReportFilePath = $request->file('lead_audit_report')->storeAs('public/Lead/audit_reports', $auditReportFileNameToStore);
-        }
 
-        if ($request->hasFile('lead_atr_report')) {
-            if (!empty($lead->lead_atr_report) && Storage::exists('public/Lead/atr_reports/' . $lead->lead_atr_report)) {
-                Storage::delete('public/Lead/atr_reports/' . $lead->lead_atr_report);
-            }
-            $atrReportFileNameWithExtention = $request->file('lead_atr_report')->getClientOriginalName();
-            $atrReportFilename = pathinfo($atrReportFileNameWithExtention, PATHINFO_FILENAME);
-            $atrReportFileExtention = $request->file('lead_atr_report')->getClientOriginalExtension();
-            $atrReportFileNameToStore = $atrReportFilename . '_' . time() . '.' . $atrReportFileExtention;
-            $atrReportFilePath = $request->file('lead_atr_report')->storeAs('public/Lead/atr_reports', $atrReportFileNameToStore);
-        }
 
         $lead->contact_id = $request->input("contact_id");
         $lead->lead_type = $request->input("lead_type");
@@ -371,13 +333,7 @@ class LeadsController extends BaseController
             $lead->lead_sale_order = $saleOrderFileNameToStore;
         }
 
-        if ($request->hasFile('lead_audit_report')) {
-            $lead->lead_audit_report = $auditReportFileNameToStore;
-        }
 
-        if ($request->hasFile('lead_atr_report')) {
-            $lead->lead_atr_report = $atrReportFileNameToStore;
-        }
         $lead->save();
 
         $totalAmountWithoutGst = 0;
@@ -385,8 +341,6 @@ class LeadsController extends BaseController
         $totalAmountWithGst = 0;
 
         $previousProducts = LeadProduct::where("lead_id", $lead->id)->delete();
-        // $products = $request->input('products');
-        // dd($products);
 
 
         $productDetails = [];
@@ -398,7 +352,6 @@ class LeadsController extends BaseController
                 $amountWithoutGst = $product['quantity'] * $product['rate'];
                 $gstAmount = ($amountWithoutGst * $gstRate) / 100;
                 $totalAmount = $amountWithoutGst + $gstAmount;
-                // 
                 $totalAmountWithoutGst += $amountWithoutGst;
                 $totalGstAmount += $gstAmount;
                 $totalAmountWithGst += $totalAmount;
@@ -432,12 +385,10 @@ class LeadsController extends BaseController
     public function show(string $id): JsonResponse
     {
         $lead = Lead::find($id);
-        //   $lead = Lead::with(['leadProducts', 'employee', 'followUp', 'contact'])->find($id);
         if (!$lead) {
             return $this->sendError("Lead not found", ['error' => ['lead not found']]);
         }
         return $this->sendResponse(["Lead" => new LeadResource($lead)], "Lead retrieved successfully");
-    // return $this->sendResponse(["lead"=> $lead, 'contact'=>new ContactResource($lead->contact)], "Lead retrieved successfully");
     }
 
     /**
@@ -513,9 +464,6 @@ class LeadsController extends BaseController
 
     public function getWorkOrdersByUser(Request $request): JsonResponse
     {
-        // Work Order = leads belonging to the user's role that are basically in their scope
-        // ('Purchase Order', 'Audit', 'ATR Report') or ('Open', etc) depending on their role.
-        // We will just sum up leads visible to them by assigned_to.
         $workOrders = Lead::forUserRole(auth()->user())
             ->select('assigned_to', DB::raw('count(*) as leads'))
             ->groupBy('assigned_to')
@@ -581,7 +529,6 @@ class LeadsController extends BaseController
     {
         $leadStatus = config('data.lead_status.Quotation');
 
-        // $leads = Lead::with('leadProducts.product')->find($id);
         $leads = Lead::with(['leadProducts.product', 'contact.client', 'leadInvoice.invoiceDetails.product'])->find($id);
 
         if (!$leads) {
@@ -616,15 +563,11 @@ class LeadsController extends BaseController
         if (!$leads->quotation_date) {
             $leads->quotation_date = now()->format("Y-m-d");
         }
-        // if(!$leads->quotation_number){
-        //     $leads->quotation_number = $this->generateQuotationNumber();
-        // }
         $leads->quotation_number = $request->input("quotation_number");
         $leads->terms = $request->input("terms");
         $leads->lead_status = $leadStatus;
         $leads->quotation_version = $leads->quotation_version + 1;
         $leads->save();
-        // 
         $user = Auth::user();
         $employee = $user->employee->first();
 
@@ -638,27 +581,20 @@ class LeadsController extends BaseController
             'leads' => $leads,
         ];
 
-        // Render the Blade view to HTML
         $html = view('quotation.quotation', $data)->render();
 
-        // Create a new mPDF instance
         $mpdf = new Mpdf();
 
-        // Write HTML to the PDF
         $mpdf->WriteHTML($html);
 
-        // Define the file path for saving the PDF
-        $filePath = 'public/Lead/generated_quotations/quotation_' . time() . $user->id . '.pdf'; // Store in 'storage/app/invoices'
-        $fileName = basename($filePath); // Extracts 'invoice_{timestamp}{user_id}.pdf'
+        $filePath = 'public/Lead/generated_quotations/quotation_' . time() . $user->id . '.pdf';
+        $fileName = basename($filePath);
 
-        // Save PDF to storage
-        Storage::put($filePath, $mpdf->Output('', 'S')); // Output as string and save to storage
+        Storage::put($filePath, $mpdf->Output('', 'S'));
         $leads->lead_quotation = $fileName;
         $leads->save();
 
-        // Output the PDF for download
-        return $mpdf->Output('quotation.pdf', 'D'); // Download the PDF
-    // return $this->sendResponse([], "Quotation generated successfully");
+        return $mpdf->Output('quotation.pdf', 'D');
 
     }
 
@@ -682,7 +618,7 @@ class LeadsController extends BaseController
             return $this->sendError("Lead not found", ['error' => ['Lead not found']]);
         }
 
-        if ($leadStatus !== $leads->lead_status) {
+        if (!in_array($leads->lead_status, ['Purchase Order', 'Purchase Order Received'])) {
             return $this->sendError("Lead Status is not set to Purchase Order Received", ['error' => ['Lead Status is not set to Purchase Order Received']]);
         }
         if ($leads->total_amount_with_gst == 0) {
@@ -890,39 +826,7 @@ class LeadsController extends BaseController
         return $response;
     }
 
-    public function showAuditReport(string $files)
-    {
-        $path = storage_path('app/public/Lead/audit_reports/' . $files);
 
-        if (!file_exists($path)) {
-            return $this->sendError("Audit report file not found", ['error' => ['audit report file not found.']]);
-        }
-
-        $fileContent = File::get($path);
-        $mimeType = File::mimeType($path);
-
-        $response = Response::make($fileContent, 200);
-        $response->header("Content-Type", $mimeType);
-        $response->header('Content-Disposition', 'inline; filename="' . $files . '"');
-        return $response;
-    }
-
-    public function showAtrReport(string $files)
-    {
-        $path = storage_path('app/public/Lead/atr_reports/' . $files);
-
-        if (!file_exists($path)) {
-            return $this->sendError("ATR report file not found", ['error' => ['atr report file not found.']]);
-        }
-
-        $fileContent = File::get($path);
-        $mimeType = File::mimeType($path);
-
-        $response = Response::make($fileContent, 200);
-        $response->header("Content-Type", $mimeType);
-        $response->header('Content-Disposition', 'inline; filename="' . $files . '"');
-        return $response;
-    }
 
 
 

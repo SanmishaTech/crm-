@@ -12,7 +12,6 @@ return [
         'In Progress' => 'In Progress',
         'Quotation' => 'Quotation',
         'Purchase Order' => 'Purchase Order Received',
-        'Invoice Generated' => 'Invoice Generated',
         'Payment Received' => 'Payment Received',
     ],
 

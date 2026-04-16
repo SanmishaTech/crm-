@@ -41,7 +41,7 @@ const formSchema = z.object({
   payment_received_remark: z.string().optional(),
 });
 
-const AlertQuotation = ({ leadId }) => {
+const AlertInvoice = ({ leadId }) => {
   const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previousPdfUrl, setPreviousPdfUrl] = useState(null);
@@ -60,7 +60,7 @@ const AlertQuotation = ({ leadId }) => {
     },
   });
 
-  // Fetch the lead details and get the previous quotation
+  // Fetch the lead details and get the previous invoice
   useEffect(() => {
     const fetchLeadDetails = async () => {
       try {
@@ -85,24 +85,8 @@ const AlertQuotation = ({ leadId }) => {
       fetchLeadDetails();
     }
   }, [leadId]);
-  useEffect(() => {
-    const fetchLeadDetails = async () => {
-      try {
-        const response = await fetch(`/api/leads/${leadId}`, {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token"),
-          },
-        });
-        const leadData = await response.json();
-        setPreviousPdfUrl(leadData?.lead_invoice || null);
-      } catch (error) {
-        console.error("Error fetching lead details:", error);
-      }
-    };
-    if (leadId) fetchLeadDetails();
-  }, [leadId]);
 
-  const handleGenerateQuotation = async (data) => {
+  const handleGenerateInvoice = async (data) => {
     setIsSubmitting(true);
     try {
       // Format the date to dd-mm-yyyy if it exists
@@ -139,7 +123,7 @@ const AlertQuotation = ({ leadId }) => {
         queryClient.invalidateQueries({ queryKey: ["lead"] });
 
         toast.success(
-          `Invoice for ${data.quotation_number} generated and opened successfully!`
+          `Invoice ${data.invoice_number} generated and opened successfully!`
         );
       } else {
         const errorData = await response.json();
@@ -154,12 +138,12 @@ const AlertQuotation = ({ leadId }) => {
   };
 
   const onSubmit = async (data) => {
-    await handleGenerateQuotation(data);
+    await handleGenerateInvoice(data);
   };
 
   return (
     <div className="space-y-4">
-      {/* Quotation Button */}
+      {/* Invoice Button */}
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="ghost" className="w-full text-sm">
@@ -348,4 +332,4 @@ const AlertQuotation = ({ leadId }) => {
   );
 };
 
-export default AlertQuotation;
+export default AlertInvoice;

@@ -23,7 +23,14 @@ class LeadResource extends JsonResource
             return $updateLeadProduct->product;
         });
 
+        $leadSource = $this->lead_source;
+        $sourceTitle = null;
+        $sourceName = null;
 
+        if ($leadSource && preg_match('/\((.*?)\)\s*(.*)/', $leadSource, $matches)) {
+            $sourceTitle = $matches[1];
+            $sourceName = $matches[2];
+        }
 
         return [
             'id' => $this->id,
@@ -42,8 +49,6 @@ class LeadResource extends JsonResource
             'lead_quotation' => $this->lead_quotation,
             'lead_invoice' => $this->lead_invoice,
             'lead_sale_order' => $this->lead_sale_order,
-            'lead_audit_report' => $this->lead_audit_report,
-            'lead_atr_report' => $this->lead_atr_report,
             'emd' => $this->emd,
             'bid_end_date' => $this->bid_end_date,
             'tender_status' => $this->tender_status,
@@ -53,6 +58,8 @@ class LeadResource extends JsonResource
             'lead_follow_up_date' => $this->lead_follow_up_date,
             'follow_up_type' => $this->follow_up_type,
             'lead_source' => $this->lead_source,
+            'lead_source_title' => $sourceTitle,
+            'lead_source_name' => $sourceName,
             'created_at' => $this->created_at->toIso8601String(),
             'updated_at' => $this->updated_at->toIso8601String(),
             'employee' => new EmployeeResource($this->employee),

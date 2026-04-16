@@ -86,16 +86,12 @@ const formSchema = z.object({
   lead_attachment: z.any().optional(),
   lead_sale_order: z.any().optional(),
   payment_received_remark: z.string().optional(),
+  quantity: z.string().optional(),
+  rate: z.any().optional(),
+  product_id: z.any().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-interface Product {
-  id: number;
-  product: string;
-  quantity?: string;
-  rate?: string;
-}
 
 interface ProductRow {
   product_id: string;
@@ -335,20 +331,16 @@ export default function EditLeadPage() {
     }
   }, [editData]);
 
-  // Separate effect to extract and set title when both editData and leadSources are available
-  useEffect(() => {
-    if (editData?.data?.Lead?.lead_source && leadSources.length > 0) {
-      const leadSource = editData.data.Lead.lead_source;
-      const match = leadSource.match(/\((.*?)\)/);
-      if (match && match[1]) {
-        setSelectedTitle(match[1]);
-      }
-    }
-  }, [editData, leadSources]);
 
   useEffect(() => {
     if (editData?.data?.Lead && leadSources.length > 0) {
       const newData = editData.data.Lead;
+      
+      // Set the title for the first dropdown directly from the backend
+      if (newData.lead_source_title) {
+        setSelectedTitle(newData.lead_source_title);
+      }
+
       const normalizedLeadStatus = (() => {
         const raw = (newData?.lead_status ?? "").trim();
         return raw === "Close" ? "Closed" : raw;
@@ -358,7 +350,7 @@ export default function EditLeadPage() {
         assigned_to: newData?.assigned_to || "",
         lead_status: normalizedLeadStatus || "",
         lead_closing_reason: newData?.lead_closing_reason || "",
-        lead_source: newData?.lead_source || "",
+        lead_source: newData?.lead_source_name ? String(newData?.lead_source_name).trim() : "", // Strictly cast to string and trim
         lead_type: newData?.lead_type || "",
         tender_number: newData?.tender_number || "",
         bid_end_date: newData?.bid_end_date || "",
@@ -397,14 +389,12 @@ export default function EditLeadPage() {
   });
 
   const onSubmit = (data: FormValues) => {
-    // Validation for reports
-    if (data.lead_status === "Invoice Generated" || 
-        data.lead_status === "Payment Received") {
-      // Add any specific invoice validation here if needed
-    }
+    // Re-combine lead_source into (Title) Name format for backend
+    const finalLeadSource = selectedTitle ? `(${selectedTitle}) ${data.lead_source}` : data.lead_source;
 
     const submissionData = {
       ...data,
+      lead_source: finalLeadSource,
       lead_attachment: file,
       lead_sale_order: saleOrderFile,
       payment_received_remark: data.payment_received_remark,
@@ -481,7 +471,7 @@ export default function EditLeadPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 md:p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="contact_id"
@@ -510,7 +500,7 @@ export default function EditLeadPage() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full sm:w-[350px] p-0">
+                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search contact..."
@@ -584,7 +574,7 @@ export default function EditLeadPage() {
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full sm:w-[390px] p-0">
+                        <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                           <Command>
                             <CommandInput
                               placeholder="Search employee..."
@@ -646,7 +636,7 @@ export default function EditLeadPage() {
                     value={selectedTitle}
                     onValueChange={(value) => {
                       setSelectedTitle(value);
-                      form.setValue("lead_source", ""); // Reset name selection
+                      // form.setValue("lead_source", ""); // Removed to prevent lifecycle overwrite
                     }}
                   >
                     <FormControl>
@@ -655,7 +645,7 @@ export default function EditLeadPage() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Array.from(new Set(leadSources.map(s => s.source_title))).map(title => (
+                      {Array.from(new Set(leadSources.map(s => String(s.source_title).trim()))).map(title => (
                         <SelectItem key={title} value={title}>{title}</SelectItem>
                       ))}
                     </SelectContent>
@@ -679,9 +669,13 @@ export default function EditLeadPage() {
                           </SelectTrigger>
                           <SelectContent className="bg-popover text-popover-foreground max-h-[250px] overflow-y-auto p-0">
                             {leadSources
-                              .filter(source => source.source_title === selectedTitle)
+                              .filter(source => {
+                                const activeTitle = selectedTitle || (editData?.data?.Lead?.lead_source_title ? String(editData.data.Lead.lead_source_title).trim() : "");
+                                const matches = String(source.source_title).trim() === activeTitle;
+                                return matches;
+                              })
                               .map((source) => (
-                                <SelectItem key={source.id} value={`(${source.source_title}) ${source.source_name}`}>
+                                <SelectItem key={source.id} value={String(source.source_name).trim()}>
                                   {source.source_name}
                                 </SelectItem>
                               ))}
@@ -755,7 +749,7 @@ export default function EditLeadPage() {
               </div>
             </CardHeader>
             <CardContent className="p-4 md:p-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="lead_status"
@@ -801,15 +795,6 @@ export default function EditLeadPage() {
                                 <SelectItem value="Purchase Order">
                                   Purchase Order Received
                                 </SelectItem>
-                                <SelectItem value="Invoice Generated">
-                                  Invoice Generated
-                                </SelectItem>
-                              </>
-                            ) : savedLeadStatus === "Invoice Generated" ? (
-                              <>
-                                <SelectItem value="Invoice Generated">
-                                  Invoice Generated
-                                </SelectItem>
                                 <SelectItem value="Payment Received">
                                   Payment Received
                                 </SelectItem>
@@ -833,237 +818,238 @@ export default function EditLeadPage() {
                           </SelectContent>
                         </Select>
                       </FormControl>
-
                       <FormMessage />
-                      {field.value === "Closed" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_closing_reason"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Closing Reason</FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  placeholder="Enter closing reason"
-                                  className="resize-none"
-                                  {...field}
-                                />
-                              </FormControl>
-
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-
-                      {field.value === "Quotation" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_attachment"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Lead Attachment (PDF)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="file"
-                                  accept="application/pdf"
-                                  onChange={(event) => {
-                                    const selectedFile = event.target.files?.[0] ?? null;
-                                    setFile(selectedFile);
-                                    field.onChange(selectedFile);
-                                  }}
-                                />
-                              </FormControl>
-                              {editData?.data?.Lead?.lead_attachment ? (
-                                <Button
-                                  type="button"
-                                  variant="link"
-                                  className="p-0 h-auto text-sm"
-                                  onClick={async () => {
-                                    const popup = window.open("", "_blank");
-                                    if (!popup) {
-                                      toast.error("Popup blocked. Please allow popups.");
-                                      return;
-                                    }
-                                    try {
-                                      const response = await fetch(
-                                        `/api/lead_attachments/${encodeURIComponent(
-                                          editData.data.Lead.lead_attachment
-                                        )}`,
-                                        {
-                                          headers: {
-                                            Authorization:
-                                              "Bearer " + localStorage.getItem("token"),
-                                            Accept: "application/pdf, application/json",
-                                            "X-Requested-With": "XMLHttpRequest",
-                                          },
-                                        }
-                                      );
-
-                                      if (!response.ok) {
-                                        throw new Error("Failed to fetch lead attachment");
-                                      }
-
-                                      const contentType =
-                                        response.headers.get("content-type") ?? "";
-                                      const blob = await response.blob();
-                                      const signature = await blob.slice(0, 5).text();
-                                      if (!signature.startsWith("%PDF-")) {
-                                        const text = await blob.text();
-                                        popup.document.open();
-                                        popup.document.write(text);
-                                        popup.document.close();
-                                        toast.error(
-                                          `Lead attachment is not a PDF (content-type: ${contentType || "unknown"}).`
-                                        );
-                                        return;
-                                      }
-
-                                      const pdfBlob =
-                                        blob.type && blob.type !== "application/octet-stream"
-                                          ? blob
-                                          : new Blob([blob], { type: "application/pdf" });
-                                      const url = window.URL.createObjectURL(pdfBlob);
-                                      popup.document.open();
-                                      popup.document.write(
-                                        `<html><head><title>Lead Attachment</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
-                                      );
-                                      popup.document.close();
-                                      const revokeWhenClosed = window.setInterval(() => {
-                                        if (popup.closed) {
-                                          window.clearInterval(revokeWhenClosed);
-                                          window.URL.revokeObjectURL(url);
-                                        }
-                                      }, 1000);
-                                    } catch {
-                                      popup.close();
-                                      toast.error("Failed to open lead attachment.");
-                                    }
-                                  }}
-                                >
-                                  View current attachment
-                                </Button>
-                              ) : null}
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                      {field.value === "Purchase Order" && (
-                        <FormField
-                          control={form.control}
-                          name="lead_sale_order"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Sale Order (PDF)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="file"
-                                  accept="application/pdf"
-                                  onChange={(event) => {
-                                    const selectedFile = event.target.files?.[0] ?? null;
-                                    setSaleOrderFile(selectedFile);
-                                    field.onChange(selectedFile);
-                                  }}
-                                />
-                              </FormControl>
-                              {editData?.data?.Lead?.lead_sale_order ? (
-                                <Button
-                                  type="button"
-                                  variant="link"
-                                  className="p-0 h-auto text-sm"
-                                  onClick={async () => {
-                                    const popup = window.open("", "_blank");
-                                    if (!popup) {
-                                      toast.error("Popup blocked. Please allow popups.");
-                                      return;
-                                    }
-                                    try {
-                                      const response = await fetch(
-                                        `/api/sale_orders/${encodeURIComponent(
-                                          editData.data.Lead.lead_sale_order
-                                        )}`,
-                                        {
-                                          headers: {
-                                            Authorization:
-                                              "Bearer " + localStorage.getItem("token"),
-                                            Accept: "application/pdf, application/json",
-                                            "X-Requested-With": "XMLHttpRequest",
-                                          },
-                                        }
-                                      );
-
-                                      if (!response.ok) {
-                                        throw new Error("Failed to fetch sale order");
-                                      }
-
-                                      const contentType =
-                                        response.headers.get("content-type") ?? "";
-                                      const blob = await response.blob();
-                                      const signature = await blob.slice(0, 5).text();
-                                      if (!signature.startsWith("%PDF-")) {
-                                        const text = await blob.text();
-                                        popup.document.open();
-                                        popup.document.write(text);
-                                        popup.document.close();
-                                        toast.error(
-                                          `Sale order is not a PDF (content-type: ${contentType || "unknown"}).`
-                                        );
-                                        return;
-                                      }
-
-                                      const pdfBlob =
-                                        blob.type && blob.type !== "application/octet-stream"
-                                          ? blob
-                                          : new Blob([blob], { type: "application/pdf" });
-                                      const url = window.URL.createObjectURL(pdfBlob);
-                                      popup.document.open();
-                                      popup.document.write(
-                                        `<html><head><title>Sale Order</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
-                                      );
-                                      popup.document.close();
-                                      const revokeWhenClosed = window.setInterval(() => {
-                                        if (popup.closed) {
-                                          window.clearInterval(revokeWhenClosed);
-                                          window.URL.revokeObjectURL(url);
-                                        }
-                                      }, 1000);
-                                    } catch {
-                                      popup.close();
-                                      toast.error("Failed to open sale order.");
-                                    }
-                                  }}
-                                >
-                                  View current sale order
-                                </Button>
-                              ) : null}
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
-                      {field.value === "Payment Received" && (
-                        <FormField
-                          control={form.control}
-                          name="payment_received_remark"
-                          render={({ field: innerField }) => (
-                            <FormItem className="mt-4">
-                              <FormLabel>Payment Received remark</FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  placeholder="Enter payment received remark"
-                                  className="resize-none"
-                                  {...innerField}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
                     </FormItem>
                   )}
                 />
+
+                {form.watch("lead_status") === "Closed" && (
+                  <FormField
+                    control={form.control}
+                    name="lead_closing_reason"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Closing Reason</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter closing reason"
+                            className="resize-none"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {form.watch("lead_status") === "Quotation" && (
+                  <FormField
+                    control={form.control}
+                    name="lead_attachment"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Lead Attachment (PDF)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept="application/pdf"
+                            onChange={(event) => {
+                              const selectedFile = event.target.files?.[0] ?? null;
+                              setFile(selectedFile);
+                              field.onChange(selectedFile);
+                            }}
+                          />
+                        </FormControl>
+                        {editData?.data?.Lead?.lead_attachment ? (
+                          <Button
+                            type="button"
+                            variant="link"
+                            className="p-0 h-auto text-sm"
+                            onClick={async () => {
+                              const popup = window.open("", "_blank");
+                              if (!popup) {
+                                toast.error("Popup blocked. Please allow popups.");
+                                return;
+                              }
+                              try {
+                                const response = await fetch(
+                                  `/api/lead_attachments/${encodeURIComponent(
+                                    editData.data.Lead.lead_attachment
+                                  )}`,
+                                  {
+                                    headers: {
+                                      Authorization:
+                                        "Bearer " + localStorage.getItem("token"),
+                                      Accept: "application/pdf, application/json",
+                                      "X-Requested-With": "XMLHttpRequest",
+                                    },
+                                  }
+                                );
+
+                                if (!response.ok) {
+                                  throw new Error("Failed to fetch lead attachment");
+                                }
+
+                                const contentType =
+                                  response.headers.get("content-type") ?? "";
+                                const blob = await response.blob();
+                                const signature = await blob.slice(0, 5).text();
+                                if (!signature.startsWith("%PDF-")) {
+                                  const text = await blob.text();
+                                  popup.document.open();
+                                  popup.document.write(text);
+                                  popup.document.close();
+                                  toast.error(
+                                    `Lead attachment is not a PDF (content-type: ${contentType || "unknown"}).`
+                                  );
+                                  return;
+                                }
+
+                                const pdfBlob =
+                                  blob.type && blob.type !== "application/octet-stream"
+                                    ? blob
+                                    : new Blob([blob], { type: "application/pdf" });
+                                const url = window.URL.createObjectURL(pdfBlob);
+                                popup.document.open();
+                                popup.document.write(
+                                  `<html><head><title>Lead Attachment</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
+                                );
+                                popup.document.close();
+                                const revokeWhenClosed = window.setInterval(() => {
+                                  if (popup.closed) {
+                                    window.clearInterval(revokeWhenClosed);
+                                    window.URL.revokeObjectURL(url);
+                                  }
+                                }, 1000);
+                              } catch {
+                                popup.close();
+                                toast.error("Failed to open lead attachment.");
+                              }
+                            }}
+                          >
+                            View current attachment
+                          </Button>
+                        ) : null}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {form.watch("lead_status") === "Purchase Order" && (
+                  <FormField
+                    control={form.control}
+                    name="lead_sale_order"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sale Order (PDF)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept="application/pdf"
+                            onChange={(event) => {
+                              const selectedFile = event.target.files?.[0] ?? null;
+                              setSaleOrderFile(selectedFile);
+                              field.onChange(selectedFile);
+                            }}
+                          />
+                        </FormControl>
+                        {editData?.data?.Lead?.lead_sale_order ? (
+                          <Button
+                            type="button"
+                            variant="link"
+                            className="p-0 h-auto text-sm"
+                            onClick={async () => {
+                              const popup = window.open("", "_blank");
+                              if (!popup) {
+                                toast.error("Popup blocked. Please allow popups.");
+                                return;
+                              }
+                              try {
+                                const response = await fetch(
+                                  `/api/sale_orders/${encodeURIComponent(
+                                    editData.data.Lead.lead_sale_order
+                                  )}`,
+                                  {
+                                    headers: {
+                                      Authorization:
+                                        "Bearer " + localStorage.getItem("token"),
+                                      Accept: "application/pdf, application/json",
+                                      "X-Requested-With": "XMLHttpRequest",
+                                    },
+                                  }
+                                );
+
+                                if (!response.ok) {
+                                  throw new Error("Failed to fetch sale order");
+                                }
+
+                                const contentType =
+                                  response.headers.get("content-type") ?? "";
+                                const blob = await response.blob();
+                                const signature = await blob.slice(0, 5).text();
+                                if (!signature.startsWith("%PDF-")) {
+                                  const text = await blob.text();
+                                  popup.document.open();
+                                  popup.document.write(text);
+                                  popup.document.close();
+                                  toast.error(
+                                    `Sale order is not a PDF (content-type: ${contentType || "unknown"}).`
+                                  );
+                                  return;
+                                }
+
+                                const pdfBlob =
+                                  blob.type && blob.type !== "application/octet-stream"
+                                    ? blob
+                                    : new Blob([blob], { type: "application/pdf" });
+                                const url = window.URL.createObjectURL(pdfBlob);
+                                popup.document.open();
+                                popup.document.write(
+                                  `<html><head><title>Sale Order</title><style>html,body{margin:0;height:100%;}iframe{border:0;width:100%;height:100%;}</style></head><body><iframe src="${url}"></iframe></body></html>`
+                                );
+                                popup.document.close();
+                                const revokeWhenClosed = window.setInterval(() => {
+                                  if (popup.closed) {
+                                    window.clearInterval(revokeWhenClosed);
+                                    window.URL.revokeObjectURL(url);
+                                  }
+                                }, 1000);
+                              } catch {
+                                popup.close();
+                                toast.error("Failed to open sale order.");
+                              }
+                            }}
+                          >
+                            View current sale order
+                          </Button>
+                        ) : null}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {form.watch("lead_status") === "Payment Received" && (
+                  <FormField
+                    control={form.control}
+                    name="payment_received_remark"
+                    render={({ field: innerField }) => (
+                      <FormItem>
+                        <FormLabel>Payment Received remark</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter payment received remark"
+                            className="resize-none"
+                            {...innerField}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
             </CardContent>
           </Card>
@@ -1100,7 +1086,7 @@ export default function EditLeadPage() {
               </div>
               {form.watch("lead_type") === "tender" && (
                 <div className=" space-y-6">
-                  <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4 mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <FormField
                       control={form.control}
                       name="tender_number"
@@ -1166,7 +1152,7 @@ export default function EditLeadPage() {
                     />
                   </div>
 
-                  <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="tender_category"
@@ -1281,7 +1267,8 @@ export default function EditLeadPage() {
             </CardHeader>
             <CardContent className="p-6">
               {/* Table Start */}
-              <Table>
+              <div className="rounded-md border overflow-x-auto overflow-y-visible">
+                <Table className="min-w-[600px] md:min-w-full">
                 <TableCaption>A list of your products.</TableCaption>
                 <TableHeader>
                   <TableRow>
@@ -1308,7 +1295,7 @@ export default function EditLeadPage() {
                               variant="outline"
                               role="combobox"
                               aria-expanded={row.isOpen}
-                              className="w-[200px] justify-between"
+                              className="w-full justify-between"
                             >
                               {row.product_id
                                 ? frameworks.find(
@@ -1319,7 +1306,7 @@ export default function EditLeadPage() {
                               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
+                          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                             <Command>
                               <CommandInput placeholder="Search products..." />
                               <CommandList>
@@ -1401,6 +1388,7 @@ export default function EditLeadPage() {
                   <TableRow></TableRow>
                 </TableFooter>
               </Table>
+              </div>
 
               <Button
                 type="button"

@@ -52,14 +52,9 @@ type SidebarProps = {
 const leadStatusOptions = [
   { value: "Open", label: "Open" },
   { value: "In Progress", label: "In Progress" },
-  { value: "Quotation", label: "Quotation" },
   { value: "Purchase Order", label: "Purchase Order Received" },
-  { value: "Audit", label: "Audit" },
-  { value: "ATR Report", label: "ATR Report" },
-  { value: "Schedule III", label: "Schedule III" },
-  { value: "Invoice Generated", label: "Invoice Generated" },
   { value: "Payment Received", label: "Payment Received" },
-  { value: "Closed", label: "Close" },
+  { value: "Close", label: "Close" },
 ];
 
 export default function Sidebar({ className, onFilterChange }: SidebarProps) {

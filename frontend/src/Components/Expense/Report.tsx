@@ -222,10 +222,6 @@ const Report = ({ leadId }: ReportProps) => {
                             <SelectItem value="Purchase Order">
                               Purchase Order Received
                             </SelectItem>
-                            <SelectItem value="Audit">Audit</SelectItem>
-                            <SelectItem value="ATR Report">
-                              ATR Report
-                            </SelectItem>
                             <SelectItem value="Close">Close</SelectItem>
                           </SelectContent>
                         </Select>

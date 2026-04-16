@@ -20,7 +20,6 @@ import { DoneDealsPieChart } from "./DoneDealsPieChart";
 import { OpenDealsPieChart } from "./OpenDealsPieChart";
 import { UntouchedDealsPieChart } from "./UntouchedDealsPieChart";
 import { LeadSourcePieChart } from "./LeadSourcePieChart";
-import { WorkOrderPieChart } from "./WorkOrderPieChart";
 
 // Define interfaces for our data structures
 interface Lead {
@@ -95,13 +94,7 @@ export default function ResponsiveLabDashboard() {
           </div>
         )}
 
-        {/* Render for Audit / ATR (2 charts, custom names) */}
-        {(localStorage.getItem("role") === 'Audit' || localStorage.getItem("role") === 'ATR') && (
-          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
-            <WorkOrderPieChart title="Work Order Received" label="Leads" />
-            <LeadSourcePieChart title="Total Sources" label="Leads" />
-          </div>
-        )}
+
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4 ">
           <Card className="col-span-full lg:col-span-3 overflow-x-auto bg-accent/40">

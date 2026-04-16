@@ -213,7 +213,7 @@ function App() {
         <Route path="/roles" element={<Dashboard />} />
         <Route path="/roles/:id/edit" element={<Dashboard />} />
         <Route path="/permissions" element={<Dashboard />} />
-       </Routes>
+      </Routes>
 
       {isVisible && (
         <Button
@@ -223,7 +223,7 @@ function App() {
             event.preventDefault(); // Prevent unintended form submission
             scrollToTop();
           }}
-          className="fixed bottom-[24px] bg-accent/80 right-[12rem] transition"
+          className="fixed bottom-[24px] bg-accent/80 right-6 transition rounded-full shadow-lg hover:bg-accent p-2"
         >
           <TooltipProvider>
             <Tooltip>

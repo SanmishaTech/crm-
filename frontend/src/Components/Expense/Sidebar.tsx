@@ -54,8 +54,8 @@ const leadStatusOptions = [
   { value: "In Progress", label: "In Progress" },
   { value: "Quotation", label: "Quotation" },
   { value: "Purchase Order", label: "Purchase Order Received" },
-  { value: "Audit", label: "Audit" },
-  { value: "ATR Report", label: "ATR Report" },
+  { value: "Invoice Generated", label: "Invoice Generated" },
+  { value: "Payment Received", label: "Payment Received" },
   { value: "Close", label: "Close" },
 ];
 
