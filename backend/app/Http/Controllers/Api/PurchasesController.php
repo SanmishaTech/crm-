@@ -15,6 +15,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Http\Controllers\Api\BaseController;
 use PhpOffice\PhpSpreadsheet\Writer\Pdf\Mpdf;
 use App\Http\Resources\PurchaseDetailResource;
+use App\Models\StockLedger;
 
    /**
      * @group Purchase Management
@@ -74,25 +75,43 @@ class PurchasesController extends BaseController
 
         $products = $request->input('products');
 
+        $now = Carbon::now()->toDateTimeString();
+
         // Prepare the product details for insertion
         $purchaseDetails = [];
+        $StockLedgerDetails = [];
         foreach ($products as $product) {
-        $purchaseDetails[] = new PurchaseDetail([
-            'product_id' => $product['product_id'],
-            'quantity' => $product['quantity'],
-            'rate' => $product['rate'],
-            'cgst' => $product['cgst'],
-            'sgst' => $product['sgst'],
-            'igst' => $product['igst'],
-            'pre_tax_amount' => $product['pre_tax_amount'],
-            'post_tax_amount' => $product['post_tax_amount']
-             ]);
-          }
+            $purchaseDetails[] = new PurchaseDetail([
+                'product_id' => $product['product_id'],
+                'quantity' => $product['quantity'],
+                'rate' => $product['rate'],
+                'cgst' => $product['cgst'],
+                'sgst' => $product['sgst'],
+                'igst' => $product['igst'],
+                'pre_tax_amount' => $product['pre_tax_amount'],
+                'post_tax_amount' => $product['post_tax_amount']
+            ]);
 
-          // Attach the products to the purchase record (using one-to-many relation)
-         $purchase->purchaseDetails()->saveMany($purchaseDetails);
+            $StockLedgerDetails[] = new StockLedger([
+                'product_id' => $product['product_id'],
+                'received' => $product['quantity'],
+                'module' => 'Purchase',
+                'foreign_key' => $purchase->id,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
 
-         return $this->sendResponse(['Purchase'=> new PurchaseResource($purchase)], "Products Purchased Successfully");
+        // Attach the products to the purchase record (using one-to-many relation)
+        $purchase->purchaseDetails()->saveMany($purchaseDetails);
+
+        // Update the Stock Ledger
+        StockLedger::insert(collect($StockLedgerDetails)->toArray());
+        foreach ($products as $product) {
+            StockLedger::calculateClosingQuantity($product['product_id']);
+        }
+
+        return $this->sendResponse(['Purchase'=> new PurchaseResource($purchase)], "Products Purchased Successfully");
 
     }
 

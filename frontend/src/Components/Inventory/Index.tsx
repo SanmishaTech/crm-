@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { X, Filter, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import Sidebar, { useSidebar } from "./Sidebar";
 import {
@@ -12,25 +10,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  File,
-  PlusCircle,
-  Search,
-  Pencil,
-  Trash,
-  MoreHorizontal,
-  ListFilter,
-  Filter,
-} from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -41,31 +20,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import {
   Pagination,
   PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
   PaginationNext,
+  PaginationPrevious,
 } from "@/components/ui/pagination";
-import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useGetData } from "@/lib/HTTP/GET";
-import AlertDialogbox from "./Delete";
 import { Skeleton } from "@/components/ui/skeleton";
 
-// Supplier type
-type Supplier = {
+type Product = {
   id: string;
-  supplier: string;
-  street_address: string;
-  area: string;
-  city: string;
-  state: string;
-  pincode: string;
-  country: string;
-  gstin: string;
+  product: string;
+  product_category: string;
+  opening_qty: number;
+  closing_qty: number;
+  last_traded_price: number;
 };
 
 type PaginationData = {
@@ -75,18 +46,7 @@ type PaginationData = {
   total: number;
 };
 
-const formSchema = z.object({
-  supplier: z.string().min(2).max(50),
-  street_address: z.string().min(2).max(50),
-  area: z.string().min(2).max(50),
-  city: z.string().min(2).max(50),
-  state: z.string().min(2).max(50),
-  pincode: z.string().min(2).max(50),
-  country: z.string().min(2).max(50),
-  gstin: z.string().min(2).max(50),
-});
-
-export default function TableDemo() {
+export default function InventoryIndex() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -105,32 +65,23 @@ export default function TableDemo() {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      supplier: "",
-    },
-  });
 
-  const { data: Sup } = useGetData({
-    endpoint: `/api/suppliers?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
+  const { data: InvResp } = useGetData({
+    endpoint: `/api/products?search=${searchTerm}&page=${currentPage}&total=${totalPages}`,
     params: {
-      queryKey: ["supplier", searchTerm, currentPage],
+      queryKey: ["inventory", searchTerm, currentPage],
       retry: 1,
-
       onSuccess: (data) => {
-        setPagination(data?.data?.pagination);
+        setPagination(data?.data?.Pagination);
         setLoading(false);
       },
       onError: (error) => {
-        if (error.message && error.message.includes("duplicate supplier")) {
-          toast.error("Supplier name is duplicated. Please use a unique name.");
-        } else {
-          toast.error("Failed to fetch supplier data. Please try again.");
-        }
+        toast.error("Failed to fetch inventory data. Please try again.");
       },
     },
   });
+
+  const products: Product[] = InvResp?.data?.Products || [];
 
   if (loading) {
     return (
@@ -149,62 +100,35 @@ export default function TableDemo() {
             <div className="flex-1 space-x-2">
               <Skeleton className="h-10 w-full" />
             </div>
-            <div className="flex space-x-2">
-              <Skeleton className="h-10 w-24" />
-            </div>
           </div>
 
-          <div className="panel p-4 rounded-md bg-card">
+          <div className="panel p-4 rounded-md bg-card mt-4">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
-                    <Skeleton className="h-4 w-20" />
-                  </TableHead>
-                  <TableHead>
-                    <Skeleton className="h-4 w-32" />
-                  </TableHead>
-                  <TableHead>
-                    <Skeleton className="h-4 w-24" />
-                  </TableHead>
-                  <TableHead>
-                    <Skeleton className="h-4 w-16" />
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <Skeleton className="h-4 w-16 ml-auto" />
-                  </TableHead>
+                  <TableHead><Skeleton className="h-4 w-20" /></TableHead>
+                  <TableHead><Skeleton className="h-4 w-32" /></TableHead>
+                  <TableHead><Skeleton className="h-4 w-20" /></TableHead>
+                  <TableHead><Skeleton className="h-4 w-20" /></TableHead>
+                  <TableHead className="text-right"><Skeleton className="h-4 w-20 ml-auto" /></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {[...Array(5)].map((_, index) => (
                   <TableRow key={index}>
-                    <TableCell>
-                      <Skeleton className="h-4 w-24" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-32" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-40" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-20" />
-                    </TableCell>
+                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-            <div className=" flex justify-center">
-              <Skeleton className="h-5 w-96" />
-            </div>
           </div>
         </div>
       </div>
     );
-  }
-
-  if (error) {
-    return <div>{error}</div>;
   }
 
   return (
@@ -214,7 +138,7 @@ export default function TableDemo() {
         <div className="p-2">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold mx-auto text-foreground">
-              Inventory List
+              Inventory / Stock Ledger
             </h3>
           </div>
         </div>
@@ -238,151 +162,84 @@ export default function TableDemo() {
             {isMinimized ? (
               <Input
                 className="bg-background text-foreground border-border"
-                placeholder="Search Inventory..."
+                placeholder="Search Product Inventory..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             ) : null}
           </div>
-
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/inventory/add")}
-              className="text-foreground hover:text-foreground/80 hover:bg-accent"
-            >
-              Inventory
-            </Button>
-          </div>
         </div>
 
-        <div className="p-4 rounded-md bg-card">
+        <div className="p-4 rounded-md bg-card mt-4 overflow-x-auto min-w-[600px]">
           <Table>
             <TableCaption className="text-muted-foreground">
-              A list of your suppliers.
+              Live Stock Availability and Valuations.
             </TableCaption>
             <TableHeader>
               <TableRow className="hover:bg-accent/50">
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("supplier")}
-                >
-                  Name
-                </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("street_address")}
-                >
-                  Price
-                </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("area")}
-                >
-                  Type
-                </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("city")}
-                >
-                  Warehouse
-                </TableHead>
-                <TableHead
-                  className="text-foreground"
-                  onClick={() => handleSort("city")}
-                >
-                  In Stock(qty)
-                </TableHead>
-                <TableHead className="text-right text-foreground">
-                  Action
-                </TableHead>
+                <TableHead className="text-foreground font-semibold">Product Name</TableHead>
+                <TableHead className="text-foreground font-semibold">Category</TableHead>
+                <TableHead className="text-foreground font-semibold">Base Price</TableHead>
+                <TableHead className="text-foreground font-semibold text-center mt-2 px-4 py-1 h-3 rounded-md border flex items-center justify-center">Opening Stock</TableHead>
+                <TableHead className="text-foreground font-semibold text-center border-l">In Stock (Available)</TableHead>
+                <TableHead className="text-right text-foreground font-semibold border-l">Current Value</TableHead>
               </TableRow>
             </TableHeader>
-            <TableFooter className="bg-muted/50"></TableFooter>
             <TableBody>
-              {Sup?.data?.Suppliers?.map((supplier) => (
-                <TableRow key={supplier.id} className="hover:bg-accent/50">
-                  <TableCell className="text-foreground">
-                    {supplier.supplier}
-                  </TableCell>
-                  <TableCell className="text-foreground">
-                    {supplier.street_address}
-                  </TableCell>
-                  <TableCell className="text-foreground">
-                    {supplier.area}
-                  </TableCell>
-                  <TableCell className="text-foreground">
-                    {supplier.city}
-                  </TableCell>
-                  <TableCell className="text-foreground">
-                    {supplier.city}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="h-8 w-8 p-0 text-foreground hover:text-foreground/80 hover:bg-accent"
-                        >
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent
-                        align="center"
-                        className="w-full flex-col items-center flex justify-center bg-popover border-border"
-                      >
-                        <DropdownMenuLabel className="hover:cursor-default text-foreground">
-                          Actions
-                        </DropdownMenuLabel>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            navigate(`/suppliers/edit/${supplier.id}`);
-                          }}
-                          className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                        >
-                          Edit
-                        </Button>
-                        <AlertDialogbox url={supplier.id} />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+              {products.length > 0 ? (
+                products.map((product) => {
+                  const outOfStock = Number(product.closing_qty) <= 0;
+                  const value = (Number(product.closing_qty) * Number(product.last_traded_price)).toFixed(2);
+
+                  return (
+                    <TableRow key={product.id} className="hover:bg-accent/50">
+                      <TableCell className="text-foreground font-medium">{product.product}</TableCell>
+                      <TableCell className="text-foreground">{product.product_category || 'N/A'}</TableCell>
+                      <TableCell className="text-foreground">₹{product.last_traded_price}</TableCell>
+                      <TableCell className="text-foreground text-center border">{product.opening_qty}</TableCell>
+                      <TableCell className={`text-center font-bold border-l ${outOfStock ? 'text-destructive' : 'text-green-600 dark:text-green-400'}`}>
+                        {product.closing_qty}
+                      </TableCell>
+                      <TableCell className="text-right text-foreground border-l">
+                        ₹{Number(value) > 0 ? value : "0.00"}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
+                    No products found in inventory.
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
 
-          <Pagination>
-            <PaginationContent className="flex items-center space-x-4">
-              <PaginationPrevious
-                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
-                  currentPage === 1
-                    ? "cursor-default opacity-50"
-                    : "cursor-pointer"
-                }`}
-                onClick={goToPreviousPage}
-              >
-                Previous
-              </PaginationPrevious>
-
-              <span className="text-sm text-foreground">
-                Page {currentPage} of {totalPages}
-              </span>
-              <PaginationNext
-                className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent ${
-                  currentPage === totalPages
-                    ? "cursor-default opacity-50"
-                    : "cursor-pointer"
-                }`}
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </PaginationNext>
-            </PaginationContent>
-          </Pagination>
+          {totalPages > 1 && (
+            <Pagination className="mt-4">
+              <PaginationContent className="flex items-center space-x-4">
+                <PaginationPrevious
+                  className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent border ${currentPage === 1 ? "cursor-default opacity-50" : "cursor-pointer"
+                    }`}
+                  onClick={goToPreviousPage}
+                >
+                  Previous
+                </PaginationPrevious>
+                <span className="text-sm text-foreground font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <PaginationNext
+                  className={`hover:pointer text-foreground hover:text-foreground/80 hover:bg-accent border ${currentPage === totalPages ? "cursor-default opacity-50" : "cursor-pointer"
+                    }`}
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </PaginationNext>
+              </PaginationContent>
+            </Pagination>
+          )}
         </div>
       </div>
     </div>

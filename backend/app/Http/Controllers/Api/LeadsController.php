@@ -662,7 +662,23 @@ class LeadsController extends BaseController
         }
         $leads->load('leadInvoice'); //solves the issue of invoice number displaying
 
-
+        $leadProducts = $leads->leadProducts;
+        foreach ($leadProducts as $product) {
+            $productModel = Product::find($product['product_id']);
+            if ($productModel) {
+                // If updating an existing invoice, add back the previously issued amount to see true available stock
+                $previousIssued = StockLedger::where('foreign_key', $invoice->id)
+                                             ->where('product_id', $product['product_id'])
+                                             ->where('module', 'Invoice')
+                                             ->sum('issued');
+                                             
+                $availableStock = $productModel->closing_qty + $previousIssued;
+                
+                if ($availableStock < $product['quantity']) {
+                    return $this->sendError("Insufficient stock", ['error' => ["Insufficient stock for product: " . $productModel->product . ". Available: " . $availableStock]]);
+                }
+            }
+        }
 
         // invoiceDetail
         //     $previousInvoiceDetails = InvoiceDetail::where('invoice_id', $invoice->id)

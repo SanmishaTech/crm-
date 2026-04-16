@@ -260,6 +260,18 @@ const Navbar = () => {
                         Products
                       </Button>
                     )}
+                    {(hasAccess("products") || hasAccess("inventory")) && (
+                      <Separator className="w-full justify-center bg-border" />
+                    )}
+                    {hasAccess("inventory") && (
+                      <Button
+                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+                        variant="ghost"
+                        onClick={() => navigate("/inventory")}
+                      >
+                        Inventory
+                      </Button>
+                    )}
                     {hasAccess("products") && hasAccess("purchase") && (
                       <Separator className="w-full justify-center bg-border" />
                     )}
@@ -622,6 +634,18 @@ const Navbar = () => {
                     className="w-full text-left justify-start"
                   >
                     Products
+                  </Button>
+                )}
+                {hasAccess("inventory") && (
+                  <Button
+                    onClick={() => {
+                      navigate("/inventory");
+                      setIsSheetOpen(false);
+                    }}
+                    variant="ghost"
+                    className="w-full text-left justify-start"
+                  >
+                    Inventory
                   </Button>
                 )}
                 {hasAccess("replacements") && (

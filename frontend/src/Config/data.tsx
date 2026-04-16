@@ -61,6 +61,21 @@ export const navItems: NavItem[] = [
         href: "/products",
         icon: "products",
       },
+      {
+        title: "Inventory",
+        href: "/inventory",
+        icon: "products",
+      },
+      {
+        title: "Purchase",
+        href: "/purchase",
+        icon: "products",
+      },
+      {
+        title: "Replacements & Repair",
+        href: "/replacements",
+        icon: "products",
+      },
     ],
   },
   {
