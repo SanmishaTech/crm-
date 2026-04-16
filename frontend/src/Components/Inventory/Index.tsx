@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { X, Filter, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
-import Sidebar, { useSidebar } from "./Sidebar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { useSidebar } from "./Sidebar";
 import {
   Table,
   TableBody,
@@ -50,7 +43,7 @@ export default function InventoryIndex() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const { searchTerm, setSearchTerm, toggle, isMinimized } = useSidebar();
+  const { searchTerm, setSearchTerm } = useSidebar();
   const navigate = useNavigate();
   const [pagination, setPagination] = useState<PaginationData | null>(null);
   const totalPages = pagination?.last_page || 1;
@@ -85,18 +78,13 @@ export default function InventoryIndex() {
 
   if (loading) {
     return (
-      <div className="flex">
-        <Sidebar className="" />
-        <div className="p-6 w-full bg-accent/60 ml-4 rounded-lg shadow-lg">
+      <div className="p-6 w-full bg-accent/60 ml-4 rounded-lg shadow-lg">
           <div className="p-2">
             <div className="flex justify-between items-center">
               <Skeleton className="h-6 w-32 mx-auto" />
             </div>
           </div>
           <div className="flex justify-between items-center py-1 space-x-3 mr-4">
-            <div className="ml-4 mt-2">
-              <Skeleton className="h-4 w-4" />
-            </div>
             <div className="flex-1 space-x-2">
               <Skeleton className="h-10 w-full" />
             </div>
@@ -127,13 +115,11 @@ export default function InventoryIndex() {
             </Table>
           </div>
         </div>
-      </div>
     );
   }
 
   return (
     <div className="flex">
-      <Sidebar className="" />
       <div className="p-6 w-full bg-accent/60 ml-4 mr-8 rounded-lg shadow-lg">
         <div className="p-2">
           <div className="flex justify-between items-center">
@@ -143,30 +129,13 @@ export default function InventoryIndex() {
           </div>
         </div>
         <div className="flex justify-between items-center py-1 space-x-3 ">
-          <div className="ml-4 mt-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Filter
-                    onClick={toggle}
-                    className="h-5 text-foreground hover:text-foreground/80"
-                  />
-                </TooltipTrigger>
-                <TooltipContent className="bg-popover text-popover-foreground">
-                  <p>Filter</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
           <div className="flex-1 space-x-2">
-            {isMinimized ? (
-              <Input
-                className="bg-background text-foreground border-border"
-                placeholder="Search Product Inventory..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            ) : null}
+            <Input
+              className="bg-background text-foreground border-border"
+              placeholder="Search Product Inventory..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </div>
 

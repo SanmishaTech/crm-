@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { usePostData } from "@/lib/HTTP/POST";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Form Schema
 const FormSchema = z.object({
@@ -56,6 +57,7 @@ const FormSchema = z.object({
 
 export default function InputForm() {
   const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -86,14 +88,17 @@ export default function InputForm() {
   const formData = usePostData({
     endpoint: "/api/clients",
     params: {
-      onSuccess: (data) => {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["clients"] });
         navigate("/clients");
       },
-      onError: (error) => {
+      onError: (error: any) => {
         // Check for the 'client' duplicate error
         if (error.response && error.response.data.errors) {
-          const serverStatus = error.response.data.status;
-          const serverErrors = error.response.data.errors;
+          const serverData = error.response.data;
+          const serverStatus = serverData.status;
+          const serverErrors = serverData.errors;
+
           // Assuming the error is for the department_name field
           if (serverStatus === false) {
             if (serverErrors.client) {

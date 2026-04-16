@@ -92,13 +92,16 @@ export default function EditClientPage() {
   const fetchData = usePutData({
     endpoint: `/api/clients/${id}`,
     params: {
-      queryKey: ["editclient", id],
-      onSuccess: (data: any) => {
+      queryKey: ["editclient", id || ""],
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["editclient"] });
-        queryClient.invalidateQueries({ queryKey: ["editclient", id] });
+        queryClient.invalidateQueries({ queryKey: ["editclient", id || ""] });
+        queryClient.invalidateQueries({ queryKey: ["clients"] });
         toast.success("Client updated successfully");
         navigate("/clients");
       },
+
+
       onError: (error: any) => {
         if (error.response && error.response.data.errors) {
           const serverStatus = error.response.data.status;

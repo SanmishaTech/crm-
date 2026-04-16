@@ -160,15 +160,42 @@ const Navbar = () => {
                 Dashboard
               </Button>
             )}
-            {hasAccess("leads") && (
-              <Button
-                onClick={() => navigate("/leads")}
-                variant="ghost"
-                className="text-foreground hover:text-foreground/80 hover:bg-accent"
-              >
-                Leads
-              </Button>
-            )}
+            <NavigationMenu className="relative inline-block">
+              <NavigationMenuList className="list-none p-0 m-0">
+                <NavigationMenuItem className="group">
+                  <NavigationMenuTrigger className="px-2 py-2 cursor-pointer text-foreground hover:bg-accent">
+                    Leads
+                    <ChevronDown
+                      className="relative top-[1px] ml-1 h-4"
+                      aria-hidden="true"
+                    />
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="flex flex-col items-start justify-center w-full bg-popover border rounded-md shadow-md">
+                    {hasAccess("leadSources") && (
+                      <Button
+                        onClick={() => navigate("/leadSources")}
+                        variant="ghost"
+                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                      >
+                        Lead Sources
+                      </Button>
+                    )}
+                    {hasAccess("leadSources") && hasAccess("leads") && (
+                      <Separator className="w-full justify-center bg-border" />
+                    )}
+                    {hasAccess("leads") && (
+                      <Button
+                        onClick={() => navigate("/leads")}
+                        variant="ghost"
+                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                      >
+                        Leads
+                      </Button>
+                    )}
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
 
             {hasAccess("events") && (
               <Button
@@ -227,18 +254,7 @@ const Navbar = () => {
                     />
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="flex flex-col items-start justify-center w-full bg-popover border rounded-md shadow-md">
-                    {hasAccess("suppliers") && (
-                      <Button
-                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                        variant="ghost"
-                        onClick={() => navigate("/suppliers")}
-                      >
-                        Suppliers
-                      </Button>
-                    )}
-                    {hasAccess("suppliers") && hasAccess("productCategories") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
+                    {/* Suppliers moved down */}
                     {hasAccess("productCategories") && (
                       <Button
                         variant="ghost"
@@ -248,7 +264,19 @@ const Navbar = () => {
                         Product Categories
                       </Button>
                     )}
-                    {hasAccess("productCategories") && hasAccess("products") && (
+                    {hasAccess("productCategories") && hasAccess("suppliers") && (
+                      <Separator className="w-full justify-center bg-border" />
+                    )}
+                    {hasAccess("suppliers") && (
+                      <Button
+                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+                        variant="ghost"
+                        onClick={() => navigate("/suppliers")}
+                      >
+                        Suppliers
+                      </Button>
+                    )}
+                    {hasAccess("suppliers") && hasAccess("products") && (
                       <Separator className="w-full justify-center bg-border" />
                     )}
                     {hasAccess("products") && (
@@ -258,18 +286,6 @@ const Navbar = () => {
                         onClick={() => navigate("/products")}
                       >
                         Products
-                      </Button>
-                    )}
-                    {(hasAccess("products") || hasAccess("inventory")) && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("inventory") && (
-                      <Button
-                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                        variant="ghost"
-                        onClick={() => navigate("/inventory")}
-                      >
-                        Inventory
                       </Button>
                     )}
                     {hasAccess("products") && hasAccess("purchase") && (
@@ -284,7 +300,19 @@ const Navbar = () => {
                         Purchase
                       </Button>
                     )}
-                    {hasAccess("purchase") && hasAccess("replacements") && (
+                    {hasAccess("purchase") && hasAccess("inventory") && (
+                      <Separator className="w-full justify-center bg-border" />
+                    )}
+                    {hasAccess("inventory") && (
+                      <Button
+                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
+                        variant="ghost"
+                        onClick={() => navigate("/inventory")}
+                      >
+                        Inventory
+                      </Button>
+                    )}
+                    {hasAccess("inventory") && hasAccess("replacements") && (
                       <Separator className="w-full justify-center bg-border" />
                     )}
                     {hasAccess("replacements") && (
@@ -308,13 +336,13 @@ const Navbar = () => {
               <NavigationMenuList className="list-none p-0 m-0">
                 <NavigationMenuItem className="group">
                   <NavigationMenuTrigger className="px-2 py-2 cursor-pointer text-foreground hover:bg-accent">
-                    Users
+                    Administration
                     <ChevronDown
-                      className="relative top-[1px]  h-4"
+                      className="relative top-[1px] ml-1 h-4"
                       aria-hidden="true"
                     />
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="flex flex-col items-center justify-center bg-popover border rounded-md shadow-md">
+                  <NavigationMenuContent className="flex flex-col items-start justify-center w-full bg-popover border rounded-md shadow-md">
                     {hasAccess("departments") && (
                       <Button
                         onClick={() => navigate("/departments")}
@@ -324,7 +352,19 @@ const Navbar = () => {
                         Department
                       </Button>
                     )}
-                    {hasAccess("departments") && hasAccess("roles") && (
+                    {hasAccess("departments") && hasAccess("employees") && (
+                      <Separator className="w-full justify-center bg-border" />
+                    )}
+                    {hasAccess("employees") && (
+                      <Button
+                        onClick={() => navigate("/employees")}
+                        variant="ghost"
+                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                      >
+                        Employees
+                      </Button>
+                    )}
+                    {hasAccess("employees") && hasAccess("roles") && (
                       <Separator className="w-full justify-center bg-border" />
                     )}
                     {hasAccess("roles") && (
@@ -348,21 +388,22 @@ const Navbar = () => {
                         Permissions
                       </Button>
                     )}
-                    {hasAccess("permissions") && hasAccess("employees") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("employees") && (
-                      <Button
-                        onClick={() => navigate("/employees")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Employees
-                      </Button>
-                    )}
-                    {hasAccess("employees") && hasAccess("challans") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            <NavigationMenu className="relative inline-block">
+              <NavigationMenuList className="list-none p-0 m-0">
+                <NavigationMenuItem className="group">
+                  <NavigationMenuTrigger className="px-2 py-2 cursor-pointer text-foreground hover:bg-accent">
+                    Operations
+                    <ChevronDown
+                      className="relative top-[1px] ml-1 h-4"
+                      aria-hidden="true"
+                    />
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="flex flex-col items-start justify-center w-full bg-popover border rounded-md shadow-md">
                     {hasAccess("challans") && (
                       <Button
                         onClick={() => navigate("/challans")}
@@ -372,7 +413,19 @@ const Navbar = () => {
                         Challan
                       </Button>
                     )}
-                    {hasAccess("challans") && hasAccess("expense_heads") && (
+                    {hasAccess("challans") && hasAccess("invoices") && (
+                      <Separator className="w-full justify-center bg-border" />
+                    )}
+                    {hasAccess("invoices") && (
+                      <Button
+                        onClick={() => navigate("/invoices")}
+                        variant="ghost"
+                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
+                      >
+                        Invoices
+                      </Button>
+                    )}
+                    {(hasAccess("challans") || hasAccess("invoices")) && hasAccess("expense_heads") && (
                       <Separator className="w-full justify-center bg-border" />
                     )}
                     {hasAccess("expense_heads") && (
@@ -387,32 +440,19 @@ const Navbar = () => {
                     {hasAccess("expense_heads") && hasAccess("expense") && (
                       <Separator className="w-full justify-center bg-border" />
                     )}
-                    {hasAccess("expense") && hasAccess("leadSources") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("leadSources") && (
+                    {hasAccess("expense") && (
                       <Button
-                        onClick={() => navigate("/leadSources")}
+                        onClick={() => navigate("/expense")}
                         variant="ghost"
                         className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
                       >
-                        Lead Sources
+                        Expense
                       </Button>
                     )}
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-
-            {hasAccess("invoices") && (
-              <Button
-                className="text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                variant="ghost"
-                onClick={() => navigate("/invoices")}
-              >
-                Invoices
-              </Button>
-            )}
           </div>
         </div>
 
@@ -552,6 +592,18 @@ const Navbar = () => {
                     Dashboard
                   </Button>
                 )}
+                {hasAccess("leadSources") && (
+                  <Button
+                    onClick={() => {
+                      navigate("/leadSources");
+                      setIsSheetOpen(false);
+                    }}
+                    variant="ghost"
+                    className="w-full text-left justify-start"
+                  >
+                    Lead Sources
+                  </Button>
+                )}
                 {hasAccess("leads") && (
                   <Button
                     onClick={() => {
@@ -600,18 +652,6 @@ const Navbar = () => {
                     Contacts
                   </Button>
                 )}
-                {hasAccess("suppliers") && (
-                  <Button
-                    onClick={() => {
-                      navigate("/suppliers");
-                      setIsSheetOpen(false);
-                    }}
-                    variant="ghost"
-                    className="w-full text-left justify-start"
-                  >
-                    Suppliers
-                  </Button>
-                )}
                 {hasAccess("productCategories") && (
                   <Button
                     onClick={() => {
@@ -624,6 +664,18 @@ const Navbar = () => {
                     Product Categories
                   </Button>
                 )}
+                {hasAccess("suppliers") && (
+                  <Button
+                    onClick={() => {
+                      navigate("/suppliers");
+                      setIsSheetOpen(false);
+                    }}
+                    variant="ghost"
+                    className="w-full text-left justify-start"
+                  >
+                    Suppliers
+                  </Button>
+                )}
                 {hasAccess("products") && (
                   <Button
                     onClick={() => {
@@ -634,6 +686,18 @@ const Navbar = () => {
                     className="w-full text-left justify-start"
                   >
                     Products
+                  </Button>
+                )}
+                {hasAccess("purchase") && (
+                  <Button
+                    onClick={() => {
+                      navigate("/purchase");
+                      setIsSheetOpen(false);
+                    }}
+                    variant="ghost"
+                    className="w-full text-left justify-start"
+                  >
+                    Purchase
                   </Button>
                 )}
                 {hasAccess("inventory") && (
@@ -660,16 +724,16 @@ const Navbar = () => {
                     Replacements & Repair
                   </Button>
                 )}
-                {hasAccess("purchase") && (
+                {hasAccess("departments") && (
                   <Button
                     onClick={() => {
-                      navigate("/purchase");
+                      navigate("/departments");
                       setIsSheetOpen(false);
                     }}
                     variant="ghost"
                     className="w-full text-left justify-start"
                   >
-                    Purchase
+                    Departments
                   </Button>
                 )}
                 {hasAccess("employees") && (
@@ -696,6 +760,18 @@ const Navbar = () => {
                     Challans
                   </Button>
                 )}
+                {hasAccess("invoices") && (
+                  <Button
+                    onClick={() => {
+                      navigate("/invoices");
+                      setIsSheetOpen(false);
+                    }}
+                    variant="ghost"
+                    className="w-full text-left justify-start"
+                  >
+                    Invoices
+                  </Button>
+                )}
                 {hasAccess("expense_heads") && (
                   <Button
                     onClick={() => {
@@ -718,42 +794,6 @@ const Navbar = () => {
                     className="w-full text-left justify-start"
                   >
                     Expense
-                  </Button>
-                )}
-                {hasAccess("departments") && (
-                  <Button
-                    onClick={() => {
-                      navigate("/departments");
-                      setIsSheetOpen(false);
-                    }}
-                    variant="ghost"
-                    className="w-full text-left justify-start"
-                  >
-                    Departments
-                  </Button>
-                )}
-                {hasAccess("leadSources") && (
-                  <Button
-                    onClick={() => {
-                      navigate("/leadSources");
-                      setIsSheetOpen(false);
-                    }}
-                    variant="ghost"
-                    className="w-full text-left justify-start"
-                  >
-                    Lead Sources
-                  </Button>
-                )}
-                {hasAccess("invoices") && (
-                  <Button
-                    onClick={() => {
-                      navigate("/invoices");
-                      setIsSheetOpen(false);
-                    }}
-                    variant="ghost"
-                    className="w-full text-left justify-start"
-                  >
-                    Invoices
                   </Button>
                 )}
               </div>

@@ -1,7 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { useEffect, useRef } from "react";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 interface ParamsType<T = any> {
   queryKey?: any[];
@@ -12,6 +11,8 @@ interface ParamsType<T = any> {
   enabled?: boolean;
   onSuccess?: (data: T) => void;
   onError?: (error: AxiosError) => void;
+  staleTime?: number;
+  gcTime?: number;
 }
 
 const fetchData = async <T = any>({
@@ -58,7 +59,8 @@ export const useGetData = <T = any>({
     retry: params.retry ?? 1,
     refetchOnWindowFocus: params.refetchOnWindowFocus ?? true,
     enabled: params.enabled ?? true,
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: params.staleTime ?? 5 * 60 * 1000,
+    gcTime: params.gcTime ?? 10 * 60 * 1000,
   });
 
   useEffect(() => {
