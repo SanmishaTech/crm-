@@ -22,27 +22,28 @@ class CreateAdminUserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'password' => Hash::make('abcd123'), // Hash the password
-                'active' => 1
+                'active' => 1,
+                'role' => 'admin'
             ]
         );
 
         // Create or retrieve the admin role
         $role = Role::firstOrCreate(['name' => 'admin']);
-        
+
         // Retrieve all permissions and sync them to the admin role
         $permissions = Permission::pluck('id', 'id')->all();
         $role->syncPermissions($permissions);
 
         // Assign the role to the user
         $user->syncRoles([$role->id]); // Use syncRoles to avoid duplication
-         
-        $profile = Employee::where('user_id',$user->id)->first();
-         if($profile){
+
+        $profile = Employee::where('user_id', $user->id)->first();
+        if ($profile) {
             $profile->employee_name = $user->name;
             $profile->email = $user->email;
             $profile->save();
             return;
-         }
+        }
         $profile = new Employee();
         $profile->user_id = $user->id;
         $profile->employee_name = $user->name;
