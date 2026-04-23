@@ -15,6 +15,11 @@ use App\Http\Resources\ProductCategoryResource;
 use App\Http\Requests\StoreProductCategoryRequest;
 use App\Http\Requests\UpdateProductCategoryRequest;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
+
    /**
      * @group Product Category Management
      */
@@ -113,5 +118,64 @@ class ProductCategoriesController extends BaseController
         ], "Product Categories retrived successfully");
 
     }
-    
+
+    /**
+     * Download Excel Template for Product Categories.
+     */
+    public function downloadTemplate()
+    {
+        if (ob_get_level()) ob_end_clean();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Set Headers
+        $headers = ['Category Name'];
+        $sheet->fromArray($headers, null, 'A1');
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Product_Category_Template.xlsx';
+        
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    /**
+     * Import Product Categories from Excel.
+     */
+    public function importData(Request $request): JsonResponse
+    {
+        $request->validate(['file' => 'required|mimes:xlsx,xls,csv|max:4096']);
+
+        try {
+            $file = $request->file('file');
+            $spreadsheet = IOFactory::load($file->getRealPath());
+            $rows = $spreadsheet->getActiveSheet()->toArray();
+            
+            unset($rows[0]); // Skip Header
+            $count = 0;
+
+            foreach ($rows as $row) {
+                if (empty(array_filter($row))) continue;
+
+                $categoryName = trim($row[0]);
+                if (empty($categoryName)) continue;
+
+                // Find or create the category (case-insensitive check)
+                $exists = ProductCategory::whereRaw('LOWER(product_category) = ?', [strtolower($categoryName)])->exists();
+                
+                if (!$exists) {
+                    ProductCategory::create(['product_category' => $categoryName]);
+                    $count++;
+                }
+            }
+
+            return $this->sendResponse([], "$count records imported successfully.");
+        } catch (\Exception $e) {
+            return $this->sendError("Import failed.", ['Error' => $e->getMessage()]);
+        }
+    }
 }

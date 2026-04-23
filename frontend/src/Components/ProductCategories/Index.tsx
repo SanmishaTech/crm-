@@ -55,6 +55,7 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import ProductCategoryDialog from "./ProductCategoryDialog";
+import ImportProductCategoryDialog from "./ImportProductCategoryDialog";
 import PaginationComponent from "../Departments/PaginationComponent";
 import AddDepartment from "../Departments/AddDepartment";
 import { useQueryClient } from "@tanstack/react-query";
@@ -237,6 +238,11 @@ export default function TableDemo() {
                 handleProductCategoryInvalidateQuery
               }
               setLoading={setLoading}
+            />
+            <ImportProductCategoryDialog
+              handleProductCategoryInvalidateQuery={
+                handleProductCategoryInvalidateQuery
+              }
             />
             {/* Add(Dialog) Ends */}
           </div>

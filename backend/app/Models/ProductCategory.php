@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ProductCategory extends Model
 {
     use HasFactory;
-
-     
+    
+    protected $fillable = ['product_category'];
 }

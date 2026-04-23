@@ -53,6 +53,8 @@ Route::group(['middleware' => ['auth:sanctum', 'permission', 'request.null']], f
    Route::get('/all_employees', [EmployeesController::class , 'allEmployees'])->name("employees.all");
    Route::put('/employee_resignation/{id}', [EmployeesController::class , 'resignation'])->name("employee.resignation");
    Route::resource('products', ProductsController::class);
+   Route::get('/product_categories/template', [ProductCategoriesController::class , 'downloadTemplate'])->name("product_categories.template");
+   Route::post('/product_categories/import', [ProductCategoriesController::class , 'importData'])->name("product_categories.import");
    Route::resource('product_categories', ProductCategoriesController::class);
    Route::get('/logout', [UserController::class , 'logout'])->name('user.logout');
 
