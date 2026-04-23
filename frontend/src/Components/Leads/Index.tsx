@@ -241,7 +241,7 @@ export default function TableDemo() {
           </div>
         </div>
 
-        <div className="panel p-4 rounded-b-lg bg-card border border-t-0 shadow-sm relative">
+        <div className="panel p-4 rounded-b-lg bg-card shadow-sm relative">
           {isLoading && (
             <div className="absolute inset-x-0 top-0 h-1 bg-primary/20 animate-pulse" />
           )}

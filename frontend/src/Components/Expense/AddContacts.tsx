@@ -237,7 +237,7 @@ const AddContacts = ({ fetchContacts }: { fetchContacts: () => void }) => {
             </div>
 
             {isCustomClient ? (
-              <div className="space-y-3 p-3 bg-accent/30 rounded-md border border-border/50 animate-in fade-in duration-300">
+              <div className="space-y-3 p-3 bg-accent/30 rounded-md animate-in fade-in duration-300">
                 <FormField
                   control={form.control}
                   name="client"

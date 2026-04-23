@@ -28,6 +28,7 @@ class UpdateClientRequest extends FormRequest
                 'required',
                 'unique:clients,client,' . $this->route('client'),
             ],
+            'contact_no' => [ 'required', 'digits:10'],
         ];
     }
 

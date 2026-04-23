@@ -222,6 +222,7 @@ class LeadsController extends BaseController
             $lead->lead_status = $request->input("lead_status");
         }
         $lead->payment_received_remark = $request->input("payment_received_remark");
+        $lead->lead_remark = $request->input("lead_remark");
         $lead->save();
 
         $totalAmountWithoutGst = 0;
@@ -325,6 +326,7 @@ class LeadsController extends BaseController
         $lead->lead_status = $request->input("lead_status");
         $lead->assigned_to = $request->input("assigned_to");
         $lead->payment_received_remark = $request->input("payment_received_remark");
+        $lead->lead_remark = $request->input("lead_remark");
 
         if ($request->hasFile('lead_attachment')) {
             $lead->lead_attachment = $quotationFileNameToStore;

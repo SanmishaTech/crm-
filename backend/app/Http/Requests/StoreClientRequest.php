@@ -25,6 +25,7 @@ class StoreClientRequest extends FormRequest
     {
         return [
             "client" => [ 'required', 'unique:clients,client'],
+            "contact_no" => [ 'required', 'digits:10'],
         ];
     }
 

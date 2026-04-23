@@ -21,14 +21,26 @@ import {
   Sun,
   Moon,
   Notebook,
+  Users,
+  Target,
+  UserCheck,
+  Package,
+  Layers,
+  ShoppingCart,
+  Archive,
+  RefreshCcw,
+  Building2,
+  UserCog,
+  ShieldCheck,
+  Key,
+  FileText,
+  Receipt,
+  Wallet,
+  CreditCard,
+  Calendar,
+  LayoutDashboard,
+  Warehouse,
 } from "lucide-react";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -155,304 +167,255 @@ const Navbar = () => {
               <Button
                 onClick={() => navigate("/dashboard")}
                 variant="ghost"
-                className="text-foreground hover:text-foreground/80 hover:bg-accent"
+                className="text-foreground hover:text-foreground/80 hover:bg-accent flex items-center gap-2"
               >
+                <LayoutDashboard className="h-4 w-4" />
                 Dashboard
               </Button>
             )}
-            <NavigationMenu className="relative inline-block">
-              <NavigationMenuList className="list-none p-0 m-0">
-                <NavigationMenuItem className="group">
-                  <NavigationMenuTrigger className="px-2 py-2 cursor-pointer text-foreground hover:bg-accent">
-                    Leads
-                    <ChevronDown
-                      className="relative top-[1px] ml-1 h-4"
-                      aria-hidden="true"
-                    />
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="flex flex-col items-start justify-center w-full bg-popover border rounded-md shadow-md">
-                    {hasAccess("leadSources") && (
-                      <Button
-                        onClick={() => navigate("/leadSources")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Lead Sources
-                      </Button>
-                    )}
-                    {hasAccess("leadSources") && hasAccess("leads") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("leads") && (
-                      <Button
-                        onClick={() => navigate("/leads")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Leads
-                      </Button>
-                    )}
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="px-3 py-2 cursor-pointer text-foreground hover:bg-accent flex items-center gap-1"
+                >
+                  Leads
+                  <ChevronDown className="h-4 w-4 opacity-50" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56 p-1">
+                {hasAccess("leadSources") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/leadSources")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <Target className="h-4 w-4 text-muted-foreground" />
+                    <span>Lead Sources</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("leads") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/leads")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span>Leads</span>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {hasAccess("events") && (
               <Button
                 onClick={() => navigate("/events")}
                 variant="ghost"
-                className="text-foreground hover:text-foreground/80 hover:bg-accent"
+                className="text-foreground hover:text-foreground/80 hover:bg-accent flex items-center gap-2"
               >
+                <Calendar className="h-4 w-4" />
                 Events
               </Button>
             )}
 
-            <NavigationMenu className="relative inline-block">
-              <NavigationMenuList className="list-none p-0 m-0">
-                <NavigationMenuItem className="group">
-                  <NavigationMenuTrigger className="px-2 py-2 cursor-pointer text-foreground hover:bg-accent">
-                    Clients
-                    <ChevronDown
-                      className="relative top-[1px] ml- h-4"
-                      aria-hidden="true"
-                    />
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className=" flex flex-col  justify-end bg-popover  rounded-md shadow-md">
-                    {hasAccess("clients") && (
-                      <Button
-                        className=" flex justify-between w-full text-sm  hover:text-foreground/80 hover:bg-accent py-3"
-                        variant="ghost"
-                        onClick={() => navigate("/clients")}
-                      >
-                        Clients
-                      </Button>
-                    )}
-                    {hasAccess("clients") && hasAccess("contacts") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("contacts") && (
-                      <Button
-                        variant="ghost"
-                        className=" text-sm hover:text-foreground/80 hover:bg-accent"
-                        onClick={() => navigate("/contacts")}
-                      >
-                        Contacts
-                      </Button>
-                    )}
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-            <NavigationMenu className="relative inline-block">
-              <NavigationMenuList className="list-none p-0 m-0">
-                <NavigationMenuItem className="group">
-                  <NavigationMenuTrigger className="px-2 py-2 cursor-pointer text-foreground hover:bg-accent">
-                    Products
-                    <ChevronDown
-                      className="relative top-[1px]  h-4"
-                      aria-hidden="true"
-                    />
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="flex flex-col items-start justify-center w-full bg-popover border rounded-md shadow-md">
-                    {/* Suppliers moved down */}
-                    {hasAccess("productCategories") && (
-                      <Button
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                        onClick={() => navigate("/productCategories")}
-                      >
-                        Product Categories
-                      </Button>
-                    )}
-                    {hasAccess("productCategories") && hasAccess("suppliers") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("suppliers") && (
-                      <Button
-                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                        variant="ghost"
-                        onClick={() => navigate("/suppliers")}
-                      >
-                        Suppliers
-                      </Button>
-                    )}
-                    {hasAccess("suppliers") && hasAccess("products") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("products") && (
-                      <Button
-                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                        variant="ghost"
-                        onClick={() => navigate("/products")}
-                      >
-                        Products
-                      </Button>
-                    )}
-                    {hasAccess("products") && hasAccess("purchase") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("purchase") && (
-                      <Button
-                        onClick={() => navigate("/purchase")}
-                        variant="ghost"
-                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Purchase
-                      </Button>
-                    )}
-                    {hasAccess("purchase") && hasAccess("inventory") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("inventory") && (
-                      <Button
-                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                        variant="ghost"
-                        onClick={() => navigate("/inventory")}
-                      >
-                        Inventory
-                      </Button>
-                    )}
-                    {hasAccess("inventory") && hasAccess("replacements") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("replacements") && (
-                      <Button
-                        onClick={() => navigate("/replacements")}
-                        variant="ghost"
-                        className="w-full text-sm text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Replacements & Repair
-                      </Button>
-                    )}
-                    {hasAccess("replacements") && (hasAccess("departments") || hasAccess("expense_heads") || hasAccess("expense") || hasAccess("challans") || hasAccess("invoices") || hasAccess("roles") || hasAccess("permissions")) && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="px-3 py-2 cursor-pointer text-foreground hover:bg-accent flex items-center gap-1"
+                >
+                  Clients
+                  <ChevronDown className="h-4 w-4 opacity-50" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56 p-1">
+                {hasAccess("clients") && (
+                  <DropdownMenuItem
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                    onClick={() => navigate("/clients")}
+                  >
+                    <UserCheck className="h-4 w-4 text-muted-foreground" />
+                    <span>Clients</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("contacts") && (
+                  <DropdownMenuItem
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                    onClick={() => navigate("/contacts")}
+                  >
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span>Contacts</span>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-            <NavigationMenu className="relative inline-block">
-              <NavigationMenuList className="list-none p-0 m-0">
-                <NavigationMenuItem className="group">
-                  <NavigationMenuTrigger className="px-2 py-2 cursor-pointer text-foreground hover:bg-accent">
-                    Administration
-                    <ChevronDown
-                      className="relative top-[1px] ml-1 h-4"
-                      aria-hidden="true"
-                    />
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="flex flex-col items-start justify-center w-full bg-popover border rounded-md shadow-md">
-                    {hasAccess("departments") && (
-                      <Button
-                        onClick={() => navigate("/departments")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Department
-                      </Button>
-                    )}
-                    {hasAccess("departments") && hasAccess("employees") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("employees") && (
-                      <Button
-                        onClick={() => navigate("/employees")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Employees
-                      </Button>
-                    )}
-                    {hasAccess("employees") && hasAccess("roles") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("roles") && (
-                      <Button
-                        onClick={() => navigate("/roles")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Roles
-                      </Button>
-                    )}
-                    {hasAccess("roles") && hasAccess("permissions") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("permissions") && (
-                      <Button
-                        onClick={() => navigate("/permissions")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Permissions
-                      </Button>
-                    )}
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="px-3 py-2 cursor-pointer text-foreground hover:bg-accent flex items-center gap-1"
+                >
+                  Products
+                  <ChevronDown className="h-4 w-4 opacity-50" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64 p-1">
+                {hasAccess("productCategories") && (
+                  <DropdownMenuItem
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                    onClick={() => navigate("/productCategories")}
+                  >
+                    <Layers className="h-4 w-4 text-muted-foreground" />
+                    <span>Product Categories</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("suppliers") && (
+                  <DropdownMenuItem
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                    onClick={() => navigate("/suppliers")}
+                  >
+                    <Warehouse className="h-4 w-4 text-muted-foreground" />
+                    <span>Suppliers</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("products") && (
+                  <DropdownMenuItem
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                    onClick={() => navigate("/products")}
+                  >
+                    <Package className="h-4 w-4 text-muted-foreground" />
+                    <span>Products</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("purchase") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/purchase")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+                    <span>Purchase</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("inventory") && (
+                  <DropdownMenuItem
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                    onClick={() => navigate("/inventory")}
+                  >
+                    <Archive className="h-4 w-4 text-muted-foreground" />
+                    <span>Inventory</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("replacements") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/replacements")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <RefreshCcw className="h-4 w-4 text-muted-foreground" />
+                    <span>Replacements & Repair</span>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-            <NavigationMenu className="relative inline-block">
-              <NavigationMenuList className="list-none p-0 m-0">
-                <NavigationMenuItem className="group">
-                  <NavigationMenuTrigger className="px-2 py-2 cursor-pointer text-foreground hover:bg-accent">
-                    Operations
-                    <ChevronDown
-                      className="relative top-[1px] ml-1 h-4"
-                      aria-hidden="true"
-                    />
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="flex flex-col items-start justify-center w-full bg-popover border rounded-md shadow-md">
-                    {hasAccess("challans") && (
-                      <Button
-                        onClick={() => navigate("/challans")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Challan
-                      </Button>
-                    )}
-                    {hasAccess("challans") && hasAccess("invoices") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("invoices") && (
-                      <Button
-                        onClick={() => navigate("/invoices")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Invoices
-                      </Button>
-                    )}
-                    {(hasAccess("challans") || hasAccess("invoices")) && hasAccess("expense_heads") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("expense_heads") && (
-                      <Button
-                        onClick={() => navigate("/expense_heads")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Expense Head
-                      </Button>
-                    )}
-                    {hasAccess("expense_heads") && hasAccess("expense") && (
-                      <Separator className="w-full justify-center bg-border" />
-                    )}
-                    {hasAccess("expense") && (
-                      <Button
-                        onClick={() => navigate("/expense")}
-                        variant="ghost"
-                        className="w-full text-foreground hover:text-foreground/80 hover:bg-accent"
-                      >
-                        Expense
-                      </Button>
-                    )}
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="px-3 py-2 cursor-pointer text-foreground hover:bg-accent flex items-center gap-1"
+                >
+                  Administration
+                  <ChevronDown className="h-4 w-4 opacity-50" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56 p-1">
+                {hasAccess("departments") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/departments")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                    <span>Departments</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("employees") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/employees")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <UserCog className="h-4 w-4 text-muted-foreground" />
+                    <span>Employees</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("roles") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/roles")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+                    <span>Roles</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("permissions") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/permissions")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <Key className="h-4 w-4 text-muted-foreground" />
+                    <span>Permissions</span>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="px-3 py-2 cursor-pointer text-foreground hover:bg-accent flex items-center gap-1"
+                >
+                  Operations
+                  <ChevronDown className="h-4 w-4 opacity-50" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56 p-1">
+                {hasAccess("challans") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/challans")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                    <span>Challan</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("invoices") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/invoices")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <Receipt className="h-4 w-4 text-muted-foreground" />
+                    <span>Invoices</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("expense_heads") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/expense_heads")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <Wallet className="h-4 w-4 text-muted-foreground" />
+                    <span>Expense Head</span>
+                  </DropdownMenuItem>
+                )}
+                {hasAccess("expense") && (
+                  <DropdownMenuItem
+                    onClick={() => navigate("/expense")}
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                  >
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    <span>Expense</span>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -558,7 +521,7 @@ const Navbar = () => {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-border" />
                 <DropdownMenuItem
-                  className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent"
+                  className="flex items-center space-x-3 text-foreground hover:text-foreground/80 hover:bg-accent cursor-pointer"
                   onClick={handleLogout}
                 >
                   <LogOut className="h-4" />

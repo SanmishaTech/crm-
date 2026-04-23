@@ -10,16 +10,102 @@ use App\Http\Resources\ClientResource;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Controllers\Api\BaseController;
-use App\Http\Controllers\Api\ClientsController;
+use App\Http\Controllers\Api\ClientsController as ApiClientsController;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
- 
-    /**
-     * @group Client Management.
-     */
- 
-  
 class ClientsController extends BaseController
 {
+    /**
+     * Download Excel Template for Clients.
+     */
+    public function downloadTemplate()
+    {
+        if (ob_get_level()) ob_end_clean();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Set Headers
+        $headers = [
+            'Client', 'Contact No', 'Email', 'GSTIN', 'Street Address', 
+            'Area', 'City', 'State', 'Pincode', 'Country',
+            'Shipping Street', 'Shipping Area', 'Shipping City', 'Shipping State', 'Shipping Pincode', 'Shipping Country'
+        ];
+        $sheet->fromArray($headers, null, 'A1');
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Client_Import_Template.xlsx';
+        
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    /**
+     * Import Clients from Excel.
+     */
+    public function importData(Request $request): JsonResponse
+    {
+        $request->validate(['file' => 'required|mimes:xlsx,xls,csv|max:4096']);
+
+        try {
+            $file = $request->file('file');
+            $spreadsheet = IOFactory::load($file->getRealPath());
+            $rows = $spreadsheet->getActiveSheet()->toArray();
+            
+            unset($rows[0]); // Skip Header
+            $count = 0;
+            $errors = [];
+
+            foreach ($rows as $index => $row) {
+                if (empty(array_filter($row))) continue;
+
+                $clientName = trim($row[0] ?? '');
+                $contactNo = trim($row[1] ?? '');
+                
+                // Mandatory validation
+                if (empty($clientName) || empty($contactNo)) {
+                    $errors[] = "Row " . ($index + 1) . ": Client Name and Contact No are mandatory.";
+                    continue;
+                }
+
+                $data = [
+                    'client' => $clientName,
+                    'contact_no' => $contactNo,
+                    'email' => trim($row[2] ?? ''),
+                    'gstin' => trim($row[3] ?? ''),
+                    'street_address' => trim($row[4] ?? ''),
+                    'area' => trim($row[5] ?? ''),
+                    'city' => trim($row[6] ?? ''),
+                    'state' => trim($row[7] ?? ''),
+                    'pincode' => trim($row[8] ?? ''),
+                    'country' => trim($row[9] ?? '') ?: 'India',
+                    'shipping_street' => trim($row[10] ?? ''),
+                    'shipping_area' => trim($row[11] ?? ''),
+                    'shipping_city' => trim($row[12] ?? ''),
+                    'shipping_state' => trim($row[13] ?? ''),
+                    'shipping_pincode' => trim($row[14] ?? ''),
+                    'shipping_country' => trim($row[15] ?? '') ?: 'India',
+                ];
+
+                Client::create($data);
+                $count++;
+            }
+
+            $message = "$count records imported successfully.";
+            if (!empty($errors)) {
+                $message .= " Some rows were skipped due to missing mandatory fields.";
+            }
+
+            return $this->sendResponse(['errors' => $errors], $message);
+        } catch (\Exception $e) {
+            return $this->sendError("Import failed.", ['Error' => $e->getMessage()]);
+        }
+    }
    
     
     /**

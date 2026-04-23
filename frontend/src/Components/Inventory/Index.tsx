@@ -149,9 +149,9 @@ export default function InventoryIndex() {
                 <TableHead className="text-foreground font-semibold">Product Name</TableHead>
                 <TableHead className="text-foreground font-semibold">Category</TableHead>
                 <TableHead className="text-foreground font-semibold">Base Price</TableHead>
-                <TableHead className="text-foreground font-semibold text-center mt-2 px-4 py-1 h-3 rounded-md border flex items-center justify-center">Opening Stock</TableHead>
-                <TableHead className="text-foreground font-semibold text-center border-l">In Stock (Available)</TableHead>
-                <TableHead className="text-right text-foreground font-semibold border-l">Current Value</TableHead>
+                <TableHead className="text-foreground font-semibold text-center mt-2 px-4 py-1 h-3 rounded-md flex items-center justify-center">Opening Stock</TableHead>
+                <TableHead className="text-foreground font-semibold text-center">In Stock (Available)</TableHead>
+                <TableHead className="text-right text-foreground font-semibold">Current Value</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -165,11 +165,11 @@ export default function InventoryIndex() {
                       <TableCell className="text-foreground font-medium">{product.product}</TableCell>
                       <TableCell className="text-foreground">{product.product_category || 'N/A'}</TableCell>
                       <TableCell className="text-foreground">₹{product.last_traded_price}</TableCell>
-                      <TableCell className="text-foreground text-center border">{product.opening_qty}</TableCell>
-                      <TableCell className={`text-center font-bold border-l ${outOfStock ? 'text-destructive' : 'text-green-600 dark:text-green-400'}`}>
+                      <TableCell className="text-foreground text-center">{product.opening_qty}</TableCell>
+                      <TableCell className={`text-center font-bold ${outOfStock ? 'text-destructive' : 'text-green-600 dark:text-green-400'}`}>
                         {product.closing_qty}
                       </TableCell>
-                      <TableCell className="text-right text-foreground border-l">
+                      <TableCell className="text-right text-foreground">
                         ₹{Number(value) > 0 ? value : "0.00"}
                       </TableCell>
                     </TableRow>

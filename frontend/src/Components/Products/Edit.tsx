@@ -271,7 +271,7 @@ export default function EditProductPage() {
                   name="product_category_id"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Product Category</FormLabel>
+                      <FormLabel>Product Category <span style={{ color: "red" }}>*</span></FormLabel>
                       <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -378,7 +378,7 @@ export default function EditProductPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        HSN Code: <span style={{ color: "red" }}>*</span>
+                        HSN Code:
                       </FormLabel>
                       <FormControl>
                         <Input

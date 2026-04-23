@@ -2,20 +2,17 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -29,22 +26,19 @@ import { useQueryClient } from "@tanstack/react-query";
 
 // Form Schema
 const FormSchema = z.object({
-  client: z.string().min(3, "Client cannot be empty").optional(),
-  street_address: z
-    .string()
-    .min(1, "Street address cannot be empty")
-    .optional(),
+  client: z.string().min(3, "Client cannot be empty"),
+  street_address: z.string().optional().or(z.literal("")),
   area: z.any().optional(),
-  city: z.string().min(3, "City cannot be empty").optional(),
-  state: z.string().min(3, "State cannot be empty").optional(),
-  pincode: z.string().min(3, "Pincode cannot be empty").optional(),
-  country: z.string().min(3, "Country cannot be empty").optional(),
+  city: z.string().optional().or(z.literal("")),
+  state: z.string().optional().or(z.literal("")),
+  pincode: z.string().optional().or(z.literal("")),
+  country: z.string().optional().or(z.literal("")),
   gstin: z.any().optional(),
   contact_no: z
     .string()
-    .regex(/^\d{10}$/, { message: "Contact number must be exactly 10 digits" })
-    .optional()
-    .or(z.literal("")),
+    .min(10, { message: "Contact number must be exactly 10 digits" })
+    .max(10, { message: "Contact number must be exactly 10 digits" })
+    .regex(/^\d{10}$/, { message: "Contact number must be exactly 10 digits" }),
 
   email: z.string().optional(),
   shipping_street: z.string().optional(),
@@ -81,6 +75,17 @@ export default function InputForm() {
       shipping_country: "India",
     },
   });
+
+  const copyBillingToShipping = () => {
+    const billingData = form.getValues();
+    form.setValue("shipping_street", billingData.street_address || "");
+    form.setValue("shipping_area", billingData.area || "");
+    form.setValue("shipping_city", billingData.city || "");
+    form.setValue("shipping_state", billingData.state || "");
+    form.setValue("shipping_pincode", billingData.pincode || "");
+    form.setValue("shipping_country", billingData.country || "");
+    toast.success("Billing address copied to shipping address");
+  };
 
   const navigate = useNavigate(); // Use For Navigation
 
@@ -175,7 +180,7 @@ export default function InputForm() {
                   name="contact_no"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Contact Number</FormLabel>
+                    <FormLabel>Contact Number <span style={{ color: "red" }}>*</span></FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Enter Contact"
@@ -256,7 +261,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Street Address <span style={{ color: "red" }}>*</span>
+                        Street Address
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Street Address" {...field} />
@@ -284,7 +289,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        City <span style={{ color: "red" }}>*</span>
+                        City
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -307,7 +312,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        State <span style={{ color: "red" }}>*</span>
+                        State
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter State" {...field} />
@@ -322,7 +327,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Pincode <span style={{ color: "red" }}>*</span>
+                        Pincode
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -344,7 +349,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Country <span style={{ color: "red" }}>*</span>
+                        Country
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -361,10 +366,18 @@ export default function InputForm() {
             </CardContent>
           </Card>
           <Card className="bg-accent/40">
-            <CardHeader className="text- justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold">
                 Shipping Address Information
               </CardTitle>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={copyBillingToShipping}
+              >
+                Copy Billing Address
+              </Button>
             </CardHeader>
             <CardContent className=" space-y-4 p-6">
               <div className="flex justify-center space-x-6 grid grid-cols-3 gap-4">
@@ -374,7 +387,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Street Address <span style={{ color: "red" }}>*</span>
+                        Street Address
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter Street Address" {...field} />
@@ -402,7 +415,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        City <span style={{ color: "red" }}>*</span>
+                        City
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -425,7 +438,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        State <span style={{ color: "red" }}>*</span>
+                        State
                       </FormLabel>
                       <FormControl>
                         <Input placeholder="Enter State" {...field} />
@@ -440,7 +453,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Pincode <span style={{ color: "red" }}>*</span>
+                        Pincode
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -462,7 +475,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        Country <span style={{ color: "red" }}>*</span>
+                        Country
                       </FormLabel>
                       <FormControl>
                         <Input

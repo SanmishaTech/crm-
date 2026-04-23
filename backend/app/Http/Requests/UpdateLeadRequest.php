@@ -28,6 +28,7 @@ class UpdateLeadRequest extends FormRequest
             'lead_attachment' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'lead_sale_order' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'payment_received_remark' => ['nullable', 'string'],
+            'lead_remark' => ['nullable', 'string'],
         ];
     }
 

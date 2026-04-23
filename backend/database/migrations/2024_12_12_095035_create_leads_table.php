@@ -59,6 +59,7 @@ return new class extends Migration {
             //report 
             $table->unsignedBigInteger("report_version")->default(0);
             $table->text("payment_received_remark")->nullable();
+            $table->text("lead_remark")->nullable();
 
 
 

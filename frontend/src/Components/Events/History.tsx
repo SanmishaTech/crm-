@@ -122,7 +122,7 @@ export default function History({ leads }: { leads: LeadWithEvents | null }) {
           {selectedParticipants.length === 0 ? (
             <div className="text-sm text-muted-foreground">No participants found.</div>
           ) : (
-            <Table className="min-w-full bg-background rounded-md border border-muted">
+            <Table className="min-w-full bg-background rounded-md">
               <TableHeader className="bg-muted text-sm">
                 <TableRow>
                   <TableCell className="px-4 py-2 text-left">#</TableCell>
@@ -201,7 +201,7 @@ export default function History({ leads }: { leads: LeadWithEvents | null }) {
       </div>
 
       <div>
-        <Table className="min-w-full bg-background rounded-md shadow-lg border border-muted">
+        <Table className="min-w-full bg-background rounded-md shadow-lg">
           <TableHeader className="bg-muted text-sm">
             <TableRow>
               <TableCell className="px-4 py-2 text-left">#</TableCell>

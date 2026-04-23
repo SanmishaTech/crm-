@@ -4,18 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useQueryClient } from "@tanstack/react-query";
-import { X, Check, ChevronsUpDown, ChevronUp } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { useQueryClient } from "@tanstack/react-query";
 import AddContacts from "./AddContacts";
+import AddProduct from "./AddProduct";
 import { cn } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 
 import {
   Select,
@@ -24,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronsUpDown, Check, X } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -35,7 +29,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -89,6 +82,7 @@ const formSchema = z.object({
   quantity: z.string().optional(),
   rate: z.any().optional(),
   product_id: z.any().optional(),
+  lead_remark: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -96,16 +90,16 @@ type FormValues = z.infer<typeof formSchema>;
 interface ProductRow {
   product_id: string;
   quantity: string;
-  rate: string;
+  rate: string | null;
+  isOpen: boolean;
 }
 
 export default function EditLeadPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
-  const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+  const [error] = useState<string | null>(null);
   const [leads, setLeads] = useState<any>([]);
 
   const [contacts, setContacts] = useState<any[]>([]);
@@ -179,7 +173,7 @@ export default function EditLeadPage() {
   const addRow = () => {
     setProductRows([
       ...productRows,
-      { product_id: "", quantity: "", rate: null },
+      { product_id: "", quantity: "", rate: null, isOpen: false },
     ]);
   };
 
@@ -192,7 +186,6 @@ export default function EditLeadPage() {
 
   const fetchData = usePostData({
     endpoint: `/api/leads/${id}`,
-    queryKey: ["editlead", id],
     params: {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -205,32 +198,26 @@ export default function EditLeadPage() {
         toast.success("Lead updated successfully");
       },
       onError: (error) => {
-        if (error.response && error.response.data.errors) {
-          const serverStatus = error.response.data.status;
-          const serverErrors = error.response.data.errors;
-          // Assuming the error is for the department_name field
-          if (serverStatus === false) {
-            if (serverErrors.contact_id) {
-              form.setError("contact_id", {
-                type: "manual",
-                message: serverErrors.contact_id[0], // The error message from the server
-              });
-            }
-            if (serverErrors.error) {
-              // setError(serverErrors.error[0]);
-              toast.error(serverErrors.error[0]);
-            }
-          } else {
-            setError("Failed to update lead"); // For any other errors
+        const serverErrors = (error as any).response.data.errors;
+        const serverStatus = (error as any).response.data.status;
+        if (serverStatus === false) {
+          if (serverErrors.contact_id) {
+            form.setError("contact_id", {
+              type: "manual",
+              message: serverErrors.contact_id[0],
+            });
+          }
+          if (serverErrors.error) {
+            toast.error(serverErrors.error[0]);
           }
         } else {
-          setError("Failed to update lead");
+          toast.error("Failed to update lead");
         }
       },
     },
   });
 
-  const [leadStatuses, setLeadStatuses] = useState<any[]>([]);
+
 
   useGetData({
     endpoint: `/api/all_lead_sources`,
@@ -246,14 +233,10 @@ export default function EditLeadPage() {
     endpoint: `/api/lead_status`,
     params: {
       queryKey: ["lead_status"],
-      onSuccess: (data) => {
-        setLeadStatuses(Object.values(data.data.LeadStatus));
-      },
     },
   });
 
-
-  const { data: productsData } = useGetData({
+  const { data: productsData, refetch: fetchProduct } = useGetData({
     endpoint: "/api/all_products",
     params: {
       queryKey: ["products"],
@@ -264,18 +247,18 @@ export default function EditLeadPage() {
   useEffect(() => {
     if (productsData?.data?.Products) {
       setFrameworks(
-        productsData?.data?.Products?.map((product) => ({
+        productsData?.data?.Products?.map((product: any) => ({
           value: product.id.toString(),
           label: product.product,
         }))
       );
       setLoading(false);
     } else {
-      // toast.error("No products available.");
       setLoading(false);
     }
   }, [productsData]);
-  const { data: FetchEmployees } = useGetData({
+
+  useGetData({
     endpoint: `/api/all_employees`,
     params: {
       queryKey: ["employees"],
@@ -285,7 +268,7 @@ export default function EditLeadPage() {
         setEmployees(data.data);
         setLoading(false);
       },
-      onError: (error) => {
+      onError: () => {
         toast.error("Failed to fetch employees.");
       },
     },
@@ -297,7 +280,6 @@ export default function EditLeadPage() {
       queryKey: ["editlead", id],
       retry: 1,
       onSuccess: (data) => {
-        setData(data?.Lead);
         setLeads(data.data.Lead?.contact?.client?.client);
         setLoading(false);
         queryClient.invalidateQueries({ queryKey: ["editlead"] });
@@ -333,7 +315,7 @@ export default function EditLeadPage() {
 
 
   useEffect(() => {
-    if (editData?.data?.Lead && leadSources.length > 0) {
+    if (editData?.data?.Lead) {
       const newData = editData.data.Lead;
       
       // Set the title for the first dropdown directly from the backend
@@ -364,6 +346,7 @@ export default function EditLeadPage() {
         lead_attachment: newData?.lead_attachment || "",
         lead_sale_order: newData?.lead_sale_order || "",
         payment_received_remark: newData?.payment_received_remark || "",
+        lead_remark: newData?.lead_remark || "",
       });
     }
   }, [editData, leadSources]);
@@ -406,21 +389,18 @@ export default function EditLeadPage() {
       })),
     };
 
-    const Formdata = new FormData();
-
-    function appendFormData(submissionData, file) {
+    function appendFormData(submissionData: any, file: any) {
       const formData = new FormData();
       formData.append("_method", "put");
 
       for (const [key, value] of Object.entries(submissionData)) {
         if (typeof value === "object" && !(value instanceof File)) {
           formData.append(key, JSON.stringify(value));
-        } else {
-          formData.append(key, value);
+        } else if (value !== null && value !== undefined) {
+          formData.append(key, value as any);
         }
       }
 
-      // Add the file as binary data
       if (file) {
         formData.append("file", file);
       }
@@ -428,9 +408,9 @@ export default function EditLeadPage() {
       return formData;
     }
 
-    const formData = appendFormData(submissionData, file);
+    const formDataObj = appendFormData(submissionData, file);
 
-    fetchData.mutate(formData);
+    fetchData.mutate(formDataObj);
     queryClient.invalidateQueries({ queryKey: ["supplier"] });
     queryClient.invalidateQueries({ queryKey: ["supplier", id] });
   };
@@ -530,7 +510,7 @@ export default function EditLeadPage() {
                                 ))}
                               </CommandGroup>
                             </CommandList>
-                            <AddContacts FetchContacts={FetchContacts} />
+                            <AddContacts fetchContacts={FetchContacts.refetch} />
                           </Command>
                         </PopoverContent>
                       </Popover>
@@ -1260,6 +1240,30 @@ export default function EditLeadPage() {
               {error && <div className="text-red-500">{error}</div>}{" "}
             </CardContent>
           </Card>
+          <Card className="bg-accent/40 mb-6">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold">Lead Remarks</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="lead_remark"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Enter Lead Remarks" 
+                        className="min-h-[100px] bg-background" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold">Products</CardTitle>
@@ -1267,7 +1271,7 @@ export default function EditLeadPage() {
             </CardHeader>
             <CardContent className="p-6">
               {/* Table Start */}
-              <div className="rounded-md border overflow-x-auto overflow-y-visible">
+              <div className="rounded-md overflow-x-auto overflow-y-visible">
                 <Table className="min-w-[600px] md:min-w-full">
                 <TableCaption>A list of your products.</TableCaption>
                 <TableHeader>
@@ -1338,6 +1342,9 @@ export default function EditLeadPage() {
                                 </CommandGroup>
                               </CommandList>
                             </Command>
+                            <div className="border-t">
+                              <AddProduct onProductAdded={fetchProduct} />
+                            </div>
                           </PopoverContent>
                         </Popover>
                       </TableCell>
@@ -1359,7 +1366,7 @@ export default function EditLeadPage() {
                           type="number"
                           placeholder="Rate"
                           name="rate"
-                          value={row.rate}
+                          value={row.rate || ""}
                           onChange={(e) => {
                             const newRows = [...productRows];
                             newRows[index].rate = e.target.value;

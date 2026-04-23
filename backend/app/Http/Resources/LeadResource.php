@@ -54,6 +54,7 @@ class LeadResource extends JsonResource
             'tender_status' => $this->tender_status,
             'lead_status' => $this->lead_status,
             'payment_received_remark' => $this->payment_received_remark,
+            'lead_remark' => $this->lead_remark,
             'follow_up_remark' => $this->follow_up_remark,
             'lead_follow_up_date' => $this->lead_follow_up_date,
             'follow_up_type' => $this->follow_up_type,

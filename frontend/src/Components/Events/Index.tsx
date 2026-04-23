@@ -154,7 +154,7 @@ export default function EventsIndex() {
           {dialogParticipants.length === 0 ? (
             <div className="text-sm text-muted-foreground">No participants found.</div>
           ) : (
-            <Table className="min-w-full bg-background rounded-md border border-muted">
+            <Table className="min-w-full bg-background rounded-md">
               <TableHeader className="bg-muted text-sm">
                 <TableRow>
                   <TableHead className="px-4 py-2 text-left">#</TableHead>

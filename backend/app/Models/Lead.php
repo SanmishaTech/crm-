@@ -56,6 +56,7 @@ class Lead extends Model
         'invoice_terms',
         'report_version',
         'payment_received_remark',
+        'lead_remark',
     ];
 
     protected $casts = [

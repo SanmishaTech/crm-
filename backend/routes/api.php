@@ -30,6 +30,8 @@ use App\Http\Controllers\Api\ProductCategoriesController;
 Route::post('/login', [UserController::class , 'login']);
 
 Route::group(['middleware' => ['auth:sanctum', 'permission', 'request.null']], function () {
+   Route::get('/clients/template', [ClientsController::class , 'downloadTemplate'])->name("clients.template");
+   Route::post('/clients/import', [ClientsController::class , 'importData'])->name("clients.import");
    Route::resource('clients', ClientsController::class);
    Route::resource('leads', LeadsController::class);
    Route::resource('contacts', ContactsController::class);

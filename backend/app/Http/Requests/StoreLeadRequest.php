@@ -26,6 +26,7 @@ class StoreLeadRequest extends FormRequest
         return [
             "contact_id" => ['required', 'exists:contacts,id'],
             'payment_received_remark' => ['nullable', 'string'],
+            'lead_remark' => ['nullable', 'string'],
         ];
     }
 

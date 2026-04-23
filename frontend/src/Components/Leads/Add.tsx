@@ -4,9 +4,11 @@ import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { X, Check, ChevronsUpDown, ChevronLeft } from "lucide-react";
 import AddContacts from "./AddContacts";
+import AddProduct from "./AddProduct";
 
 import {
   Card,
@@ -79,6 +81,7 @@ const FormSchema = z.object({
   rate: z.string().optional(),
   product_id: z.string().optional(),
   payment_received_remark: z.string().optional(),
+  lead_remark: z.string().optional(),
 });
 
 export default function InputForm() {
@@ -108,6 +111,7 @@ export default function InputForm() {
       rate: "",
       product_id: "",
       payment_received_remark: "",
+      lead_remark: "",
     },
   });
   const queryClient = useQueryClient();
@@ -766,6 +770,30 @@ export default function InputForm() {
               {error && <div className="text-red-500">{error}</div>}{" "}
             </CardContent>
           </Card>
+          <Card className="bg-accent/40 mb-6">
+            <CardHeader>
+              <CardTitle className="text-xl font-semibold">Lead Remarks</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <FormField
+                control={form.control}
+                name="lead_remark"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Enter Lead Remarks" 
+                        className="min-h-[100px] bg-background" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
           <Card className="bg-accent/40">
             <CardHeader className="text- justify-between space-y-0 pb-2">
               <CardTitle className="text-xl font-semibold">Products</CardTitle>
@@ -773,7 +801,7 @@ export default function InputForm() {
             </CardHeader>
             <CardContent className="p-6">
               {/* Table Start */}
-              <div className="rounded-md border overflow-x-auto overflow-y-visible">
+              <div className="rounded-md overflow-x-auto overflow-y-visible">
                 <Table className="min-w-[600px] md:min-w-full">
                 <TableCaption>A list of your products.</TableCaption>
                 <TableHeader>
@@ -847,6 +875,9 @@ export default function InputForm() {
                                 </CommandGroup>
                               </CommandList>
                             </Command>
+                            <div className="border-t">
+                              <AddProduct onProductAdded={fetchProduct} />
+                            </div>
                           </PopoverContent>
                         </Popover>
                       </TableCell>

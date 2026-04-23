@@ -42,39 +42,14 @@ const FormSchema = z.object({
     })
     .nonempty({ message: "Supplier field is required." }),
 
-  street_address: z
-    .string()
-    .min(2, {
-      message: "Street Address field must have at least 2 characters.",
-    })
-    .nonempty({ message: "Street Address field is required." }),
+  street_address: z.string().optional().or(z.literal("")),
   area: z.string().optional(),
-  city: z
-    .string()
-    .min(2, { message: "City field must have at least 2 characters." })
-    .nonempty({ message: "City field is required." }),
-  state: z
-    .string()
-    .min(2, { message: "State field must have at least 2 characters." })
-    .nonempty({ message: "State field is required." }),
-  pincode: z.string().optional(),
-  country: z
-    .string()
-    .min(2, { message: "Country field must have at least 2 characters." })
-    .nonempty({ message: "Country field is required." }),
+  city: z.string().optional().or(z.literal("")),
+  state: z.string().optional().or(z.literal("")),
+  pincode: z.string().optional().or(z.literal("")),
+  country: z.string().optional().or(z.literal("")),
   gstin: z.string().optional(),
-  // .regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}[A-Z]{1}[0-9]{1}$/, {
-  //     message: "Invalid GST Number. Please enter a valid GSTIN. ",
-  //   })
-  //   .max(15, "GST Number must be exactly 15 characters")
-  //   .min(15, "GST Number must be exactly 15 characters"),
-  contact_name: z
-    .string()
-    .min(2, { message: "Contact Name field must have at least 2 characters." })
-    .max(50, {
-      message: "Contact Name field must have no more than 50 characters.",
-    })
-    .nonempty({ message: "Contact Name field is required." }),
+  contact_name: z.string().optional().or(z.literal("")),
 
   department: z.string().optional(),
   location: z.string().optional(),
@@ -83,7 +58,8 @@ const FormSchema = z.object({
     .regex(/^\d{10}$/, {
       message: "Mobile number must be exactly 10 digits",
     })
-    .nonempty({ message: "Mobile number field is required." }),
+    .optional()
+    .or(z.literal("")),
   mobile_2: z
     .string()
     .regex(/^\d{10}$/, {
@@ -94,7 +70,8 @@ const FormSchema = z.object({
   email: z
     .string()
     .email("Please enter a valid email address.")
-    .nonempty("Email is required."),
+    .optional()
+    .or(z.literal("")),
   alternate_email: z
     .string()
     .email("Please enter a valid email address.")
@@ -270,7 +247,7 @@ export default function InputForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-foreground">
-                      Supplier <span className="text-destructive">*</span>
+                      Supplier
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -395,7 +372,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Contact Name <span className="text-destructive">*</span>
+                        Contact Name
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -415,7 +392,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Email <span className="text-destructive">*</span>
+                        Email
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -436,8 +413,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Primary Mobile Number{" "}
-                        <span className="text-destructive">*</span>
+                        Primary Mobile Number
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -560,8 +536,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Street Address{" "}
-                        <span className="text-destructive">*</span>
+                        Street Address
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -598,7 +573,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        City <span className="text-destructive">*</span>
+                        City
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -617,7 +592,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        State <span className="text-destructive">*</span>
+                        State
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -637,7 +612,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Pincode <span className="text-destructive">*</span>
+                        Pincode
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -661,7 +636,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-foreground">
-                        Country <span className="text-destructive">*</span>
+                        Country
                       </FormLabel>
                       <FormControl>
                         <Input

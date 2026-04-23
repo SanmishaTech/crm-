@@ -38,9 +38,11 @@ const FormSchema = z.object({
   model: z.any().optional(),
   hsn_code: z
     .string()
-    .min(6, "HSN Code Minimum 6 digits")
-    .max(8, "HSN Code Maximum 8 digits")
-    .nonempty("HSN Code cannot be empty"),
+    .optional()
+    .or(z.literal(""))
+    .refine((val) => !val || (val.length >= 6 && val.length <= 8), {
+      message: "HSN Code must be between 6 and 8 digits",
+    }),
   gst_rate: z
     .string()
     .nonempty("GST Rate cannot be empty")
@@ -236,7 +238,7 @@ export default function InputForm() {
                   name="product_category_id"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>Product Category</FormLabel>
+                      <FormLabel>Product Category <span style={{ color: "red" }}>*</span></FormLabel>
                       <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -343,7 +345,7 @@ export default function InputForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        HSN Code: <span style={{ color: "red" }}>*</span>
+                        HSN Code:
                       </FormLabel>
                       <FormControl>
                         <Input
