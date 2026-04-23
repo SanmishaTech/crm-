@@ -69,12 +69,16 @@ class ProductsController extends BaseController
         $product->hsn_code = $request->input("hsn_code");
         $product->model = $request->input("model");
         $product->manufacturer = $request->input("manufacturer");
-        $product->opening_qty = $request->input("opening_qty");
+        $product->opening_qty = $request->input("opening_qty") ?? 0;
         $product->closing_qty = $request->input("closing_qty");
         $product->last_traded_price = $request->input("last_traded_price");
 
         $product->save();
-        return $this->sendResponse(['Product'=> new ProductResource($product)], "Product Stored successfully");
+        
+        // Ensure closing_qty is initialized based on opening_qty
+        \App\Models\StockLedger::calculateClosingQuantity($product->id);
+        
+        return $this->sendResponse(['Product'=> new ProductResource($product->fresh())], "Product Stored successfully");
 
     }
 
@@ -114,11 +118,15 @@ class ProductsController extends BaseController
         $product->hsn_code = $request->input("hsn_code");
         $product->model = $request->input("model");
         $product->manufacturer = $request->input("manufacturer");
-        $product->opening_qty = $request->input("opening_qty");
+        $product->opening_qty = $request->input("opening_qty") ?? 0;
         $product->closing_qty = $request->input("closing_qty");
         $product->last_traded_price = $request->input("last_traded_price");
         $product->save();
-        return $this->sendResponse(['Product'=> new ProductResource($product)], "Product Updated successfuly");
+
+        // Recalculate closing_qty in case opening_qty was changed
+        \App\Models\StockLedger::calculateClosingQuantity($product->id);
+
+        return $this->sendResponse(['Product'=> new ProductResource($product->fresh())], "Product Updated successfuly");
          
     }
 
